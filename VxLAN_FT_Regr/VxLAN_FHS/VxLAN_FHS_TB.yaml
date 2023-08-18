@@ -1,0 +1,751 @@
+testbed:
+    name: FHSTestbed
+    alias: FHSTestbed
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-1882.cisco.com
+            address: 64.103.221.184
+    custom:
+        owner: Rathi Rajendran
+        contacts: ratrajen@cisco.com
+
+# ------------------------------------------------------
+#        Node List:
+#
+#            node05_spine       : SPINE-FX2
+#            node01             : LEAF1-VPC-FX3
+#            node02             : LEAF2-VPC-FX3
+#            node03             : LEAF3-SA-FX2
+#            node04             : LEAF4-SA-FX
+#            node06             : FANOUT-3172
+#
+# ------------------------------------------------------
+
+devices:
+
+    # ------------------------------------------------------
+    #  Device
+    # ------------------------------------------------------
+    ixia:
+        type: tgn
+        alias: ixia
+        os: 'ixianative'
+        connections:
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+
+                ixnetwork_api_server_ip: 10.105.56.215
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.20'
+                ixia_chassis_ip: 10.105.56.207
+                ixia_license_server_ip: 10.105.56.207
+                ixia_port_list: ['2/7', '2/10', '2/8', '2/12', '2/9', '2/15', '2/13', '2/14', '2/11']
+                # 'orphan1', 'sa1_port1', 'orphan2', 'vpc', 'sec', 'sa1_port2', 'sa2_port1', 'sa2_port2', 'vpc1'
+        custom:
+            config: ixia_esi_rx.ixncfg
+
+    LEAF1-VPC-FX3:
+        alias: node01
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2004
+                arguments:
+                    prompt_recovery: True
+                settings:
+                    RELOAD_TIMEOUT: 600
+                    RELOAD_RECONNECT_WAIT: 180
+                    POST_RELOAD_WAIT: 180
+                    CONNECTION_TIMEOUT: 150
+                    PROMPT_RECOVERY_INTERVAL: 60
+                    PROMPT_RECOVERY_RETRIES: 60
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.200
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.193
+            msk: 26
+
+    LEAF2-VPC-FX3:
+        alias: node02
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2005
+                arguments:
+                    prompt_recovery: True
+                settings:
+                    RELOAD_TIMEOUT: 600
+                    RELOAD_RECONNECT_WAIT: 180
+                    POST_RELOAD_WAIT: 180
+                    CONNECTION_TIMEOUT: 150
+                    PROMPT_RECOVERY_INTERVAL: 60
+                    PROMPT_RECOVERY_RETRIES: 60
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.201
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.193
+            msk: 26
+
+    LEAF3-SA-FX2:
+        alias: node03
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2003
+                arguments:
+                    prompt_recovery: True
+                settings:
+                    RELOAD_TIMEOUT: 600
+                    RELOAD_RECONNECT_WAIT: 180
+                    POST_RELOAD_WAIT: 180
+                    CONNECTION_TIMEOUT: 150
+                    PROMPT_RECOVERY_INTERVAL: 60
+                    PROMPT_RECOVERY_RETRIES: 60
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.202
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.193
+            msk: 26
+
+    LEAF4-SA-FX:
+        alias: node04
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2006
+                arguments:
+                    prompt_recovery: True
+                settings:
+                    RELOAD_TIMEOUT: 600
+                    RELOAD_RECONNECT_WAIT: 180
+                    POST_RELOAD_WAIT: 180
+                    CONNECTION_TIMEOUT: 150
+                    PROMPT_RECOVERY_INTERVAL: 60
+                    PROMPT_RECOVERY_RETRIES: 60
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.203
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.193
+            msk: 26
+    SPINE-FX2:
+        alias: node05_spine
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2002
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.198
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.198
+            msk: 26
+    FANOUT-3172:
+        alias: node06
+        type: n3k
+        platform: n3k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.105.56.203
+                port: 2007
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.105.57.204
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.105.57.193
+            msk: 26
+# ------------------------------------------------------
+# Device Connections
+# ------------------------------------------------------
+# ------------------------------------------------------
+#        Node List:
+#
+#            node01     : LEAF1-VPC-FX3
+#            node02     : LEAF2-VPC-FX3
+#            node03      : LEAF3-SA-FX2
+#            node04      : LEAF4-SA-FX
+#            node05_spine        : SPINE-FX2
+#            node05_vpcAccess    : FANOUT-3172
+#
+# ------------------------------------------------------
+topology:
+
+    # Node ID : node05_spine
+    SPINE-FX2:
+        interfaces:
+            # -- to VTEP-1
+            Ethernet1/107/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_1
+                link: nd05_nd01_1_1
+            Ethernet1/107/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_2
+                link: nd05_nd01_1_2
+            
+            # -- to VTEP-2
+            Ethernet1/107/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_1
+                link: nd05_nd02_1_1
+            Ethernet1/107/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_2
+                link: nd05_nd02_1_2
+
+            # -- to VTEP-3
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_1
+                link: nd05_nd03_1_1
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_2
+                link: nd05_nd03_1_2
+            
+            # -- to VTEP-4
+            Ethernet1/98/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_1
+                link: nd05_nd04_1_1
+            Ethernet1/98/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_2
+                link: nd05_nd04_1_2
+
+    # Node ID : node01
+    LEAF1-VPC-FX3:
+        interfaces:
+            # -- to SPINE
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_1
+                link: nd01_nd05_1_1
+            Ethernet1/28:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_2
+                link: nd01_nd05_1_2
+            # -- to VTEP-2
+            Ethernet1/24:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_1
+                link: nd01_nd02_1_1
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_2
+                link: nd01_nd02_1_2
+            
+            # -- to IXIA
+            Ethernet1/47:
+                link: nd01_tgn01_1_1
+                alias: nd01_tgn01_1_1
+                type: ethernet
+                inf_speed: 1000000
+            Ethernet1/48:
+                link: nd01_tgn01_1_2
+                alias: nd01_tgn01_1_2
+                type: ethernet
+                inf_speed: 1000000
+
+            # -- to FANOUT
+            Ethernet1/7:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_1
+                link: nd01_nd06_1_1
+            Ethernet1/8:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_2
+                link: nd01_nd06_1_2
+            Ethernet1/9:                
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_3
+                link: nd01_nd06_1_3
+            Ethernet1/10:               
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_4
+                link: nd01_nd06_1_4
+            Ethernet1/31:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_5
+                link: nd01_nd06_1_5
+            Ethernet1/32:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_6
+                link: nd01_nd06_1_6
+            Ethernet1/33:                
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_7
+                link: nd01_nd06_1_7
+            Ethernet1/34:               
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd06_1_8
+                link: nd01_nd06_1_8
+    
+    # Node ID : node02
+    LEAF2-VPC-FX3:
+        interfaces:
+
+            # -- to SPINE
+            Ethernet1/37:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_1
+                link: nd02_nd05_1_1
+            Ethernet1/38:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_2
+                link: nd02_nd05_1_2
+            
+            # -- to VTEP-1
+            Ethernet1/24:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_1
+                link: nd02_nd01_1_1
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_2
+                link: nd02_nd01_1_2
+            
+            # -- to IXIA
+            Ethernet1/47:
+                link: nd02_tgn01_1_1
+                alias: nd02_tgn01_1_1
+                type: ethernet
+                inf_speed: 1000000
+            
+            # -- to FANOUT
+            Ethernet1/7:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd06_1_1
+                link: nd02_nd06_1_1
+            Ethernet1/8:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd06_1_2
+                link: nd02_nd06_1_2
+            Ethernet1/9:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd06_1_3
+                link: nd02_nd06_1_3
+            Ethernet1/10:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd06_1_4
+                link: nd02_nd06_1_4
+            Ethernet1/31:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd06_1_5
+                link: nd02_nd06_1_5
+            Ethernet1/32:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd06_1_6
+                link: nd02_nd06_1_6
+
+    # Node ID : node03
+    LEAF3-SA-FX2:
+        interfaces:
+            # -- to SPINE
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_1
+                link: nd03_nd05_1_1
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_2
+                link: nd03_nd05_1_2
+
+            # -- to IXIA
+            Ethernet1/103:
+                type: ethernet
+                link: nd03_tgn01_1_1
+                alias: nd03_tgn01_1_1
+                inf_speed: 10000000
+            Ethernet1/101:
+                type: ethernet
+                link: nd03_tgn01_1_2
+                alias: nd03_tgn01_1_2
+                inf_speed: 10000000
+            
+            # -- to FANOUT
+            Ethernet1/102/1:
+                type: ethernet
+                link: nd03_nd06_1_1
+                alias: nd03_nd06_1_1
+                inf_speed: 10000000
+            Ethernet1/102/2:
+                type: ethernet
+                link: nd03_nd06_1_2
+                alias: nd03_nd06_1_2
+                inf_speed: 10000000
+    
+    # Node ID : node04
+    LEAF4-SA-FX:
+        interfaces:
+            # -- to SPINE
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_1
+                link: nd04_nd05_1_1
+            Ethernet1/26:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_2
+                link: nd04_nd05_1_2
+            # -- to IXIA
+            Ethernet1/47:
+                type: ethernet
+                link: nd04_tgn01_1_1
+                alias: nd04_tgn01_1_1
+                inf_speed: 1000000
+            Ethernet1/48:
+                type: ethernet
+                link: nd04_tgn01_1_2
+                alias: nd04_tgn01_1_2
+                inf_speed: 1000000
+
+    FANOUT-3172:
+        interfaces:
+            Ethernet1/13:
+                type: ethernet
+                link: nd06_nd01_1_1
+                alias: nd06_nd01_1_1
+                inf_speed: 1000000
+            Ethernet1/14:
+                type: ethernet
+                link: nd06_nd01_1_2
+                alias: nd06_nd01_1_2
+                inf_speed: 1000000
+            Ethernet1/15:
+                type: ethernet
+                link: nd06_nd01_1_3
+                alias: nd06_nd01_1_3
+                inf_speed: 1000000
+            Ethernet1/16:
+                type: ethernet
+                link: nd06_nd01_1_4
+                alias: nd06_nd01_1_4
+                inf_speed: 1000000
+            Ethernet1/17:
+                type: ethernet
+                link: nd06_nd02_1_1
+                alias: nd06_nd02_1_1
+                inf_speed: 1000000
+            Ethernet1/18:
+                type: ethernet
+                link: nd06_nd02_1_2
+                alias: nd06_nd02_1_2
+                inf_speed: 1000000
+            Ethernet1/19:
+                type: ethernet
+                link: nd06_nd02_1_3
+                alias: nd06_nd02_1_3
+                inf_speed: 1000000
+            Ethernet1/20:
+                type: ethernet
+                link: nd06_nd02_1_4
+                alias: nd06_nd02_1_4
+                inf_speed: 1000000
+            Ethernet1/48:
+                type: ethernet
+                link: nd06_tgn01_1_1
+                alias: nd06_tgn01_1_1
+                inf_speed: 1000000
+            Ethernet1/47:
+                type: ethernet
+                link: nd06_tgn01_1_2
+                alias: nd06_tgn01_1_2
+                inf_speed: 1000000
+            Ethernet1/53/1:
+                type: ethernet
+                link: nd06_nd01_1_5
+                alias: nd06_nd01_1_5
+                inf_speed: 1000000
+            Ethernet1/53/2:
+                type: ethernet
+                link: nd06_nd01_1_6
+                alias: nd06_nd01_1_6
+                inf_speed: 1000000
+            Ethernet1/53/3:
+                type: ethernet
+                link: nd06_nd01_1_7
+                alias: nd06_nd01_1_7
+                inf_speed: 1000000
+            Ethernet1/53/4:
+                type: ethernet
+                link: nd06_nd01_1_8
+                alias: nd06_nd01_1_8
+                inf_speed: 1000000
+            Ethernet1/21:
+                type: ethernet
+                link: nd06_nd02_1_5
+                alias: nd06_nd02_1_5
+                inf_speed: 1000000
+            Ethernet1/22:
+                type: ethernet
+                link: nd06_nd02_1_6
+                alias: nd06_nd02_1_6
+                inf_speed: 1000000
+            Ethernet1/35:
+                type: ethernet
+                link: nd06_nd03_1_1
+                alias: nd06_nd03_1_1
+                inf_speed: 1000000
+            Ethernet1/36:
+                type: ethernet
+                link: nd06_nd03_1_2
+                alias: nd06_nd03_1_2
+                inf_speed: 1000000
+    ixia:
+        interfaces:
+            2/7:
+                type: ethernet
+                alias: tgn01_nd01_1_1
+                link: nd01_tgn01_1_1
+                inf_speed: 1000000
+            2/10:
+                type: ethernet
+                alias: tgn01_nd03_1_1
+                link: nd03_tgn01_1_1
+                inf_speed: 1000000
+            2/15:
+                type: ethernet
+                alias: tgn01_nd03_1_2
+                link: nd03_tgn01_1_2
+                inf_speed: 1000000
+            2/8:
+                type: ethernet
+                alias: tgn01_nd01_1_2
+                link: nd01_tgn01_1_2
+                inf_speed: 1000000
+            2/11:
+                type: ethernet
+                alias: tgn01_nd06_1_1
+                link: nd06_tgn01_1_1
+                inf_speed: 1000000
+            2/12:
+                type: ethernet
+                alias: tgn01_nd06_1_2
+                link: nd06_tgn01_1_2
+                inf_speed: 1000000
+            2/9:
+                type: ethernet
+                alias: tgn01_nd02_1_1
+                link: nd02_tgn01_1_1
+                inf_speed: 1000000
+            2/13:
+                type: ethernet
+                alias: tgn01_nd04_1_1
+                link: nd04_tgn01_1_1
+                inf_speed: 1000000
+            2/14:
+                type: ethernet
+                alias: tgn01_nd06_1_2
+                link: nd06_tgn01_1_2
+                inf_speed: 1000000

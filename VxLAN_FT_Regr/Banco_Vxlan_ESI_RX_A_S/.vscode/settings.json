@@ -1,0 +1,47 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/Banco_Vxlan_ESI_RX_A_S",
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr",
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/Banco_Vxlan_ESI_RX_A_S/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan",
+        "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats",
+        "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats/lib"
+    ],
+    "xdev.pyats.projects": [
+        {
+            "type": "genie",
+            "name": "Banco_Vxlan_ESI_RX_A_S",
+            "jobFile": "esi_rx_mh_regression_job.py",
+            "triggerFiles": [
+                "esi_rx_mh_grun_data.yml"
+            ],
+            "testbedFile": "colorado_testbed.yaml",
+            "logicalTestbed": false,
+            "cleanFile": "",
+            "packages": [
+                "",
+                "auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr",
+                "",
+                "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats/lib/",
+                "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats/lib/nxtest"
+            ],
+            "settings": {
+                "makeDevelop": {
+                    "onEachRun": [],
+                    "onProjectActivation": []
+                }
+            },
+            "active": true
+        }
+    ],
+    "python.analysis.extraPaths": [
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/Banco_Vxlan_ESI_RX_A_S",
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr",
+        "/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/Banco_Vxlan_ESI_RX_A_S/auto/dc3-india/absr/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan",
+        "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats",
+        "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/repo_dump/nexus-test-pyats/lib"
+    ],
+    "python.defaultInterpreterPath": "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/pyats_venvs/pyats_venv_03_2023/bin/python3",
+    "xdev.pyats.tree": "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/pyats_venvs/pyats_venv_03_2023",
+    "xdev.pyats.runner": "/ws/team_jdasgupt-bgl/vxlan_blr_qa_regr/pyats_venvs/pyats_venv_03_2023/bin/pyats",
+    "xdev.pyats.version": "23.2"
+}

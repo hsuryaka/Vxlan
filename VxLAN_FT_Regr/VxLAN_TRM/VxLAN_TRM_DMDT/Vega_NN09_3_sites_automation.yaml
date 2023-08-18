@@ -1,0 +1,1504 @@
+# ------------------------------------------------------
+# Testbed Details
+# ------------------------------------------------------
+testbed:
+    name: havadhut_VEGA_NN09_3_sites
+    alias: havadhut_VEGA_NN09_3_sites
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-316.cisco.com
+            address: 64.103.221.184
+    custom:
+        owner: Harsh Avadhutha
+        contacts: havadhut@cisco.com
+
+# ------------------------------------------------------
+#        Node List:
+#
+#            # External Devices
+#            node01_dci          : CS-DCI
+#            node02_ext_rtr      : EXT-RTR
+#
+#            # SITE-1
+#            node03_s1_spine     : S1-FX3-SPINE
+#            node04_s1_bgw1      : S1-FX3-BGW-1
+#            node05_s1_bgw2      : S1-FX3-BGW-2
+#            node06_s1_leaf      : S1-FX3-LEAF
+#            node07_s1_bgvpc     : S1-BG-VPC_ACCESS
+#
+#            # SITE-2
+#            node08_s2_spine     : S2-GX-SPINE
+#            node09_s2_bgw1      : S2-GX-EOR-BGW-1
+#            node10_s2_bgw2      : S2-GX-EOR-BGW-2
+#            node11_s2_leaf      : S2-GX-EOR-LEAF
+#            node12_s3_bgvpc     : S1-BG-VPC_ACCESS
+#
+#            # SITE-3
+#            node13_s3_bgw       : S3-FX3-BGW
+#            node14_s3_leaf      : S3-FX3-LEAF
+# ------------------------------------------------------
+
+devices:
+    # ------------------------------------------------------
+    # Device - CS-DCI - node01_dci
+    # ------------------------------------------------------
+    CS-DCI:
+        alias: node01_dci
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2006
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            b:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2007
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.65
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - EXT-RTR - node02_ext_rtr
+    # ------------------------------------------------------
+    EXT-RTR:
+        alias: node02_ext_rtr
+        type: n3k
+        platform: n3k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2017
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.67
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S2-FX3-SPINE - node03_s1_spine
+    # ------------------------------------------------------
+    S2-FX3-SPINE:
+        alias: node03_s1_spine
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2019
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.69
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S2-FX3-BGW-1 - node04_s1_bgw1
+    # ------------------------------------------------------
+    S2-FX3-BGW-1:
+        alias: node04_s1_bgw1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2020
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.70
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S2-FX3-BGW-2 - node05_s1_bgw2
+    # ------------------------------------------------------
+    S2-FX3-BGW-2:
+        alias: node05_s1_bgw2
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2021
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.71
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S2-FX3-LEAF-1 - node06_s1_leaf
+    # ------------------------------------------------------
+    S2-FX3-LEAF-1:
+        alias: node06_s1_leaf
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2023
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.73
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S3-GX-SPINE - node08_s2_spine
+    # ------------------------------------------------------
+    S3-GX-SPINE:
+        alias: node08_s2_spine
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2026
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.75
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S3-GX-EOR-BGW-1 - node09_s2_bgw1
+    # ------------------------------------------------------
+    S3-GX-EOR-BGW-1:
+        alias: node09_s2_bgw1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2008
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            b:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2009
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.76
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S3-GX-EOR-BGW-2 - node10_s2_bgw2
+    # ------------------------------------------------------
+    S3-GX-EOR-BGW-2:
+        alias: node10_s2_bgw2
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2010
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            b:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2011
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.77
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S3-FX3-LEAF-1 - node11_s2_leaf
+    # ------------------------------------------------------
+    S3-FX3-LEAF-1:
+        alias: node11_s2_leaf
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2022
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.78
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S3-BG-VPC_ACCESS - node12_s3_bgvpc
+    # ------------------------------------------------------
+    S3-BG-VPC_ACCESS:
+        alias: node12_s3_bgvpc
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2013
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S4-GX-TOR-BGW - node13_s3_bgw
+    # ------------------------------------------------------
+    S4-GX-TOR-BGW:
+        alias: node13_s3_bgw
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2027
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.80
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ------------------------------------------------------
+    # Device - S4-FX-LEAF - node14_s3_leaf
+    # ------------------------------------------------------
+    S4-FX-LEAF:
+        alias: node14_s3_leaf
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.225.127.43
+                port: 2025
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.81
+                service_attributes:
+                    execute:
+                        timeout: 1000
+                    configure:
+                        timeout: 1000
+                        bulk: true
+        custom:
+            execute:
+                timeout: 1000
+            configure:
+                timeout: 1000
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+
+    # ----------------------------------------------------------------------
+    # TGEN Details
+    # ----------------------------------------------------------------------
+    # ----------------------------------------------------------------------
+    # TGEN Port Mapping
+    # ----------------------------------------------------------------------
+    # PORT  -   Node Alias          -   Node Name            -   Device Port
+    # ----------------------------------------------------------------------
+    # 7/13  -   node04_s1_bgw1      -   S1-BGW-1             -   1/48
+    # 7/14  -   node05_s1_bgw2      -   S1-BGW-2             -   1/48
+    # 7/16  -   node06_s1_leaf      -   S1-LEAF              -   1/48
+    # 7/4   -   node09_s2_bgw1      -   S2-BGW-1             -   2/16
+    # 7/5   -   node10_s2_bgw2      -   S2-BGW-2             -   2/16
+    # 7/11  -   node12_s3_bgvpc     -   S2-BGW-VPC-ACCESS    -   1/1/1
+    # 7/15  -   node11_s2_leaf      -   S2-LEAF              -   1/48
+    # 7/19  -   node14_s3_leaf      -   S3-LEAF              -   1/48
+    # 8/5   -   node02_ext_rtr      -   EXT-RTR              -   1/104/1
+    # ----------------------------------------------------------------------
+    ixia:
+        type: tgn
+        alias: ixia
+        os: 'ixianative'
+        connections:
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+                ixnetwork_api_server_ip: 10.197.127.87
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.10'
+                ixia_chassis_ip: 10.225.127.36
+                ixia_license_server_ip: 10.225.127.36
+                ixia_port_list: [ '7/13', '7/14', '7/16', '7/4', '7/5', '7/11', '7/15', '7/19', '8/5']
+        custom:
+            config: ixia_esi_rx.ixncfg
+
+# ------------------------------------------------------
+# Device Connections
+# ------------------------------------------------------
+# ------------------------------------------------------
+#        Node List:
+#
+#            # External Devices
+#            node01_dci          : CS-DCI
+#            node02_ext_rtr      : EXT-RTR
+#
+#            # SITE-1
+#            node03_s1_spine     : S1-FX3-SPINE
+#            node04_s1_bgw1      : S1-FX3-BGW-1
+#            node05_s1_bgw2      : S1-FX3-BGW-2
+#            node06_s1_leaf      : S1-FX3-LEAF
+#            node07_s3_bgvpc     : S1-BG-VPC_ACCESS
+#
+#            # SITE-2
+#            node08_s2_spine     : S2-GX-SPINE
+#            node09_s2_bgw1      : S2-GX-EOR-BGW-1
+#            node10_s2_bgw2      : S2-GX-EOR-BGW-2
+#            node11_s2_leaf      : S2-GX-EOR-LEAF
+#
+#            # SITE-3
+#            node12_s3_bgw       : S3-FX3-BGW
+#            node13_s3_leaf      : S3-FX3-LEAF
+# ------------------------------------------------------
+topology:
+
+    # Node ID : node01_dci
+    CS-DCI:
+        interfaces:
+            # -- DCI to S1-BGW-1
+            Ethernet1/11/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_1
+                link: nd01_nd04_1_1
+            Ethernet1/11/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_2
+                link: nd01_nd04_1_2
+            Ethernet1/11/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_3
+                link: nd01_nd04_1_3
+            Ethernet1/11/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_4
+                link: nd01_nd04_1_4
+            # -- DCI to S1-BGW-2
+            Ethernet1/4/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_1
+                link: nd01_nd05_1_1
+            Ethernet1/4/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_2
+                link: nd01_nd05_1_2
+            Ethernet1/4/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_3
+                link: nd01_nd05_1_3
+            Ethernet1/4/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd05_1_4
+                link: nd01_nd05_1_4
+            # -- DCI to S2-BGW-1
+            Ethernet2/1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd09_1_1
+                link: nd01_nd09_1_1
+            Ethernet2/1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd09_1_2
+                link: nd01_nd09_1_2
+            Ethernet2/1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd09_1_3
+                link: nd01_nd09_1_3
+            Ethernet2/1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd09_1_4
+                link: nd01_nd09_1_4
+            # -- DCI to S2-BGW-2
+            Ethernet2/25/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd10_1_1
+                link: nd01_nd10_1_1
+            Ethernet2/25/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd10_1_2
+                link: nd01_nd10_1_2
+            Ethernet2/25/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd10_1_3
+                link: nd01_nd10_1_3
+            Ethernet2/25/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd10_1_4
+                link: nd01_nd10_1_4
+            # -- DCI to S3-BGW
+            Ethernet1/6/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd13_1_1
+                link: nd01_nd13_1_1
+            Ethernet1/6/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd13_1_2
+                link: nd01_nd13_1_2
+            Ethernet1/6/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd13_1_3
+                link: nd01_nd13_1_3
+            Ethernet1/6/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd13_1_4
+                link: nd01_nd13_1_4
+
+    # Node ID : node02_ext_rtr
+    EXT-RTR:
+        interfaces:
+            # -- EXT-RTR to S1-BGW-1
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd04_1_1
+                link: nd02_nd04_1_1
+            # -- EXT-RTR to S1-BGW-2
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_1
+                link: nd02_nd05_1_1
+            # -- EXT-RTR to S2-BGW-1
+            Ethernet1/52:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd09_1_1
+                link: nd02_nd09_1_1
+            # -- EXT-RTR to S2-BGW-2
+            Ethernet1/53:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd10_1_1
+                link: nd02_nd10_1_1
+            
+            # -- EXT-RTR to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd02_tgen_1_1
+                link: nd02_tgen_1_1
+
+    # Node ID : node03_s1_spine
+    S2-FX3-SPINE:
+        interfaces:
+            # -- SPINE to BGW-1
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd04_1_1
+                link: nd03_nd04_1_1
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd04_1_2
+                link: nd03_nd04_1_2
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd04_1_3
+                link: nd03_nd04_1_3
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd04_1_4
+                link: nd03_nd04_1_4
+
+            # -- SPINE to BGW-2
+            Ethernet1/5:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_1
+                link: nd03_nd05_1_1
+            Ethernet1/6:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_2
+                link: nd03_nd05_1_2
+            Ethernet1/7:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_3
+                link: nd03_nd05_1_3
+            Ethernet1/8:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_4
+                link: nd03_nd05_1_4
+
+            # -- SPINE to LEAF-1
+            Ethernet1/13:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd06_1_1
+                link: nd03_nd06_1_1
+            Ethernet1/14:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd06_1_2
+                link: nd03_nd06_1_2
+            Ethernet1/15:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd06_1_3
+                link: nd03_nd06_1_3
+            Ethernet1/16:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd06_1_4
+                link: nd03_nd06_1_4
+
+    # Node ID : node04_s1_bgw1
+    S2-FX3-BGW-1:
+        interfaces:
+            # -- S1-BGW-1 to EXT-RTR
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd02_1_1
+                link: nd02_nd04_1_1
+
+            # -- BGW to DCI
+            Ethernet1/49/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_1
+                link: nd01_nd04_1_1
+            Ethernet1/49/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_2
+                link: nd01_nd04_1_2
+            Ethernet1/49/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_3
+                link: nd01_nd04_1_3
+            Ethernet1/49/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_4
+                link: nd01_nd04_1_4
+
+            # -- BGW to SPINE
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd03_1_1
+                link: nd03_nd04_1_1
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd03_1_2
+                link: nd03_nd04_1_2
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd03_1_3
+                link: nd03_nd04_1_3
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd03_1_4
+                link: nd03_nd04_1_4
+
+            # -- LEAF-1 to LEAF-2 VPC Keep-Alive
+            Ethernet1/19:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_1
+                link: nd04_nd05_1_1
+
+            # -- LEAF-1 to LEAF-2 VPC Peer-links
+            Ethernet1/20:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_2
+                link: nd04_nd05_1_2
+            Ethernet1/21:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_3
+                link: nd04_nd05_1_3
+            
+            # -- LEAF-1 to LEAF-2 Backup link
+            Ethernet1/22:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd05_1_4
+                link: nd04_nd05_1_4
+
+            # -- BGW-1 to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd04_tgen_1_1
+                link: nd04_tgen_1_1
+
+    # Node ID : node05_s1_bgw2
+    S2-FX3-BGW-2:
+        interfaces:
+            # -- S1-BGW-2 to EXT-RTR
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_1
+                link: nd02_nd05_1_1
+
+            # -- BGW to DCI
+            Ethernet1/31:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_1
+                link: nd01_nd05_1_1
+            Ethernet1/32:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_2
+                link: nd01_nd05_1_2
+            Ethernet1/33:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_3
+                link: nd01_nd05_1_3
+            Ethernet1/34:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd01_1_4
+                link: nd01_nd05_1_4
+
+            # -- BGW to SPINE
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_1
+                link: nd03_nd05_1_1
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_2
+                link: nd03_nd05_1_2
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_3
+                link: nd03_nd05_1_3
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_4
+                link: nd03_nd05_1_4
+
+            # -- LEAF-1 to LEAF-2 VPC Keep-Alive
+            Ethernet1/19:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_1
+                link: nd04_nd05_1_1
+
+            # -- LEAF-1 to LEAF-2 VPC Peer-links
+            Ethernet1/20:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_2
+                link: nd04_nd05_1_2
+            Ethernet1/21:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_3
+                link: nd04_nd05_1_3
+            
+            # -- LEAF-1 to LEAF-2 Backup link
+            Ethernet1/22:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd04_1_4
+                link: nd04_nd05_1_4
+
+            # -- BGW-1 to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd05_tgen_1_1
+                link: nd05_tgen_1_1
+
+    # Node ID : node06_s1_leaf
+    S2-FX3-LEAF-1:
+        interfaces:
+            # -- LEAF to SPINE
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd06_nd03_1_1
+                link: nd03_nd06_1_1
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd06_nd03_1_2
+                link: nd03_nd06_1_2
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd06_nd03_1_3
+                link: nd03_nd06_1_3
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd06_nd03_1_4
+                link: nd03_nd06_1_4
+
+            # -- LEAF to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd06_tgen_1_1
+                link: nd06tgen_1_1
+
+    # Node ID : node08_s2_spine
+    S3-GX-SPINE:
+        interfaces:
+            # -- SPINE to BGW-1
+            Ethernet1/51/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd09_1_1
+                link: nd08_nd09_1_1
+            Ethernet1/51/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd09_1_2
+                link: nd08_nd09_1_2
+            Ethernet1/51/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd09_1_3
+                link: nd08_nd09_1_3
+            Ethernet1/51/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd09_1_4
+                link: nd08_nd09_1_4
+
+            # -- SPINE to BGW-2
+            Ethernet1/1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd10_1_1
+                link: nd08_nd10_1_1
+            Ethernet1/1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd10_1_2
+                link: nd08_nd10_1_2
+            Ethernet1/1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd10_1_3
+                link: nd08_nd10_1_3
+            Ethernet1/1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd10_1_4
+                link: nd08_nd10_1_4
+
+            # -- SPINE to LEAF-1
+            Ethernet1/45/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd11_1_1
+                link: nd08_nd11_1_1
+            Ethernet1/45/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd11_1_2
+                link: nd08_nd11_1_2
+            Ethernet1/45/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd11_1_3
+                link: nd08_nd11_1_3
+            Ethernet1/45/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd08_nd11_1_4
+                link: nd08_nd11_1_4
+
+    # Node ID : node09_s2_bgw1
+    S3-GX-EOR-BGW-1:
+        interfaces:
+            # -- BGW-1 to DCI
+            Ethernet1/5/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd01_1_1
+                link: nd01_nd09_1_1
+            Ethernet1/5/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd01_1_2
+                link: nd01_nd09_1_2
+            Ethernet1/5/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd01_1_3
+                link: nd01_nd09_1_3
+            Ethernet1/5/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd01_1_4
+                link: nd01_nd09_1_4
+
+            # -- BGW-1 to EXT-RTR
+            Ethernet2/15:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd02_1_1
+                link: nd02_nd09_1_1
+
+            # -- BGW-1 to SPINE
+            Ethernet1/12/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd08_1_1
+                link: nd08_nd09_1_1
+            Ethernet1/12/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd08_1_2
+                link: nd08_nd09_1_2
+            Ethernet1/12/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd08_1_3
+                link: nd08_nd09_1_3
+            Ethernet1/12/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd09_nd08_1_4
+                link: nd08_nd09_1_4
+
+            # -- BGW-1 to BGW-2 VPC Keep-Alive
+            Ethernet1/9/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd09_nd10_1_1
+                link: nd09_nd10_1_1
+
+            # -- BGW-1 to BGW-2 VPC Peer-links
+            Ethernet1/9/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd09_nd10_1_2
+                link: nd09_nd10_1_2
+            Ethernet1/9/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd09_nd10_1_3
+                link: nd09_nd10_1_3
+            
+            # -- BGW-1 to BGW-2 Backup link
+            Ethernet1/9/4:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd09_nd10_1_4
+                link: nd09_nd10_1_4
+
+            # -- BGW-1 to ACCESS VPC Peer-links
+            Ethernet2/11:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd09_nd12_1_1
+                link: nd09_nd12_1_1
+            Ethernet2/12:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd09_nd12_1_2
+                link: nd09_nd12_1_2
+
+            # -- BGW to IXIA
+            Ethernet2/16:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd09_tgen_1_1
+                link: nd09_tgen_1_1           
+
+    # Node ID : node10_s2_bgw2
+    S3-GX-EOR-BGW-2:
+        interfaces:
+            # -- BGW-2 to DCI
+            Ethernet1/12/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd01_1_1
+                link: nd01_nd10_1_1
+            Ethernet1/12/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd01_1_2
+                link: nd01_nd10_1_2
+            Ethernet1/12/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd01_1_3
+                link: nd01_nd10_1_3
+            Ethernet1/12/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd01_1_4
+                link: nd01_nd10_1_4
+
+            # -- BGW-1 to EXT-RTR
+            Ethernet2/15:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd02_1_1
+                link: nd02_nd10_1_1
+
+            # -- BGW-2 to SPINE
+            Ethernet1/5/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd08_1_1
+                link: nd08_nd10_1_1
+            Ethernet1/5/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd08_1_2
+                link: nd08_nd10_1_2
+            Ethernet1/5/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd08_1_3
+                link: nd08_nd10_1_3
+            Ethernet1/5/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd10_nd08_1_4
+                link: nd08_nd10_1_4
+            
+            # -- BGW-2 to BGW-1 VPC Keep-Alive
+            Ethernet1/9/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd10_nd09_1_1
+                link: nd09_nd10_1_1
+
+            # -- BGW-2 to BGW-1 VPC Peer-links
+            Ethernet1/9/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd10_nd09_1_2
+                link: nd09_nd10_1_2
+            Ethernet1/9/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd10_nd09_1_3
+                link: nd09_nd10_1_3
+            
+            # -- BGW-2 to BGW-1 Backup link
+            Ethernet1/9/4:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd10_nd09_1_4
+                link: nd09_nd10_1_4
+
+            # -- BGW-2 to ACCESS VPC Peer-links
+            Ethernet2/11:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd10_nd12_1_1
+                link: nd10_nd12_1_1
+            Ethernet2/12:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd10_nd12_1_2
+                link: nd10_nd12_1_2
+
+            # -- BGW to IXIA
+            Ethernet2/16:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd10_tgen_1_1
+                link: nd10_tgen_1_1
+
+    # Node ID : node11_s2_leaf
+    S3-FX3-LEAF-1:
+        interfaces:
+            # -- LEAF to SPINE
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd11_nd08_1_1
+                link: nd08_nd11_1_1
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd11_nd08_1_2
+                link: nd08_nd11_1_2
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd11_nd08_1_3
+                link: nd08_nd11_1_3
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd11_nd08_1_4
+                link: nd08_nd11_1_4
+
+            # -- LEAF to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd11_tgen_1_1
+                link: nd11_tgen_1_1
+
+    # Node ID : node12_s3_bgvpc
+    S3-BG-VPC_ACCESS:
+        interfaces:
+            # -- ACCESS to LEAF-1
+            Ethernet1/15:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd12_nd09_1_1
+                link: nd09_nd12_1_1
+            Ethernet1/16:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd12_nd09_1_2
+                link: nd09_nd12_1_2
+            
+            # -- ACCESS to LEAF-2
+            Ethernet1/17:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd12_nd10_1_1
+                link: nd10_nd12_1_1
+            Ethernet1/18:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd12_nd10_1_2
+                link: nd10_nd12_1_2
+
+            # -- ACCESS to IXIA
+            Ethernet1/1/1:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd12_tgen_1_1
+                link: nd12_tgen_1_1
+
+    # Node ID : node13_s3_bgw
+    S4-GX-TOR-BGW:
+        interfaces:
+            # -- BGW to DCI
+            Ethernet1/21/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd01_1_1
+                link: nd01_nd13_1_1
+            Ethernet1/21/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd01_1_2
+                link: nd01_nd13_1_2
+            Ethernet1/21/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd01_1_3
+                link: nd01_nd13_1_3
+            Ethernet1/21/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd01_1_4
+                link: nd01_nd13_1_4
+
+            # -- BGW to LEAF
+            Ethernet1/1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd14_1_1
+                link: nd13_nd14_1_1
+            Ethernet1/1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd14_1_2
+                link: nd13_nd14_1_2
+            Ethernet1/1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd14_1_3
+                link: nd13_nd14_1_3
+            Ethernet1/1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd13_nd14_1_4
+                link: nd13_nd14_1_4
+    
+    # Node ID : node14_s3_leaf
+    S4-FX-LEAF:
+        interfaces:
+            # -- LEAF to BGW
+            Ethernet1/49/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd14_nd13_1_1
+                link: nd13_nd14_1_1
+            Ethernet1/49/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd14_nd13_1_2
+                link: nd13_nd14_1_2
+            Ethernet1/49/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd14_nd13_1_3
+                link: nd13_nd14_1_3
+            Ethernet1/49/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd14_nd13_1_4
+                link: nd13_nd14_1_4
+
+            # -- LEAF to IXIA
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd14_tgen_1_1
+                link: nd14_tgen_1_1
+
+    # TGEN Links
+    # [ '3/4', '8/4']
+    # ixia:
+    #     interfaces:
+    #         # TGEN to ACCESS
+    #         8/16:
+    #             type: fiber
+    #             inf_speed: 100000
+    #             alias: tgen_nd05_1_1
+    #             link: nd05_tgen_1_1
+    #         # TGEN to STD
+    #         7/15:
+    #             type: fiber
+    #             inf_speed: 100000
+    #             alias: tgen_nd04_1_1
+    #             link: nd04_tgen_1_1

@@ -1,0 +1,2210 @@
+
+!Command: show running-config
+!Running configuration last done at: Fri Aug  9 13:47:04 2019
+!Time: Fri Aug  9 15:47:19 2019
+
+version 9.3(1) Bios:version 07.65 
+switchname dcicore-2
+vdc dcicore-2 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature bash-shell
+nv overlay evpn
+feature bgp
+feature pim
+clock timezone PST -8 0
+clock summer-time PST 2 Sun Mar 02:00 1 Sun Nov 02:00 60
+feature nv overlay
+
+no password strength-check
+username admin password 5 $5$JVNgY3iP$tXF.l1ktDFsytajrm2FhkDUudTF2v7n4P.hGxG/6HxB  role network-admin
+ip domain-lookup
+interface breakout module 1 port 29,32 map 10g-4x
+copp profile strict
+snmp-server user admin network-admin auth md5 0xc5a6639484eb4b84482351e277a1ff81 priv 0xc5a6639484eb4b84482351e277a1ff81 localizedkey
+rmon event 1 description FATAL(1) owner PMON@FATAL
+rmon event 2 description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 description ERROR(3) owner PMON@ERROR
+rmon event 4 description WARNING(4) owner PMON@WARNING
+rmon event 5 description INFORMATION(5) owner PMON@INFO
+ntp server 10.22.31.142 use-vrf management
+ntp server 172.31.201.208 use-vrf management
+
+ip pim log-neighbor-changes
+ip pim ssm range 232.0.0.0/8
+ip routing multicast event-history rib size 80000000
+ip routing multicast event-history mfdm-debugs size 40000000
+ip routing multicast event-history notify-clients size 20000000
+vlan 1
+
+route-map permitall permit 10
+route-map unchanged permit 10
+  set ip next-hop unchanged
+vrf context management
+  ip route 0.0.0.0/0 172.31.200.1
+
+
+interface Ethernet1/1
+  mtu 9216
+  ip address 193.2.101.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/2
+  mtu 9216
+  ip address 193.2.52.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/3
+  mtu 9216
+  ip address 193.2.91.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/4
+  mtu 9216
+  ip address 193.2.102.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/5
+  mtu 9216
+  ip address 193.2.92.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/6
+  mtu 9216
+  ip address 193.2.51.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  mtu 9216
+  ip address 193.2.71.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/9
+  mtu 9216
+  ip address 193.52.1.1/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/10
+  no shutdown
+
+interface Ethernet1/11
+  mtu 9216
+  ip address 193.2.72.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/12
+  no shutdown
+
+interface Ethernet1/13
+  no shutdown
+
+interface Ethernet1/14
+  mtu 9216
+  ip address 193.52.6.1/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  no shutdown
+
+interface Ethernet1/18
+  ip address 193.5.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  mtu 9216
+  ip address 193.15.1.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/22
+  mtu 9216
+  ip address 193.2.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/23
+  ip address 193.2.36.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/24
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  no shutdown
+
+interface Ethernet1/27
+  ip address 193.1.31.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/28
+  ip address 193.4.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/29/1
+  no shutdown
+
+interface Ethernet1/29/2
+  no shutdown
+
+interface Ethernet1/29/3
+  no shutdown
+
+interface Ethernet1/29/4
+  no shutdown
+
+interface Ethernet1/30
+  mtu 9216
+  ip address 193.3.11.2/24
+  no shutdown
+
+interface Ethernet1/31
+  mtu 9216
+  ip address 193.1.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/32/1
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/32/1.1
+  mtu 9216
+  encapsulation dot1q 101
+  ip address 193.101.1.1/24
+  no shutdown
+
+interface Ethernet1/32/1.2
+  mtu 9216
+  encapsulation dot1q 102
+  ip address 193.101.2.1/24
+  no shutdown
+
+interface Ethernet1/32/1.3
+  mtu 9216
+  encapsulation dot1q 103
+  ip address 193.101.3.1/24
+  no shutdown
+
+interface Ethernet1/32/1.4
+  mtu 9216
+  encapsulation dot1q 104
+  ip address 193.101.4.1/24
+  no shutdown
+
+interface Ethernet1/32/1.5
+  mtu 9216
+  encapsulation dot1q 105
+  ip address 193.101.5.1/24
+  no shutdown
+
+interface Ethernet1/32/1.6
+  mtu 9216
+  encapsulation dot1q 106
+  ip address 193.101.6.1/24
+  no shutdown
+
+interface Ethernet1/32/1.7
+  mtu 9216
+  encapsulation dot1q 107
+  ip address 193.101.7.1/24
+  no shutdown
+
+interface Ethernet1/32/1.8
+  mtu 9216
+  encapsulation dot1q 108
+  ip address 193.101.8.1/24
+  no shutdown
+
+interface Ethernet1/32/1.9
+  mtu 9216
+  encapsulation dot1q 109
+  ip address 193.101.9.1/24
+  no shutdown
+
+interface Ethernet1/32/1.10
+  mtu 9216
+  encapsulation dot1q 110
+  ip address 193.101.10.1/24
+  no shutdown
+
+interface Ethernet1/32/1.11
+  mtu 9216
+  encapsulation dot1q 111
+  ip address 193.101.11.1/24
+  no shutdown
+
+interface Ethernet1/32/1.12
+  mtu 9216
+  encapsulation dot1q 112
+  ip address 193.101.12.1/24
+  no shutdown
+
+interface Ethernet1/32/1.13
+  mtu 9216
+  encapsulation dot1q 113
+  ip address 193.101.13.1/24
+  no shutdown
+
+interface Ethernet1/32/1.14
+  mtu 9216
+  encapsulation dot1q 114
+  ip address 193.101.14.1/24
+  no shutdown
+
+interface Ethernet1/32/1.15
+  mtu 9216
+  encapsulation dot1q 115
+  ip address 193.101.15.1/24
+  no shutdown
+
+interface Ethernet1/32/1.16
+  mtu 9216
+  encapsulation dot1q 116
+  ip address 193.101.16.1/24
+  no shutdown
+
+interface Ethernet1/32/1.17
+  mtu 9216
+  encapsulation dot1q 117
+  ip address 193.101.17.1/24
+  no shutdown
+
+interface Ethernet1/32/1.18
+  mtu 9216
+  encapsulation dot1q 118
+  ip address 193.101.18.1/24
+  no shutdown
+
+interface Ethernet1/32/1.19
+  mtu 9216
+  encapsulation dot1q 119
+  ip address 193.101.19.1/24
+  no shutdown
+
+interface Ethernet1/32/1.20
+  mtu 9216
+  encapsulation dot1q 120
+  ip address 193.101.20.1/24
+  no shutdown
+
+interface Ethernet1/32/1.21
+  mtu 9216
+  encapsulation dot1q 121
+  ip address 193.101.21.1/24
+  no shutdown
+
+interface Ethernet1/32/1.22
+  mtu 9216
+  encapsulation dot1q 122
+  ip address 193.101.22.1/24
+  no shutdown
+
+interface Ethernet1/32/1.23
+  mtu 9216
+  encapsulation dot1q 123
+  ip address 193.101.23.1/24
+  no shutdown
+
+interface Ethernet1/32/1.24
+  mtu 9216
+  encapsulation dot1q 124
+  ip address 193.101.24.1/24
+  no shutdown
+
+interface Ethernet1/32/1.25
+  mtu 9216
+  encapsulation dot1q 125
+  ip address 193.101.25.1/24
+  no shutdown
+
+interface Ethernet1/32/1.26
+  mtu 9216
+  encapsulation dot1q 126
+  ip address 193.101.26.1/24
+  no shutdown
+
+interface Ethernet1/32/1.27
+  mtu 9216
+  encapsulation dot1q 127
+  ip address 193.101.27.1/24
+  no shutdown
+
+interface Ethernet1/32/1.28
+  mtu 9216
+  encapsulation dot1q 128
+  ip address 193.101.28.1/24
+  no shutdown
+
+interface Ethernet1/32/1.29
+  mtu 9216
+  encapsulation dot1q 129
+  ip address 193.101.29.1/24
+  no shutdown
+
+interface Ethernet1/32/1.30
+  mtu 9216
+  encapsulation dot1q 130
+  ip address 193.101.30.1/24
+  no shutdown
+
+interface Ethernet1/32/1.31
+  mtu 9216
+  encapsulation dot1q 131
+  ip address 193.101.31.1/24
+  no shutdown
+
+interface Ethernet1/32/1.32
+  mtu 9216
+  encapsulation dot1q 132
+  ip address 193.101.32.1/24
+  no shutdown
+
+interface Ethernet1/32/1.33
+  mtu 9216
+  encapsulation dot1q 133
+  ip address 193.101.33.1/24
+  no shutdown
+
+interface Ethernet1/32/1.34
+  mtu 9216
+  encapsulation dot1q 134
+  ip address 193.101.34.1/24
+  no shutdown
+
+interface Ethernet1/32/1.35
+  mtu 9216
+  encapsulation dot1q 135
+  ip address 193.101.35.1/24
+  no shutdown
+
+interface Ethernet1/32/1.36
+  mtu 9216
+  encapsulation dot1q 136
+  ip address 193.101.36.1/24
+  no shutdown
+
+interface Ethernet1/32/1.37
+  mtu 9216
+  encapsulation dot1q 137
+  ip address 193.101.37.1/24
+  no shutdown
+
+interface Ethernet1/32/1.38
+  mtu 9216
+  encapsulation dot1q 138
+  ip address 193.101.38.1/24
+  no shutdown
+
+interface Ethernet1/32/1.39
+  mtu 9216
+  encapsulation dot1q 139
+  ip address 193.101.39.1/24
+  no shutdown
+
+interface Ethernet1/32/1.40
+  mtu 9216
+  encapsulation dot1q 140
+  ip address 193.101.40.1/24
+  no shutdown
+
+interface Ethernet1/32/2
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/32/2.1
+  mtu 9216
+  encapsulation dot1q 141
+  ip address 193.102.1.1/24
+  no shutdown
+
+interface Ethernet1/32/2.2
+  mtu 9216
+  encapsulation dot1q 142
+  ip address 193.102.2.1/24
+  no shutdown
+
+interface Ethernet1/32/2.3
+  mtu 9216
+  encapsulation dot1q 143
+  ip address 193.102.3.1/24
+  no shutdown
+
+interface Ethernet1/32/2.4
+  mtu 9216
+  encapsulation dot1q 144
+  ip address 193.102.4.1/24
+  no shutdown
+
+interface Ethernet1/32/2.5
+  mtu 9216
+  encapsulation dot1q 145
+  ip address 193.102.5.1/24
+  no shutdown
+
+interface Ethernet1/32/2.6
+  mtu 9216
+  encapsulation dot1q 146
+  ip address 193.102.6.1/24
+  no shutdown
+
+interface Ethernet1/32/2.7
+  mtu 9216
+  encapsulation dot1q 147
+  ip address 193.102.7.1/24
+  no shutdown
+
+interface Ethernet1/32/2.8
+  mtu 9216
+  encapsulation dot1q 148
+  ip address 193.102.8.1/24
+  no shutdown
+
+interface Ethernet1/32/2.9
+  mtu 9216
+  encapsulation dot1q 149
+  ip address 193.102.9.1/24
+  no shutdown
+
+interface Ethernet1/32/2.10
+  mtu 9216
+  encapsulation dot1q 150
+  ip address 193.102.10.1/24
+  no shutdown
+
+interface Ethernet1/32/2.11
+  mtu 9216
+  encapsulation dot1q 151
+  ip address 193.102.11.1/24
+  no shutdown
+
+interface Ethernet1/32/2.12
+  mtu 9216
+  encapsulation dot1q 152
+  ip address 193.102.12.1/24
+  no shutdown
+
+interface Ethernet1/32/2.13
+  mtu 9216
+  encapsulation dot1q 153
+  ip address 193.102.13.1/24
+  no shutdown
+
+interface Ethernet1/32/2.14
+  mtu 9216
+  encapsulation dot1q 154
+  ip address 193.102.14.1/24
+  no shutdown
+
+interface Ethernet1/32/2.15
+  mtu 9216
+  encapsulation dot1q 155
+  ip address 193.102.15.1/24
+  no shutdown
+
+interface Ethernet1/32/2.16
+  mtu 9216
+  encapsulation dot1q 156
+  ip address 193.102.16.1/24
+  no shutdown
+
+interface Ethernet1/32/2.17
+  mtu 9216
+  encapsulation dot1q 157
+  ip address 193.102.17.1/24
+  no shutdown
+
+interface Ethernet1/32/2.18
+  mtu 9216
+  encapsulation dot1q 158
+  ip address 193.102.18.1/24
+  no shutdown
+
+interface Ethernet1/32/2.19
+  mtu 9216
+  encapsulation dot1q 159
+  ip address 193.102.19.1/24
+  no shutdown
+
+interface Ethernet1/32/2.20
+  mtu 9216
+  encapsulation dot1q 160
+  ip address 193.102.20.1/24
+  no shutdown
+
+interface Ethernet1/32/2.21
+  mtu 9216
+  encapsulation dot1q 161
+  ip address 193.102.21.1/24
+  no shutdown
+
+interface Ethernet1/32/2.22
+  mtu 9216
+  encapsulation dot1q 162
+  ip address 193.102.22.1/24
+  no shutdown
+
+interface Ethernet1/32/2.23
+  mtu 9216
+  encapsulation dot1q 163
+  ip address 193.102.23.1/24
+  no shutdown
+
+interface Ethernet1/32/2.24
+  mtu 9216
+  encapsulation dot1q 164
+  ip address 193.102.24.1/24
+  no shutdown
+
+interface Ethernet1/32/2.25
+  mtu 9216
+  encapsulation dot1q 165
+  ip address 193.102.25.1/24
+  no shutdown
+
+interface Ethernet1/32/2.26
+  mtu 9216
+  encapsulation dot1q 166
+  ip address 193.102.26.1/24
+  no shutdown
+
+interface Ethernet1/32/2.27
+  mtu 9216
+  encapsulation dot1q 167
+  ip address 193.102.27.1/24
+  no shutdown
+
+interface Ethernet1/32/2.28
+  mtu 9216
+  encapsulation dot1q 168
+  ip address 193.102.28.1/24
+  no shutdown
+
+interface Ethernet1/32/2.29
+  mtu 9216
+  encapsulation dot1q 169
+  ip address 193.102.29.1/24
+  no shutdown
+
+interface Ethernet1/32/2.30
+  mtu 9216
+  encapsulation dot1q 170
+  ip address 193.102.30.1/24
+  no shutdown
+
+interface Ethernet1/32/2.31
+  mtu 9216
+  encapsulation dot1q 171
+  ip address 193.102.31.1/24
+  no shutdown
+
+interface Ethernet1/32/2.32
+  mtu 9216
+  encapsulation dot1q 172
+  ip address 193.102.32.1/24
+  no shutdown
+
+interface Ethernet1/32/2.33
+  mtu 9216
+  encapsulation dot1q 173
+  ip address 193.102.33.1/24
+  no shutdown
+
+interface Ethernet1/32/2.34
+  mtu 9216
+  encapsulation dot1q 174
+  ip address 193.102.34.1/24
+  no shutdown
+
+interface Ethernet1/32/2.35
+  mtu 9216
+  encapsulation dot1q 175
+  ip address 193.102.35.1/24
+  no shutdown
+
+interface Ethernet1/32/2.36
+  mtu 9216
+  encapsulation dot1q 176
+  ip address 193.102.36.1/24
+  no shutdown
+
+interface Ethernet1/32/2.37
+  mtu 9216
+  encapsulation dot1q 177
+  ip address 193.102.37.1/24
+  no shutdown
+
+interface Ethernet1/32/2.38
+  mtu 9216
+  encapsulation dot1q 178
+  ip address 193.102.38.1/24
+  no shutdown
+
+interface Ethernet1/32/2.39
+  mtu 9216
+  encapsulation dot1q 179
+  ip address 193.102.39.1/24
+  no shutdown
+
+interface Ethernet1/32/2.40
+  mtu 9216
+  encapsulation dot1q 180
+  ip address 193.102.40.1/24
+  no shutdown
+
+interface Ethernet1/32/3
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/32/3.1
+  mtu 9216
+  encapsulation dot1q 181
+  ip address 193.103.1.1/24
+  no shutdown
+
+interface Ethernet1/32/3.2
+  mtu 9216
+  encapsulation dot1q 182
+  ip address 193.103.2.1/24
+  no shutdown
+
+interface Ethernet1/32/3.3
+  mtu 9216
+  encapsulation dot1q 183
+  ip address 193.103.3.1/24
+  no shutdown
+
+interface Ethernet1/32/3.4
+  mtu 9216
+  encapsulation dot1q 184
+  ip address 193.103.4.1/24
+  no shutdown
+
+interface Ethernet1/32/3.5
+  mtu 9216
+  encapsulation dot1q 185
+  ip address 193.103.5.1/24
+  no shutdown
+
+interface Ethernet1/32/3.6
+  mtu 9216
+  encapsulation dot1q 186
+  ip address 193.103.6.1/24
+  no shutdown
+
+interface Ethernet1/32/3.7
+  mtu 9216
+  encapsulation dot1q 187
+  ip address 193.103.7.1/24
+  no shutdown
+
+interface Ethernet1/32/3.8
+  mtu 9216
+  encapsulation dot1q 188
+  ip address 193.103.8.1/24
+  no shutdown
+
+interface Ethernet1/32/3.9
+  mtu 9216
+  encapsulation dot1q 189
+  ip address 193.103.9.1/24
+  no shutdown
+
+interface Ethernet1/32/3.10
+  mtu 9216
+  encapsulation dot1q 190
+  ip address 193.103.10.1/24
+  no shutdown
+
+interface Ethernet1/32/3.11
+  mtu 9216
+  encapsulation dot1q 191
+  ip address 193.103.11.1/24
+  no shutdown
+
+interface Ethernet1/32/3.12
+  mtu 9216
+  encapsulation dot1q 192
+  ip address 193.103.12.1/24
+  no shutdown
+
+interface Ethernet1/32/3.13
+  mtu 9216
+  encapsulation dot1q 193
+  ip address 193.103.13.1/24
+  no shutdown
+
+interface Ethernet1/32/3.14
+  mtu 9216
+  encapsulation dot1q 194
+  ip address 193.103.14.1/24
+  no shutdown
+
+interface Ethernet1/32/3.15
+  mtu 9216
+  encapsulation dot1q 195
+  ip address 193.103.15.1/24
+  no shutdown
+
+interface Ethernet1/32/3.16
+  mtu 9216
+  encapsulation dot1q 196
+  ip address 193.103.16.1/24
+  no shutdown
+
+interface Ethernet1/32/3.17
+  mtu 9216
+  encapsulation dot1q 197
+  ip address 193.103.17.1/24
+  no shutdown
+
+interface Ethernet1/32/3.18
+  mtu 9216
+  encapsulation dot1q 198
+  ip address 193.103.18.1/24
+  no shutdown
+
+interface Ethernet1/32/3.19
+  mtu 9216
+  encapsulation dot1q 199
+  ip address 193.103.19.1/24
+  no shutdown
+
+interface Ethernet1/32/3.20
+  mtu 9216
+  encapsulation dot1q 200
+  ip address 193.103.20.1/24
+  no shutdown
+
+interface Ethernet1/32/3.21
+  mtu 9216
+  encapsulation dot1q 201
+  ip address 193.103.21.1/24
+  no shutdown
+
+interface Ethernet1/32/3.22
+  mtu 9216
+  encapsulation dot1q 202
+  ip address 193.103.22.1/24
+  no shutdown
+
+interface Ethernet1/32/3.23
+  mtu 9216
+  encapsulation dot1q 203
+  ip address 193.103.23.1/24
+  no shutdown
+
+interface Ethernet1/32/3.24
+  mtu 9216
+  encapsulation dot1q 204
+  ip address 193.103.24.1/24
+  no shutdown
+
+interface Ethernet1/32/3.25
+  mtu 9216
+  encapsulation dot1q 205
+  ip address 193.103.25.1/24
+  no shutdown
+
+interface Ethernet1/32/3.26
+  mtu 9216
+  encapsulation dot1q 206
+  ip address 193.103.26.1/24
+  no shutdown
+
+interface Ethernet1/32/3.27
+  mtu 9216
+  encapsulation dot1q 207
+  ip address 193.103.27.1/24
+  no shutdown
+
+interface Ethernet1/32/3.28
+  mtu 9216
+  encapsulation dot1q 208
+  ip address 193.103.28.1/24
+  no shutdown
+
+interface Ethernet1/32/3.29
+  mtu 9216
+  encapsulation dot1q 209
+  ip address 193.103.29.1/24
+  no shutdown
+
+interface Ethernet1/32/3.30
+  mtu 9216
+  encapsulation dot1q 210
+  ip address 193.103.30.1/24
+  no shutdown
+
+interface Ethernet1/32/3.31
+  mtu 9216
+  encapsulation dot1q 211
+  ip address 193.103.31.1/24
+  no shutdown
+
+interface Ethernet1/32/3.32
+  mtu 9216
+  encapsulation dot1q 212
+  ip address 193.103.32.1/24
+  no shutdown
+
+interface Ethernet1/32/3.33
+  mtu 9216
+  encapsulation dot1q 213
+  ip address 193.103.33.1/24
+  no shutdown
+
+interface Ethernet1/32/3.34
+  mtu 9216
+  encapsulation dot1q 214
+  ip address 193.103.34.1/24
+  no shutdown
+
+interface Ethernet1/32/3.35
+  mtu 9216
+  encapsulation dot1q 215
+  ip address 193.103.35.1/24
+  no shutdown
+
+interface Ethernet1/32/3.36
+  mtu 9216
+  encapsulation dot1q 216
+  ip address 193.103.36.1/24
+  no shutdown
+
+interface Ethernet1/32/3.37
+  mtu 9216
+  encapsulation dot1q 217
+  ip address 193.103.37.1/24
+  no shutdown
+
+interface Ethernet1/32/3.38
+  mtu 9216
+  encapsulation dot1q 218
+  ip address 193.103.38.1/24
+  no shutdown
+
+interface Ethernet1/32/3.39
+  mtu 9216
+  encapsulation dot1q 219
+  ip address 193.103.39.1/24
+  no shutdown
+
+interface Ethernet1/32/3.40
+  mtu 9216
+  encapsulation dot1q 220
+  ip address 193.103.40.1/24
+  no shutdown
+
+interface Ethernet1/32/4
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/32/4.1
+  mtu 9216
+  encapsulation dot1q 221
+  ip address 193.104.1.1/24
+  no shutdown
+
+interface Ethernet1/32/4.2
+  mtu 9216
+  encapsulation dot1q 222
+  ip address 193.104.2.1/24
+  no shutdown
+
+interface Ethernet1/32/4.3
+  mtu 9216
+  encapsulation dot1q 223
+  ip address 193.104.3.1/24
+  no shutdown
+
+interface Ethernet1/32/4.4
+  mtu 9216
+  encapsulation dot1q 224
+  ip address 193.104.4.1/24
+  no shutdown
+
+interface Ethernet1/32/4.5
+  mtu 9216
+  encapsulation dot1q 225
+  ip address 193.104.5.1/24
+  no shutdown
+
+interface Ethernet1/32/4.6
+  mtu 9216
+  encapsulation dot1q 226
+  ip address 193.104.6.1/24
+  no shutdown
+
+interface Ethernet1/32/4.7
+  mtu 9216
+  encapsulation dot1q 227
+  ip address 193.104.7.1/24
+  no shutdown
+
+interface Ethernet1/32/4.8
+  mtu 9216
+  encapsulation dot1q 228
+  ip address 193.104.8.1/24
+  no shutdown
+
+interface Ethernet1/32/4.9
+  mtu 9216
+  encapsulation dot1q 229
+  ip address 193.104.9.1/24
+  no shutdown
+
+interface Ethernet1/32/4.10
+  mtu 9216
+  encapsulation dot1q 230
+  ip address 193.104.10.1/24
+  no shutdown
+
+interface Ethernet1/32/4.11
+  mtu 9216
+  encapsulation dot1q 231
+  ip address 193.104.11.1/24
+  no shutdown
+
+interface Ethernet1/32/4.12
+  mtu 9216
+  encapsulation dot1q 232
+  ip address 193.104.12.1/24
+  no shutdown
+
+interface Ethernet1/32/4.13
+  mtu 9216
+  encapsulation dot1q 233
+  ip address 193.104.13.1/24
+  no shutdown
+
+interface Ethernet1/32/4.14
+  mtu 9216
+  encapsulation dot1q 234
+  ip address 193.104.14.1/24
+  no shutdown
+
+interface Ethernet1/32/4.15
+  mtu 9216
+  encapsulation dot1q 235
+  ip address 193.104.15.1/24
+  no shutdown
+
+interface Ethernet1/32/4.16
+  mtu 9216
+  encapsulation dot1q 236
+  ip address 193.104.16.1/24
+  no shutdown
+
+interface Ethernet1/32/4.17
+  mtu 9216
+  encapsulation dot1q 237
+  ip address 193.104.17.1/24
+  no shutdown
+
+interface Ethernet1/32/4.18
+  mtu 9216
+  encapsulation dot1q 238
+  ip address 193.104.18.1/24
+  no shutdown
+
+interface Ethernet1/32/4.19
+  mtu 9216
+  encapsulation dot1q 239
+  ip address 193.104.19.1/24
+  no shutdown
+
+interface Ethernet1/32/4.20
+  mtu 9216
+  encapsulation dot1q 240
+  ip address 193.104.20.1/24
+  no shutdown
+
+interface Ethernet1/32/4.21
+  mtu 9216
+  encapsulation dot1q 241
+  ip address 193.104.21.1/24
+  no shutdown
+
+interface Ethernet1/32/4.22
+  mtu 9216
+  encapsulation dot1q 242
+  ip address 193.104.22.1/24
+  no shutdown
+
+interface Ethernet1/32/4.23
+  mtu 9216
+  encapsulation dot1q 243
+  ip address 193.104.23.1/24
+  no shutdown
+
+interface Ethernet1/32/4.24
+  mtu 9216
+  encapsulation dot1q 244
+  ip address 193.104.24.1/24
+  no shutdown
+
+interface Ethernet1/32/4.25
+  mtu 9216
+  encapsulation dot1q 245
+  ip address 193.104.25.1/24
+  no shutdown
+
+interface Ethernet1/32/4.26
+  mtu 9216
+  encapsulation dot1q 246
+  ip address 193.104.26.1/24
+  no shutdown
+
+interface Ethernet1/32/4.27
+  mtu 9216
+  encapsulation dot1q 247
+  ip address 193.104.27.1/24
+  no shutdown
+
+interface Ethernet1/32/4.28
+  mtu 9216
+  encapsulation dot1q 248
+  ip address 193.104.28.1/24
+  no shutdown
+
+interface Ethernet1/32/4.29
+  mtu 9216
+  encapsulation dot1q 249
+  ip address 193.104.29.1/24
+  no shutdown
+
+interface Ethernet1/32/4.30
+  mtu 9216
+  encapsulation dot1q 250
+  ip address 193.104.30.1/24
+  no shutdown
+
+interface Ethernet1/32/4.31
+  mtu 9216
+  encapsulation dot1q 251
+  ip address 193.104.31.1/24
+
+interface Ethernet1/32/4.32
+  mtu 9216
+  encapsulation dot1q 252
+  ip address 193.104.32.1/24
+
+interface Ethernet1/32/4.33
+  mtu 9216
+  encapsulation dot1q 253
+  ip address 193.104.33.1/24
+
+interface Ethernet1/32/4.34
+  mtu 9216
+  encapsulation dot1q 254
+  ip address 193.104.34.1/24
+
+interface Ethernet1/32/4.35
+  mtu 9216
+  encapsulation dot1q 255
+  ip address 193.104.35.1/24
+
+interface Ethernet1/32/4.36
+  mtu 9216
+  encapsulation dot1q 256
+  ip address 193.104.36.1/24
+
+interface Ethernet1/32/4.37
+  mtu 9216
+  encapsulation dot1q 257
+  ip address 193.104.37.1/24
+
+interface Ethernet1/32/4.38
+  mtu 9216
+  encapsulation dot1q 258
+  ip address 193.104.38.1/24
+
+interface Ethernet1/32/4.39
+  mtu 9216
+  encapsulation dot1q 259
+  ip address 193.104.39.1/24
+
+interface Ethernet1/32/4.40
+  mtu 9216
+  encapsulation dot1q 260
+  ip address 193.104.40.1/24
+
+interface mgmt0
+  vrf member management
+  ip address 172.31.200.167/21
+line console
+  exec-timeout 0
+  speed 115200
+line vty
+  exec-timeout 0
+router bgp 1001
+  router-id 105.1.1.2
+  timers bgp 180 600
+  timers bestpath-limit 600
+  graceful-restart restart-time 300
+  graceful-restart stalepath-time 600
+  log-neighbor-changes
+  address-family ipv4 unicast
+    network 105.1.1.2/32
+    network 250.250.250.2/32
+    redistribute direct route-map permitall
+    maximum-paths 64
+    maximum-paths ibgp 64
+  address-family ipv4 mvpn
+    retain route-target all
+  address-family l2vpn evpn
+    retain route-target all
+  template peer dcioverlay
+    ebgp-multihop 10
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family ipv4 mvpn
+      disable-peer-as-check
+      send-community
+      send-community extended
+      route-map unchanged out
+      rewrite-rt-asn
+    address-family l2vpn evpn
+      disable-peer-as-check
+      send-community
+      send-community extended
+      route-map unchanged out
+      rewrite-evpn-rt-asn
+  neighbor 193.1.11.1
+    inherit peer dcioverlay
+    remote-as 65001
+    update-source Ethernet1/31
+    address-family ipv4 unicast
+  neighbor 193.1.31.1
+    inherit peer dcioverlay
+    remote-as 65001
+    update-source Ethernet1/27
+    address-family ipv4 unicast
+  neighbor 193.2.11.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/22
+    address-family ipv4 unicast
+  neighbor 193.2.36.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/23
+    address-family ipv4 unicast
+  neighbor 193.2.51.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/6
+    address-family ipv4 unicast
+  neighbor 193.2.52.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/2
+    address-family ipv4 unicast
+  neighbor 193.2.71.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/8
+    address-family ipv4 unicast
+  neighbor 193.2.72.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/11
+    address-family ipv4 unicast
+  neighbor 193.2.91.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/3
+    address-family ipv4 unicast
+  neighbor 193.2.92.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/5
+    address-family ipv4 unicast
+  neighbor 193.2.101.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/1
+    address-family ipv4 unicast
+  neighbor 193.2.102.1
+    inherit peer dcioverlay
+    remote-as 65002
+    update-source Ethernet1/4
+    address-family ipv4 unicast
+  neighbor 193.3.11.1
+    inherit peer dcioverlay
+    remote-as 65003
+    update-source Ethernet1/30
+    address-family ipv4 unicast
+  neighbor 193.4.11.1
+    inherit peer dcioverlay
+    remote-as 65004
+    update-source Ethernet1/28
+    address-family ipv4 unicast
+  neighbor 193.5.11.1
+    inherit peer dcioverlay
+    remote-as 65005
+    update-source Ethernet1/18
+    address-family ipv4 unicast
+  neighbor 193.15.1.1
+    inherit peer dcioverlay
+    remote-as 65015
+    update-source Ethernet1/21
+    address-family ipv4 unicast
+  neighbor 193.52.1.2
+    inherit peer dcioverlay
+    remote-as 1002
+    update-source Ethernet1/9
+    address-family ipv4 unicast
+  neighbor 193.52.6.2
+    inherit peer dcioverlay
+    remote-as 1002
+    update-source Ethernet1/14
+    address-family ipv4 unicast
+  neighbor 193.101.1.2
+    inherit peer dcioverlay
+    remote-as 65301
+    update-source Ethernet1/32/1.1
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.2.2
+    inherit peer dcioverlay
+    remote-as 65302
+    update-source Ethernet1/32/1.2
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.3.2
+    inherit peer dcioverlay
+    remote-as 65303
+    update-source Ethernet1/32/1.3
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.4.2
+    inherit peer dcioverlay
+    remote-as 65304
+    update-source Ethernet1/32/1.4
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.5.2
+    inherit peer dcioverlay
+    remote-as 65305
+    update-source Ethernet1/32/1.5
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.6.2
+    inherit peer dcioverlay
+    remote-as 65306
+    update-source Ethernet1/32/1.6
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.7.2
+    inherit peer dcioverlay
+    remote-as 65307
+    update-source Ethernet1/32/1.7
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.8.2
+    inherit peer dcioverlay
+    remote-as 65308
+    update-source Ethernet1/32/1.8
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.9.2
+    inherit peer dcioverlay
+    remote-as 65309
+    update-source Ethernet1/32/1.9
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.10.2
+    inherit peer dcioverlay
+    remote-as 65310
+    update-source Ethernet1/32/1.10
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.11.2
+    inherit peer dcioverlay
+    remote-as 65311
+    update-source Ethernet1/32/1.11
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.12.2
+    inherit peer dcioverlay
+    remote-as 65312
+    update-source Ethernet1/32/1.12
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.13.2
+    inherit peer dcioverlay
+    remote-as 65313
+    update-source Ethernet1/32/1.13
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.14.2
+    inherit peer dcioverlay
+    remote-as 65314
+    update-source Ethernet1/32/1.14
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.15.2
+    inherit peer dcioverlay
+    remote-as 65315
+    update-source Ethernet1/32/1.15
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.16.2
+    inherit peer dcioverlay
+    remote-as 65316
+    update-source Ethernet1/32/1.16
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.17.2
+    inherit peer dcioverlay
+    remote-as 65317
+    update-source Ethernet1/32/1.17
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.18.2
+    inherit peer dcioverlay
+    remote-as 65318
+    update-source Ethernet1/32/1.18
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.19.2
+    inherit peer dcioverlay
+    remote-as 65319
+    update-source Ethernet1/32/1.19
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.20.2
+    inherit peer dcioverlay
+    remote-as 65320
+    update-source Ethernet1/32/1.20
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.21.2
+    inherit peer dcioverlay
+    remote-as 65321
+    update-source Ethernet1/32/1.21
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.22.2
+    inherit peer dcioverlay
+    remote-as 65322
+    update-source Ethernet1/32/1.22
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.23.2
+    inherit peer dcioverlay
+    remote-as 65323
+    update-source Ethernet1/32/1.23
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.24.2
+    inherit peer dcioverlay
+    remote-as 65324
+    update-source Ethernet1/32/1.24
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.25.2
+    inherit peer dcioverlay
+    remote-as 65325
+    update-source Ethernet1/32/1.25
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.26.2
+    inherit peer dcioverlay
+    remote-as 65326
+    update-source Ethernet1/32/1.26
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.27.2
+    inherit peer dcioverlay
+    remote-as 65327
+    update-source Ethernet1/32/1.27
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.28.2
+    inherit peer dcioverlay
+    remote-as 65328
+    update-source Ethernet1/32/1.28
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.29.2
+    inherit peer dcioverlay
+    remote-as 65329
+    update-source Ethernet1/32/1.29
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.30.2
+    inherit peer dcioverlay
+    remote-as 65330
+    update-source Ethernet1/32/1.30
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.31.2
+    inherit peer dcioverlay
+    remote-as 65331
+    update-source Ethernet1/32/1.31
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.32.2
+    inherit peer dcioverlay
+    remote-as 65332
+    update-source Ethernet1/32/1.32
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.33.2
+    inherit peer dcioverlay
+    remote-as 65333
+    update-source Ethernet1/32/1.33
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.34.2
+    inherit peer dcioverlay
+    remote-as 65334
+    update-source Ethernet1/32/1.34
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.35.2
+    inherit peer dcioverlay
+    remote-as 65335
+    update-source Ethernet1/32/1.35
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.36.2
+    inherit peer dcioverlay
+    remote-as 65336
+    update-source Ethernet1/32/1.36
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.37.2
+    inherit peer dcioverlay
+    remote-as 65337
+    update-source Ethernet1/32/1.37
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.38.2
+    inherit peer dcioverlay
+    remote-as 65338
+    update-source Ethernet1/32/1.38
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.39.2
+    inherit peer dcioverlay
+    remote-as 65339
+    update-source Ethernet1/32/1.39
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.101.40.2
+    inherit peer dcioverlay
+    remote-as 65340
+    update-source Ethernet1/32/1.40
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.1.2
+    inherit peer dcioverlay
+    remote-as 65341
+    update-source Ethernet1/32/2.1
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.2.2
+    inherit peer dcioverlay
+    remote-as 65342
+    update-source Ethernet1/32/2.2
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.3.2
+    inherit peer dcioverlay
+    remote-as 65343
+    update-source Ethernet1/32/2.3
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.4.2
+    inherit peer dcioverlay
+    remote-as 65344
+    update-source Ethernet1/32/2.4
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.5.2
+    inherit peer dcioverlay
+    remote-as 65345
+    update-source Ethernet1/32/2.5
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.6.2
+    inherit peer dcioverlay
+    remote-as 65346
+    update-source Ethernet1/32/2.6
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.7.2
+    inherit peer dcioverlay
+    remote-as 65347
+    update-source Ethernet1/32/2.7
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.8.2
+    inherit peer dcioverlay
+    remote-as 65348
+    update-source Ethernet1/32/2.8
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.9.2
+    inherit peer dcioverlay
+    remote-as 65349
+    update-source Ethernet1/32/2.9
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.10.2
+    inherit peer dcioverlay
+    remote-as 65350
+    update-source Ethernet1/32/2.10
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.11.2
+    inherit peer dcioverlay
+    remote-as 65351
+    update-source Ethernet1/32/2.11
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.12.2
+    inherit peer dcioverlay
+    remote-as 65352
+    update-source Ethernet1/32/2.12
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.13.2
+    inherit peer dcioverlay
+    remote-as 65353
+    update-source Ethernet1/32/2.13
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.14.2
+    inherit peer dcioverlay
+    remote-as 65354
+    update-source Ethernet1/32/2.14
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.15.2
+    inherit peer dcioverlay
+    remote-as 65355
+    update-source Ethernet1/32/2.15
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.16.2
+    inherit peer dcioverlay
+    remote-as 65356
+    update-source Ethernet1/32/2.16
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.17.2
+    inherit peer dcioverlay
+    remote-as 65357
+    update-source Ethernet1/32/2.17
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.18.2
+    inherit peer dcioverlay
+    remote-as 65358
+    update-source Ethernet1/32/2.18
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.19.2
+    inherit peer dcioverlay
+    remote-as 65359
+    update-source Ethernet1/32/2.19
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.20.2
+    inherit peer dcioverlay
+    remote-as 65360
+    update-source Ethernet1/32/2.20
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.21.2
+    inherit peer dcioverlay
+    remote-as 65361
+    update-source Ethernet1/32/2.21
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.22.2
+    inherit peer dcioverlay
+    remote-as 65362
+    update-source Ethernet1/32/2.22
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.23.2
+    inherit peer dcioverlay
+    remote-as 65363
+    update-source Ethernet1/32/2.23
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.24.2
+    inherit peer dcioverlay
+    remote-as 65364
+    update-source Ethernet1/32/2.24
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.25.2
+    inherit peer dcioverlay
+    remote-as 65365
+    update-source Ethernet1/32/2.25
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.26.2
+    inherit peer dcioverlay
+    remote-as 65366
+    update-source Ethernet1/32/2.26
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.27.2
+    inherit peer dcioverlay
+    remote-as 65367
+    update-source Ethernet1/32/2.27
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.28.2
+    inherit peer dcioverlay
+    remote-as 65368
+    update-source Ethernet1/32/2.28
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.29.2
+    inherit peer dcioverlay
+    remote-as 65369
+    update-source Ethernet1/32/2.29
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.30.2
+    inherit peer dcioverlay
+    remote-as 65370
+    update-source Ethernet1/32/2.30
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.31.2
+    inherit peer dcioverlay
+    remote-as 65371
+    update-source Ethernet1/32/2.31
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.32.2
+    inherit peer dcioverlay
+    remote-as 65372
+    update-source Ethernet1/32/2.32
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.33.2
+    inherit peer dcioverlay
+    remote-as 65373
+    update-source Ethernet1/32/2.33
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.34.2
+    inherit peer dcioverlay
+    remote-as 65374
+    update-source Ethernet1/32/2.34
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.35.2
+    inherit peer dcioverlay
+    remote-as 65375
+    update-source Ethernet1/32/2.35
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.36.2
+    inherit peer dcioverlay
+    remote-as 65376
+    update-source Ethernet1/32/2.36
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.37.2
+    inherit peer dcioverlay
+    remote-as 65377
+    update-source Ethernet1/32/2.37
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.38.2
+    inherit peer dcioverlay
+    remote-as 65378
+    update-source Ethernet1/32/2.38
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.39.2
+    inherit peer dcioverlay
+    remote-as 65379
+    update-source Ethernet1/32/2.39
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.102.40.2
+    inherit peer dcioverlay
+    remote-as 65380
+    update-source Ethernet1/32/2.40
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.1.2
+    inherit peer dcioverlay
+    remote-as 65381
+    update-source Ethernet1/32/3.1
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.2.2
+    inherit peer dcioverlay
+    remote-as 65382
+    update-source Ethernet1/32/3.2
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.3.2
+    inherit peer dcioverlay
+    remote-as 65383
+    update-source Ethernet1/32/3.3
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.4.2
+    inherit peer dcioverlay
+    remote-as 65384
+    update-source Ethernet1/32/3.4
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.5.2
+    inherit peer dcioverlay
+    remote-as 65385
+    update-source Ethernet1/32/3.5
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.6.2
+    inherit peer dcioverlay
+    remote-as 65386
+    update-source Ethernet1/32/3.6
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.7.2
+    inherit peer dcioverlay
+    remote-as 65387
+    update-source Ethernet1/32/3.7
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.8.2
+    inherit peer dcioverlay
+    remote-as 65388
+    update-source Ethernet1/32/3.8
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.9.2
+    inherit peer dcioverlay
+    remote-as 65389
+    update-source Ethernet1/32/3.9
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.10.2
+    inherit peer dcioverlay
+    remote-as 65390
+    update-source Ethernet1/32/3.10
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.11.2
+    inherit peer dcioverlay
+    remote-as 65391
+    update-source Ethernet1/32/3.11
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.12.2
+    inherit peer dcioverlay
+    remote-as 65392
+    update-source Ethernet1/32/3.12
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.13.2
+    inherit peer dcioverlay
+    remote-as 65393
+    update-source Ethernet1/32/3.13
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.14.2
+    inherit peer dcioverlay
+    remote-as 65394
+    update-source Ethernet1/32/3.14
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.15.2
+    inherit peer dcioverlay
+    remote-as 65395
+    update-source Ethernet1/32/3.15
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.16.2
+    inherit peer dcioverlay
+    remote-as 65396
+    update-source Ethernet1/32/3.16
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.17.2
+    inherit peer dcioverlay
+    remote-as 65397
+    update-source Ethernet1/32/3.17
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.18.2
+    inherit peer dcioverlay
+    remote-as 65398
+    update-source Ethernet1/32/3.18
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.19.2
+    inherit peer dcioverlay
+    remote-as 65399
+    update-source Ethernet1/32/3.19
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.20.2
+    inherit peer dcioverlay
+    remote-as 65400
+    update-source Ethernet1/32/3.20
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.21.2
+    inherit peer dcioverlay
+    remote-as 65401
+    update-source Ethernet1/32/3.21
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.22.2
+    inherit peer dcioverlay
+    remote-as 65402
+    update-source Ethernet1/32/3.22
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.23.2
+    inherit peer dcioverlay
+    remote-as 65403
+    update-source Ethernet1/32/3.23
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.24.2
+    inherit peer dcioverlay
+    remote-as 65404
+    update-source Ethernet1/32/3.24
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.25.2
+    inherit peer dcioverlay
+    remote-as 65405
+    update-source Ethernet1/32/3.25
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.26.2
+    inherit peer dcioverlay
+    remote-as 65406
+    update-source Ethernet1/32/3.26
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.27.2
+    inherit peer dcioverlay
+    remote-as 65407
+    update-source Ethernet1/32/3.27
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.28.2
+    inherit peer dcioverlay
+    remote-as 65408
+    update-source Ethernet1/32/3.28
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.29.2
+    inherit peer dcioverlay
+    remote-as 65409
+    update-source Ethernet1/32/3.29
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.30.2
+    inherit peer dcioverlay
+    remote-as 65410
+    update-source Ethernet1/32/3.30
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.31.2
+    inherit peer dcioverlay
+    remote-as 65411
+    update-source Ethernet1/32/3.31
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.32.2
+    inherit peer dcioverlay
+    remote-as 65412
+    update-source Ethernet1/32/3.32
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.33.2
+    inherit peer dcioverlay
+    remote-as 65413
+    update-source Ethernet1/32/3.33
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.34.2
+    inherit peer dcioverlay
+    remote-as 65414
+    update-source Ethernet1/32/3.34
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.35.2
+    inherit peer dcioverlay
+    remote-as 65415
+    update-source Ethernet1/32/3.35
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.36.2
+    inherit peer dcioverlay
+    remote-as 65416
+    update-source Ethernet1/32/3.36
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.37.2
+    inherit peer dcioverlay
+    remote-as 65417
+    update-source Ethernet1/32/3.37
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.38.2
+    inherit peer dcioverlay
+    remote-as 65418
+    update-source Ethernet1/32/3.38
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.39.2
+    inherit peer dcioverlay
+    remote-as 65419
+    update-source Ethernet1/32/3.39
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.103.40.2
+    inherit peer dcioverlay
+    remote-as 65420
+    update-source Ethernet1/32/3.40
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.1.2
+    inherit peer dcioverlay
+    remote-as 65421
+    update-source Ethernet1/32/4.1
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.2.2
+    inherit peer dcioverlay
+    remote-as 65422
+    update-source Ethernet1/32/4.2
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.3.2
+    inherit peer dcioverlay
+    remote-as 65423
+    update-source Ethernet1/32/4.3
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.4.2
+    inherit peer dcioverlay
+    remote-as 65424
+    update-source Ethernet1/32/4.4
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.5.2
+    inherit peer dcioverlay
+    remote-as 65425
+    update-source Ethernet1/32/4.5
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.6.2
+    inherit peer dcioverlay
+    remote-as 65426
+    update-source Ethernet1/32/4.6
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.7.2
+    inherit peer dcioverlay
+    remote-as 65427
+    update-source Ethernet1/32/4.7
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.8.2
+    inherit peer dcioverlay
+    remote-as 65428
+    update-source Ethernet1/32/4.8
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.9.2
+    inherit peer dcioverlay
+    remote-as 65429
+    update-source Ethernet1/32/4.9
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.10.2
+    inherit peer dcioverlay
+    remote-as 65430
+    update-source Ethernet1/32/4.10
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.11.2
+    inherit peer dcioverlay
+    remote-as 65431
+    update-source Ethernet1/32/4.11
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.12.2
+    inherit peer dcioverlay
+    remote-as 65432
+    update-source Ethernet1/32/4.12
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.13.2
+    inherit peer dcioverlay
+    remote-as 65433
+    update-source Ethernet1/32/4.13
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.14.2
+    inherit peer dcioverlay
+    remote-as 65434
+    update-source Ethernet1/32/4.14
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.15.2
+    inherit peer dcioverlay
+    remote-as 65435
+    update-source Ethernet1/32/4.15
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.16.2
+    inherit peer dcioverlay
+    remote-as 65436
+    update-source Ethernet1/32/4.16
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.17.2
+    inherit peer dcioverlay
+    remote-as 65437
+    update-source Ethernet1/32/4.17
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.18.2
+    inherit peer dcioverlay
+    remote-as 65438
+    update-source Ethernet1/32/4.18
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.19.2
+    inherit peer dcioverlay
+    remote-as 65439
+    update-source Ethernet1/32/4.19
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.20.2
+    inherit peer dcioverlay
+    remote-as 65440
+    update-source Ethernet1/32/4.20
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.21.2
+    inherit peer dcioverlay
+    remote-as 65441
+    update-source Ethernet1/32/4.21
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.22.2
+    inherit peer dcioverlay
+    remote-as 65442
+    update-source Ethernet1/32/4.22
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.23.2
+    inherit peer dcioverlay
+    remote-as 65443
+    update-source Ethernet1/32/4.23
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.24.2
+    inherit peer dcioverlay
+    remote-as 65444
+    update-source Ethernet1/32/4.24
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.25.2
+    inherit peer dcioverlay
+    remote-as 65445
+    update-source Ethernet1/32/4.25
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.26.2
+    inherit peer dcioverlay
+    remote-as 65446
+    update-source Ethernet1/32/4.26
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.27.2
+    inherit peer dcioverlay
+    remote-as 65447
+    update-source Ethernet1/32/4.27
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.28.2
+    inherit peer dcioverlay
+    remote-as 65448
+    update-source Ethernet1/32/4.28
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.29.2
+    inherit peer dcioverlay
+    remote-as 65449
+    update-source Ethernet1/32/4.29
+    timers 180 600
+    address-family ipv4 unicast
+  neighbor 193.104.30.2
+    inherit peer dcioverlay
+    remote-as 65450
+    update-source Ethernet1/32/4.30
+    timers 180 600
+    address-family ipv4 unicast
+ip pim event-history join-prune size 81457280
+ip pim event-history null-register size 10457280
+ip pim event-history pim-internal size 81457280
+ip pim event-history txlist size 41457280
+ip pim event-history mrib size 81457280
+
+logging console 5
+
+

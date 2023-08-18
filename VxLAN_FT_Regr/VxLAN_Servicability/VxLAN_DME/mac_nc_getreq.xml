@@ -1,0 +1,7 @@
+<System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
+        <mac-items>
+          <static-items>
+            <vni-items/>
+          </static-items>
+        </mac-items>
+      </System>

@@ -1,0 +1,478 @@
+
+!Command: show running-config
+!Running configuration last done at: Fri Aug  9 00:25:07 2019
+!Time: Fri Aug  9 15:40:12 2019
+
+version 9.3(1) Bios:version 07.65 
+switchname site2-spine2
+vdc site2-spine2 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature telnet
+feature bash-shell
+nv overlay evpn
+feature ospf
+feature bgp
+feature pim
+feature msdp
+feature lacp
+clock timezone PST -8 0
+clock summer-time PST 2 Sun Mar 02:00 1 Sun Nov 02:00 60
+
+logging level bgp 2
+
+no password strength-check
+username admin password 5 $5$rkgy2DUp$Dlqsa2FngM3dukVDso9wrjcj5dUGfqK3XYVLTDGmQY/  role network-admin
+username senthil password 5 $5$4qMuT16/$rw/k.5hhrHmjaZaXWy/lVbynPzaYcn4wQsBz7Cr/y.8  role network-operator
+username senthil role network-admin
+username senthil passphrase  lifetime 99999 warntime 14 gracetime 3
+ip domain-lookup
+interface breakout module 1 port 60 map 10g-4x
+copp profile strict
+snmp-server user admin network-admin auth md5 0x98476274c2589d7c8f02d5e20418ed6d priv 0x98476274c2589d7c8f02d5e20418ed6d localizedkey
+snmp-server user senthil network-operator auth md5 0x5f6368b205e1dd5c0bb3956c0ee342d9 priv 0x5f6368b205e1dd5c0bb3956c0ee342d9 localizedkey
+snmp-server user senthil network-admin
+rmon event 1 description FATAL(1) owner PMON@FATAL
+rmon event 2 description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 description ERROR(3) owner PMON@ERROR
+rmon event 4 description WARNING(4) owner PMON@WARNING
+rmon event 5 description INFORMATION(5) owner PMON@INFO
+ntp server 10.22.31.142 use-vrf management
+ntp server 172.31.201.208 use-vrf management
+
+ip pim rp-address 200.200.200.200 group-list 224.0.0.0/4
+ip pim ssm range 232.0.0.0/8
+ip pim anycast-rp 200.200.200.200 200.200.200.7
+ip pim anycast-rp 200.200.200.200 200.200.200.8
+ip msdp originator-id loopback1
+ip msdp peer 201.1.1.53 connect-source loopback1
+ip routing multicast event-history rib size 80000000
+ip routing multicast event-history mfdm-debugs size 40000000
+ip routing multicast event-history notify-clients size 20000000
+vlan 1
+
+route-map allowall permit 10
+route-map ebgppermitall permit 10
+  set ip next-hop unchanged
+route-map permitall permit 10
+route-map vxlanpermitall permit 10
+vrf context management
+  ip route 0.0.0.0/0 172.31.200.1
+
+
+interface Ethernet1/1
+  mtu 9216
+  ip address 192.20.7.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/2
+  mtu 9216
+  ip address 192.13.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/3
+  mtu 9216
+  ip address 192.24.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/4
+  no shutdown
+
+interface Ethernet1/5
+  no shutdown
+
+interface Ethernet1/6
+  mtu 9216
+  ip address 192.20.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  mtu 9216
+  ip address 192.19.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/9
+  no shutdown
+
+interface Ethernet1/10
+  no shutdown
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+  mtu 9216
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/13
+  no shutdown
+
+interface Ethernet1/14
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  no shutdown
+
+interface Ethernet1/18
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  no shutdown
+
+interface Ethernet1/22
+  no shutdown
+
+interface Ethernet1/23
+  no shutdown
+
+interface Ethernet1/24
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  no shutdown
+
+interface Ethernet1/27
+  no shutdown
+
+interface Ethernet1/28
+  no shutdown
+
+interface Ethernet1/29
+  no shutdown
+
+interface Ethernet1/30
+  no shutdown
+
+interface Ethernet1/31
+  no shutdown
+
+interface Ethernet1/32
+  no shutdown
+
+interface Ethernet1/33
+  mtu 9216
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/34
+  mtu 9216
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/35
+  mtu 9216
+  ip address 192.17.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/36
+  mtu 9216
+  ip address 192.18.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/37
+  mtu 9216
+  ip address 192.14.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/38
+  no shutdown
+
+interface Ethernet1/39
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip address 192.81.36.1/24
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/40
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip address 192.81.41.1/24
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/41
+  no shutdown
+
+interface Ethernet1/42
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip address 192.81.66.1/24
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/43
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip address 192.81.56.1/24
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/44
+  no shutdown
+
+interface Ethernet1/45
+  no shutdown
+
+interface Ethernet1/46
+  no shutdown
+
+interface Ethernet1/47
+  no shutdown
+
+interface Ethernet1/48
+  no shutdown
+
+interface Ethernet1/49
+  no shutdown
+
+interface Ethernet1/50
+  no shutdown
+
+interface Ethernet1/51
+  no shutdown
+
+interface Ethernet1/52
+  no shutdown
+
+interface Ethernet1/53
+  no shutdown
+
+interface Ethernet1/54
+  mtu 9216
+  ip address 192.23.6.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/55
+  no shutdown
+
+interface Ethernet1/56
+  no shutdown
+
+interface Ethernet1/57
+  no shutdown
+
+interface Ethernet1/58
+  no shutdown
+
+interface Ethernet1/59
+  no shutdown
+
+interface Ethernet1/60/1
+  ip address 192.71.1.1/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/60/2
+  no shutdown
+
+interface Ethernet1/60/3
+  no shutdown
+
+interface Ethernet1/60/4
+  no shutdown
+
+interface Ethernet1/61
+  no shutdown
+
+interface Ethernet1/62
+  no shutdown
+
+interface Ethernet1/63
+  no shutdown
+
+interface Ethernet1/64
+  no shutdown
+
+interface Ethernet1/65
+  no shutdown
+
+interface Ethernet1/66
+
+interface Ethernet1/67
+  no shutdown
+
+interface Ethernet1/68
+
+interface Ethernet1/69
+  no shutdown
+
+interface Ethernet1/70
+  no shutdown
+
+interface Ethernet1/71
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip unnumbered loopback1
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/72
+  mtu 9216
+  medium p2p
+  no ip redirects
+  ip unnumbered loopback1
+  no ipv6 redirects
+  ip ospf network point-to-point
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface mgmt0
+  vrf member management
+  ip address 172.31.202.64/21
+
+interface loopback1
+  ip address 201.2.2.8/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback2
+  ip address 200.200.200.200/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback3
+  ip address 200.200.200.8/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+line console
+  exec-timeout 525600
+  speed 115200
+line vty
+  exec-timeout 0
+router ospf ospf_1
+  router-id 201.2.2.8
+  log-adjacency-changes
+  auto-cost reference-bandwidth 400 Gbps
+  shutdown
+router bgp 65002
+  shutdown
+  router-id 201.2.2.8
+  cluster-id 2
+  timers bestpath-limit 600
+  graceful-restart restart-time 300
+  graceful-restart stalepath-time 600
+  log-neighbor-changes
+  address-family ipv4 unicast
+    network 200.200.200.8/32
+    network 200.200.200.200/32
+    network 201.2.2.8/32
+    maximum-paths 64
+    maximum-paths ibgp 64
+  address-family ipv6 unicast
+    maximum-paths 64
+    maximum-paths ibgp 64
+    nexthop route-map permitall
+  address-family ipv4 mvpn
+    nexthop route-map permitall
+    retain route-target all
+  address-family l2vpn evpn
+    nexthop route-map permitall
+    retain route-target all
+  template peer LEAFS
+    remote-as 65002
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+      route-reflector-client
+    address-family ipv6 unicast
+      send-community
+      send-community extended
+      route-reflector-client
+    address-family ipv4 mvpn
+      send-community
+      send-community extended
+      route-reflector-client
+      route-map permitall out
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+      route-reflector-client
+      route-map permitall out
+  neighbor 201.2.2.1
+    inherit peer LEAFS
+  neighbor 201.2.2.2
+    inherit peer LEAFS
+  neighbor 201.2.2.3
+    inherit peer LEAFS
+  neighbor 201.2.2.4
+    inherit peer LEAFS
+  neighbor 201.2.2.5
+    inherit peer LEAFS
+  neighbor 201.2.2.6
+    inherit peer LEAFS
+  neighbor 201.2.2.11
+    inherit peer LEAFS
+  neighbor 201.2.2.12
+    inherit peer LEAFS
+  neighbor 201.2.2.13
+    inherit peer LEAFS
+  neighbor 201.2.2.14
+    inherit peer LEAFS
+ip pim event-history join-prune size 81457280
+ip pim event-history null-register size 10457280
+ip pim event-history pim-internal size 81457280
+ip pim event-history txlist size 41457280
+ip pim event-history mrib size 81457280
+
+logging console 5
+
+

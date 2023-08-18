@@ -1,0 +1,1107 @@
+# ------------------------------------------------------
+#        Node List:
+#            node1_cs_dci    : CS-DCI
+#            node2_s2_spine  : S2-FX3-SPINE
+#            node3_s2_bgw_1  : S2-FX3-BGW-1
+#            node4_s2_bgw_2  : S2-FX3-BGW-2
+#            node5_s2_leaf_1 : S2-FX3-LEAF-1
+#            node6_s3_spine  : S3-GX-SPINE
+#            node7_s3_bgw_1  : S3-GX-EOR-BGW-1
+#            node8_s3_bgw_2  : S3-GX-EOR-BGW-2
+#            node9_s3_leaf_1 : S3-GX-TOR-LEAF-1
+# ------------------------------------------------------
+# ------------------------------------------------------
+# OSPF Neighbor Verification
+# ------------------------------------------------------
+ospf_neighbors: {}
+    # node2_s1_spine:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p2:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel221:
+    #                                             neighbors:
+    #                                                 2.21.1.1:
+    #                                                     address: 2.21.1.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.21.1.1
+    #                                         '{{nd02_nd03_1_3}}':
+    #                                             neighbors:
+    #                                                 2.21.1.1:
+    #                                                     address: 2.21.2.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.21.1.1
+    #                                         '{{nd02_nd03_1_4}}':
+    #                                             neighbors:
+    #                                                 2.21.1.1:
+    #                                                     address: 2.21.3.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.21.1.1
+    #                                         port-channel222:
+    #                                             neighbors:
+    #                                                 2.22.1.1:
+    #                                                     address: 2.22.1.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.22.1.1
+    #                                         '{{nd02_nd04_1_3}}':
+    #                                             neighbors:
+    #                                                 2.22.1.1:
+    #                                                     address: 2.22.2.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.22.1.1
+    #                                         '{{nd02_nd04_1_4}}':
+    #                                             neighbors:
+    #                                                 2.22.1.1:
+    #                                                     address: 2.22.3.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.22.1.1
+    #                                         port-channel211:
+    #                                             neighbors:
+    #                                                 2.11.1.1:
+    #                                                     address: 2.11.1.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.11.1.1
+    #                                         '{{nd02_nd05_1_3}}':
+    #                                             neighbors:
+    #                                                 2.11.1.1:
+    #                                                     address: 2.11.2.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.11.1.1
+    #                                         '{{nd02_nd05_1_4}}':
+    #                                             neighbors:
+    #                                                 2.11.1.1:
+    #                                                     address: 2.11.3.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 2.11.1.1
+    # node3_s1_bgw_1:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p2:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel221:
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.21.1.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd03_nd02_1_3}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.21.2.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd03_nd02_1_4}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.21.3.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    # node4_s1_bgw_2:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p2:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel222:
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.22.1.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd04_nd02_1_3}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.22.2.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd04_nd02_1_4}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.22.3.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    # node5_s1_leaf_1:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p2:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel211:
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.11.1.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd05_nd02_1_3}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.11.2.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+    #                                         '{{nd05_nd02_1_4}}':
+    #                                             neighbors:
+    #                                                 22.22.22.22:
+    #                                                     address: 2.11.3.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 22.22.22.22
+   
+    # node7_s2_bgw_1:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p3:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel3211:
+    #                                             neighbors:
+    #                                                 3.11.1.1:
+    #                                                     address: 3.21.1.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.11.1.1
+    #                                         '{{nd07_nd09_1_3}}':
+    #                                             neighbors:
+    #                                                 3.11.1.1:
+    #                                                     address: 3.21.17.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.11.1.1
+    #                                         '{{nd07_nd09_1_4}}':
+    #                                             neighbors:
+    #                                                 3.11.1.1:
+    #                                                     address: 3.21.25.2
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.11.1.1
+   
+    # node9_s2_leaf_1:
+    #     vrf:
+    #         default:
+    #             address_family:
+    #                 ipv4:
+    #                     instance:
+    #                         p3:
+    #                             areas:
+    #                                 0.0.0.0:
+    #                                     interfaces:
+    #                                         port-channel3211:
+    #                                             neighbors:
+    #                                                 3.21.1.1:
+    #                                                     address: 3.21.1.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.21.1.1
+    #                                         '{{nd09_nd07_1_3}}':
+    #                                             neighbors:
+    #                                                 3.21.1.1:
+    #                                                     address: 3.21.17.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.21.1.1
+    #                                         '{{nd09_nd07_1_4}}':
+    #                                             neighbors:
+    #                                                 3.21.1.1:
+    #                                                     address: 3.21.25.3
+    #                                                     state: full
+    #                                                     neighbor_router_id: 3.21.1.1
+
+# ------------------------------------------------------
+# PIM Neighbor Verification
+# ------------------------------------------------------
+pim_neighbors: {}
+    # node2_s1_spine:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel221:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.21.1.3:
+    #                                     interface: port-channel221
+    #                 '{{nd02_nd03_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.21.2.3:
+    #                                       interface: '{{nd02_nd03_1_3}}'
+    #                 '{{nd02_nd03_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.21.3.3:
+    #                                       interface: '{{nd02_nd03_1_4}}'
+    #                 port-channel222:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.22.1.3:
+    #                                     interface: port-channel222
+    #                 '{{nd02_nd04_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.22.2.3:
+    #                                       interface: '{{nd02_nd04_1_3}}'
+    #                 '{{nd02_nd04_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.22.3.3:
+    #                                       interface: '{{nd02_nd04_1_4}}'
+    #                 port-channel211:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.11.1.3:
+    #                                     interface: port-channel211
+    #                 '{{nd02_nd05_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.11.2.3:
+    #                                       interface: '{{nd02_nd05_1_3}}'
+    #                 '{{nd02_nd05_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.11.3.3:
+    #                                       interface: '{{nd02_nd05_1_4}}'
+    # node3_s1_bgw_1:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel221:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.21.1.2:
+    #                                     interface: port-channel221
+    #                 '{{nd03_nd02_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.21.2.2:
+    #                                       interface: '{{nd03_nd02_1_3}}'
+    #                 '{{nd03_nd02_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.21.3.2:
+    #                                       interface: '{{nd03_nd02_1_4}}'
+    # node4_s1_bgw_2:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel222:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.22.1.2:
+    #                                     interface: port-channel222
+    #                 '{{nd04_nd02_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.22.2.2:
+    #                                       interface: '{{nd04_nd02_1_3}}'
+    #                 '{{nd04_nd02_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.22.3.2:
+    #                                       interface: '{{nd04_nd02_1_4}}'
+    # node5_s1_leaf_1:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel211:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 2.11.1.2:
+    #                                     interface: port-channel211
+    #                 '{{nd05_nd02_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.11.2.2:
+    #                                       interface: '{{nd05_nd02_1_3}}'
+    #                 '{{nd05_nd02_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   2.11.3.2:
+    #                                       interface: '{{nd05_nd02_1_4}}'
+  
+    # node7_s2_bgw_1:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel3211:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 3.21.1.2:
+    #                                     interface: port-channel3211
+    #                 '{{nd07_nd09_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   3.21.17.2:
+    #                                       interface: '{{nd07_nd09_1_3}}'
+    #                 '{{nd07_nd09_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   3.21.25.2:
+    #                                       interface: '{{nd07_nd09_1_4}}'
+   
+    # node9_s2_leaf_1:
+    #     vrf:
+    #         default:
+    #             interfaces:
+    #                 port-channel3211:
+    #                     address_family:
+    #                         ipv4:
+    #                             neighbors:
+    #                                 3.21.1.3:
+    #                                     interface: port-channel3211
+    #                 '{{nd09_nd07_1_3}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   3.21.17.3:
+    #                                       interface: '{{nd09_nd07_1_3}}'
+    #                 '{{nd09_nd07_1_4}}':
+    #                       address_family:
+    #                           ipv4:
+    #                               neighbors:
+    #                                   3.21.25.3:
+    #                                       interface: '{{nd09_nd0_1_4}}'
+# ------------------------------------------------------
+# BGP Neighbor Verification
+# ------------------------------------------------------
+bgp_neighbors: {}
+    # node1_cs_dci:
+    #     total_peers: 16
+    #     total_established_peers: 16
+    #     vrf:
+    #         default:
+    #             local_as: 500
+    #             vrf_peers: 16
+    #             vrf_established_peers: 16
+    #             router_id: 50.50.50.50
+    #             neighbor:
+    #                 2.21.1.1:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.22.1.1:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.51.1.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.51.2.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.51.3.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.52.1.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.52.2.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.52.3.2:
+    #                     state: established
+    #                     remote_as: 200
+    #                 3.21.1.1:
+    #                     state: established
+    #                     remote_as: 300
+    #                 # 3.22.1.1:
+    #                 #     state: established
+    #                 #     remote_as: 300
+    #                 3.51.1.2:
+    #                     state: established
+    #                     remote_as: 300
+    #                 3.51.17.2:
+    #                     state: established
+    #                     remote_as: 300
+    #                 3.51.25.2:
+    #                     state: established
+    #                     remote_as: 300
+    #                 # 3.52.1.2:
+    #                 #     state: established
+    #                 #     remote_as: 300
+    #                 # 3.52.17.2:
+    #                 #     state: established
+    #                 #     remote_as: 300
+    #                 # 3.52.25.2:
+    #                 #     state: established
+    #                 #     remote_as: 300
+    # node2_s1_spine:
+    #     total_peers: 3
+    #     total_established_peers: 3
+    #     vrf:
+    #         default:
+    #             local_as: 200
+    #             vrf_peers: 3
+    #             vrf_established_peers: 3
+    #             router_id: 22.22.22.22
+    #             neighbor:
+    #                 2.21.1.1:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.22.1.1:
+    #                     state: established
+    #                     remote_as: 200
+    #                 2.11.1.1:
+    #                     state: established
+    #                     remote_as: 200
+    # node3_s1_bgw_1:
+    #     total_peers: 5
+    #     total_established_peers: 5
+    #     vrf:
+    #         default:
+    #             local_as: 200
+    #             vrf_peers: 5
+    #             vrf_established_peers: 5
+    #             router_id: 2.21.1.1
+    #             neighbor:
+    #                 2.51.1.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 2.51.2.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 2.51.3.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 22.22.22.22:
+    #                     state: established
+    #                     remote_as: 200
+    #                 50.50.50.50:
+    #                     state: established
+    #                     remote_as: 500
+    # node4_s1_bgw_2:
+    #     total_peers: 5
+    #     total_established_peers: 5
+    #     vrf:
+    #         default:
+    #             local_as: 200
+    #             vrf_peers: 5
+    #             vrf_established_peers: 5
+    #             router_id: 2.22.1.1
+    #             neighbor:
+    #                 2.52.1.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 2.52.2.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 2.52.3.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 22.22.22.22:
+    #                     state: established
+    #                     remote_as: 200
+    #                 50.50.50.50:
+    #                     state: established
+    #                     remote_as: 500
+    # node5_s1_leaf_1:
+    #     total_peers: 76
+    #     total_established_peers: 1
+    #     vrf:
+    #         default:
+    #             local_as: 200
+    #             vrf_peers: 1
+    #             vrf_established_peers: 1
+    #             router_id: 2.11.1.1
+    #             neighbor:
+    #                 22.22.22.22:
+    #                     state: established
+    #                     remote_as: 200
+  
+    # node7_s2_bgw_1:
+    #     total_peers: 5
+    #     total_established_peers: 5
+    #     vrf:
+    #         default:
+    #             local_as: 300
+    #             vrf_peers: 5
+    #             vrf_established_peers: 5
+    #             router_id: 3.21.1.1
+    #             neighbor:
+    #                 3.51.1.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 3.51.17.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 3.51.25.3:
+    #                     state: established
+    #                     remote_as: 500
+    #                 50.50.50.50:
+    #                     state: established
+    #                     remote_as: 500
+    #                 3.11.1.1 :
+    #                     state: established
+    #                     remote_as: 500
+   
+    # node9_s2_leaf_1:
+    #     total_peers: 76
+    #     total_established_peers: 1
+    #     vrf:
+    #         default:
+    #             local_as: 300
+    #             vrf_peers: 1
+    #             vrf_established_peers: 1
+    #             router_id: 3.11.1.1
+    #             neighbor:
+    #                 3.21.1.1:
+    #                     state: established
+    #                     remote_as: 300
+
+# ------------------------------------------------------
+# BGP L2VPN EVPN Summary Verification
+# ------------------------------------------------------
+bgp_l2vpn_evpn_summary: {}
+    # node1_cs_dci:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 50.50.50.50
+    #                     vrf_local_as: 500
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 4
+    #                             capablepeers: 4
+    #                             neighbor:
+    #                                 2.21.1.1:
+    #                                     neighbor: 2.21.1.1
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                     state: established
+    #                                 2.22.1.1:
+    #                                     neighbor: 2.22.1.1
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                     state: established
+    #                                 3.21.1.1:
+    #                                     neighbor: 3.21.1.1
+    #                                     version: 4
+    #                                     remoteas: 300
+    #                                     state: established
+                                 
+    # node2_s1_spine:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 22.22.22.22
+    #                     vrf_local_as: 200
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 3
+    #                             capablepeers: 3
+    #                             neighbor:
+    #                                 2.21.1.1:
+    #                                     neighbor: 2.21.1.1
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                 2.22.1.1:
+    #                                     neighbor: 2.22.1.1
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                 2.11.1.1:
+    #                                     neighbor: 2.11.1.1
+    #                                     version: 4
+    #                                     remoteas: 200
+    # node3_s1_bgw_1:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 2.21.1.1
+    #                     vrf_local_as: 200
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 2
+    #                             capablepeers: 2
+    #                             neighbor:
+    #                                 22.22.22.22:
+    #                                     neighbor: 22.22.22.22
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                 50.50.50.50:
+    #                                     neighbor: 50.50.50.50
+    #                                     version: 4
+    #                                     remoteas: 500
+    #                                     state: established
+    # node4_s1_bgw_2:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 2.22.1.1
+    #                     vrf_local_as: 200
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 2
+    #                             capablepeers: 2
+    #                             neighbor:
+    #                                 22.22.22.22:
+    #                                     neighbor: 22.22.22.22
+    #                                     version: 4
+    #                                     remoteas: 200
+    #                                 50.50.50.50:
+    #                                     neighbor: 50.50.50.50
+    #                                     version: 4
+    #                                     remoteas: 500
+    #                                     state: established
+    # node5_s1_leaf_1:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 2.11.1.1
+    #                     vrf_local_as: 200
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 1
+    #                             capablepeers: 1
+    #                             neighbor:
+    #                                 22.22.22.22:
+    #                                     neighbor: 22.22.22.22
+    #                                     version: 4
+    #                                     remoteas: 200
+   
+    # node7_s2_bgw_1:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 3.21.1.1
+    #                     vrf_local_as: 300
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 2
+    #                             capablepeers: 2
+    #                             neighbor:
+    #                                 3.11.1.1 :
+    #                                     neighbor: 3.11.1.1 
+    #                                     version: 4
+    #                                     remoteas: 300
+    #                                 50.50.50.50:
+    #                                     neighbor: 50.50.50.50
+    #                                     version: 4
+    #                                     remoteas: 500
+    #                                     state: established
+  
+    # node9_s2_leaf_1:
+    #     instance:
+    #         default:
+    #             vrf:
+    #                 default:
+    #                     vrf_name_out: default
+    #                     vrf_router_id: 3.11.1.1
+    #                     vrf_local_as: 300
+    #                     address_family:
+    #                         l2vpn evpn:
+    #                             configuredpeers: 1
+    #                             capablepeers: 1
+    #                             neighbor:
+    #                                 3.21.1.1:
+    #                                     neighbor: 3.21.1.1 
+    #                                     version: 4
+    #                                     remoteas: 300
+
+# ------------------------------------------------------
+# NVE Interface Detail Verification
+# ------------------------------------------------------
+nve_interface_detail: {}
+    # node3_s1_bgw_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         if_state: up
+    #         encap_type: vxlan
+    #         vpc_capability: 'vpc-vip-only [notified]'
+    #         source_if: loopback1
+    #         primary_ip: '2.21.21.21'
+    #         secondary_ip: '2.21.22.21'
+    #         src_if_state: up
+    #         adv_vmac: True
+    #         sm_state: nve-intf-add-complete
+    # node4_s1_bgw_2:
+    #     nve1:
+    #         nve_name: nve1
+    #         if_state: up
+    #         encap_type: vxlan
+    #         vpc_capability: 'vpc-vip-only [notified]'
+    #         source_if: loopback1
+    #         primary_ip: '2.22.22.22'
+    #         secondary_ip: '2.21.22.21'
+    #         src_if_state: up
+    #         adv_vmac: True
+    #         sm_state: nve-intf-add-complete
+    # node5_s1_leaf_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         if_state: up
+    #         encap_type: vxlan
+    #         vpc_capability: 'vpc-vip-only [not-notified]'
+    #         source_if: loopback1
+    #         primary_ip: '2.11.11.11'
+    #         secondary_ip: '0.0.0.0'
+    #         src_if_state: up
+    #         adv_vmac: False
+    #         sm_state: nve-intf-add-complete
+    # node7_s2_bgw_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         if_state: up
+    #         encap_type: vxlan
+    #         vpc_capability: 'vpc-vip-only [not-notified]'
+    #         source_if: loopback1
+    #         primary_ip: '3.21.21.21'
+    #         secondary_ip: '0.0.0.0'
+    #         src_if_state: up
+    #         adv_vmac: False
+    #         sm_state: nve-intf-add-complete
+   
+    # node9_s2_leaf_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         if_state: up
+    #         encap_type: vxlan
+    #         vpc_capability: 'vpc-vip-only [not-notified]'
+    #         source_if: loopback1
+    #         primary_ip: '3.11.11.11'
+    #         secondary_ip: '0.0.0.0'
+    #         src_if_state: up
+    #         adv_vmac: False
+    #         sm_state: nve-intf-add-complete
+
+# ------------------------------------------------------
+# NVE Peers Verification
+# ------------------------------------------------------
+nve_peers: {}
+    # node3_s1_bgw_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         peer_ip:
+    #             2.11.11.11:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.22.22.22:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.21.22.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.100.100.100:
+    #                 learn_type: CP
+    #                 peer_state: up
+    # node4_s1_bgw_2:
+    #     nve1:
+    #         nve_name: nve1
+    #         peer_ip:
+    #             2.11.11.11:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.21.22.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.100.100.100:
+    #                 learn_type: CP
+    #                 peer_state: up
+    # node5_s1_leaf_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         peer_ip:
+    #             2.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.21.22.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.22.22.22:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.100.100.100:
+    #                 learn_type: CP
+    #                 peer_state: up
+    # node7_s2_bgw_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         peer_ip:
+    #             2.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.22.22.22:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.21.22.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             2.100.100.100:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.11.11.11:
+    #                 learn_type: CP
+    #                 peer_state: up
+                
+
+    # # node8_s2_bgw_2:
+    # #     nve1:
+    # #         nve_name: nve1
+    # #         peer_ip:
+    # #             2.21.21.21:
+    # #                 learn_type: CP
+    # #                 peer_state: up
+    # #             2.22.22.22:
+    # #                 learn_type: CP
+    # #                 peer_state: up
+    # #             2.100.100.100:
+    # #                 learn_type: CP
+    # #                 peer_state: up
+    # #             3.11.11.11:
+    # #                 learn_type: CP
+    # #                 peer_state: up
+    # #             3.21.21.21:
+    # #                 learn_type: CP
+    # #                 peer_state: up
+    # node9_s2_leaf_1:
+    #     nve1:
+    #         nve_name: nve1
+    #         peer_ip:
+    #             3.21.21.21:
+    #                 learn_type: CP
+    #                 peer_state: up
+    #             3.100.100.100:
+    #                 learn_type: CP
+    #                 peer_state: up
+
+# ------------------------------------------------------
+# NVE VNI Summary Verification
+# ------------------------------------------------------
+nve_vni_summary: {}
+    # node3_s1_bgw_1:
+    #     vni:
+    #         summary:
+    #             cp_vni_count: 225
+    #             cp_vni_up: 225
+    #             cp_vni_down: 0
+    #             dp_vni_count: 0
+    #             dp_vni_up: 0
+    #             dp_vni_down: 0
+    # node4_s1_bgw_2:
+    #     vni:
+    #         summary:
+    #             cp_vni_count: 225
+    #             cp_vni_up: 225
+    #             cp_vni_down: 0
+    #             dp_vni_count: 0
+    #             dp_vni_up: 0
+    #             dp_vni_down: 0
+    # node5_s1_leaf_1:
+    #     vni:
+    #         summary:
+    #             cp_vni_count: 225
+    #             cp_vni_up: 225
+    #             cp_vni_down: 0
+    #             dp_vni_count: 0
+    #             dp_vni_up: 0
+    #             dp_vni_down: 0
+    # node7_s2_bgw_1:
+    #     vni:
+    #         summary:
+    #             cp_vni_count: 225
+    #             cp_vni_up: 225
+    #             cp_vni_down: 0
+    #             dp_vni_count: 0
+    #             dp_vni_up: 0
+    #             dp_vni_down: 0
+    # # node8_s2_bgw_2:
+    # #     vni:
+    # #         summary:
+    # #             cp_vni_count: 225
+    # #             cp_vni_up: 225
+    # #             cp_vni_down: 0
+    # #             dp_vni_count: 0
+    # #             dp_vni_up: 0
+    # #             dp_vni_down: 0
+    # node9_s2_leaf_1:
+    #     vni:
+    #         summary:
+    #             cp_vni_count: 225
+    #             cp_vni_up: 225
+    #             cp_vni_down: 0
+    #             dp_vni_count: 0
+    #             dp_vni_up: 0
+    #             dp_vni_down: 0
+
+# ------------------------------------------------------
+# NVE MSite DCI Links Summary Verification
+# ------------------------------------------------------
+nve_multisite_dci_links: {}
+    # node3_s1_bgw_1:
+    #     multisite:
+    #         dci_links:
+    #             port-channel21:
+    #                 if_name: port-channel21
+    #                 if_state: up
+    #             '{{nd03_nd01_1_3}}':
+    #                 if_name: '{{nd03_nd01_1_3}}'
+    #                 if_state: up
+    #             '{{nd03_nd01_1_4}}':
+    #                 if_name: '{{nd03_nd01_1_4}}'
+    #                 if_state: up
+    # node4_s1_bgw_2:
+    #     multisite:
+    #         dci_links:
+    #             port-channel22:
+    #                 if_name: port-channel22
+    #                 if_state: up
+    #             '{{nd04_nd01_1_3}}':
+    #                 if_name: '{{nd04_nd01_1_3}}'
+    #                 if_state: up
+    #             '{{nd04_nd01_1_4}}':
+    #                 if_name: '{{nd04_nd01_1_4}}'
+    #                 if_state: up
+    # node7_s2_bgw_1:
+    #     multisite:
+    #         dci_links:
+    #             port-channel31:
+    #                 if_name: port-channel31
+    #                 if_state: up
+    #             '{{nd07_nd01_1_3}}':
+    #                 if_name: '{{nd07_nd01_1_3}}'
+    #                 if_state: up
+    #             '{{nd07_nd01_1_4}}':
+    #                 if_name: '{{nd07_nd01_1_2}}'
+    #                 if_state: up
+   
+
+# ------------------------------------------------------
+# NVE MSite Fabric Links Summary Verification
+# ------------------------------------------------------
+nve_multisite_fabric_links: {}
+    # node3_s1_bgw_1:
+    #     multisite:
+    #         fabric_links:
+    #             port-channel221:
+    #                 if_name: port-channel221
+    #                 if_state: up
+    #             '{{nd03_nd02_1_3}}':
+    #                 if_name: '{{nd03_nd02_1_3}}'
+    #                 if_state: up
+    #             '{{nd03_nd02_1_4}}':
+    #                 if_name: '{{nd03_nd02_1_4}}'
+    #                 if_state: up
+    # node4_s1_bgw_2:
+    #     multisite:
+    #         fabric_links:
+    #             port-channel222:
+    #                 if_name: port-channel222
+    #                 if_state: up
+    #             '{{nd04_nd02_1_3}}':
+    #                 if_name: '{{nd04_nd02_1_3}}'
+    #                 if_state: up
+    #             '{{nd04_nd02_1_4}}':
+    #                 if_name: '{{nd04_nd02_1_4}}'
+    #                 if_state: up
+    # node7_s2_bgw_1:
+    #     multisite:
+    #         fabric_links:
+    #             port-channel3211:
+    #                 if_name: port-channel3211
+    #                 if_state: up
+    #             '{{nd07_nd09_1_3}}':
+    #                 if_name: '{{nd07_nd09_1_3}}'
+    #                 if_state: up
+    #             '{{nd07_nd09_1_4}}':
+    #                 if_name: '{{nd07_nd09_1_4}}'
+    #                 if_state: up
+   
+
+# ------------------------------------------------------
+# Collect Logs
+# ------------------------------------------------------
+collect_log: {}
+    # node1_cs_dci:
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    # node2_s1_spine:
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    # node3_s1_bgw_1:
+    #     - show nve peers
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    #     - show ip igmp snooping groups
+    # node4_s1_bgw_2:
+    #     - show nve peers
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    #     - show ip igmp snooping groups
+    # node5_s1_leaf_1:
+    #     - show nve peers
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    #     - show ip igmp snooping groups
+    # node7_s2_bgw_1:
+    #     - show nve peers
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    #     - show ip igmp snooping groups
+    # node9_s2_leaf_1:
+    #     - show nve peers
+    #     - show ip ospf neighbors
+    #     - show bgp sessions
+    #     - show ip bgp summary
+    #     - show ip igmp snooping groups
+
+# ------------------------------------------------------
+# Error Logs Check - Exclude Patter
+# ------------------------------------------------------
+err_log_check_exclude_pattern: ''

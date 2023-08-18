@@ -1,0 +1,830 @@
+devices:
+    image_server:
+       type: 'LnxServer'
+       connections:
+           a:
+               protocol: scp
+               ip: 10.127.63.241
+               port: 22
+
+       credentials:
+           default:
+               password: password
+               username: swadmin
+
+
+    tgn1:
+       type: 'stc'
+       connections: 
+           a:      {protocol: telnet, ip: 10.197.127.16}
+           labsvr: {protocol: telnet, ip: 10.197.127.121}
+  
+
+    Seoul-1:
+        os: nxos
+        type: 'router'
+        alias: "leaf3"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2035
+
+
+            alt:
+                ip: 10.197.127.51
+                protocol: telnet
+
+
+    Seoul-2:
+        os: nxos
+        type: 'router'
+        alias: "leaf4"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2036
+
+            alt:
+                ip: 10.197.127.52
+                protocol: telnet
+
+
+
+ 
+
+    Sundown-1:
+        os: nxos
+        type: 'router'
+        alias: "leaf5"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2039
+
+
+            alt:
+                ip: 10.197.127.53
+                protocol: telnet
+
+
+    Sundown-2:
+        os: nxos
+        type: 'router'
+        alias: "leaf6"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2040
+
+
+            alt:
+                ip: 10.197.127.54
+                protocol: telnet
+
+               
+    FAN-1:
+        os: nxos
+        type: 'router'
+        alias: "sw1"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2037
+
+            #alt:
+            #    ip: 10.197.127.8
+            #    protocol: telnet 
+
+
+    FAN-2:
+        os: nxos
+        type: 'router'
+        alias: "sw3"
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2038
+
+            #alt:
+            #    ip: 10.197.127.233
+            #    protocol: telnet
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345 
+
+ 
+
+    SPINE:
+        os: nxos
+        type: 'router'
+        alias: "spine1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+
+            a:
+                protocol: telnet
+                ip: "10.197.127.14"
+                port: 2041
+
+            alt:
+                ip: 10.197.127.57
+                protocol: telnet 
+
+ 
+        
+topology:
+    leaf3:
+        interfaces:
+            leaf3_leaf4_intf1: 
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                alias: "mct"
+
+                
+            leaf3_spine1_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "Po31"
+
+ 
+            leaf3_sw1_intf1: 
+                intf: "Eth1/39"
+                link: link-1
+                type: Eth
+                alias: "Po100"
+                 
+                 
+            leaf3_vpc_intf1: 
+                intf: "100"
+                link: link-1
+                type: 'vpc_po'
+                mode: 'trunk'
+                vlan: "501-510"
+                port: "switchport" 
+                peer_ip : "10.197.127.52"          
+
+            leaf3_mct_intf1: 
+                intf: "1"
+                link: link-1
+                type: 'mct_po'
+                peer_ip : "10.197.127.52"          
+                src_ip : "10.197.127.51"                   
+                
+
+            leaf3_spine1_po1: 
+                intf: "31"
+                link: link-1
+                type: l3_po
+                ipv4: "31.0.0.2/24"
+                pim: 'yes'
+ 
+            leaf3_leaf4_svi1: 
+                intf: "Vlan2"
+                link: link-1
+                type: svi
+                alias: "vlan2"
+                ipv4: "34.100.0.3/24"
+                pim: 'yes'
+
+
+ 
+
+
+            vxlan1: 
+                intf: "vxlan1"
+                link: link-1
+                type: vxlan
+                vlan: 500
+                vni: 200500
+                count1: 10
+                routed_vlan: 100
+                routed_vni: 90100
+                count2: 2
+                ipv4_add: 5.0.0.0/16
+                ipv6_add: 5::0/64
+                mcast_group: 225.5.0.0/24
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                ipv4: 34.0.0.3/32
+                ipv4_sec: 34.0.0.1/32
+                pim: 'yes'
+                
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                ipv4: 34.1.1.3/32
+                pim: 'yes'
+                                
+            pim: 
+                intf: "pim1"
+                link: link-1
+                type: pim
+                group_start: 225.5.0.0/24
+                rp-address : 1.2.1.2 
+                group-list : 224.0.0.0/4
+
+            leaf3_Mgmt0: 
+                intf: "mgmt0"
+                link: link-1
+                type: Eth
+                ipv4: "10.197.127.51"
+
+ 
+            leaf3_tgn1_intf1: 
+                intf: "Eth1/20"
+                link: link-1
+                type: Eth
+                alias: "TunnelVpc"
+                
+                
+            leaf3_tgn1_intf2: 
+                intf: "Eth1/5"
+                link: link-1
+                type: Eth
+                alias: "TunnelOrphan1"
+
+ 
+    leaf4:
+        interfaces:
+            leaf4_leaf3_intf1: 
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                alias: "mct"
+                
+            leaf4_spine1_intf1: 
+                intf: "Eth1/1"
+                link: "41"
+                type: Eth
+                pim: 'yes'
+                alias: "Po41"
+
+            leaf4_sw1_intf1: 
+                intf: "Eth1/45"
+                link: link-1
+                type: Eth
+                alias: "Po100"
+
+            leaf4_leaf3_svi1: 
+                intf: "Vlan2"
+                link: link-1
+                type: svi
+                alias: "vlan2"
+                ipv4: "34.100.0.4/24"
+                pim: 'yes'
+
+
+            leaf4_tgn1_intf1: 
+                intf: "Eth1/20"
+                link: link-1
+                type: Eth
+                alias: "TunnelVpc"
+               
+            leaf4_vpc_intf1: 
+                intf: "100"
+                link: link-1
+                type: 'vpc_po'
+                mode: 'trunk'
+                vlan: "501-510"
+                port: "switchport" 
+                peer_ip : "10.197.127.51"   
+
+            leaf4_mct_intf1: 
+                intf: "1"
+                link: link-1
+                type: 'mct_po'
+                peer_ip : "10.197.127.51"          
+                src_ip : "10.197.127.52"                    
+
+
+ 
+            leaf4_spine1_po1: 
+                intf: "41"
+                link: link-1
+                type: l3_po
+                ipv4: "41.0.0.2/24"
+                pim: 'yes'
+
+ 
+
+            vxlan1: 
+                intf: "vxlan1"
+                link: link-1
+                type: vxlan
+                vlan: 500
+                vni: 200500
+                count1: 10
+                routed_vlan: 100
+                routed_vni: 90100
+                count2: 2
+                ipv4_add: 5.0.0.0/16
+                ipv6_add: 5::0/64
+                mcast_group: 225.5.0.0/24
+
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                ipv4: 34.0.0.4/32
+                ipv4_sec: 34.0.0.1/32
+                pim: 'yes'
+                
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                ipv4: 34.1.1.4/32
+                pim: 'yes'
+
+            leaf4_Mgmt0: 
+                intf: "mgmt0"
+                link: link-1
+                type: mgmt
+                ipv4: "10.197.127.52"
+                pim: 'yes'                
+ 
+    leaf5:
+        interfaces:
+            leaf5_Mgmt0: 
+                intf: "mgmt0"
+                link: link-1
+                type: Eth
+                ipv4: "10.197.127.53"
+
+            leaf5_spine1_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                pim: 'yes'
+                alias: "Po51"
+
+            leaf5_leaf6_svi1: 
+                intf: "Vlan2"
+                link: link-1
+                type: svi
+                alias: "vlan2"
+                ipv4: "56.100.0.5/24"
+                pim: 'yes'
+
+                                                
+            leaf5_leaf6_intf1: 
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                alias: "mct"
+                
+            leaf5_sw3_intf1: 
+                intf: "Eth1/35"
+                link: link-1
+                type: Eth
+                alias: "Po100"
+
+
+                
+            leaf5_vpc_intf1:
+                intf: "100"
+                link: link-1
+                type: 'vpc_po'
+                mode: 'trunk'
+                vlan: "501-510"
+                port: "switchport" 
+                peer_ip : "10.197.127.54"   
+
+            leaf5_mct_intf1: 
+                intf: "1"
+                link: link-1
+                type: 'mct_po'
+                peer_ip : "10.197.127.54"          
+                src_ip : "10.197.127.53"                    
+ 
+
+            leaf5_spine1_po1: 
+                intf: "51"
+                link: link-1
+                type: l3_po
+                ipv4: "51.0.0.2/24"
+                pim: 'yes'
+
+ 
+                
+            vxlan1: 
+                intf: "vxlan1"
+                link: link-1
+                type: vxlan
+                vlan: 500
+                vni: 200500
+                count1: 10
+                routed_vlan: 100
+                routed_vni: 90100
+                count2: 2
+                ipv4_add: 5.0.0.0/16
+                ipv6_add: 5::0/64
+                mcast_group: 225.5.0.0/24
+
+
+           
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                ipv4: 56.0.0.5/32
+                ipv4_sec: 56.0.0.1/32
+                pim: 'yes'
+                
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                ipv4: 56.1.1.5/32
+                pim: 'yes'
+
+   
+            leaf5_tgn1_intf1: 
+                intf: "Eth1/20"
+                link: link-1
+                type: Eth
+                alias: "TunnelVpc"
+                
+            leaf5_tgn1_intf2: 
+                intf: "Eth1/48"
+                link: link-1
+                type: Eth
+                alias: "TunnelOrphan1"
+                
+ 
+
+
+    leaf6:
+        interfaces:
+            leaf6_Mgmt0: 
+                intf: "mgmt0"
+                link: link-1
+                type: Eth
+                ipv4: "10.197.127.54"
+                                        
+            leaf6_spine1_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "Po61"
+ 
+            leaf6_leaf5_svi1: 
+                intf: "Vlan2"
+                link: link-1
+                type: svi
+                alias: "vlan2"
+                ipv4: "56.100.0.6/24"
+                pim: 'yes'
+
+ 
+
+            leaf6_leaf5_intf1: 
+                intf: "Eth1/9"
+                link: Eth
+                type: fiber
+                alias: "mct" 
+                               
+            leaf6_sw3_intf1: 
+                intf: "Eth1/37"
+                link: link-1
+                type: Eth
+                alias: "Po100"
+
+
+            leaf6_tgn1_intf1: 
+                intf: "Eth1/20"
+                link: link-1
+                type: Eth
+                alias: "TunnelVpc"
+
+                                
+            leaf6_vpc_intf1: 
+                intf: "100"
+                link: link-1                
+                type: 'vpc_po'
+                mode: 'trunk'
+                vlan: "501-510"
+                port: "switchport" 
+                peer_ip : "10.197.127.53"   
+
+            leaf5_mct_intf1: 
+                intf: "1"
+                link: link-1
+                type: 'mct_po'
+                peer_ip : "10.197.127.53"          
+                src_ip : "10.197.127.54"      
+
+           
+            leaf6_spine1_po1: 
+                intf: "61"
+                link: link-1
+                type: l3_po
+                ipv4: "61.0.0.2/24"            
+                pim: 'yes'
+                
+
+ 
+            vxlan1: 
+                intf: "vxlan1"
+                link: link-1
+                type: vxlan
+                vlan: 500
+                vni: 200500
+                count1: 10
+                routed_vlan: 100
+                routed_vni: 90100
+                count2: 2
+                ipv4_add: 5.0.0.0/16
+                ipv6_add: 5::0/64
+                mcast_group: 225.5.0.0/24
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                ipv4: 56.0.0.6/32
+                ipv4_sec: 56.0.0.1/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                ipv4: 56.1.1.6/32
+                pim: 'yes'
+                
+
+    spine1:
+        interfaces:
+            spine1_leaf3_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                ipv4: 1.0.0.2/32 
+                alias: "Po31"
+
+            spine1_leaf4_intf1: 
+                intf: "Eth1/5"
+                link: link-1
+                type: Eth
+                alias: "Po41"                                
+
+            spine1_leaf5_intf1:  
+                intf: "Eth1/16"
+                link: link-1
+                type: Eth
+                ipv4: 1.0.0.2/32 
+                alias: "Po51"    
+                            
+            spine1_leaf6_intf1: 
+                intf: "Eth1/20"
+                link: Eth
+                type: fiber
+                alias: "Po61"                
+           
+            spine1_leaf3_po1: 
+                intf: "31"
+                link: link-1
+                type: l3_po
+                ipv4: "31.0.0.1/24"
+                pim: 'yes'
+                
+            spine1_leaf4_po1: 
+                intf: "41"
+                link: link-1
+                type: l3_po
+                ipv4: "41.0.0.1/24"
+                pim: 'yes'
+                
+            spine1_leaf5_po1: 
+                intf: "51"
+                link: link-1
+                type: l3_po
+                ipv4: "51.0.0.1/24"
+                pim: 'yes'
+                
+            spine1_leaf6_po1: 
+                intf: "61"
+                link: link-1
+                type: l3_po
+                ipv4: "61.0.0.1/24"
+                pim: 'yes'
+                
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                ipv4: 100.0.0.1/32
+                pim: 'yes'
+                
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                ipv4: 100.1.1.1/32
+                pim: 'yes'
+
+            loopback2:
+                intf: "loopback2"
+                link: link-2
+                type: loopback
+                ipv4: 10.1.1.1/32
+                pim: 'yes'
+
+
+            spine1_tgn1_intf1: 
+                intf: "Eth1/10"
+                link: link-1
+                type: Eth
+                ipv4: '99.0.0.1/8'
+
+                 
+    sw1:
+        interfaces:
+            sw1_leaf3_intf1: 
+                intf: "Eth1/39"
+                link: link-1
+                type: fiber
+                alias: "Po100"
+                
+                
+            sw1_leaf4_intf1: 
+                intf: "Eth1/45"
+                link: link-1
+                type: fiber
+                alias: "Po100"
+                
+                
+            sw1_tgn1_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: fiber
+                alias: 'tgn1-4'
+                mode: trunk
+                vlan: "501-510"
+                port: "switchport"    
+
+            sw1_vpc_intf1: 
+                intf: "100"
+                link: link-1
+                type: po_to_leaf
+                mode: trunk
+                vlan: "501-510"
+                port: "switchport"      
+  
+              
+ 
+    sw3:
+        interfaces:
+            sw3_leaf5_intf1: 
+                intf: "Eth1/35"
+                link: link-1
+                type: fiber
+                alias: "Po100"
+                
+            sw3_leaf6_intf1: 
+                intf: "Eth1/37"
+                link: link-1
+                type: fiber
+                alias: "Po100"
+                
+            sw3_tgn1_intf1: 
+                intf: "Eth1/1"
+                link: link-1
+                type: fiber
+                alias: 'tgn1-15'
+                mode: trunk
+                vlan: "501-510"
+                port: "switchport"    
+
+            sw3_vpc_intf1: 
+                intf: "100"
+                link: link-1
+                type: po_to_leaf
+                mode: trunk
+                vlan: "501-510"
+                port: "switchport"      
+
+
+    tgn1:
+        interfaces:
+            tgn1_sw1_intf1: 
+                intf: "4/5"
+                link: link-1
+                type: fiber
+ 
+            tgn1_sw3_intf1: 
+                intf: "4/6"
+                link: link-1
+                type: fiber
+ 
+            tgn1_leaf3_intf1: 
+                intf: "4/1"
+                link: link-1
+                type: fiber
+                alias: "TunnelVpc"
+
+            tgn1_leaf3_intf2: 
+                intf: "6/1"
+                link: link-1
+                type: fiber
+                alias: "TunnelOrphan1"
+
+            tgn1_leaf4_intf1: 
+                intf: "4/2"
+                link: link-1
+                type: fiber
+                alias: "TunnelVpc"
+                              
+            tgn1_leaf5_intf1: 
+                intf: "4/3"
+                link: link-1
+                type: fiber
+                alias: "TunnelVpc"
+                   
+            tgn1_leaf5_intf2: 
+                intf: "6/2"
+                link: link-1
+                type: fiber
+                alias: "TunnelOrphan1" 
+
+            tgn1_leaf6_intf1: 
+                intf: "4/4"
+                link: link-1
+                type: fiber
+                alias: "TunnelVpc"
+
+ 
+                                
+                                

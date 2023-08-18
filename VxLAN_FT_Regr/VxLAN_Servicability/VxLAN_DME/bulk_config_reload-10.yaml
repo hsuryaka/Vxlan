@@ -1,0 +1,42 @@
+system_setup:
+    cfg_persistence: True
+    system_cfg:
+        1:
+            device_name: 'device-1'
+            file_path: '/auto/dc3/absr/pyats/users/absr/otm_infra/inputs/cfg_files/pre_test_input.cfg'
+
+test_attributes:
+    on_failure:
+        core_location: '/ws/pkanduri-bgl/cores/'
+
+testcase:
+    1:
+        id: "Mac_address_static"
+        description: "config replay tests"
+        feature:
+            1: 
+                id: "reload_precleanup"
+                command: "sh run"
+                skip_phase: ['unconfigure_CLI', 'extract_payload', 'execute_payload', 'compare_pre_and_post_configurations']
+            2:
+                id: "reload"
+                feature_cfg_file_path: '/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/bulk_cfg.txt'
+                skip_phase: ['unconfigure_CLI']
+                dn: "api/mo/sys/mac-items"
+                expected: "ok"
+                oper:
+                    getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/bulk_getReqFile"
+                    getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/reload_get_resp"
+                    depth: 8
+                    match: {'vni': '11001'}
+                post_trigger: "reload"
+            3:
+                id: "post_reload_verification"
+                oper:
+                    getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/bulk_getReqFile"
+                    getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/reload_get_resp"
+                    match_custom_get_resp: '/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/reload_get_resp'
+                skip_phase: ['configure_via_CLI', 'unconfigure_CLI', 'extract_payload', 'execute_payload', 'compare_pre_and_post_configurations']
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"

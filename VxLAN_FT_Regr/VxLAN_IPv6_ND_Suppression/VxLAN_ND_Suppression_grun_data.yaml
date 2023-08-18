@@ -1,0 +1,1561 @@
+# extends: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_IPv6_ND_Suppression/VxLAN_ND_Suppression_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_IPv6_ND_Suppression/VxLAN_ND_Suppression_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+TC_002_TcamCarvingAndReload:
+  source:
+    pkg: lib.triggers.tcam_config.tcam_config
+    class: TcamCarvingAndReload
+  trigger_wait_time: 300
+  timeout_config: 300
+
+# Common Setup to configure the VxLAN
+TC_003_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+# # # Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+# TC_004_TriggerConvertL3VNIOld2New:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: Regr.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyCC:
+#                 pkg: Regr.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: TriggerConvertL3VNIOld2New
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Configure IXIA Before Converting and Before Scale
+TC_005_ConfigureIxia:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: ConfigureIxia
+    # tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_1.ixncfg"
+    tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_Orphan.ixncfg"
+
+TC_006_TriggerFlapNve:
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerFlapNve
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            #VerifyCC:
+            #    pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #    method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    cli_to_parse: 'show running-config nv overlay'
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail | grep ^2001 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    # cacheCount: "403"
+    cacheCount: "1400"
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+
+# # Trigger Flap NVE
+# TC_006_TriggerFlapNve:
+#     # source:
+#     #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#     #     class: VersionSample
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: TriggerFlapNve
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyNDSuppCache:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyNDSuppCache
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             #VerifyCC:
+#             #    pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #    method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     cli_to_parse: 'show running-config nv overlay'
+#     # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail | grep ^2001 | wc -l'
+#     ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+#     # cacheCount: "403"
+#     cacheCount: "1400"
+#     wait_time: '60'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+#     # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+#     nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_NDSuppressionVerification:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    cli_to_parse: 'show ipv6 nd suppression-cache detail | grep ^2001 | wc -l'
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail | grep ^2001 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    # cacheCount: "403"
+    cacheCount: "1400"
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerClearIPv6NeighborVrfAll:
+# clear IPv6 ND Suppression cache 
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_1.ixncfg"
+    processors:
+        post:
+            StopTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: StopTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: clearIPv6NbrForceDel
+
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node3_s1_vpc_2
+    ndSupp_cli_to_parse: 'clear ipv6 neighbor vrf all force-delete'
+    cacheCount: "1400"
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+TC_00X_TriggerHostMoveSuppND_Before:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_1.ixncfg"
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            StopTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: StopTraffic
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache local  | grep ^2001:10:1::11 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "100"
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerHostMoveSuppND_After:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_HM_1.ixncfg"
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            StopTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: StopTraffic
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache local  | grep ^2001:10:1::11 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "0"
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 30
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+# TC_00X_TriggerRemoveReaddNDSuppression:
+# # Trigger Remove Readd ND Suppression
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: VersionSample
+#     # source:
+#     #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#     #     class: TriggerRemoveReaddNDSuppression
+#     processors:
+#         post:
+#             VerifyNDSuppCache:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyNDSuppCache
+#     device_dut:
+#         - node4_s1_leaf_1
+#     cli_to_parse: 'show running-config interface nve 1'
+#     ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache remote | grep ^2001 | wc -l'
+#     cacheCount: "301"
+
+#     nd_sup_ent_count: 0
+#     wait_time: '5'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+#     nd_supp_cache_dut_list: ['node4_s1_leaf_1']
+
+# TC_00X_TriggerNoARPSuppNDSuppression:
+# # Trigger Remove Re-add ARP Suppression
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: VersionSample
+#     # source:
+#     #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#     #     class: TriggerNoARPSuppNDSuppression
+#     processors:
+#         post:
+#             VerifyNDSuppCache:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyNDSuppCache
+#     device_dut:
+#         - node4_s1_leaf_1
+#     cli_to_parse: 'show running-config interface nve 1'
+#     ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail vlan 1002 | grep ^2001 | wc -l'
+#     cacheCount: "300"
+#     nd_sup_ent_count: 0
+#     wait_time: '5'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+#     nd_supp_cache_dut_list: ['node4_s1_leaf_1']
+
+# TC_00X_TriggerVPCPriRemSuppND:
+# # Trigger Remove Re-add ND Suppression on VPC Pri
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: VersionSample
+#     # source:
+#     #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#     #     class: TriggerVPCPriRemSuppND
+#     processors:
+#         post:
+#             VerifyNDSuppCache:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyNDSuppCache
+#     device_dut:
+#         - node2_s1_vpc_1
+#     vpc_pri: 
+#         - node2_s1_vpc_1
+#     vpc_sec:
+#         - node3_s1_vpc_2
+#     cli_to_parse: 'show vpc'
+#     ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail vlan 1002 | grep ^2001 | wc -l'
+#     cacheCount: "300"
+#     nd_sup_ent_count: 0
+#     wait_time: '5'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+#     # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+#     nd_supp_cache_dut_list: ['node2_s1_vpc_1']
+
+
+TC_00X_ConfigureixiaOrphanFlap:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/ND_Supp_NR1F_Auto_Orphan.ixncfg"
+
+TC_00X_TriggerNDSupp_MCTFlapPri:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNDSupp_MCTFlapPri
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheOrphan
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_VPCPoFlapPri:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNDSupp_VPCPoFlapPri
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheOrphan
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_OrphanFlapPri:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNDSupp_OrphanFlapPri
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheOrphan
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_OrphanFlapSec:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNDSupp_OrphanFlapSec
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheOrphan
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+
+    device_dut:
+        - node3_s1_vpc_2
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_NVE_RmvReadd:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    # tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/temp.ixncfg"
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummary
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_SVI_MultipleV6Addr:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNDSupp_SVI_MultipleV6Addr
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+    device_dut:
+        - node2_s1_vpc_1
+        # - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show ipv6 nd suppression-cache vlan 1002 | grep ^2001 | wc -l"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"    
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1','node4_s1_leaf_1']
+
+TC_00X_SuppNDCacheSummary:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummary
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1','node4_s1_leaf_1']
+
+TC_00X_SuppNDCacheSummaryLocal:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummarLocal
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1','node4_s1_leaf_1']
+
+
+TC_00X_SuppNDCacheSummaryRemote:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    # tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/temp.ixncfg"
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummaryRemote
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1','node4_s1_leaf_1']
+
+TC_00X_SuppNDCacheSummaryVlan:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummaryVlan
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vlan 1002 vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1','node4_s1_leaf_1']
+
+TC_00X_TriggerNDSupp_ArpRestart:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    # tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/temp.ixncfg"
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummary
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+TC_00X_TriggerNDSupp_ICMPv6Restart:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    # tgen_cfg_file: "/auto/dc3-india/hganapat/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv6_ND_Suppression/temp.ixncfg"
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCacheSummary
+    device_dut:
+        - node2_s1_vpc_1
+    standalone_dut: ['node4_s1_leaf_1']
+    # vpc_pri: 
+    #     - node2_s1_vpc_1
+    # vpc_sec:
+    #     - node3_s1_vpc_2
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "200"    
+    # nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+TC_007_TriggerNveSrcLoopbackFlap:
+# Trigger Flap NVE Source interface loopback
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            # VerifyTraffic:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+#            VerifyCC:
+#                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    # source:
+    #     pkg: lib.triggers.flap
+    #     class: interface_flap.FlapLoopbackRange
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    loopback_range:
+        "1"
+    # converge_sec: 240
+    converge_sec: 10
+    cacheCount: "403"
+    cli_to_parse: "show ipv6 nd suppression-cache det | grep ^2001 | wc -l"
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache det | grep ^2001 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '5'
+    # traffic_convergence_time: 120
+    traffic_convergence_time: 100
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# Trigger Clear ARP and Mac address table
+TC_008_TriggerClearARPAndMAC:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    # ndSupp_cli_to_parse: 'show ipv6 nd suppression-cache detail vlan 1002 | grep ^2001 | wc -l'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# Clear IPv4 Route for all VRF's Before Converting and Before Scale
+TC_009_TriggerClearIPv4RouteVrfAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    clear_cmd_lst:
+        - clear ip route vrf all *
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# Clear IPv4 Route for all VRF's Before Converting and Before Scale
+TC_010_TriggerClearIPv6RouteVrfAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    clear_cmd_lst:
+        - clear ipv6 route vrf all *
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# # Clear IPv4 Route for all VRF's Before Converting and Before Scale
+# TC_011_TriggerClearIpv6NeighborsVrfAll:
+#     processors:
+#         pre:
+#             send_continuous_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: send_continuous_traffic
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+#         common_verification:
+#                 pkg: src.forwarding.vxlan.vxlan_verify
+#                 method: common_verification
+#                 order: [ 'verify_traffic', 'common_verification' ]
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     source:
+#         pkg: lib.triggers.clear
+#         class: clear.Clear
+#     clear_cmd_lst: [ 'clear ipv6 neighbor vrf all force-delete' ]
+#     trigger_wait_time: 30
+#     convergence_time: 30
+#     verify_wait_time: 1
+
+# Clear IP BGP All Before Converting and Before Scale
+TC_012_TriggerClearBgpAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    clear_cmd_lst:
+        - clear ip bgp vrf all *
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+# Restart Process CLI BGP
+TC_013_TriggerRestartBgpCLI:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 300
+        interval: 20
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+# Restart Process NVE
+TC_014_TriggerRestartProcessKillNVE:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: doCopyRunToStart
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+    source:
+        pkg: genie.libs.sdk.triggers.processrestart.nve.nxos.processrestart
+        class: TriggerProcessKillRestartNve
+    devices:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 300
+        interval: 20
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# Trigger Disable Enable feature nv overlay
+TC_021_TriggerDisableAndEnableNveOverlay_S1_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: doCopyRunToStart
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    device_dut:
+        - node2_s1_vpc_1
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '220'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+# Trigger Disable Enable feature nv overlay
+TC_022_TriggerDisableAndEnableNveOverlay_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: doCopyRunToStart
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    device_dut:
+        - node3_s1_vpc_2
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '220'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+TC_00X_TriggerRemoveReaddNDSuppression:
+# Trigger Remove Readd ND Suppression
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerRemoveReaddNDSuppression
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+    device_dut:
+        - node4_s1_leaf_1
+    cli_to_parse: 'show running-config interface nve 1'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "301"
+
+    nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerNoARPSuppNDSuppression:
+# Trigger Remove Re-add ARP Suppression
+    source:
+        # pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        # class: VersionSample
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: TriggerNoARPSuppNDSuppression
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+    device_dut:
+        - node4_s1_leaf_1
+    cli_to_parse: 'show running-config interface nve 1'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"
+    nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+TC_00X_TriggerVPCPriRemSuppND:
+# Trigger Remove Re-add ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: TriggerVPCPriRemSuppND
+    processors:
+        post:
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+    device_dut:
+        - node2_s1_vpc_1
+    vpc_pri: 
+        - node2_s1_vpc_1
+    vpc_sec:
+        - node3_s1_vpc_2
+    cli_to_parse: 'show vpc'
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cacheCount: "300"
+    nd_sup_ent_count: 0
+    wait_time: '5'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    # nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+# # Trigger Remove/Add new L3VNI Under VRF After Converting and Before Scale
+# TC_023_TriggerRemoveAddNewL3VNIUnderVRF:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: doCopyRunToStart
+#             # VerifyCC:
+#             #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #     method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: TriggerRemoveAddNewL3VNIUnderVRF
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#     #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+#     nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Trigger Reload for Site-1 BGW-1
+TC_024_TriggerReloadBGW_S1_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: doCopyRunToStart
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            # check_cores:
+            #     pkg: lib.verify.verify_core
+            #     method: call_verify_cores
+    devices:
+        - node2_s1_vpc_1
+    device_dut:
+        - node2_s1_vpc_1
+
+    start_wait_time: 2
+    stop_wait_time: 10
+    wait_time: 5
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    # source:
+    #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+    #     class: VersionSample
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+# Trigger Reload for Site-2 BGW-2
+TC_025_TriggerReloadBGW_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyTraffic
+            VerifyNDSuppCache:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: VerifyNDSuppCache
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+                method: doCopyRunToStart
+            # VerifyCC:
+            #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+            #     method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    devices:
+        - node3_s1_vpc_2
+    device_dut:
+        - node3_s1_vpc_2
+
+    start_wait_time: 2
+    stop_wait_time: 10
+    wait_time: 5
+    verify_wait_time: 2
+    # source:
+    #     class: triggers.ha.reload.reload.TriggerReload
+    #     pkg: genie.libs.sdk
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+        class: VersionSample
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    cacheCount: "300"
+    cli_to_parse: "show version"
+    ndSupp_cli_to_parse: 'show ipv6 neighbor vrf all  | grep ^2001 | wc -l'
+    cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    nd_supp_cache_dut_list: ['node2_s1_vpc_1', 'node4_s1_leaf_1']
+
+
+
+# # Reload Fabric Modules
+# TC_026_TriggerReloadFabricModules_S2_BGW_2:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: doCopyRunToStart
+#             # VerifyCC:
+#             #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #     method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: genie.libs.sdk.triggers.ha.reload.nxos.reload
+#     timeout:
+#         class: TriggerReloadFabricModule
+#     devices:
+#         - node4_s1_leaf_1
+#         max_time: 500
+#         interval: 20
+
+#     num_values:
+#         oc: '1'
+#     traffic_convergence_time: 300
+#     #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# TC_027_TriggerReloadLC_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: doCopyRunToStart
+#             # VerifyCC:
+#             #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #     method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 60
+#     source:
+#         pkg: lib.triggers.flap
+#         class: eor_triggers.ReloadLC
+#     device_dut:
+#         - node4_s1_leaf_1
+#     intf_list:
+#         - nd04_nd01_1_4
+#     #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# TC_028_TriggerConfigRollBack_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: doCopyRunToStart
+#             # VerifyCC:
+#             #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #     method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 60
+#     trigger_wait_time: 240
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: ConfigureRollback
+#     verify_dict:
+#         node01:
+#             test_dut: ['node7_s2_bgw_1']
+#             cmd: ['no interface nve 1']
+#     #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+#     cc_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# TC_029_TriggerSSO_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: doCopyRunToStart
+#             # VerifyCC:
+#             #     pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#             #     method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: TriggerSSO
+#     device_dut:
+#         - node4_s1_leaf_1
+
+# # Trigger NVE delete and config rollback
+# TC_009_TriggerConfigureRollback_intNVE_S1_BGWs:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: ConfigureRollback
+#     trigger_wait_time: 180
+#     traffic_convergence_time: 180
+#     verify_dict:
+#         node01:
+#             test_dut: ['node3_s2_bgw_1', 'node4_s2_bgw_2']
+#             cmd: ['no interface nve 1']
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+
+# # Configure IXIA Before Converting and Before Scale
+# TC_002_ConfigureIxiaBeforeScale:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#         class: ConfigureIxia
+#     datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_128_MSite_Scale/VxLAN_128_MSite_Scale_config.yaml)}"
+
+# # Trigger Remove/Add L3VNI Under VRF Before Converting and Before Scale
+# TC_007_TriggerRemoveAddL3VniUnderVrfBeforeScale_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.remove_add
+#         class: remove_add.RemoveAddL3VniUnderVrf
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+
+
+#     wait_time: '60'
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+
+# # Trigger Delete Recreate VLAN Before Converting and Before Scale
+# TC_008_TriggerDeleteRecreateVlan_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "101,103,3-4,7-8"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+
+# # Trigger Delete Recreate VLAN After Converting and Before Scale
+# TC_017_TriggerDeleteRecreateVlan_S2_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "104,106,9-10,13-14"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+#                 method: VerifyTraffic
+
+# # # Reload EOR LC
+# # TriggerReloadLC:
+# #     processors:
+# #         post:
+# #             VerifyTraffic:
+# #                 pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+# #                 method: VerifyTraffic
+# #     source:
+# #         pkg: lib.triggers.flap
+# #         class: eor_triggers.ReloadLC
+# #     device_dut:
+# #         - node7_s3_bgw_1
+# #     intf_list:
+# #         - nd07_nd01_1_1
+
+# # # # Sample in script test
+# # SampleTest:
+# #     source:
+# #         pkg: VxLAN_FT_Regr.VxLAN_IPv6_ND_Suppression.VxLAN_ND_Suppression_script
+# #         class: SampleTest

@@ -1,0 +1,125 @@
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+# Author information:                                              #
+#        __author__ = 'Nexus India VxLAN DevTest Group'            #
+#        __copyright__ = 'Copyright (c) 2023, Cisco Systems Inc.'  #
+#        __contact__ = ['absr@cisco.com']                          #
+#        __credits__ = ['absr']                                    #
+#        __version__ = 2.0                                         #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   Define Cleaner modules, device groups / devices                #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+cleaners:
+    PyatsDeviceClean:
+        module: genie.libs.clean
+        devices: [node01_spine, node02_vpcVtep1, node03_vpcVtep2, node04_stdVtep3, node05_vpcFANOUT]
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   Define clean part for devices                                  #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+devices:
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   node01_spine - Configuration                                   #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    node01_spine:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+        order:
+            - connect
+            - apply_configuration
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   node02_vpcVtep1 - Configuration                                #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    node02_vpcVtep1:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+                
+                ! -- Breakout Configs
+                interface breakout module 1 port 54 map 10g-4x
+                
+        order:
+            - connect
+            - apply_configuration
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   node03_vpcVtep2 - Configuration                                #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    node03_vpcVtep2:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 54 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   node04_stdVtep3 - Configuration                                #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    node04_stdVtep3:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 52 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#   node05_vpcFANOUT - Configuration                               #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    node05_vpcFANOUT:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                
+        order:
+            - connect
+            - apply_configuration

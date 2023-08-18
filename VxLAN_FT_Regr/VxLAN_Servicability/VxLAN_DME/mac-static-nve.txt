@@ -1,0 +1,1 @@
+mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23

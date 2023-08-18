@@ -1,0 +1,464 @@
+
+!Command: show running-config
+!No configuration change since last restart
+!Time: Fri Aug  9 15:47:29 2019
+
+version 9.3(1) Bios:version 07.65 [last: 07.46] 
+switchname dcicore-4
+vdc dcicore-4 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature ngmvpn
+nv overlay evpn
+feature bgp
+feature pim
+clock timezone PST -8 0
+clock summer-time PST 2 Sun Mar 02:00 1 Sun Nov 02:00 60
+feature nv overlay
+
+no password strength-check
+username admin password 5 $5$unhen5ZH$0os73LjdDE0Xmv4/A6iYRmsdbIENbjubFVgx7fl6IC6  role network-admin
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 0x35cfa8fdcc6246c66df94b7127c1b659 priv 0x35cfa8fdcc6246c66df94b7127c1b659 localizedkey
+rmon event 1 description FATAL(1) owner PMON@FATAL
+rmon event 2 description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 description ERROR(3) owner PMON@ERROR
+rmon event 4 description WARNING(4) owner PMON@WARNING
+rmon event 5 description INFORMATION(5) owner PMON@INFO
+ntp server 10.22.31.142 use-vrf management
+ntp server 172.31.201.208 use-vrf management
+
+fabric multicast event-history bgp size 111943040
+fabric multicast event-history mrib size 111943040
+fabric multicast event-history pim size 20943040
+fabric multicast event-history internal size large
+ip pim log-neighbor-changes
+ip pim ssm range 232.0.0.0/8
+ip routing multicast event-history rib size 80000000
+ip routing multicast event-history mfdm-debugs size 40000000
+ip routing multicast event-history notify-clients size 20000000
+vlan 1
+
+route-map permitall permit 10
+route-map unchanged permit 10
+  set ip next-hop unchanged
+vrf context management
+  ip route 0.0.0.0/0 172.31.200.1
+
+
+interface Ethernet1/1
+  mtu 9216
+  ip address 193.7.13.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/2
+  mtu 9216
+  ip address 193.7.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/3
+  no shutdown
+
+interface Ethernet1/4
+  no shutdown
+
+interface Ethernet1/5
+  mtu 9216
+  ip address 193.6.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/6
+  mtu 9216
+  ip address 193.6.26.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  no shutdown
+
+interface Ethernet1/9
+  no shutdown
+
+interface Ethernet1/10
+  mtu 9216
+  ip address 193.12.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/11
+  no shutdown
+
+interface Ethernet1/12
+  no shutdown
+
+interface Ethernet1/13
+  no shutdown
+
+interface Ethernet1/14
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  mtu 9216
+  ip address 193.13.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/18
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  mtu 9216
+  ip address 193.11.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/22
+  no shutdown
+
+interface Ethernet1/23
+  no shutdown
+
+interface Ethernet1/24
+  mtu 9216
+  ip address 193.8.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  mtu 9216
+  ip address 193.10.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/27
+  no shutdown
+
+interface Ethernet1/28
+  no shutdown
+
+interface Ethernet1/29
+  no shutdown
+
+interface Ethernet1/30
+  no shutdown
+
+interface Ethernet1/31
+  mtu 9216
+  ip address 193.9.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/32
+  no shutdown
+
+interface Ethernet1/33
+  no shutdown
+
+interface Ethernet1/34
+  no shutdown
+
+interface Ethernet1/35
+  no shutdown
+
+interface Ethernet1/36
+  mtu 9216
+  ip address 193.7.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/37
+  no shutdown
+
+interface Ethernet1/38
+  no shutdown
+
+interface Ethernet1/39
+  mtu 9216
+  ip address 193.6.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/40
+  mtu 9216
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/41
+  no shutdown
+
+interface Ethernet1/42
+  no shutdown
+
+interface Ethernet1/43
+  no shutdown
+
+interface Ethernet1/44
+  mtu 9216
+  ip address 193.12.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/45
+  no shutdown
+
+interface Ethernet1/46
+  no shutdown
+
+interface Ethernet1/47
+  no shutdown
+
+interface Ethernet1/48
+  no shutdown
+
+interface Ethernet1/49
+  no shutdown
+
+interface Ethernet1/50
+  no shutdown
+
+interface Ethernet1/51
+  no shutdown
+
+interface Ethernet1/52
+  mtu 9216
+  ip address 193.13.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/53
+  mtu 9216
+  ip address 193.8.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/54
+  mtu 9216
+  ip address 193.11.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/55
+  no shutdown
+
+interface Ethernet1/56
+  no shutdown
+
+interface Ethernet1/57
+  mtu 9216
+  ip address 193.9.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/58
+  no shutdown
+
+interface Ethernet1/59
+  no shutdown
+
+interface Ethernet1/60
+  mtu 9216
+  ip address 193.10.12.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/61
+  no shutdown
+
+interface Ethernet1/62
+  no shutdown
+
+interface Ethernet1/63
+  mtu 9216
+  ip address 193.52.6.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/64
+  mtu 9216
+  ip address 193.14.11.2/24
+  ip pim sparse-mode
+  no shutdown
+
+interface mgmt0
+  vrf member management
+  ip address 172.31.203.108/21
+
+interface loopback1
+  ip address 105.1.1.4/32
+  ip pim sparse-mode
+
+interface loopback2
+line console
+  exec-timeout 0
+  speed 38400
+line vty
+  exec-timeout 0
+router bgp 1002
+  router-id 105.1.1.4
+  timers bestpath-limit 600
+  graceful-restart restart-time 300
+  graceful-restart stalepath-time 600
+  log-neighbor-changes
+  address-family ipv4 unicast
+    network 105.1.1.4/32
+    redistribute direct route-map permitall
+    maximum-paths 64
+    maximum-paths ibgp 64
+  address-family ipv4 mvpn
+    retain route-target all
+  address-family l2vpn evpn
+    retain route-target all
+  template peer dcioverlay
+    ebgp-multihop 10
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family ipv4 mvpn
+      disable-peer-as-check
+      send-community
+      send-community extended
+      route-map unchanged out
+      rewrite-rt-asn
+    address-family l2vpn evpn
+      disable-peer-as-check
+      send-community
+      send-community extended
+      route-map unchanged out
+      rewrite-evpn-rt-asn
+  neighbor 193.6.11.1
+    inherit peer dcioverlay
+    remote-as 65006
+    update-source Ethernet1/39
+    address-family ipv4 unicast
+  neighbor 193.6.12.1
+    inherit peer dcioverlay
+    remote-as 65006
+    update-source Ethernet1/5
+    address-family ipv4 unicast
+  neighbor 193.6.26.1
+    inherit peer dcioverlay
+    remote-as 65006
+    update-source Ethernet1/6
+    address-family ipv4 unicast
+  neighbor 193.7.11.1
+    inherit peer dcioverlay
+    remote-as 65007
+    update-source Ethernet1/36
+    address-family ipv4 unicast
+  neighbor 193.7.12.1
+    inherit peer dcioverlay
+    remote-as 65007
+    update-source Ethernet1/2
+    address-family ipv4 unicast
+  neighbor 193.7.13.1
+    inherit peer dcioverlay
+    remote-as 65007
+    update-source Ethernet1/1
+    address-family ipv4 unicast
+  neighbor 193.8.11.1
+    inherit peer dcioverlay
+    remote-as 65008
+    update-source Ethernet1/24
+    address-family ipv4 unicast
+  neighbor 193.8.12.1
+    inherit peer dcioverlay
+    remote-as 65008
+    update-source Ethernet1/53
+    address-family ipv4 unicast
+  neighbor 193.9.11.1
+    inherit peer dcioverlay
+    remote-as 65009
+    update-source Ethernet1/31
+    address-family ipv4 unicast
+  neighbor 193.9.12.1
+    inherit peer dcioverlay
+    remote-as 65009
+    update-source Ethernet1/57
+    address-family ipv4 unicast
+  neighbor 193.10.11.1
+    inherit peer dcioverlay
+    remote-as 65010
+    update-source Ethernet1/26
+    address-family ipv4 unicast
+  neighbor 193.10.12.1
+    inherit peer dcioverlay
+    remote-as 65010
+    update-source Ethernet1/60
+    address-family ipv4 unicast
+  neighbor 193.11.11.1
+    inherit peer dcioverlay
+    remote-as 65011
+    update-source Ethernet1/21
+    address-family ipv4 unicast
+  neighbor 193.11.12.1
+    inherit peer dcioverlay
+    remote-as 65011
+    update-source Ethernet1/54
+    address-family ipv4 unicast
+  neighbor 193.12.11.1
+    inherit peer dcioverlay
+    remote-as 65012
+    update-source Ethernet1/10
+    address-family ipv4 unicast
+  neighbor 193.12.12.1
+    inherit peer dcioverlay
+    remote-as 65012
+    update-source Ethernet1/44
+    address-family ipv4 unicast
+  neighbor 193.13.11.1
+    inherit peer dcioverlay
+    remote-as 65013
+    update-source Ethernet1/17
+    address-family ipv4 unicast
+  neighbor 193.13.12.1
+    inherit peer dcioverlay
+    remote-as 65013
+    update-source Ethernet1/52
+    address-family ipv4 unicast
+  neighbor 193.14.11.1
+    inherit peer dcioverlay
+    remote-as 65014
+    update-source Ethernet1/64
+    address-family ipv4 unicast
+  neighbor 193.52.6.1
+    inherit peer dcioverlay
+    remote-as 1001
+    update-source Ethernet1/63
+    address-family ipv4 unicast
+ip pim event-history join-prune size 81457280
+ip pim event-history null-register size 10457280
+ip pim event-history pim-internal size 81457280
+ip pim event-history txlist size 41457280
+ip pim event-history mrib size 81457280
+
+logging console 5
+
+

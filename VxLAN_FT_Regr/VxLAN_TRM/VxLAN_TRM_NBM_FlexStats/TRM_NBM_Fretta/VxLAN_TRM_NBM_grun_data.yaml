@@ -1,0 +1,447 @@
+# extends: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(TRM_NBM_Fretta/VxLAN_TRM_NBM_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(TRM_NBM_Fretta/VxLAN_TRM_NBM_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+TC_002_TcamCarvingAndReload:
+  source:
+    pkg: lib.triggers.tcam_config.tcam_config
+    class: TcamCarvingAndReload
+  trigger_wait_time: 300
+  timeout_config: 300
+
+# Common Setup to configure the VxLAN
+TC_003_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+# Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+TC_004_TriggerConvertL3VNIOld2New:
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: TriggerConvertL3VNIOld2New
+    device_dut:
+        - node2_s1_vpc_1
+        - node3_s1_vpc_2
+        - node4_s1_leaf_1
+
+# # Configure IXIA Before Converting and Before Scale
+TC_005_ConfigureIxia:
+    source:
+        pkg: VxLAN_TRM_NBM_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/havadhut/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_TRM_NBM_FlexStats/TRM_NBM_Fretta/NR1F_TRM_NBM_Fretta.ixncfg"
+
+# Trigger Flap NVE
+TC_006_TriggerFlapNve_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: TriggerFlapNve
+    device_dut:
+        - node4_s1_leaf_1
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+# Trigger Flap NVE
+TC_007_TriggerFlapNve_VPC_Primary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: TriggerFlapNve
+    device_dut:
+        - node2_s1_vpc_1
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+# Trigger Flap NVE Source interface loopback
+TC_008_TriggerNveSrcLoopbackFlap_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node4_s1_leaf_1
+    loopback_range:
+        "1"
+    converge_sec: 240
+
+# Trigger Flap NVE Source interface loopback
+TC_009_TriggerNveSrcLoopbackFlap_VPC_Secondary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node3_s1_vpc_2
+    loopback_range:
+        "1"
+    converge_sec: 240
+
+# FLAP TRM VRF
+TC_010_TriggerFlapVrf_TRM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node4_s1_leaf_1
+    vrfs: ['VRF-1','VRF-5']
+
+# FLAP NBM VRF
+TC_011_TriggerFlapVrf_NBM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node4_s1_leaf_1
+    vrfs: ['NBM-1']
+
+# FLAP NBM VRF
+TC_012_TRMUPLinkFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapInterfaceConvergence
+    device_dut:
+        - node4_s1_leaf_1
+    converge_time: 5
+    interface: nd04_nd01_1_3
+
+# FLAP NBM VRF
+TC_013_NBMUPLinkFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapInterfaceConvergence
+    device_dut:
+        - node4_s1_leaf_1
+    converge_time: 5
+    interface: nd01_nd04_1_4
+
+# Restart Process CLI BGP
+TC_014_TriggerRestartBgpCLI_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 200
+        interval: 20
+
+# Restart Process CLI BGP
+TC_015_TriggerRestartBgpCLI_VPC_Primary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node2_s1_vpc_1
+    timeout:
+        max_time: 200
+        interval: 20
+
+# Restart Process NVE
+TC_016_TriggerRestartProcessKillNVE:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: genie.libs.sdk.triggers.processrestart.nve.nxos.processrestart
+        class: TriggerProcessKillRestartNve
+    devices:
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 200
+        interval: 20
+
+# Restart Process NBM
+TC_017_TriggerRestartProcessKillNBM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node4_s1_leaf_1
+    process_list:
+        - nbm
+    timeout:
+        max_time: 200
+        interval: 20
+
+# Trigger Disable Enable feature nv overlay
+TC_018_TriggerDisableAndEnableNveOverlay:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node4_s1_leaf_1
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '600'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+# Trigger Reload for Site-1 BGW-1
+TC_019_TriggerReloadVTEP:
+    processors:
+        pre:
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: doCopyRunToStart
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    devices:
+        - node4_s1_leaf_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+
+# Verify configure rollback for int nve 1
+TC_020_TriggerConfigRollBack_int_nve:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: 240
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node4_s1_leaf_1']
+            cmd: ['no interface nve 1']
+
+# Verify configure rollback for feature nbm
+TC_021_TriggerConfigRollBack_feature_nbm:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: 240
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node4_s1_leaf_1']
+            cmd: ['no feature nbm']
+
+# Sample in script test
+# SampleTest:
+#     processors:
+#         post:
+#             VerifyFlexStats:
+#                 pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+#                 method: VerifyFlexStats
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+#         class: SampleTest
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Common Cleanup
+CommonCleanup:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM_NBM_FlexStats.TRM_NBM_Fretta.VxLAN_TRM_NBM_script
+                method: VerifyErrLogs
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup

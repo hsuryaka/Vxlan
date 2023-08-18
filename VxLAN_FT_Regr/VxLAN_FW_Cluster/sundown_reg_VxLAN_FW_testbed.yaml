@@ -1,0 +1,293 @@
+testbed:
+    name: sundow-regression-testbed
+    alias: sundow-regression-testbed
+    custom:
+        session_name: 'l3_nia_fsv'
+    tacacs:
+        login_prompt: 'Login:'
+        username: admin
+        password_prompt: "^.*Password:"
+    passwords:
+        tacacs: insieme
+        enable: lab
+        line: lab
+    servers:
+        tftp:
+            server: bgl-golden-tftp
+            address: 10.127.57.23
+            #path: "/auto/bgl-golden/tftpboot/scheduler/"
+            credentials:
+                default:
+                    username: sftpuser
+                    password: sftpuser123
+        
+devices:
+    FX3-REG-TB2-TOR2:
+        os: nxos
+        type: VPC_VTEP
+        alias: uut1
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2027
+            alt:
+                protocol: telnet
+                ip: 10.197.127.218
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR2:
+        os: nxos
+        type: VPC_VTEP
+        alias: uut2
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2035
+            alt:
+                protocol: telnet
+                ip: 10.197.127.218
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR3:
+        os: nxos
+        type: L2_SWITCH
+        alias: uut3
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2036
+            alt:
+                protocol: telnet
+                ip: 10.78.63.26
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR1:
+        os: nxos
+        type: STANDALONE_VTEP
+        alias: uut4
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2034
+            alt:
+                protocol: telnet
+                ip: 10.197.127.203
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR3:
+        os: nxos
+        type: SPINE
+        alias: uut33
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2028
+            alt:
+                protocol: telnet
+                ip: 10.197.127.219
+        custom:
+          abstraction:
+            order: [os, platform]
+    IXIA:
+        type: ixia
+        alias: TG1
+        os: ixianative
+        platform: n9k 
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            a:
+                protocol: telnet
+                ip: "10.127.57.249"
+            alt:
+                ip: "10.78.63.102"
+                port: 8009
+                protocol: telnet
+            hltapi:
+                protocol: hltapi
+                ip: 10.127.57.249
+                tcl_server: 10.78.63.102:8009
+                ixnetwork_tcl_server: 10.78.63.102:8009
+                username: ixia
+                reset: 1
+
+topology:
+    FX3-REG-TB2-TOR3:
+        interfaces:
+            SPINE_to_LEAF-1_1:
+                intf: Ethernet1/21
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-2_1:
+                intf: Ethernet1/15
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-3_1:
+                intf: Ethernet1/25
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+    FX3-REG-TB1-TOR1:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet1/43
+                link: LEAF-1_to_LEAF-2_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet1/44
+                link: LEAF-1_to_LEAF-2_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/8
+                link: LEAF-1_to_SPINE_1
+                type: ethernet
+                PO : 211
+            LEAF_to_FAN_1:
+                intf: Ethernet1/22
+                link: LEAF-1_to_FAN_1
+                type: ethernet
+                PO : 200
+            LEAF_to_IXIA:
+                intf: Ethernet1/25
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    FX3-REG-TB1-TOR3:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet1/43
+                link: LEAF-2_to_LEAF-1_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet1/44
+                link: LEAF-2_to_LEAF-1_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/7
+                link: LEAF-2_to_SPINE_1
+                type: ethernet
+                PO : 212
+            LEAF_to_FAN_1:
+                intf: Ethernet1/8
+                link: LEAF-2_to_FAN_1
+                type: ethernet
+                PO : 200
+    FX3-REG-TB1-TOR2:
+        interfaces:
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/15
+                link: LEAF-3_to_SPINE_1
+                type: ethernet
+                PO : 213
+            LEAF_to_IXIA:
+                intf: Ethernet1/25
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+    FX3-REG-TB2-TOR2:
+        interfaces:
+            FAN_to_LEAF-1_1:
+                intf: Ethernet1/37
+                link: FAN_to_LEAF-1
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-2_1:
+                intf: Ethernet1/21
+                link: FAN_to_LEAF-2
+                type: ethernet
+                PO : 200
+            FAN_to_IXIA:
+                intf: Ethernet1/47
+                link: FAN_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_FAN:
+                intf: 11/1
+                link: IXIA_to_FAN
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-3:
+                intf: 11/9
+                link: IXIA_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1:
+                intf: 6/5
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3

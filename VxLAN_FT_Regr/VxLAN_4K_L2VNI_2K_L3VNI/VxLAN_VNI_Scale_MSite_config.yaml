@@ -1,0 +1,4909 @@
+# ------------------------------------------------------
+#        Node List:
+#            node1_cs_dci    : CS-DCI
+#            node2_s2_spine  : S2-FX3-SPINE
+#            node3_s2_bgw_1  : S2-FX3-BGW-1
+#            node4_s2_bgw_2  : S2-FX3-BGW-2
+#            node5_s2_leaf_1 : S2-FX3-LEAF-1
+#            node6_s3_spine  : S3-GX-SPINE
+#            node7_s3_bgw_1  : S3-GX-EOR-BGW-1
+#            node8_s3_bgw_2  : S3-GX-EOR-BGW-2
+#            node9_s3_leaf_1 : S3-GX-TOR-LEAF-1
+# ------------------------------------------------------
+parameters:
+    context: cli
+    # ------------------------------------------------------
+    # Features to be enabled
+    # ------------------------------------------------------
+    enable_features:
+        node1_cs_dci: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node2_s2_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node3_s2_bgw_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node4_s2_bgw_2: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node5_s2_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node6_s3_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node7_s3_bgw_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node8_s3_bgw_2: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node9_s3_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+    
+    # ------------------------------------------------------
+    # TCAM Carving configs
+    # ------------------------------------------------------
+    tcam_carving_config:
+        node3_s2_bgw_1: |
+            hardware profile multicast max-limit lpm-entries 4096
+        node4_s2_bgw_2: |
+            hardware profile multicast max-limit lpm-entries 4096
+        node5_s2_leaf_1: |
+            hardware profile multicast max-limit lpm-entries 4096
+        node7_s3_bgw_1: |
+            hardware profile multicast max-limit lpm-entries 4096
+        node8_s3_bgw_2: |
+            hardware profile multicast max-limit lpm-entries 4096
+        node9_s3_leaf_1: |
+            hardware profile multicast max-limit lpm-entries 4096
+    
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config:
+
+        # Site-2 SPINE --------------------------
+        node1_cs_dci:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 50.50.50.50
+                    prefix_length: 255.255.255.255
+            # Setting up PO interfaces with MTU
+            nd01_nd03_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd03_1_2:
+                mtu: 9216
+                enabled: True
+            nd01_nd04_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd04_1_2:
+                mtu: 9216
+                enabled: True
+            nd01_nd07_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd07_1_2:
+                mtu: 9216
+                enabled: True
+            nd01_nd08_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd08_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # DCI to S2-BGW-1
+            Port-channel21:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S2-BGW-1 ###"
+                mtu: 9216
+                add_members: nd01_nd03_1_1, nd01_nd03_1_2
+                ipv4:
+                    ip: 2.51.1.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd01_nd03_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.51.2.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd01_nd03_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.51.3.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            # DCI to S2-BGW-2
+            Port-channel22:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S2-BGW-2 ###"
+                mtu: 9216
+                add_members: nd01_nd04_1_1, nd01_nd04_1_2
+                ipv4:
+                    ip: 2.52.1.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd01_nd04_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-2 ###"
+                ipv4:
+                    ip: 2.52.2.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd01_nd04_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-2 ###"
+                ipv4:
+                    ip: 2.52.3.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            # DCI to S3-BGW-1
+            Port-channel31:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-1 ###"
+                mtu: 9216
+                add_members: nd01_nd07_1_1, nd01_nd07_1_2
+                ipv4:
+                    ip: 3.51.1.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            # DCI to S3-BGW-2
+            Port-channel32:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-2 ###"
+                mtu: 9216
+                add_members: nd01_nd08_1_1, nd01_nd08_1_2
+                ipv4:
+                    ip: 3.52.1.3
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+
+        # Site-2 SPINE --------------------------
+        node2_s2_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 22.22.22.22
+                    prefix_length: 255.255.255.255
+
+            # Setting up PO interfaces with MTU
+            nd02_nd03_1_1:
+                mtu: 9216
+                enabled: True
+            nd02_nd03_1_2:
+                mtu: 9216
+                enabled: True
+            nd02_nd04_1_1:
+                mtu: 9216
+                enabled: True
+            nd02_nd04_1_2:
+                mtu: 9216
+                enabled: True
+            nd02_nd05_1_1:
+                mtu: 9216
+                enabled: True
+            nd02_nd05_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # SPINE to BGW-1
+            Port-channel221:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S2-BGW-1 ###"
+                mtu: 9216
+                add_members: nd02_nd03_1_1, nd02_nd03_1_2
+                ipv4:
+                    ip: 2.21.1.2
+                    prefix_length: 255.255.255.254
+            nd02_nd03_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.21.2.2
+                    prefix_length: 255.255.255.254
+            nd02_nd03_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.21.3.2
+                    prefix_length: 255.255.255.254
+
+            # SPINE to BGW-2
+            Port-channel222:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S2-BGW-1 ###"
+                mtu: 9216
+                add_members: nd02_nd04_1_1, nd02_nd04_1_2
+                ipv4:
+                    ip: 2.22.1.2
+                    prefix_length: 255.255.255.254
+            nd02_nd04_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.22.2.2
+                    prefix_length: 255.255.255.254
+            nd02_nd04_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.22.3.2
+                    prefix_length: 255.255.255.254
+
+            # SPINE to LEAF
+            Port-channel211:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S2-LEAF-1 ###"
+                mtu: 9216
+                add_members: nd02_nd05_1_1, nd02_nd05_1_2
+                ipv4:
+                    ip: 2.11.1.2
+                    prefix_length: 255.255.255.254
+            nd02_nd05_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 2.11.2.2
+                    prefix_length: 255.255.255.254
+            nd02_nd05_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 2.11.3.2
+                    prefix_length: 255.255.255.254    
+
+        # Site-2 BGW-1 --------------------------
+        node3_s2_bgw_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 2.21.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 2.21.21.21
+                    prefix_length: 255.255.255.255
+            loopback100:
+                description: "### M-SITE VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 2.100.100.100
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd03_nd02_1_1:
+                mtu: 9216
+                enabled: True
+            nd03_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            nd03_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd03_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # BGW-1 to SPINE
+            Port-channel221:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd03_nd02_1_1, nd03_nd02_1_2
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.21.1.3
+                    prefix_length: 255.255.255.254
+            nd03_nd02_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.21.2.3
+                    prefix_length: 255.255.255.254
+            nd03_nd02_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.21.3.3
+                    prefix_length: 255.255.255.254
+
+            # S2-BGW-1 to DCI
+            Port-channel21:
+                channel_group_mode: active
+                enabled: True
+                description: "### To DCI ###"
+                mtu: 9216
+                add_members: nd03_nd01_1_1, nd03_nd01_1_2
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.51.1.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd03_nd01_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To DCI ###"
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.51.2.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd03_nd01_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To DCI ###"
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.51.3.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd03_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+            
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_multisite_bgw_interface: loopback100
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_multisite_ingress_replication: True
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        # Site-2 BGW-2 --------------------------
+        node4_s2_bgw_2:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 2.22.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 2.22.22.22
+                    prefix_length: 255.255.255.255
+            loopback100:
+                description: "### M-SITE VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 2.100.100.100
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd04_nd02_1_1:
+                mtu: 9216
+                enabled: True
+            nd04_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            nd04_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd04_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # BGW-2 to SPINE
+            Port-channel222:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd04_nd02_1_1, nd04_nd02_1_2
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.22.1.3
+                    prefix_length: 255.255.255.254
+            nd04_nd02_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.22.2.3
+                    prefix_length: 255.255.255.254
+            nd04_nd02_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 2.22.3.3
+                    prefix_length: 255.255.255.254
+            
+            # S2-BGW-2 to DCI
+            Port-channel22:
+                channel_group_mode: active
+                enabled: True
+                description: "### To DCI ###"
+                mtu: 9216
+                add_members: nd04_nd01_1_1, nd04_nd01_1_2
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.52.1.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd04_nd01_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To DCI ###"
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.52.2.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd04_nd01_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To DCI ###"
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 2.52.3.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd04_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_multisite_bgw_interface: loopback100
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_multisite_ingress_replication: True
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        # Site-2 LEAF-1 --------------------------
+        node5_s2_leaf_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 2.11.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 2.11.11.11
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd05_nd02_1_1:
+                mtu: 9216
+                enabled: True
+            nd05_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # LEAF to SPINE
+            Port-channel211:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S1-SPINE ###"
+                mtu: 9216
+                add_members: nd05_nd02_1_1, nd05_nd02_1_2
+                ipv4:
+                    ip: 2.11.1.3
+                    prefix_length: 255.255.255.254
+            nd05_nd02_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.11.2.3
+                    prefix_length: 255.255.255.254
+            nd05_nd02_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 2.11.3.3
+                    prefix_length: 255.255.255.254
+            nd05_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+    
+        # Site-2 SPINE --------------------------
+        node6_s3_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 33.33.33.33
+                    prefix_length: 255.255.255.255
+
+            # Setting up PO interfaces with MTU
+            nd06_nd07_1_1:
+                mtu: 9216
+                enabled: True
+            nd06_nd07_1_2:
+                mtu: 9216
+                enabled: True
+            nd06_nd08_1_1:
+                mtu: 9216
+                enabled: True
+            nd06_nd08_1_2:
+                mtu: 9216
+                enabled: True
+            nd06_nd09_1_1:
+                mtu: 9216
+                enabled: True
+            nd06_nd09_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # SPINE to BGW-1
+            Port-channel3211:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-1 ###"
+                mtu: 9216
+                add_members: nd06_nd07_1_1
+                ipv4:
+                    ip: 3.21.1.2
+                    prefix_length: 255.255.255.254
+            Port-channel3212:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-1 ###"
+                mtu: 9216
+                add_members: nd06_nd07_1_2
+                ipv4:
+                    ip: 3.21.2.2
+                    prefix_length: 255.255.255.254
+
+            # SPINE to BGW-2
+            Port-channel3221:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-2 ###"
+                mtu: 9216
+                add_members: nd06_nd08_1_1
+                ipv4:
+                    ip: 3.22.1.2
+                    prefix_length: 255.255.255.254
+            Port-channel3222:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-BGW-2 ###"
+                mtu: 9216
+                add_members: nd06_nd08_1_2
+                ipv4:
+                    ip: 3.22.2.2
+                    prefix_length: 255.255.255.254
+
+            # SPINE to LEAF
+            Port-channel3111:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S3-LEAF-1 ###"
+                mtu: 9216
+                add_members: nd06_nd09_1_1, nd06_nd09_1_2
+                ipv4:
+                    ip: 3.11.1.2
+                    prefix_length: 255.255.255.254
+            nd06_nd09_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 3.11.2.2
+                    prefix_length: 255.255.255.254
+            nd06_nd09_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 3.11.3.2
+                    prefix_length: 255.255.255.254  
+
+        # Site-3 BGW-1 --------------------------
+        node7_s3_bgw_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 3.21.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 3.21.21.21
+                    prefix_length: 255.255.255.255
+            loopback100:
+                description: "### M-SITE VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 3.100.100.100
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd07_nd06_1_1:
+                mtu: 9216
+                enabled: True
+            nd07_nd06_1_2:
+                mtu: 9216
+                enabled: True
+            nd07_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd07_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # BGW-1 to SPINE
+            Port-channel3211:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd07_nd06_1_1
+                evpn_multisite_fabric_tracking: True
+                ipv4:
+                    ip: 3.21.1.3
+                    prefix_length: 255.255.255.254
+            Port-channel3212:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                mtu: 9216
+                add_members: nd07_nd06_1_2
+                ipv4:
+                    ip: 3.21.2.3
+                    prefix_length: 255.255.255.254
+
+            # S2-BGW-1 to DCI
+            Port-channel31:
+                channel_group_mode: active
+                enabled: True
+                description: "### DCI ###"
+                mtu: 9216
+                add_members: nd07_nd01_1_1, nd07_nd01_1_2
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 3.51.1.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd07_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+            
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_multisite_bgw_interface: loopback100
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_multisite_ingress_replication: True
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        # Site-3 BGW-1 --------------------------
+        node8_s3_bgw_2:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 3.22.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 3.22.22.22
+                    prefix_length: 255.255.255.255
+            loopback100:
+                description: "### M-SITE VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 3.100.100.100
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd08_nd06_1_1:
+                mtu: 9216
+                enabled: True
+            nd08_nd06_1_2:
+                mtu: 9216
+                enabled: True
+            nd08_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd08_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # BGW-1 to SPINE
+            Port-channel3221:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                mtu: 9216
+                add_members: nd08_nd06_1_1
+                ipv4:
+                    ip: 3.22.1.3
+                    prefix_length: 255.255.255.254
+            Port-channel3222:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                evpn_multisite_fabric_tracking: True
+                mtu: 9216
+                add_members: nd08_nd06_1_2
+                ipv4:
+                    ip: 3.22.2.3
+                    prefix_length: 255.255.255.254
+
+            # S3-BGW-2 to DCI
+            Port-channel32:
+                channel_group_mode: active
+                enabled: True
+                description: "### To DCI ###"
+                mtu: 9216
+                add_members: nd08_nd01_1_1, nd08_nd01_1_1
+                evpn_multisite_dci_tracking: True
+                ipv4:
+                    ip: 3.52.1.2
+                    prefix_length: 255.255.255.254
+                    route-tag: '54321'
+            nd08_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+            
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_multisite_bgw_interface: loopback100
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_multisite_ingress_replication: True
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        # Site-3 LEAF-1 --------------------------
+        node9_s3_leaf_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 3.11.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 3.11.11.11
+                    prefix_length: 255.255.255.255
+            
+            # Setting up PO interfaces with MTU
+            nd09_nd06_1_1:
+                mtu: 9216
+                enabled: True
+            nd09_nd06_1_2:
+                mtu: 9216
+                enabled: True
+            
+            # LEAF to SPINE
+            Port-channel3111:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd09_nd06_1_1, nd09_nd06_1_2
+                ipv4:
+                    ip: 3.11.1.3
+                    prefix_length: 255.255.255.254
+            nd09_nd06_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 3.11.2.3
+                    prefix_length: 255.255.255.254
+            nd09_nd06_1_4:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-LEAF-1 ###"
+                ipv4:
+                    ip: 3.11.3.3
+                    prefix_length: 255.255.255.254 
+            nd09_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "3-22,101-110"
+
+            # SVI Configs
+            Vlan3-4:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-1
+                ipv4:
+                    start_ipv4_addr: 100.1.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:2::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan5-6:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-2
+                ipv4:
+                    start_ipv4_addr: 100.1.4.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:4::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan7-8:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-3
+                ipv4:
+                    start_ipv4_addr: 100.1.6.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:6::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan9-10:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-4
+                ipv4:
+                    start_ipv4_addr: 100.1.8.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:8::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan11-12:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-5
+                ipv4:
+                    start_ipv4_addr: 100.1.10.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:10::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan13-14:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-6
+                ipv4:
+                    start_ipv4_addr: 100.1.12.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:12::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan15-16:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-7
+                ipv4:
+                    start_ipv4_addr: 100.1.14.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:14::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan17-18:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-8
+                ipv4:
+                    start_ipv4_addr: 100.1.16.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:16::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan19-20:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-9
+                ipv4:
+                    start_ipv4_addr: 100.1.18.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:18::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan21-22:
+                enabled: True
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                vrf: vrf-10
+                ipv4:
+                    start_ipv4_addr: 100.1.20.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:20::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan101-110:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'vrf'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                enabled: True
+                nve_vni_dict:
+                    1114003-1114022:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    1111001-1111010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+    
+    # ------------------------------------------------------
+    # OSPF COnfigs
+    # ------------------------------------------------------
+    ospf_config:
+        # S2-SPINE
+        node2_s2_spine:
+            default:
+                instance: p2
+                router_id: 22.22.22.22
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po221:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd03_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd03_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po222:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd04_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd04_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po211:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd05_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd05_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+        
+        # S2-BGW-1
+        node3_s2_bgw_1:
+            default:
+                instance: p2
+                router_id: 2.21.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po221:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd02_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S2-BGW-2
+        node4_s2_bgw_2:
+            default:
+                instance: p2
+                router_id: 2.22.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po222:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd02_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S2-LEAF-1
+        node5_s2_leaf_1:
+            default:
+                instance: p2
+                router_id: 2.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po211:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd02_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+        
+        # S3-SPINE
+        node6_s3_spine:
+            default:
+                instance: p3
+                router_id: 33.33.33.33
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po3211:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3212:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3221:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3222:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3111:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd06_nd09_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd06_nd09_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S3-BGW-1
+        node7_s3_bgw_1:
+            default:
+                instance: p3
+                router_id: 3.21.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po3211:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3212:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S3-BGW-2
+        node8_s3_bgw_2:
+            default:
+                instance: p3
+                router_id: 3.22.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po3221:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po3222:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S3-LEAF-1
+        node9_s3_leaf_1:
+            default:
+                instance: p3
+                router_id: 3.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po3111:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd09_nd06_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd09_nd06_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+    # ------------------------------------------------------
+    # VLAN Configs
+    # ------------------------------------------------------
+    vlan_config: 
+        node3_s2_bgw_1:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+        node4_s2_bgw_2:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+        node5_s2_leaf_1:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+        node7_s3_bgw_1:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+        node8_s3_bgw_2:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+        node9_s3_leaf_1:
+            -   vlan: "3-22"
+                vn_segment_id: "1114003-1114022"
+            -   vlan: "101-110"
+                vn_segment_id: "1111001-1111010"
+
+    # ------------------------------------------------------
+    # route-map Configs
+    # ------------------------------------------------------
+    route_policy_config:
+        node1_cs_dci:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+        node2_s2_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+        node6_s3_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+        node3_s2_bgw_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node4_s2_bgw_2:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node5_s2_leaf_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node7_s3_bgw_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node8_s3_bgw_2:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node9_s3_leaf_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+    
+    # ------------------------------------------------------
+    # VxLAN Configs
+    # ------------------------------------------------------
+    vxlan_config:
+        node3_s2_bgw_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            evpn_msite_attr:
+                -   evpn_msite_bgw: 200
+        node4_s2_bgw_2:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            evpn_msite_attr:
+                -   evpn_msite_bgw: 200
+        node5_s2_leaf_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+        node7_s3_bgw_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            evpn_msite_attr:
+                -   evpn_msite_bgw: 300
+        node8_s3_bgw_2:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            evpn_msite_attr:
+                -   evpn_msite_bgw: 300
+        node9_s3_leaf_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    
+    # ------------------------------------------------------
+    # VxLAN EVPN Configs
+    # ------------------------------------------------------
+    evpn_config:
+        node3_s2_bgw_1:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node4_s2_bgw_2:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node5_s2_leaf_1:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node7_s3_bgw_1:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node8_s3_bgw_2:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node9_s3_leaf_1:
+            vni_list:
+                -   vni_id: 1114002-1114022
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+    # ------------------------------------------------------
+    # VRF Configs
+    # ------------------------------------------------------
+    vrf_config:
+        node3_s2_bgw_1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node4_s2_bgw_2:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node5_s2_leaf_1: 
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node7_s3_bgw_1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node8_s3_bgw_2:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node9_s3_leaf_1: 
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "1111001-1111010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+    # ------------------------------------------------------
+    # PIM Configs
+    # ------------------------------------------------------
+    pim_config:
+        # S2-SPINE
+        node2_s2_spine:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 22.22.22.22
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po221:
+                        mode: sparse-mode
+                    nd02_nd03_1_3:
+                        mode: sparse-mode
+                    nd02_nd03_1_4:
+                        mode: sparse-mode
+                    po222:
+                        mode: sparse-mode
+                    nd02_nd04_1_3:
+                        mode: sparse-mode
+                    nd02_nd04_1_4:
+                        mode: sparse-mode
+                    po211:
+                        mode: sparse-mode
+                    nd02_nd05_1_3:
+                        mode: sparse-mode
+                    nd02_nd05_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+        
+        # S2-BGW-1
+        node3_s2_bgw_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 22.22.22.22
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po221:
+                        mode: sparse-mode
+                    nd03_nd02_1_3:
+                        mode: sparse-mode
+                    nd03_nd02_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+        
+        # S2-BGW-2
+        node4_s2_bgw_2:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 22.22.22.22
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po222:
+                        mode: sparse-mode
+                    nd04_nd02_1_3:
+                        mode: sparse-mode
+                    nd04_nd02_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+
+        # S2-LEAF-1
+        node5_s2_leaf_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 22.22.22.22
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po211:
+                        mode: sparse-mode
+                    nd05_nd02_1_3:
+                        mode: sparse-mode
+                    nd05_nd02_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+        
+        # S3-SPINE
+        node6_s3_spine:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 33.33.33.33
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po3211:
+                        mode: sparse-mode
+                    po3212:
+                        mode: sparse-mode
+                    po3221:
+                        mode: sparse-mode
+                    po3222:
+                        mode: sparse-mode
+                    po3111:
+                        mode: sparse-mode
+                    nd06_nd09_1_3:
+                        mode: sparse-mode
+                    nd06_nd09_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+
+        # S3-BGW-1
+        node7_s3_bgw_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 33.33.33.33
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po3211:
+                        mode: sparse-mode
+                    po3212:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+
+        # S3-BGW-2
+        node8_s3_bgw_2:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 33.33.33.33
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po3221:
+                        mode: sparse-mode
+                    po3222:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+
+        # S2-BGW-1
+        node9_s3_leaf_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 33.33.33.33
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po221:
+                        mode: sparse-mode
+                    nd09_nd06_1_3:
+                        mode: sparse-mode
+                    nd09_nd06_1_4:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+            vrf-1:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-2:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-3:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-4:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-5:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-6:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-7:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-8:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-9:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+            vrf-10:
+                rp_address:
+                    - static_rp_group_list: 224.0.0.0/4
+                interface_config: {}
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config:
+        
+        # CS-DCI
+        node1_cs_dci:
+            default:
+                bgp_id: 500
+                router_id: 50.50.50.50
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_REDIST_TAG_54321'
+                neighbor_attr:
+                    -   neighbor_id: 2.51.1.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-1 Underlay Connectivity to 2.51.1.2'
+                        nbr_update_source: 'po21'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.51.2.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-1 Underlay Connectivity to 2.51.2.2'
+                        nbr_update_source: nd01_nd03_1_3
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.51.3.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-1 Underlay Connectivity to 2.51.3.2'
+                        nbr_update_source: nd01_nd03_1_4
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.21.1.1
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-1 DCI Connectivity to 2.21.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_route_map_name_out: RMAP_NH_UNCHANGED
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.1.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-2 Underlay Connectivity to 2.52.1.2'
+                        nbr_update_source: 'po22'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.2.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-2 Underlay Connectivity to 2.52.2.2'
+                        nbr_update_source: nd01_nd04_1_3
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.3.2
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-2 Underlay Connectivity to 2.52.3.2'
+                        nbr_update_source: nd01_nd04_1_4
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.22.1.1
+                        nbr_remote_as: 200
+                        nbr_description: 'S2-BGW-2 DCI Connectivity to 2.22.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_route_map_name_out: RMAP_NH_UNCHANGED
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.51.1.2
+                        nbr_remote_as: 300
+                        nbr_description: 'S3-BGW-1 Underlay Connectivity to 3.51.1.2'
+                        nbr_update_source: 'po31'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.21.1.1
+                        nbr_remote_as: 300
+                        nbr_description: 'S3-BGW-1 DCI Connectivity to 3.21.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_route_map_name_out: RMAP_NH_UNCHANGED
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.52.1.2
+                        nbr_remote_as: 300
+                        nbr_description: 'S3-BGW-2 Underlay Connectivity to 3.52.1.2'
+                        nbr_update_source: 'po32'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.22.1.1
+                        nbr_remote_as: 300
+                        nbr_description: 'S3-BGW-2 DCI Connectivity to 3.22.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_route_map_name_out: RMAP_NH_UNCHANGED
+                                nbr_af_send_community: 'both'
+        
+        # S2-SPINE
+        node2_s2_spine:
+            default:
+                bgp_id: 200
+                router_id: 22.22.22.22
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 2.21.1.1
+                        nbr_remote_as: 200
+                        nbr_description: 'BGW-1 Connectivity to 2.21.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 2.22.1.1
+                        nbr_remote_as: 200
+                        nbr_description: 'BGW-2 Connectivity to 2.22.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 2.11.1.1
+                        nbr_remote_as: 200
+                        nbr_description: 'LEAF-1 Connectivity to 2.11.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+        
+        # S2-BGW-1
+        node3_s2_bgw_1:
+            default:
+                bgp_id: 200
+                router_id: 2.21.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 22.22.22.22
+                        nbr_remote_as: 200
+                        nbr_description: 'Spine Connectivity to 22.22.22.22'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.51.1.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.51.1.3'
+                        nbr_update_source: 'po21'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.51.2.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.51.2.3'
+                        nbr_update_source: nd03_nd01_1_3
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.51.3.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.51.3.3'
+                        nbr_update_source: nd03_nd01_1_4
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 50.50.50.50
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Connectivity to 50.50.50.50'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        
+        # S2-BGW-2
+        node4_s2_bgw_2:
+            default:
+                bgp_id: 200
+                router_id: 2.22.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 22.22.22.22
+                        nbr_remote_as: 200
+                        nbr_description: 'Spine Connectivity to 22.22.22.22'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.1.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.52.1.3'
+                        nbr_update_source: 'po22'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.2.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.52.2.3'
+                        nbr_update_source: nd04_nd01_1_3
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 2.52.3.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 2.52.3.3'
+                        nbr_update_source: nd04_nd01_1_4
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 50.50.50.50
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Connectivity to 50.50.50.50'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # S2-LEAF-1
+        node5_s2_leaf_1:
+            default:
+                bgp_id: 200
+                router_id: 2.11.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 22.22.22.22
+                        nbr_remote_as: 200
+                        nbr_description: 'Spine Connectivity to 22.22.22.22'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 200
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        
+        # S3-SPINE
+        node6_s3_spine:
+            default:
+                bgp_id: 300
+                router_id: 33.33.33.33
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 3.21.1.1
+                        nbr_remote_as: 300
+                        nbr_description: 'BGW-1 Connectivity to 3.21.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 3.22.1.1
+                        nbr_remote_as: 300
+                        nbr_description: 'BGW-2 Connectivity to 3.22.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 3.11.1.1
+                        nbr_remote_as: 300
+                        nbr_description: 'LEAF-1 Connectivity to 3.11.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+
+        # S3-BGW-1
+        node7_s3_bgw_1:
+            default:
+                bgp_id: 300
+                router_id: 3.21.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 33.33.33.33
+                        nbr_remote_as: 300
+                        nbr_description: 'Spine Connectivity to 33.33.33.33'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.51.1.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 3.51.1.3'
+                        nbr_update_source: 'po31'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 50.50.50.50
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Connectivity to 50.50.50.50'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # S3-BGW-2
+        node8_s3_bgw_2:
+            default:
+                bgp_id: 300
+                router_id: 3.22.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 33.33.33.33
+                        nbr_remote_as: 300
+                        nbr_description: 'Spine Connectivity to 33.33.33.33'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 3.52.1.3
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Underlay Connectivity to 3.52.1.3'
+                        nbr_update_source: 'po32'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'ipv4 unicast'
+                                log_neighbor_changes: True
+                                nbr_af_soft_reconfiguration: True
+                                nbr_af_send_community: 'both'
+                    -   neighbor_id: 50.50.50.50
+                        nbr_remote_as: 500
+                        nbr_description: 'DCI Connectivity to 50.50.50.50'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        nbr_peer_type: 'fabric-external'
+                        nbr_ebgp_multihop: True
+                        nbr_ebgp_multihop_max_hop: 10
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                log_neighbor_changes: True
+                                nbr_ebgp_multihop: True
+                                nbr_af_rewrite_evpn_rt_asn: True
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # S3-LEAF-1
+        node9_s3_leaf_1:
+            default:
+                bgp_id: 300
+                router_id: 3.11.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 8
+                        af_maximum_paths_ibgp: 8
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    -   neighbor_id: 33.33.33.33
+                        nbr_remote_as: 300
+                        nbr_description: 'Spine Connectivity to 33.33.33.33'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            "vrf-1":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-2":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-3":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-4":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-5":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-6":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-7":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-8":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-9":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+            "vrf-10":
+              bgp_id: 300
+              address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 8
+                    af_maximum_paths_ibgp: 8
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    missing_config: 
+    
+        node1_cs_dci: |
+            route-map RMAP_REDIST_TAG_54321 permit 10
+                match tag 54321
+            interface loopback0
+                ip address 50.50.50.50/32 tag 54321
+            interface port-channel21
+                ip address 2.51.1.3/31 tag 54321
+            interface port-channel22
+                ip address 2.52.1.3/31 tag 54321
+            interface port-channel31
+                ip address 3.51.1.3/31 tag 54321
+            interface port-channel32
+                ip address 3.52.1.3/31 tag 54321
+            interface Ethernet1/11
+                ip address 2.51.2.3/31 tag 54321
+            interface Ethernet1/12
+                ip address 2.51.3.3/31 tag 54321
+            interface Ethernet1/15
+                ip address 2.52.2.3/31 tag 54321
+            interface Ethernet1/16
+                ip address 2.52.3.3/31 tag 54321
+            router bgp 500
+                address-family ipv4 unicast
+                    redistribute direct route-map RMAP_REDIST_TAG_54321
+
+        node3_s2_bgw_1: |
+            route-map RMAP_REDIST_TAG_54321 permit 10
+                match tag 54321
+            interface loopback0
+                ip address 2.21.1.1/32 tag 54321
+            interface loopback1
+                ip address 2.21.21.21/32 tag 54321
+            interface loopback100
+                ip address 2.100.100.100/32 tag 54321
+            interface port-channel21
+                ip address 2.51.1.2/31 tag 54321
+            interface {{nd03_nd01_1_3}}
+                ip address 2.51.2.2/31 tag 54321
+            interface {{nd03_nd01_1_4}}
+                ip address 2.51.3.2/31 tag 54321
+            interface {{nd03_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+            router bgp 200
+                address-family ipv4 unicast
+                    redistribute direct route-map RMAP_REDIST_TAG_54321
+        
+        node4_s2_bgw_2: |
+            route-map RMAP_REDIST_TAG_54321 permit 10
+                match tag 54321
+            interface loopback0
+                ip address 2.22.1.1/32 tag 54321
+            interface loopback1
+                ip address 2.22.22.22/32 tag 54321
+            interface loopback100
+                ip address 2.100.100.100/32 tag 54321
+            interface port-channel22
+                ip address 2.52.1.2/31 tag 54321
+            interface {{nd04_nd01_1_3}}
+                ip address 2.52.2.2/31 tag 54321
+            interface {{nd04_nd01_1_4}}
+                ip address 2.52.3.2/31 tag 54321
+            interface {{nd04_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+            router bgp 200
+                address-family ipv4 unicast
+                    redistribute direct route-map RMAP_REDIST_TAG_54321
+        
+        node5_s2_leaf_1: |
+            interface {{nd05_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+
+        node7_s3_bgw_1: |
+            route-map RMAP_REDIST_TAG_54321 permit 10
+                match tag 54321
+            interface loopback0
+                ip address 3.21.1.1/32 tag 54321
+            interface loopback1
+                ip address 3.21.21.21/32 tag 54321
+            interface loopback100
+                ip address 3.100.100.100/32 tag 54321
+            interface port-channel31
+                ip address 3.51.1.2/31 tag 54321
+            interface {{nd07_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+            router bgp 300
+                address-family ipv4 unicast
+                    redistribute direct route-map RMAP_REDIST_TAG_54321
+        
+        node8_s3_bgw_2: |
+            route-map RMAP_REDIST_TAG_54321 permit 10
+                match tag 54321
+            interface loopback0
+                ip address 3.22.1.1/32 tag 54321
+            interface loopback1
+                ip address 3.22.22.22/32 tag 54321
+            interface loopback100
+                ip address 3.100.100.100/32 tag 54321
+            interface port-channel32
+                ip address 3.52.1.2/31 tag 54321
+            interface {{nd08_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+            router bgp 300
+                address-family ipv4 unicast
+                    redistribute direct route-map RMAP_REDIST_TAG_54321
+    
+        node9_s3_leaf_1: |
+            interface {{nd09_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+
+    # ------------------------------------------------------
+    # Features to be disabled as part of cleanup
+    # ------------------------------------------------------
+    disable_features:
+        node1_cs_dci: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node2_s2_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node3_s2_bgw_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node4_s2_bgw_2: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node5_s2_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node6_s3_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node7_s3_bgw_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node8_s3_bgw_2: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node9_s3_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+    
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    disable_missing_config:
+        node1_cs_dci: |
+            no route-map RMAP_REDIST_TAG_54321 permit 10
+        node3_s2_bgw_1: |
+            no route-map RMAP_REDIST_TAG_54321 permit 10
+        node4_s2_bgw_2: |
+            no route-map RMAP_REDIST_TAG_54321 permit 10
+        node7_s3_bgw_1: |
+            no route-map RMAP_REDIST_TAG_54321 permit 10
+        node8_s3_bgw_2: |
+            no route-map RMAP_REDIST_TAG_54321 permit 10
+    
+    # ------------------------------------------------------
+    # IXIA TGEN Data Before Scale Increaset
+    # ------------------------------------------------------
+    IXIA_TGEN_data:
+        LEAF_1_TGEN_data:
+            'no_of_ints'            : "20"
+            'mac'                   : '00:20:11:00:00:01'
+            'mac_step'              : '00:00:00:00:00:01'
+            'protocol'              : 'ipv46'
+            'v4_addr'               : '100.1.2.10'
+            'v4_addr_step'          : '0.0.1.0'
+            'v4_gateway'            : '100.1.2.1'
+            'v4_gateway_step'       : '0.0.1.0'
+            'v4_netmask'            : '255.255.255.0'
+            'v6_addr'               : '2001:100:1:2::10'
+            'v6_addr_step'          : '0:0:0:1::'
+            'v6_gateway'            : '2001:100:1:2::1'
+            'v6_gateway_step'       : '0:0:0:1::'
+            'v6_netmask'            : '64'
+            'vlan_id'               : '3'
+            'vlan_id_step'          : '1'
+        LEAF_2_TGEN_data:
+            'no_of_ints'            : "20"
+            'mac'                   : '00:30:11:00:00:01'
+            'mac_step'              : '00:00:00:00:00:01'
+            'protocol'              : 'ipv46'
+            'v4_addr'               : '100.1.2.20'
+            'v4_addr_step'          : '0.0.1.0'
+            'v4_gateway'            : '100.1.2.1'
+            'v4_gateway_step'       : '0.0.1.0'
+            'v4_netmask'            : '255.255.255.0'
+            'v6_addr'               : '2001:100:1:2::20'
+            'v6_addr_step'          : '0:0:0:1::'
+            'v6_gateway'            : '2001:100:1:2::1'
+            'v6_gateway_step'       : '0:0:0:1::'
+            'v6_netmask'            : '64'
+            'vlan_id'               : '3'
+            'vlan_id_step'          : '1'
+
+    # ------------------------------------------------------
+    # Scale Increase Data
+    # ------------------------------------------------------
+    BGW_MCAST_VNI_data:
+        VRF_string          : 'VRF-'
+        VRF_id_start        : 1
+        VRF_count           : 1976
+        VLAN_PER_VRF_count  : 2
+        l2_mcast_grp_ip     : '224.1.1.101'
+        l2vni_per_mcast_grp : '32'
+        l3_vni_start        : 1111001
+        l2_vlan_start       : 3
+        l2_vni_start        : 1114003
+    LEAF_MCAST_VNI_data:
+        VRF_string          : 'VRF-'
+        VRF_id_start        : 1
+        VRF_count           : 1976
+        VLAN_PER_VRF_count  : 2
+        l2_mcast_grp_ip     : '224.1.1.101'
+        l2vni_per_mcast_grp : '32'
+        l3_vni_start        : 1111001
+        l2_vlan_start       : 3
+        l2_vni_start        : 1114003
+        l2_vlan_ipv4_start  : '100.1.1.1'
+        l2_vlan_ipv4_mask   : '/24'
+        l2_vlan_ipv6_start  : '2001:100:1:1::1'
+        l2_vlan_ipv6_mask   : '/64'
+    

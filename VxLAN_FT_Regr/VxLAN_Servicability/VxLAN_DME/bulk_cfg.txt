@@ -1,0 +1,1934 @@
+
+!Command: show running-config
+!Running configuration last done at: Wed Oct 14 16:20:50 2020
+!Time: Wed Oct 14 16:21:19 2020
+
+version 9.4(1) Bios:version 01.01 
+hostname Sundown-1
+vdc Sundown-1 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+  limit-resource vni_bd minimum 4096 maximum 4096
+
+feature telnet
+feature nxapi
+feature bash-shell
+feature scp-server
+cfs eth distribute
+feature ospf
+feature pim
+feature netconf
+feature restconf
+feature grpc
+feature interface-vlan
+feature vn-segment-vlan-based
+feature hsrp
+feature lacp
+feature vpc
+clock timezone IST 5 30
+feature nv overlay
+
+no password strength-check
+username admin password 5 $5$MLOBGC$hWcZqWiFPpKAvfOIetoGBbTFjBn0szkJXdEwuKs2Uq2  role network-admin
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 0x99d373acbc94683547fa0048b65e53a6 priv aes-128 0x99d373acbc94683547fa0048b65e53a6 localizedkey
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+ip pim rp-address 11.11.11.11 group-list 224.0.0.0/4
+ip pim ssm range 232.0.0.0/8
+ip igmp snooping vxlan
+vlan 1,201-301
+vlan 201
+  vn-segment 11001
+vlan 202
+  vn-segment 11002
+vlan 203
+  vn-segment 11003
+vlan 204
+  vn-segment 11004
+vlan 205
+  vn-segment 11005
+vlan 206
+  vn-segment 11006
+vlan 207
+  vn-segment 11007
+vlan 208
+  vn-segment 11008
+vlan 209
+  vn-segment 11009
+vlan 210
+  vn-segment 11010
+vlan 211
+  vn-segment 11011
+vlan 212
+  vn-segment 11012
+vlan 213
+  vn-segment 11013
+vlan 214
+  vn-segment 11014
+vlan 215
+  vn-segment 11015
+vlan 216
+  vn-segment 11016
+vlan 217
+  vn-segment 11017
+vlan 218
+  vn-segment 11018
+vlan 219
+  vn-segment 11019
+vlan 220
+  vn-segment 11020
+vlan 221
+  vn-segment 11021
+vlan 222
+  vn-segment 11022
+vlan 223
+  vn-segment 11023
+vlan 224
+  vn-segment 11024
+vlan 225
+  vn-segment 11025
+vlan 226
+  vn-segment 11026
+vlan 227
+  vn-segment 11027
+vlan 228
+  vn-segment 11028
+vlan 229
+  vn-segment 11029
+vlan 230
+  vn-segment 11030
+vlan 231
+  vn-segment 11031
+vlan 232
+  vn-segment 11032
+vlan 233
+  vn-segment 11033
+vlan 234
+  vn-segment 11034
+vlan 235
+  vn-segment 11035
+vlan 236
+  vn-segment 11036
+vlan 237
+  vn-segment 11037
+vlan 238
+  vn-segment 11038
+vlan 239
+  vn-segment 11039
+vlan 240
+  vn-segment 11040
+vlan 241
+  vn-segment 11041
+vlan 242
+  vn-segment 11042
+vlan 243
+  vn-segment 11043
+vlan 244
+  vn-segment 11044
+vlan 245
+  vn-segment 11045
+vlan 246
+  vn-segment 11046
+vlan 247
+  vn-segment 11047
+vlan 248
+  vn-segment 11048
+vlan 249
+  vn-segment 11049
+vlan 250
+  vn-segment 11050
+vlan 251
+  vn-segment 12001
+vlan 252
+  vn-segment 12002
+vlan 253
+  vn-segment 12003
+vlan 254
+  vn-segment 12004
+vlan 255
+  vn-segment 12005
+vlan 256
+  vn-segment 12006
+vlan 257
+  vn-segment 12007
+vlan 258
+  vn-segment 12008
+vlan 259
+  vn-segment 12009
+vlan 260
+  vn-segment 12010
+vlan 261
+  vn-segment 12011
+vlan 262
+  vn-segment 12012
+vlan 263
+  vn-segment 12013
+vlan 264
+  vn-segment 12014
+vlan 265
+  vn-segment 12015
+vlan 266
+  vn-segment 12016
+vlan 267
+  vn-segment 12017
+vlan 268
+  vn-segment 12018
+vlan 269
+  vn-segment 12019
+vlan 270
+  vn-segment 12020
+vlan 271
+  vn-segment 12021
+vlan 272
+  vn-segment 12022
+vlan 273
+  vn-segment 12023
+vlan 274
+  vn-segment 12024
+vlan 275
+  vn-segment 12025
+vlan 276
+  vn-segment 12026
+vlan 277
+  vn-segment 12027
+vlan 278
+  vn-segment 12028
+vlan 279
+  vn-segment 12029
+vlan 280
+  vn-segment 12030
+vlan 281
+  vn-segment 12031
+vlan 282
+  vn-segment 12032
+vlan 283
+  vn-segment 12033
+vlan 284
+  vn-segment 12034
+vlan 285
+  vn-segment 12035
+vlan 286
+  vn-segment 12036
+vlan 287
+  vn-segment 12037
+vlan 288
+  vn-segment 12038
+vlan 289
+  vn-segment 12039
+vlan 290
+  vn-segment 12040
+vlan 291
+  vn-segment 12041
+vlan 292
+  vn-segment 12042
+vlan 293
+  vn-segment 12043
+vlan 294
+  vn-segment 12044
+vlan 295
+  vn-segment 12045
+vlan 296
+  vn-segment 12046
+vlan 297
+  vn-segment 12047
+vlan 298
+  vn-segment 12048
+vlan 299
+  vn-segment 12049
+vlan 300
+  vn-segment 12050
+
+vrf context management
+  ip route 0.0.0.0/0 10.197.127.1
+vrf context peer-keep-alive
+vpc domain 100
+  peer-switch
+  role priority 3000
+  system-priority 3000
+  peer-keepalive destination 5.5.5.10 source 5.5.5.5 vrf peer-keep-alive
+  peer-gateway
+  ipv6 nd synchronize
+  ip arp synchronize
+nxapi http port 80
+nxapi use-vrf management
+
+
+interface Vlan1
+  no ip redirects
+  no ipv6 redirects
+
+interface Vlan201
+  no shutdown
+  no ip redirects
+  ip address 2.1.1.2/24
+  ipv6 address 2001:2:1:1::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 201 
+    ip 2.1.1.1
+  hsrp 201 ipv6
+    ip 2001:2:1:1::1
+
+interface Vlan202
+  no shutdown
+  no ip redirects
+  ip address 2.1.2.2/24
+  ipv6 address 2001:2:1:2::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 202 
+    ip 2.1.2.1
+  hsrp 202 ipv6
+    ip 2001:2:1:2::1
+
+interface Vlan203
+  no shutdown
+  no ip redirects
+  ip address 2.1.3.2/24
+  ipv6 address 2001:2:1:3::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 203 
+    ip 2.1.3.1
+  hsrp 203 ipv6
+    ip 2001:2:1:3::1
+
+interface Vlan204
+  no shutdown
+  no ip redirects
+  ip address 2.1.4.2/24
+  ipv6 address 2001:2:1:4::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 204 
+    ip 2.1.4.1
+  hsrp 204 ipv6
+    ip 2001:2:1:4::1
+
+interface Vlan205
+  no shutdown
+  no ip redirects
+  ip address 2.1.5.2/24
+  ipv6 address 2001:2:1:5::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 205 
+    ip 2.1.5.1
+  hsrp 205 ipv6
+    ip 2001:2:1:5::1
+
+interface Vlan206
+  no shutdown
+  no ip redirects
+  ip address 2.1.6.2/24
+  ipv6 address 2001:2:1:6::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 206 
+    ip 2.1.6.1
+  hsrp 206 ipv6
+    ip 2001:2:1:6::1
+
+interface Vlan207
+  no shutdown
+  no ip redirects
+  ip address 2.1.7.2/24
+  ipv6 address 2001:2:1:7::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 207 
+    ip 2.1.7.1
+  hsrp 207 ipv6
+    ip 2001:2:1:7::1
+
+interface Vlan208
+  no shutdown
+  no ip redirects
+  ip address 2.1.8.2/24
+  ipv6 address 2001:2:1:8::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 208 
+    ip 2.1.8.1
+  hsrp 208 ipv6
+    ip 2001:2:1:8::1
+
+interface Vlan209
+  no shutdown
+  no ip redirects
+  ip address 2.1.9.2/24
+  ipv6 address 2001:2:1:9::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 209 
+    ip 2.1.9.1
+  hsrp 209 ipv6
+    ip 2001:2:1:9::1
+
+interface Vlan210
+  no shutdown
+  no ip redirects
+  ip address 2.1.10.2/24
+  ipv6 address 2001:2:1:a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 210 
+    ip 2.1.10.1
+  hsrp 210 ipv6
+    ip 2001:2:1:a::1
+
+interface Vlan211
+  no shutdown
+  no ip redirects
+  ip address 2.1.11.2/24
+  ipv6 address 2001:2:1:b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 211 
+    ip 2.1.11.1
+  hsrp 211 ipv6
+    ip 2001:2:1:b::1
+
+interface Vlan212
+  no shutdown
+  no ip redirects
+  ip address 2.1.12.2/24
+  ipv6 address 2001:2:1:c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 212 
+    ip 2.1.12.1
+  hsrp 212 ipv6
+    ip 2001:2:1:c::1
+
+interface Vlan213
+  no shutdown
+  no ip redirects
+  ip address 2.1.13.2/24
+  ipv6 address 2001:2:1:d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 213 
+    ip 2.1.13.1
+  hsrp 213 ipv6
+    ip 2001:2:1:d::1
+
+interface Vlan214
+  no shutdown
+  no ip redirects
+  ip address 2.1.14.2/24
+  ipv6 address 2001:2:1:e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 214 
+    ip 2.1.14.1
+  hsrp 214 ipv6
+    ip 2001:2:1:e::1
+
+interface Vlan215
+  no shutdown
+  no ip redirects
+  ip address 2.1.15.2/24
+  ipv6 address 2001:2:1:f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 215 
+    ip 2.1.15.1
+  hsrp 215 ipv6
+    ip 2001:2:1:f::1
+
+interface Vlan216
+  no shutdown
+  no ip redirects
+  ip address 2.1.16.2/24
+  ipv6 address 2001:2:1:10::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 216 
+    ip 2.1.16.1
+  hsrp 216 ipv6
+    ip 2001:2:1:10::1
+
+interface Vlan217
+  no shutdown
+  no ip redirects
+  ip address 2.1.17.2/24
+  ipv6 address 2001:2:1:11::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 217 
+    ip 2.1.17.1
+  hsrp 217 ipv6
+    ip 2001:2:1:11::1
+
+interface Vlan218
+  no shutdown
+  no ip redirects
+  ip address 2.1.18.2/24
+  ipv6 address 2001:2:1:12::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 218 
+    ip 2.1.18.1
+  hsrp 218 ipv6
+    ip 2001:2:1:12::1
+
+interface Vlan219
+  no shutdown
+  no ip redirects
+  ip address 2.1.19.2/24
+  ipv6 address 2001:2:1:13::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 219 
+    ip 2.1.19.1
+  hsrp 219 ipv6
+    ip 2001:2:1:13::1
+
+interface Vlan220
+  no shutdown
+  no ip redirects
+  ip address 2.1.20.2/24
+  ipv6 address 2001:2:1:14::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 220 
+    ip 2.1.20.1
+  hsrp 220 ipv6
+    ip 2001:2:1:14::1
+
+interface Vlan221
+  no shutdown
+  no ip redirects
+  ip address 2.1.21.2/24
+  ipv6 address 2001:2:1:15::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 221 
+    ip 2.1.21.1
+  hsrp 221 ipv6
+    ip 2001:2:1:15::1
+
+interface Vlan222
+  no shutdown
+  no ip redirects
+  ip address 2.1.22.2/24
+  ipv6 address 2001:2:1:16::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 222 
+    ip 2.1.22.1
+  hsrp 222 ipv6
+    ip 2001:2:1:16::1
+
+interface Vlan223
+  no shutdown
+  no ip redirects
+  ip address 2.1.23.2/24
+  ipv6 address 2001:2:1:17::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 223 
+    ip 2.1.23.1
+  hsrp 223 ipv6
+    ip 2001:2:1:17::1
+
+interface Vlan224
+  no shutdown
+  no ip redirects
+  ip address 2.1.24.2/24
+  ipv6 address 2001:2:1:18::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 224 
+    ip 2.1.24.1
+  hsrp 224 ipv6
+    ip 2001:2:1:18::1
+
+interface Vlan225
+  no shutdown
+  no ip redirects
+  ip address 2.1.25.2/24
+  ipv6 address 2001:2:1:19::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 225 
+    ip 2.1.25.1
+  hsrp 225 ipv6
+    ip 2001:2:1:19::1
+
+interface Vlan226
+  no shutdown
+  no ip redirects
+  ip address 2.1.26.2/24
+  ipv6 address 2001:2:1:1a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 226 
+    ip 2.1.26.1
+  hsrp 226 ipv6
+    ip 2001:2:1:1a::1
+
+interface Vlan227
+  no shutdown
+  no ip redirects
+  ip address 2.1.27.2/24
+  ipv6 address 2001:2:1:1b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 227 
+    ip 2.1.27.1
+  hsrp 227 ipv6
+    ip 2001:2:1:1b::1
+
+interface Vlan228
+  no shutdown
+  no ip redirects
+  ip address 2.1.28.2/24
+  ipv6 address 2001:2:1:1c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 228 
+    ip 2.1.28.1
+  hsrp 228 ipv6
+    ip 2001:2:1:1c::1
+
+interface Vlan229
+  no shutdown
+  no ip redirects
+  ip address 2.1.29.2/24
+  ipv6 address 2001:2:1:1d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 229 
+    ip 2.1.29.1
+  hsrp 229 ipv6
+    ip 2001:2:1:1d::1
+
+interface Vlan230
+  no shutdown
+  no ip redirects
+  ip address 2.1.30.2/24
+  ipv6 address 2001:2:1:1e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 230 
+    ip 2.1.30.1
+  hsrp 230 ipv6
+    ip 2001:2:1:1e::1
+
+interface Vlan231
+  no shutdown
+  no ip redirects
+  ip address 2.1.31.2/24
+  ipv6 address 2001:2:1:1f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 231 
+    ip 2.1.31.1
+  hsrp 231 ipv6
+    ip 2001:2:1:1f::1
+
+interface Vlan232
+  no shutdown
+  no ip redirects
+  ip address 2.1.32.2/24
+  ipv6 address 2001:2:1:20::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 232 
+    ip 2.1.32.1
+  hsrp 232 ipv6
+    ip 2001:2:1:20::1
+
+interface Vlan233
+  no shutdown
+  no ip redirects
+  ip address 2.1.33.2/24
+  ipv6 address 2001:2:1:21::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 233 
+    ip 2.1.33.1
+  hsrp 233 ipv6
+    ip 2001:2:1:21::1
+
+interface Vlan234
+  no shutdown
+  no ip redirects
+  ip address 2.1.34.2/24
+  ipv6 address 2001:2:1:22::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 234 
+    ip 2.1.34.1
+  hsrp 234 ipv6
+    ip 2001:2:1:22::1
+
+interface Vlan235
+  no shutdown
+  no ip redirects
+  ip address 2.1.35.2/24
+  ipv6 address 2001:2:1:23::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 235 
+    ip 2.1.35.1
+  hsrp 235 ipv6
+    ip 2001:2:1:23::1
+
+interface Vlan236
+  no shutdown
+  no ip redirects
+  ip address 2.1.36.2/24
+  ipv6 address 2001:2:1:24::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 236 
+    ip 2.1.36.1
+  hsrp 236 ipv6
+    ip 2001:2:1:24::1
+
+interface Vlan237
+  no shutdown
+  no ip redirects
+  ip address 2.1.37.2/24
+  ipv6 address 2001:2:1:25::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 237 
+    ip 2.1.37.1
+  hsrp 237 ipv6
+    ip 2001:2:1:25::1
+
+interface Vlan238
+  no shutdown
+  no ip redirects
+  ip address 2.1.38.2/24
+  ipv6 address 2001:2:1:26::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 238 
+    ip 2.1.38.1
+  hsrp 238 ipv6
+    ip 2001:2:1:26::1
+
+interface Vlan239
+  no shutdown
+  no ip redirects
+  ip address 2.1.39.2/24
+  ipv6 address 2001:2:1:27::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 239 
+    ip 2.1.39.1
+  hsrp 239 ipv6
+    ip 2001:2:1:27::1
+
+interface Vlan240
+  no shutdown
+  no ip redirects
+  ip address 2.1.40.2/24
+  ipv6 address 2001:2:1:28::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 240 
+    ip 2.1.40.1
+  hsrp 240 ipv6
+    ip 2001:2:1:28::1
+
+interface Vlan241
+  no shutdown
+  no ip redirects
+  ip address 2.1.41.2/24
+  ipv6 address 2001:2:1:29::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 241 
+    ip 2.1.41.1
+  hsrp 241 ipv6
+    ip 2001:2:1:29::1
+
+interface Vlan242
+  no shutdown
+  no ip redirects
+  ip address 2.1.42.2/24
+  ipv6 address 2001:2:1:2a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 242 
+    ip 2.1.42.1
+  hsrp 242 ipv6
+    ip 2001:2:1:2a::1
+
+interface Vlan243
+  no shutdown
+  no ip redirects
+  ip address 2.1.43.2/24
+  ipv6 address 2001:2:1:2b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 243 
+    ip 2.1.43.1
+  hsrp 243 ipv6
+    ip 2001:2:1:2b::1
+
+interface Vlan244
+  no shutdown
+  no ip redirects
+  ip address 2.1.44.2/24
+  ipv6 address 2001:2:1:2c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 244 
+    ip 2.1.44.1
+  hsrp 244 ipv6
+    ip 2001:2:1:2c::1
+
+interface Vlan245
+  no shutdown
+  no ip redirects
+  ip address 2.1.45.2/24
+  ipv6 address 2001:2:1:2d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 245 
+    ip 2.1.45.1
+  hsrp 245 ipv6
+    ip 2001:2:1:2d::1
+
+interface Vlan246
+  no shutdown
+  no ip redirects
+  ip address 2.1.46.2/24
+  ipv6 address 2001:2:1:2e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 246 
+    ip 2.1.46.1
+  hsrp 246 ipv6
+    ip 2001:2:1:2e::1
+
+interface Vlan247
+  no shutdown
+  no ip redirects
+  ip address 2.1.47.2/24
+  ipv6 address 2001:2:1:2f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 247 
+    ip 2.1.47.1
+  hsrp 247 ipv6
+    ip 2001:2:1:2f::1
+
+interface Vlan248
+  no shutdown
+  no ip redirects
+  ip address 2.1.48.2/24
+  ipv6 address 2001:2:1:30::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 248 
+    ip 2.1.48.1
+  hsrp 248 ipv6
+    ip 2001:2:1:30::1
+
+interface Vlan249
+  no shutdown
+  no ip redirects
+  ip address 2.1.49.2/24
+  ipv6 address 2001:2:1:31::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 249 
+    ip 2.1.49.1
+  hsrp 249 ipv6
+    ip 2001:2:1:31::1
+
+interface Vlan250
+  no shutdown
+  no ip redirects
+  ip address 2.1.50.2/24
+  ipv6 address 2001:2:1:32::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 250 
+    ip 2.1.50.1
+  hsrp 250 ipv6
+    ip 2001:2:1:32::1
+
+interface Vlan251
+  no shutdown
+  no ip redirects
+  ip address 2.1.51.2/24
+  ipv6 address 2001:2:1:51::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 251 
+    ip 2.1.51.1
+  hsrp 251 ipv6
+    ip 2001:2:1:51::1
+
+interface Vlan252
+  no shutdown
+  no ip redirects
+  ip address 2.1.52.2/24
+  ipv6 address 2001:2:1:52::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 252 
+    ip 2.1.52.1
+  hsrp 252 ipv6
+    ip 2001:2:1:52::1
+
+interface Vlan253
+  no shutdown
+  no ip redirects
+  ip address 2.1.53.2/24
+  ipv6 address 2001:2:1:53::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 253 
+    ip 2.1.53.1
+  hsrp 253 ipv6
+    ip 2001:2:1:53::1
+
+interface Vlan254
+  no shutdown
+  no ip redirects
+  ip address 2.1.54.2/24
+  ipv6 address 2001:2:1:54::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 254 
+    ip 2.1.54.1
+  hsrp 254 ipv6
+    ip 2001:2:1:54::1
+
+interface Vlan255
+  no shutdown
+  no ip redirects
+  ip address 2.1.55.2/24
+  ipv6 address 2001:2:1:55::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 255 
+    ip 2.1.55.1
+  hsrp 255 ipv6
+    ip 2001:2:1:55::1
+
+interface Vlan256
+  no shutdown
+  no ip redirects
+  ip address 2.1.56.2/24
+  ipv6 address 2001:2:1:56::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 256 
+    ip 2.1.56.1
+  hsrp 256 ipv6
+    ip 2001:2:1:56::1
+
+interface Vlan257
+  no shutdown
+  no ip redirects
+  ip address 2.1.57.2/24
+  ipv6 address 2001:2:1:57::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 257 
+    ip 2.1.57.1
+  hsrp 257 ipv6
+    ip 2001:2:1:57::1
+
+interface Vlan258
+  no shutdown
+  no ip redirects
+  ip address 2.1.58.2/24
+  ipv6 address 2001:2:1:58::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 258 
+    ip 2.1.58.1
+  hsrp 258 ipv6
+    ip 2001:2:1:58::1
+
+interface Vlan259
+  no shutdown
+  no ip redirects
+  ip address 2.1.59.2/24
+  ipv6 address 2001:2:1:59::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 259 
+    ip 2.1.59.1
+  hsrp 259 ipv6
+    ip 2001:2:1:59::1
+
+interface Vlan260
+  no shutdown
+  no ip redirects
+  ip address 2.1.60.2/24
+  ipv6 address 2001:2:1:5a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 260 
+    ip 2.1.60.1
+  hsrp 260 ipv6
+    ip 2001:2:1:5a::1
+
+interface Vlan261
+  no shutdown
+  no ip redirects
+  ip address 2.1.61.2/24
+  ipv6 address 2001:2:1:5b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 261 
+    ip 2.1.61.1
+  hsrp 261 ipv6
+    ip 2001:2:1:5b::1
+
+interface Vlan262
+  no shutdown
+  no ip redirects
+  ip address 2.1.62.2/24
+  ipv6 address 2001:2:1:5c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 262 
+    ip 2.1.62.1
+  hsrp 262 ipv6
+    ip 2001:2:1:5c::1
+
+interface Vlan263
+  no shutdown
+  no ip redirects
+  ip address 2.1.63.2/24
+  ipv6 address 2001:2:1:5d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 263 
+    ip 2.1.63.1
+  hsrp 263 ipv6
+    ip 2001:2:1:5d::1
+
+interface Vlan264
+  no shutdown
+  no ip redirects
+  ip address 2.1.64.2/24
+  ipv6 address 2001:2:1:5e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 264 
+    ip 2.1.64.1
+  hsrp 264 ipv6
+    ip 2001:2:1:5e::1
+
+interface Vlan265
+  no shutdown
+  no ip redirects
+  ip address 2.1.65.2/24
+  ipv6 address 2001:2:1:5f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 265 
+    ip 2.1.65.1
+  hsrp 265 ipv6
+    ip 2001:2:1:5f::1
+
+interface Vlan266
+  no shutdown
+  no ip redirects
+  ip address 2.1.66.2/24
+  ipv6 address 2001:2:1:60::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 266 
+    ip 2.1.66.1
+  hsrp 266 ipv6
+    ip 2001:2:1:60::1
+
+interface Vlan267
+  no shutdown
+  no ip redirects
+  ip address 2.1.67.2/24
+  ipv6 address 2001:2:1:61::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 267 
+    ip 2.1.67.1
+  hsrp 267 ipv6
+    ip 2001:2:1:61::1
+
+interface Vlan268
+  no shutdown
+  no ip redirects
+  ip address 2.1.68.2/24
+  ipv6 address 2001:2:1:62::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 268 
+    ip 2.1.68.1
+  hsrp 268 ipv6
+    ip 2001:2:1:62::1
+
+interface Vlan269
+  no shutdown
+  no ip redirects
+  ip address 2.1.69.2/24
+  ipv6 address 2001:2:1:63::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 269 
+    ip 2.1.69.1
+  hsrp 269 ipv6
+    ip 2001:2:1:63::1
+
+interface Vlan270
+  no shutdown
+  no ip redirects
+  ip address 2.1.70.2/24
+  ipv6 address 2001:2:1:64::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 270 
+    ip 2.1.70.1
+  hsrp 270 ipv6
+    ip 2001:2:1:64::1
+
+interface Vlan271
+  no shutdown
+  no ip redirects
+  ip address 2.1.71.2/24
+  ipv6 address 2001:2:1:65::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 271 
+    ip 2.1.71.1
+  hsrp 271 ipv6
+    ip 2001:2:1:65::1
+
+interface Vlan272
+  no shutdown
+  no ip redirects
+  ip address 2.1.72.2/24
+  ipv6 address 2001:2:1:66::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 272 
+    ip 2.1.72.1
+  hsrp 272 ipv6
+    ip 2001:2:1:66::1
+
+interface Vlan273
+  no shutdown
+  no ip redirects
+  ip address 2.1.73.2/24
+  ipv6 address 2001:2:1:67::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 273 
+    ip 2.1.73.1
+  hsrp 273 ipv6
+    ip 2001:2:1:67::1
+
+interface Vlan274
+  no shutdown
+  no ip redirects
+  ip address 2.1.74.2/24
+  ipv6 address 2001:2:1:68::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 274 
+    ip 2.1.74.1
+  hsrp 274 ipv6
+    ip 2001:2:1:68::1
+
+interface Vlan275
+  no shutdown
+  no ip redirects
+  ip address 2.1.75.2/24
+  ipv6 address 2001:2:1:69::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 275 
+    ip 2.1.75.1
+  hsrp 275 ipv6
+    ip 2001:2:1:69::1
+
+interface Vlan276
+  no shutdown
+  no ip redirects
+  ip address 2.1.76.2/24
+  ipv6 address 2001:2:1:6a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 276 
+    ip 2.1.76.1
+  hsrp 276 ipv6
+    ip 2001:2:1:6a::1
+
+interface Vlan277
+  no shutdown
+  no ip redirects
+  ip address 2.1.77.2/24
+  ipv6 address 2001:2:1:6b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 277 
+    ip 2.1.77.1
+  hsrp 277 ipv6
+    ip 2001:2:1:6b::1
+
+interface Vlan278
+  no shutdown
+  no ip redirects
+  ip address 2.1.78.2/24
+  ipv6 address 2001:2:1:6c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 278 
+    ip 2.1.78.1
+  hsrp 278 ipv6
+    ip 2001:2:1:6c::1
+
+interface Vlan279
+  no shutdown
+  no ip redirects
+  ip address 2.1.79.2/24
+  ipv6 address 2001:2:1:6d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 279 
+    ip 2.1.79.1
+  hsrp 279 ipv6
+    ip 2001:2:1:6d::1
+
+interface Vlan280
+  no shutdown
+  no ip redirects
+  ip address 2.1.80.2/24
+  ipv6 address 2001:2:1:6e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 280 
+    ip 2.1.80.1
+  hsrp 280 ipv6
+    ip 2001:2:1:6e::1
+
+interface Vlan281
+  no shutdown
+  no ip redirects
+  ip address 2.1.81.2/24
+  ipv6 address 2001:2:1:6f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 281 
+    ip 2.1.81.1
+  hsrp 281 ipv6
+    ip 2001:2:1:6f::1
+
+interface Vlan282
+  no shutdown
+  no ip redirects
+  ip address 2.1.82.2/24
+  ipv6 address 2001:2:1:70::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 282 
+    ip 2.1.82.1
+  hsrp 282 ipv6
+    ip 2001:2:1:70::1
+
+interface Vlan283
+  no shutdown
+  no ip redirects
+  ip address 2.1.83.2/24
+  ipv6 address 2001:2:1:71::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 283 
+    ip 2.1.83.1
+  hsrp 283 ipv6
+    ip 2001:2:1:71::1
+
+interface Vlan284
+  no shutdown
+  no ip redirects
+  ip address 2.1.84.2/24
+  ipv6 address 2001:2:1:72::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 284 
+    ip 2.1.84.1
+  hsrp 284 ipv6
+    ip 2001:2:1:72::1
+
+interface Vlan285
+  no shutdown
+  no ip redirects
+  ip address 2.1.85.2/24
+  ipv6 address 2001:2:1:73::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 285 
+    ip 2.1.85.1
+  hsrp 285 ipv6
+    ip 2001:2:1:73::1
+
+interface Vlan286
+  no shutdown
+  no ip redirects
+  ip address 2.1.86.2/24
+  ipv6 address 2001:2:1:74::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 286 
+    ip 2.1.86.1
+  hsrp 286 ipv6
+    ip 2001:2:1:74::1
+
+interface Vlan287
+  no shutdown
+  no ip redirects
+  ip address 2.1.87.2/24
+  ipv6 address 2001:2:1:75::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 287 
+    ip 2.1.87.1
+  hsrp 287 ipv6
+    ip 2001:2:1:75::1
+
+interface Vlan288
+  no shutdown
+  no ip redirects
+  ip address 2.1.88.2/24
+  ipv6 address 2001:2:1:76::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 288 
+    ip 2.1.88.1
+  hsrp 288 ipv6
+    ip 2001:2:1:76::1
+
+interface Vlan289
+  no shutdown
+  no ip redirects
+  ip address 2.1.89.2/24
+  ipv6 address 2001:2:1:77::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 289 
+    ip 2.1.89.1
+  hsrp 289 ipv6
+    ip 2001:2:1:77::1
+
+interface Vlan290
+  no shutdown
+  no ip redirects
+  ip address 2.1.90.2/24
+  ipv6 address 2001:2:1:78::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 290 
+    ip 2.1.90.1
+  hsrp 290 ipv6
+    ip 2001:2:1:78::1
+
+interface Vlan291
+  no shutdown
+  no ip redirects
+  ip address 2.1.91.2/24
+  ipv6 address 2001:2:1:79::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 291 
+    ip 2.1.91.1
+  hsrp 291 ipv6
+    ip 2001:2:1:79::1
+
+interface Vlan292
+  no shutdown
+  no ip redirects
+  ip address 2.1.92.2/24
+  ipv6 address 2001:2:1:7a::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 292 
+    ip 2.1.92.1
+  hsrp 292 ipv6
+    ip 2001:2:1:7a::1
+
+interface Vlan293
+  no shutdown
+  no ip redirects
+  ip address 2.1.93.2/24
+  ipv6 address 2001:2:1:7b::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 293 
+    ip 2.1.93.1
+  hsrp 293 ipv6
+    ip 2001:2:1:7b::1
+
+interface Vlan294
+  no shutdown
+  no ip redirects
+  ip address 2.1.94.2/24
+  ipv6 address 2001:2:1:7c::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 294 
+    ip 2.1.94.1
+  hsrp 294 ipv6
+    ip 2001:2:1:7c::1
+
+interface Vlan295
+  no shutdown
+  no ip redirects
+  ip address 2.1.95.2/24
+  ipv6 address 2001:2:1:7d::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 295 
+    ip 2.1.95.1
+  hsrp 295 ipv6
+    ip 2001:2:1:7d::1
+
+interface Vlan296
+  no shutdown
+  no ip redirects
+  ip address 2.1.96.2/24
+  ipv6 address 2001:2:1:7e::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 296 
+    ip 2.1.96.1
+  hsrp 296 ipv6
+    ip 2001:2:1:7e::1
+
+interface Vlan297
+  no shutdown
+  no ip redirects
+  ip address 2.1.97.2/24
+  ipv6 address 2001:2:1:7f::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 297 
+    ip 2.1.97.1
+  hsrp 297 ipv6
+    ip 2001:2:1:7f::1
+
+interface Vlan298
+  no shutdown
+  no ip redirects
+  ip address 2.1.98.2/24
+  ipv6 address 2001:2:1:80::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 298 
+    ip 2.1.98.1
+  hsrp 298 ipv6
+    ip 2001:2:1:80::1
+
+interface Vlan299
+  no shutdown
+  no ip redirects
+  ip address 2.1.99.2/24
+  ipv6 address 2001:2:1:81::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 299 
+    ip 2.1.99.1
+  hsrp 299 ipv6
+    ip 2001:2:1:81::1
+
+interface Vlan300
+  no shutdown
+  no ip redirects
+  ip address 2.1.100.2/24
+  ipv6 address 2001:2:1:82::2/64
+  no ipv6 redirects
+  hsrp version 2
+  hsrp 300 
+    ip 2.1.100.1
+  hsrp 300 ipv6
+    ip 2001:2:1:82::1
+
+interface port-channel100
+  switchport
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+
+interface port-channel200
+  switchport
+  switchport mode trunk
+  vpc 200
+
+interface port-channel211
+  ip address 2.211.1.3/31
+  ipv6 address 2001:2:211:1::3/64
+  ip ospf network point-to-point
+  ip router ospf 100 area 0.0.0.0
+  ip pim sparse-mode
+
+interface nve1
+  no shutdown
+  source-interface loopback1
+  member vni 11001
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11002
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11003
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11004
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11005
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11006
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11007
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11008
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11009
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11010
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11011
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11012
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11013
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11014
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11015
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11016
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11017
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11018
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11019
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11020
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11021
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11022
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11023
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11024
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11025
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11026
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11027
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11028
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11029
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11030
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11031
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11032
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11033
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11034
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11035
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11036
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11037
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11038
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11039
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11040
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11041
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11042
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11043
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11044
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11045
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11046
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11047
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11048
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11049
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 11050
+    ingress-replication protocol static
+      peer-ip 2.23.23.23
+  member vni 12001
+    mcast-group 225.1.1.11
+  member vni 12002
+    mcast-group 225.1.1.11
+  member vni 12003
+    mcast-group 225.1.1.12
+  member vni 12004
+    mcast-group 225.1.1.12
+  member vni 12005
+    mcast-group 225.1.1.13
+  member vni 12006
+    mcast-group 225.1.1.13
+  member vni 12007
+    mcast-group 225.1.1.14
+  member vni 12008
+    mcast-group 225.1.1.14
+  member vni 12009
+    mcast-group 225.1.1.15
+  member vni 12010
+    mcast-group 225.1.1.15
+  member vni 12011
+    mcast-group 225.1.1.16
+  member vni 12012
+    mcast-group 225.1.1.16
+  member vni 12013
+    mcast-group 225.1.1.17
+  member vni 12014
+    mcast-group 225.1.1.17
+  member vni 12015
+    mcast-group 225.1.1.18
+  member vni 12016
+    mcast-group 225.1.1.18
+  member vni 12017
+    mcast-group 225.1.1.19
+  member vni 12018
+    mcast-group 225.1.1.19
+  member vni 12019
+    mcast-group 225.1.1.20
+  member vni 12020
+    mcast-group 225.1.1.20
+  member vni 12021
+    mcast-group 225.1.1.21
+  member vni 12022
+    mcast-group 225.1.1.21
+  member vni 12023
+    mcast-group 225.1.1.22
+  member vni 12024
+    mcast-group 225.1.1.22
+  member vni 12025
+    mcast-group 225.1.1.23
+  member vni 12026
+    mcast-group 225.1.1.23
+  member vni 12027
+    mcast-group 225.1.1.24
+  member vni 12028
+    mcast-group 225.1.1.24
+  member vni 12029
+    mcast-group 225.1.1.25
+  member vni 12030
+    mcast-group 225.1.1.25
+  member vni 12031
+    mcast-group 225.1.1.26
+  member vni 12032
+    mcast-group 225.1.1.26
+  member vni 12033
+    mcast-group 225.1.1.27
+  member vni 12034
+    mcast-group 225.1.1.27
+  member vni 12035
+    mcast-group 225.1.1.28
+  member vni 12036
+    mcast-group 225.1.1.28
+  member vni 12037
+    mcast-group 225.1.1.29
+  member vni 12038
+    mcast-group 225.1.1.29
+  member vni 12039
+    mcast-group 225.1.1.30
+  member vni 12040
+    mcast-group 225.1.1.30
+  member vni 12041
+    mcast-group 225.1.1.31
+  member vni 12042
+    mcast-group 225.1.1.31
+  member vni 12043
+    mcast-group 225.1.1.32
+  member vni 12044
+    mcast-group 225.1.1.32
+  member vni 12045
+    mcast-group 225.1.1.33
+  member vni 12046
+    mcast-group 225.1.1.33
+  member vni 12047
+    mcast-group 225.1.1.34
+  member vni 12048
+    mcast-group 225.1.1.34
+  member vni 12049
+    mcast-group 225.1.1.35
+  member vni 12050
+    mcast-group 225.1.1.35
+
+interface Ethernet1/1
+  channel-group 211 mode active
+  no shutdown
+
+interface Ethernet1/2
+  no shutdown
+
+interface Ethernet1/3
+  no shutdown
+
+interface Ethernet1/4
+  no shutdown
+
+interface Ethernet1/5
+  no shutdown
+
+interface Ethernet1/6
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  no shutdown
+
+interface Ethernet1/9
+  vrf member peer-keep-alive
+  ip address 5.5.5.5/24
+  no shutdown
+
+interface Ethernet1/10
+  channel-group 100 mode active
+  no shutdown
+
+interface Ethernet1/11
+  no shutdown
+
+interface Ethernet1/12
+  no shutdown
+
+interface Ethernet1/13
+  no shutdown
+
+interface Ethernet1/14
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  no shutdown
+
+interface Ethernet1/18
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  no shutdown
+
+interface Ethernet1/22
+  no shutdown
+
+interface Ethernet1/23
+  no shutdown
+
+interface Ethernet1/24
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  no shutdown
+
+interface Ethernet1/27
+  no shutdown
+
+interface Ethernet1/28
+  no shutdown
+
+interface Ethernet1/29
+  no shutdown
+
+interface Ethernet1/30
+  no shutdown
+
+interface Ethernet1/31
+  no shutdown
+
+interface Ethernet1/32
+  no shutdown
+
+interface Ethernet1/33
+  no shutdown
+
+interface Ethernet1/34
+  no shutdown
+
+interface Ethernet1/35
+  channel-group 200 mode active
+  no shutdown
+
+interface Ethernet1/36
+  no shutdown
+
+interface Ethernet1/37
+  no shutdown
+
+interface Ethernet1/38
+  no shutdown
+
+interface Ethernet1/39
+  no shutdown
+
+interface Ethernet1/40
+  no shutdown
+
+interface Ethernet1/41
+  no shutdown
+
+interface Ethernet1/42
+  no shutdown
+
+interface Ethernet1/43
+  no shutdown
+
+interface Ethernet1/44
+  no shutdown
+
+interface Ethernet1/45
+  no shutdown
+
+interface Ethernet1/46
+  no shutdown
+
+interface Ethernet1/47
+  no shutdown
+
+interface Ethernet1/48
+  no shutdown
+
+interface Ethernet1/49
+
+interface Ethernet1/50
+
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+
+interface Ethernet1/54
+
+interface mgmt0
+  vrf member management
+  ip address 10.197.127.53/25
+
+interface loopback0
+  ip address 2.211.1.1/32
+  ip ospf network point-to-point
+  ip router ospf 100 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback1
+  ip address 2.21.21.21/32
+  ip address 2.20.20.20/32 secondary
+  ip ospf network point-to-point
+  ip router ospf 100 area 0.0.0.0
+  ip pim sparse-mode
+icam monitor scale
+
+line console
+  exec-timeout 0
+  terminal width  511
+  speed 115200
+line vty
+boot nxos bootflash:/nxos.10.1.0.20.bin 
+router ospf 100
+  router-id 2.211.1.1
+mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23
+
+no logging console
+
+

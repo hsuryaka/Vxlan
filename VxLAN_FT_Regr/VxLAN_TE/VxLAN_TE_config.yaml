@@ -1,0 +1,3505 @@
+# ------------------------------------------------------
+# Device list
+# ------------------------------------------------------
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : Fx_Core3
+#            node2_s1_vpc_1  : S1_BGW1_Ely_Pri
+#            node3_s1_vpc_2  : S1_BGW1_Ely_Sec
+#            node4_s1_leaf_1 : Tecate_Vtep
+#            node5_s1_access : Paris_L2
+#            node6_core1 : Gx2B_Core1
+#            node7_core2 : Gx2B_Core2
+# ------------------------------------------------------
+parameters:
+    context: cli
+    # ------------------------------------------------------
+    # Features to be enabled
+    # ------------------------------------------------------
+    enable_features:
+        node1_s1_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+            - telnet
+
+        node2_s1_vpc_1: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node3_s1_vpc_2: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node4_s1_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node5_s1_access: 
+            - lldp
+            - lacp
+        node6_core1: 
+            - lldp
+            - lacp
+        node7_core2: 
+            - lldp
+            - lacp    
+    # ------------------------------------------------------
+    # TCAM Carving configs
+    # ------------------------------------------------------
+    # tcam_carving_config:
+    #     node2_s1_vpc_1: |
+    #         hardware access-list tcam region ing-racl 768
+    #         hardware access-list tcam region ing-sup 768
+    #     node3_s1_vpc_2: |
+    #         hardware access-list tcam region ing-racl 768
+    #         hardware access-list tcam region ing-sup 768
+    #     node4_s1_leaf_1: |
+    #         hardware access-list tcam region ing-racl 768
+    #         hardware access-list tcam region ing-sup 768
+    
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config:
+
+        # Site-1 SPINE --------------------------
+        node1_s1_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 192.168.3.1
+                    prefix_length: 255.255.255.255
+
+    #         #-----------------------------------------------#
+    #         # Setting up PO interfaces with MTU
+    #         nd01_nd02_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd01_nd02_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd01_nd03_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd01_nd03_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd01_nd04_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd01_nd04_1_2:
+    #             mtu: 9216
+    #             enabled: True
+            
+    #         #-----------------------------------------------#
+    #         # SPINE to VPC-1 Uplink number 1 - PO
+    #         Port-channel111:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To S1-VPC-1 ###"
+    #             mtu: 9216
+    #             add_members: nd01_nd02_1_1, nd01_nd02_1_2
+    #             ipv4:
+    #                 ip: 1.11.1.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to VPC-1 Uplink number 2 - L3 int
+    #         nd01_nd02_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-1 ###"
+    #             ipv4:
+    #                 ip: 1.11.2.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to VPC-1 Uplink number 3 - L3 int
+    #         nd01_nd02_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-1 ###"
+    #             ipv4:
+    #                 ip: 1.11.3.2
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # SPINE to VPC-2 Uplink number 1 - PO
+    #         Port-channel112:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To S1-VPC-2 ###"
+    #             mtu: 9216
+    #             add_members: nd01_nd03_1_1, nd01_nd03_1_2
+    #             ipv4:
+    #                 ip: 1.12.1.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to VPC-2 Uplink number 2 - L3 int
+    #         nd01_nd03_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-2 ###"
+    #             ipv4:
+    #                 ip: 1.12.2.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to VPC-2 Uplink number 3 - L3 int
+    #         nd01_nd03_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-1 ###"
+    #             ipv4:
+    #                 ip: 1.12.3.2
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # SPINE to STD Uplink number 1 - PO
+    #         Port-channel113:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To S1-STD-1 ###"
+    #             mtu: 9216
+    #             add_members: nd01_nd04_1_1, nd01_nd04_1_2
+    #             ipv4:
+    #                 ip: 1.13.1.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to STD Uplink number 2 - L3 int
+    #         nd01_nd04_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-2 ###"
+    #             ipv4:
+    #                 ip: 1.13.2.2
+    #                 prefix_length: 255.255.255.254
+    #         # SPINE to STD Uplink number 3 - L3 int
+    #         nd01_nd04_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-VPC-1 ###"
+    #             ipv4:
+    #                 ip: 1.13.3.2
+    #                 prefix_length: 255.255.255.254
+
+    #     # Site-1 VPC-1 --------------------------
+    #     node2_s1_vpc_1:
+    #         loopback0:
+    #             description: "### Router ID Loopback ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.11.1.1
+    #                 prefix_length: 255.255.255.255
+    #         loopback1:
+    #             description: "### VTEP loopback interface ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.11.11.11
+    #                 prefix_length: 255.255.255.255
+    #             ipv4_sec:
+    #                 ip: 1.10.10.10
+    #                 prefix_length: 255.255.255.255
+            
+    #         #-----------------------------------------------#
+    #         # Setting up PO interfaces with MTU
+    #         nd02_nd01_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd02_nd01_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd02_nd05_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd02_nd05_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd02_nd03_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd02_nd03_1_3:
+    #             mtu: 9216
+    #             enabled: True
+            
+    #         #-----------------------------------------------#
+    #         # VPC-1 to SPINE
+    #         Port-channel111:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To SPINE ###"
+    #             mtu: 9216
+    #             add_members: nd02_nd01_1_1, nd02_nd01_1_2
+    #             ipv4:
+    #                 ip: 1.11.1.3
+    #                 prefix_length: 255.255.255.254
+    #         nd02_nd01_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To SPINE ###"
+    #             ipv4:
+    #                 ip: 1.11.2.3
+    #                 prefix_length: 255.255.255.254
+    #         nd02_nd01_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To SPINE ###"
+    #             ipv4:
+    #                 ip: 1.11.3.3
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # VPC Peer-keep-alive
+    #         nd02_nd03_1_1:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### Peer-keep-alive ###"
+    #             ipv4:
+    #                 ip: 1.1.1.2
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # VPC Peer-Link
+    #         Port-channel10:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "2,1001-1020"
+    #             add_members: nd02_nd03_1_2, nd02_nd03_1_3
+
+    #         #-----------------------------------------------#
+    #         # VPC PO link to ACCESS
+    #         Port-channel100:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1001-1020"
+    #             add_members: nd02_nd05_1_1,nd02_nd05_1_2
+
+    #         #-----------------------------------------------#
+    #         # VPC Pri Orphan port
+    #         nd02_ixia_1_1:
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "2,1001-1020"
+
+    #         #-----------------------------------------------#
+    #         # VPC routing link to peer
+    #         Vlan2:
+    #             description: "Vlan2 - peer gateway vpc peer-link"
+    #             enabled: True
+    #             mtu: 9216
+    #             ipv4:
+    #                 redirect: False
+    #                 ip: 2.2.2.2
+    #                 prefix_length: 255.255.255.254
+    #             ipv6:
+    #                 redirect: False
+            
+    #         #-----------------------------------------------#
+    #         # SVI Configs
+    #         Vlan1001-1010:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.1.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:1:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan1011-1020:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.11.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:11:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan3001-3010:
+    #             description: "L3VNI"
+    #             mtu: 9216
+    #             enabled: True
+    #             ip_forward: True
+    #             ipv6_forward: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 redirect: False
+    #             ipv6:
+    #                 redirect: False
+            
+    #         #-----------------------------------------------#
+    #         # NVE Configs
+    #         nve1:
+    #             description: 'NVE Interface'
+    #             nve_host_reachability_protocol: bgp
+    #             nve_src_intf_loopback: loopback1
+    #             nve_src_intf_holddown: 240
+    #             nve_global_ir_proto: bgp
+    #             nve_global_suppress_arp: True
+    #             nve_adv_virtual_rmac: True
+    #             enabled: True
+    #             nve_vni_dict:
+    #                 2001001-2001005:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001006-2001010:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001011-2001015:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001016-2001020:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 3003001-3003010:
+    #                     nve_vni_type: 'L3'
+    #                     nve_vni_associate_vrf: True
+        
+    #     # Site-1 VPC-2 --------------------------
+    #     node3_s1_vpc_2:
+    #         loopback0:
+    #             description: "### Router ID Loopback ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.12.1.1
+    #                 prefix_length: 255.255.255.255
+    #         loopback1:
+    #             description: "### VTEP loopback interface ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.12.12.12
+    #                 prefix_length: 255.255.255.255
+    #             ipv4_sec:
+    #                 ip: 1.10.10.10
+    #                 prefix_length: 255.255.255.255
+            
+    #         #-----------------------------------------------#
+    #         # Setting up PO interfaces with MTU
+    #         nd03_nd01_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd03_nd01_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd03_nd05_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd03_nd05_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd03_nd02_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd03_nd02_1_3:
+    #             mtu: 9216
+    #             enabled: True
+            
+    #         #-----------------------------------------------#
+    #         # VPC-2 to SPINE
+    #         Port-channel112:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To SPINE ###"
+    #             mtu: 9216
+    #             add_members: nd03_nd01_1_1, nd03_nd01_1_2
+    #             ipv4:
+    #                 ip: 1.12.1.3
+    #                 prefix_length: 255.255.255.254
+    #         nd03_nd01_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To SPINE ###"
+    #             ipv4:
+    #                 ip: 1.12.2.3
+    #                 prefix_length: 255.255.255.254
+    #         nd03_nd01_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To SPINE ###"
+    #             ipv4:
+    #                 ip: 1.12.3.3
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # VPC Peer-keep-alive
+    #         nd03_nd02_1_1:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### Peer-keep-alive ###"
+    #             ipv4:
+    #                 ip: 1.1.1.3
+    #                 prefix_length: 255.255.255.254
+
+    #         #-----------------------------------------------#
+    #         # VPC Peer-Link
+    #         Port-channel10:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "2,1001-1020"
+    #             add_members: nd03_nd02_1_2, nd03_nd02_1_3
+
+
+    #         #-----------------------------------------------#
+    #         # VPC Pri Orphan port
+    #         nd03_ixia_1_1:
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "2,1001-1020"
+
+
+    #         #-----------------------------------------------#
+    #         # VPC PO link to ACCESS
+    #         Port-channel100:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1001-1020"
+    #             add_members: nd03_nd05_1_1,nd03_nd05_1_2
+
+    #         #-----------------------------------------------#
+    #         # VPC routing link to peer
+    #         Vlan2:
+    #             description: "Vlan2 - peer gateway vpc peer-link"
+    #             enabled: True
+    #             mtu: 9216
+    #             ipv4:
+    #                 redirect: False
+    #                 ip: 2.2.2.3
+    #                 prefix_length: 255.255.255.254
+    #             ipv6:
+    #                 redirect: False
+
+    #         #-----------------------------------------------#
+    #         # SVI Configs
+    #         Vlan1001-1010:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.1.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:1:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan1011-1020:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.11.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:11:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan3001-3010:
+    #             description: "L3VNI"
+    #             mtu: 9216
+    #             enabled: True
+    #             ip_forward: True
+    #             ipv6_forward: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 redirect: False
+    #             ipv6:
+    #                 redirect: False
+            
+    #         #-----------------------------------------------#
+    #         # NVE Configs
+    #         nve1:
+    #             description: 'NVE Interface'
+    #             nve_host_reachability_protocol: bgp
+    #             nve_src_intf_loopback: loopback1
+    #             nve_src_intf_holddown: 240
+    #             nve_global_ir_proto: bgp
+    #             nve_global_suppress_arp: True
+    #             nve_adv_virtual_rmac: True
+    #             enabled: True
+    #             nve_vni_dict:
+    #                 2001001-2001005:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001006-2001010:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001011-2001015:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001016-2001020:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 3003001-3003010:
+    #                     nve_vni_type: 'L3'
+    #                     nve_vni_associate_vrf: True
+        
+    #     # Site-1 STD-LEAF --------------------------
+    #     node4_s1_leaf_1:
+    #         loopback0:
+    #             description: "### Router ID Loopback ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.13.1.1
+    #                 prefix_length: 255.255.255.255
+    #         loopback1:
+    #             description: "### VTEP loopback interface ###"
+    #             enabled: True
+    #             ipv4:
+    #                 ip: 1.13.13.13
+    #                 prefix_length: 255.255.255.255
+            
+    #         #-----------------------------------------------#
+    #         # Setting up PO interfaces with MTU
+    #         nd04_nd01_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd04_nd01_1_2:
+    #             mtu: 9216
+    #             enabled: True
+            
+    #         #-----------------------------------------------#
+    #         # LEAF to SPINE
+    #         Port-channel113:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             description: "### To S1-SPINE ###"
+    #             mtu: 9216
+    #             add_members: nd05_nd02_1_1, nd05_nd02_1_2
+    #             ipv4:
+    #                 ip: 1.13.1.3
+    #                 prefix_length: 255.255.255.254
+    #         nd04_nd01_1_3:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-BGW-1 ###"
+    #             ipv4:
+    #                 ip: 1.13.2.3
+    #                 prefix_length: 255.255.255.254
+    #         nd04_nd01_1_4:
+    #             enabled: True
+    #             mtu: 9216
+    #             description: "### To S2-BGW-1 ###"
+    #             ipv4:
+    #                 ip: 1.13.3.3
+    #                 prefix_length: 255.255.255.254
+            
+    #         #-----------------------------------------------#
+    #         # STD to IXIA
+    #         nd04_tgen_1_1:
+    #             enabled: True
+    #             description: edge
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1001-1010"
+    #         nd04_tgen_1_2:
+    #             enabled: True
+    #             description: edge
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1011-1020"
+
+    #         #-----------------------------------------------#
+    #         # SVI Configs
+    #         Vlan1001-1010:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.1.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:1:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan1011-1020:
+    #             description: "L2VNI"
+    #             mtu: 9216
+    #             fabric_forwarding_mode: anycast-gateway
+    #             enabled: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 start_ipv4_addr: 10.11.0.1
+    #                 start_ipv4_prefix_len: 255.255.0.0
+    #                 step_ipv4_addr: 0.1.0.0
+    #                 step_ipv4_len: 0.0.0.0
+    #                 redirect: False
+    #             ipv6:
+    #                 start_ipv6_addr: 2001:10:11:0::1
+    #                 start_ipv6_prefix_len: 64
+    #                 step_ipv6_addr: 0:0:1:0::0
+    #                 step_ipv6_prefix_len: 0
+    #                 redirect: False
+    #         Vlan3001-3010:
+    #             description: "L3VNI"
+    #             mtu: 9216
+    #             enabled: True
+    #             ip_forward: True
+    #             ipv6_forward: True
+    #             vrf:
+    #                 start: 1
+    #                 step: 1
+    #                 prefix: 'VRF'
+    #             ipv4:
+    #                 redirect: False
+    #             ipv6:
+    #                 redirect: False
+
+    #         #-----------------------------------------------#
+    #         # NVE Configs
+    #         nve1:
+    #             description: 'NVE Interface'
+    #             nve_host_reachability_protocol: bgp
+    #             nve_src_intf_loopback: loopback1
+    #             nve_src_intf_holddown: 240
+    #             nve_global_ir_proto: bgp
+    #             nve_global_suppress_arp: True
+    #             enabled: True
+    #             nve_vni_dict:
+    #                 2001001-2001005:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001006-2001010:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001011-2001015:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.1.1
+    #                     nve_vni_suppress_arp: True
+    #                 2001016-2001020:
+    #                     nve_vni_type: 'L2'
+    #                     nve_vni_mcast_group: 225.10.2.1
+    #                     nve_vni_suppress_arp: True
+    #                 3003001-3003010:
+    #                     nve_vni_type: 'L3'
+    #                     nve_vni_associate_vrf: True
+    
+    #     # Site-1 ACCESS --------------------------
+    #     node5_s1_access:
+
+    #         #-----------------------------------------------#
+    #         # Setting up PO interfaces with MTU
+    #         nd05_nd02_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd05_nd02_1_2:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd05_nd03_1_1:
+    #             mtu: 9216
+    #             enabled: True
+    #         nd05_nd03_1_2:
+    #             mtu: 9216
+    #             enabled: True
+            
+    #         #-----------------------------------------------#
+    #         # VPC PO link to VPC Peers
+    #         Port-channel100:
+    #             channel_group_mode: active
+    #             enabled: True
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1001-1020"
+    #             add_members: nd05_nd02_1_1,nd05_nd02_1_2,nd05_nd03_1_1,nd05_nd03_1_2 
+
+    #         #-----------------------------------------------#
+    #         # SPINE to TGEN for Site internal emulation
+    #         nd05_tgen_1_1:
+    #             enabled: True
+    #             description: edge
+    #             switchport_enable: True
+    #             switchport_mode: trunk
+    #             trunk_vlans: "1001-1020"
+    
+    # # ------------------------------------------------------
+    # # OSPF COnfigs
+    # # ------------------------------------------------------
+    ospf_config:
+        
+        # S1-SPINE
+        node1_s1_spine:
+            default:
+                instance: "100"
+                router_id: 192.168.3.1
+    #             log_adjacency_changes: True
+    #             log_adjacency_changes_detail: True
+                interface_config:
+                    # po111:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+                    # nd01_nd02_1_3:
+                    nd01_nd02_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        # if_cost: 1
+                        # if_type: 'point-to-point'
+                    # nd01_nd02_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 po112:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd01_nd03_1_3:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd01_nd03_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 po113:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd01_nd04_1_3:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd01_nd04_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 lo0:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+        
+    #     # S1-VPC-1
+    #     node2_s1_vpc_1:
+    #         default:
+    #             instance: p1
+    #             router_id: 1.11.1.1
+    #             log_adjacency_changes: True
+    #             log_adjacency_changes_detail: True
+    #             interface_config:
+    #                 po111:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd02_nd01_1_3:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd02_nd01_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 lo0:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                 lo1:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                 Vlan2:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+
+    #     # S1-VPC-2
+    #     node3_s1_vpc_2:
+    #         default:
+    #             instance: p1
+    #             router_id: 1.12.1.1
+    #             log_adjacency_changes: True
+    #             log_adjacency_changes_detail: True
+    #             interface_config:
+    #                 po112:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd03_nd01_1_3:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd03_nd01_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 lo0:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                 lo1:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                 Vlan2:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+
+    #     # S1-STD-LEAF
+    #     node4_s1_leaf_1:
+    #         default:
+    #             instance: p1
+    #             router_id: 1.13.1.1
+    #             log_adjacency_changes: True
+    #             log_adjacency_changes_detail: True
+    #             interface_config:
+    #                 po113:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd04_nd01_1_3:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 nd04_nd01_1_4:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                     if_cost: 1
+    #                     if_type: 'point-to-point'
+    #                 lo0:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+    #                 lo1:
+    #                     if_admin_control: True
+    #                     area: 0.0.0.0
+        
+    # ------------------------------------------------------
+    # VLAN Configs
+    # ------------------------------------------------------
+    vlan_config: 
+    #     node2_s1_vpc_1:
+    #         -   vlan: "1001-1020"
+    #             vn_segment_id: "2001001-2001020"
+    #         -   vlan: "3001-3010"
+    #             vn_segment_id: "3003001-3003010"
+    #         -   vlan: "2"
+    #     node3_s1_vpc_2:
+    #         -   vlan: "1001-1020"
+    #             vn_segment_id: "2001001-2001020"
+    #         -   vlan: "3001-3010"
+    #             vn_segment_id: "3003001-3003010"
+    #         -   vlan: "2"
+        node4_s1_leaf_1:
+            -   vlan: "101-102"
+                vn_segment_id: "100101-100102"
+            # -   vlan: "3001-3010"
+            #     vn_segment_id: "3003001-3003010"
+    #     node5_s1_access:
+    #         -   vlan: "1001-1020"
+
+    # # ------------------------------------------------------
+    # # route-map Configs
+    # # ------------------------------------------------------
+    route_policy_config:
+        node1_s1_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+    #     node2_s1_vpc_1:
+    #         -   route_policy: "RMAP_PERMIT_ALL"
+    #             route_disposition: "permit"
+    #             statement_name: 10
+    #     node3_s1_vpc_2:
+    #         -   route_policy: "RMAP_PERMIT_ALL"
+    #             route_disposition: "permit"
+    #             statement_name: 10
+    #     node4_s1_leaf_1:
+    #         -   route_policy: "RMAP_PERMIT_ALL"
+    #             route_disposition: "permit"
+    #             statement_name: 10
+    
+    # # ------------------------------------------------------
+    # # VxLAN Configs
+    # # ------------------------------------------------------
+    # vxlan_config:
+    #     node2_s1_vpc_1:
+    #         fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    #     node3_s1_vpc_2:
+    #         fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    #     node4_s1_leaf_1:
+    #         fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    
+    # # ------------------------------------------------------
+    # # VxLAN EVPN Configs
+    # # ------------------------------------------------------
+    # evpn_config:
+    #     node2_s1_vpc_1:
+    #         vni_list:
+    #             -   vni_id: 2001001-2001020
+    #                 rd: auto
+    #                 rt_list:
+    #                     -   rt: "auto"
+    #                         rt_type: both
+        
+    #     node3_s1_vpc_2:
+    #         vni_list:
+    #             -   vni_id: 2001001-2001020
+    #                 rd: auto
+    #                 rt_list:
+    #                     -   rt: "auto"
+    #                         rt_type: both
+        
+    #     node4_s1_leaf_1:
+    #         vni_list:
+    #             -   vni_id: 2001001-2001020
+    #                 rd: auto
+    #                 rt_list:
+    #                     -   rt: "auto"
+    #                         rt_type: both
+
+    # # ------------------------------------------------------
+    # # VRF Configs
+    # # ------------------------------------------------------
+    vrf_config:
+        node2_s1_vpc_1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        
+    #     node3_s1_vpc_2:
+    #         vrf_list:
+    #             -   prefix: "VRF"
+    #                 vrf_name: "1-10"
+    #                 vni: "3003001-3003010"
+    #                 rd: 'auto'
+    #                 address_family_attr:
+    #                   - af_name: 'ipv4 unicast'
+    #                     rt_attr: 'auto'
+    #                     rt_type: 'both'
+    #                     protocols:
+    #                      - protocol: 'evpn'
+    #                        rt_evpn: True
+    #                   - af_name: 'ipv6 unicast'
+    #                     rt_attr: 'auto'
+    #                     rt_type: 'both'
+    #                     protocols:
+    #                      - protocol: 'evpn'
+    #                        rt_evpn: True
+        
+    #     node4_s1_leaf_1: 
+    #         vrf_list:
+    #             -   prefix: "VRF"
+    #                 vrf_name: "1-10"
+    #                 vni: "3003001-3003010"
+    #                 rd: 'auto'
+    #                 address_family_attr:
+    #                   - af_name: 'ipv4 unicast'
+    #                     rt_attr: 'auto'
+    #                     rt_type: 'both'
+    #                     protocols:
+    #                      - protocol: 'evpn'
+    #                        rt_evpn: True
+    #                   - af_name: 'ipv6 unicast'
+    #                     rt_attr: 'auto'
+    #                     rt_type: 'both'
+    #                     protocols:
+    #                      - protocol: 'evpn'
+    #                        rt_evpn: True
+
+    # # ------------------------------------------------------
+    # # PIM Configs
+    # # ------------------------------------------------------
+    # pim_config:
+    #     # S1-SPINE
+    #     node1_s1_spine:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 224.0.0.0/4
+    #             interface_config:
+    #                 po111:
+    #                     mode: sparse-mode
+    #                 nd01_nd02_1_3:
+    #                     mode: sparse-mode
+    #                 nd01_nd02_1_4:
+    #                     mode: sparse-mode
+    #                 po112:
+    #                     mode: sparse-mode
+    #                 nd01_nd03_1_3:
+    #                     mode: sparse-mode
+    #                 nd01_nd03_1_4:
+    #                     mode: sparse-mode
+    #                 po113:
+    #                     mode: sparse-mode
+    #                 nd01_nd04_1_3:
+    #                     mode: sparse-mode
+    #                 nd01_nd04_1_4:
+    #                     mode: sparse-mode
+    #                 lo0:
+    #                     mode: sparse-mode
+        
+    #     # S1-VPC-1
+    #     node2_s1_vpc_1:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 224.0.0.0/4
+    #             interface_config:
+    #                 po111:
+    #                     mode: sparse-mode
+    #                 nd02_nd01_1_3:
+    #                     mode: sparse-mode
+    #                 nd02_nd01_1_4:
+    #                     mode: sparse-mode
+    #                 lo0:
+    #                     mode: sparse-mode
+    #                 lo1:
+    #                     mode: sparse-mode
+    #                 Vlan2:
+    #                     mode: sparse-mode
+        
+    #     # S1-VPC-2
+    #     node3_s1_vpc_2:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 224.0.0.0/4
+    #             interface_config:
+    #                 po112:
+    #                     mode: sparse-mode
+    #                 nd03_nd01_1_3:
+    #                     mode: sparse-mode
+    #                 nd03_nd01_1_4:
+    #                     mode: sparse-mode
+    #                 lo0:
+    #                     mode: sparse-mode
+    #                 lo1:
+    #                     mode: sparse-mode
+    #                 Vlan2:
+    #                     mode: sparse-mode
+
+    #     # S1-STD-LEAF
+    #     node4_s1_leaf_1:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 224.0.0.0/4
+    #             interface_config:
+    #                 po113:
+    #                     mode: sparse-mode
+    #                 nd04_nd01_1_3:
+    #                     mode: sparse-mode
+    #                 nd04_nd01_1_4:
+    #                     mode: sparse-mode
+    #                 lo0:
+    #                     mode: sparse-mode
+    #                 lo1:
+    #                     mode: sparse-mode
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config:
+        
+        # S1-SPINE
+        node1_s1_spine:
+            default:
+                bgp_id: 65001
+                router_id: 192.168.3.1
+    #             keepalive_interval: 90
+    #             prefix_peer_timeout: 270
+    #             holdtime: 270
+    #             graceful_restart_restart_time: 600
+    #             log_neighbor_changes: True
+    #             address_family_attr:
+    #                 -   af_name: 'l2vpn evpn'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                 -   af_name: 'ipv4 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #                 -   af_name: 'ipv6 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #             neighbor_attr:
+    #                 -   neighbor_id: 1.11.1.1
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'VPC-1 Connectivity to 1.11.1.1'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+    #                             nbr_af_route_reflector_client: True
+    #                 -   neighbor_id: 1.12.1.1
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'VPC-2 Connectivity to 1.12.1.1'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+    #                             nbr_af_route_reflector_client: True
+    #                 -   neighbor_id: 1.13.1.1
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'STD-LEAF Connectivity to 1.13.1.1'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+    #                             nbr_af_route_reflector_client: True
+        
+    #     # S2-BGW-1
+    #     node2_s1_vpc_1:
+    #         default:
+    #             bgp_id: 100
+    #             router_id: 1.11.1.1
+    #             keepalive_interval: 90
+    #             prefix_peer_timeout: 270
+    #             holdtime: 270
+    #             graceful_restart_restart_time: 600
+    #             log_neighbor_changes: True
+    #             address_family_attr:
+    #                 -   af_name: 'l2vpn evpn'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_advertise_pip: True
+    #                 -   af_name: 'ipv4 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #                 -   af_name: 'ipv6 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #             neighbor_attr:
+    #                 -   neighbor_id: 11.11.11.11
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'Spine Connectivity to 11.11.11.11'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+
+    #         "1-10":
+    #             bgp_id: 100
+    #             prefix: 'VRF'
+    #             address_family_attr:
+    #               - af_name: 'ipv4 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #               - af_name: 'ipv6 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        
+    #     # S2-BGW-2
+    #     node3_s1_vpc_2:
+    #         default:
+    #             bgp_id: 100
+    #             router_id: 1.12.1.1
+    #             keepalive_interval: 90
+    #             prefix_peer_timeout: 270
+    #             holdtime: 270
+    #             graceful_restart_restart_time: 600
+    #             log_neighbor_changes: True
+    #             address_family_attr:
+    #                 -   af_name: 'l2vpn evpn'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_advertise_pip: True
+    #                 -   af_name: 'ipv4 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #                 -   af_name: 'ipv6 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #             neighbor_attr:
+    #                 -   neighbor_id: 11.11.11.11
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'Spine Connectivity to 11.11.11.11'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+    #         "1-10":
+    #             bgp_id: 100
+    #             prefix: 'VRF'
+    #             address_family_attr:
+    #               - af_name: 'ipv4 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #               - af_name: 'ipv6 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+    #     # S2-LEAF-1
+    #     node4_s1_leaf_1:
+    #         default:
+    #             bgp_id: 100
+    #             router_id: 1.13.1.1
+    #             keepalive_interval: 90
+    #             prefix_peer_timeout: 270
+    #             holdtime: 270
+    #             graceful_restart_restart_time: 600
+    #             log_neighbor_changes: True
+    #             address_family_attr:
+    #                 -   af_name: 'l2vpn evpn'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                 -   af_name: 'ipv4 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #                 -   af_name: 'ipv6 unicast'
+    #                     af_maximum_paths_ebgp: 64
+    #                     af_maximum_paths_ibgp: 64
+    #                     af_redist_connected: True
+    #                     af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #             neighbor_attr:
+    #                 -   neighbor_id: 11.11.11.11
+    #                     nbr_remote_as: 100
+    #                     nbr_description: 'Spine Connectivity to 11.11.11.11'
+    #                     nbr_update_source: 'loopback0'
+    #                     nbr_keepalive_interval: 90
+    #                     nbr_holdtime: 270
+    #                     address_family_attr:
+    #                         -   nbr_af_name: 'l2vpn evpn'
+    #                             nbr_af_send_community: 'both'
+    #         "1-10":
+    #             bgp_id: 100
+    #             prefix: 'VRF'
+    #             address_family_attr:
+    #               - af_name: 'ipv4 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    #               - af_name: 'ipv6 unicast'
+    #                 af_advertise_l2_evpn: True
+    #                 af_maximum_paths_ebgp: 64
+    #                 af_maximum_paths_ibgp: 64
+    #                 af_redist_connected: True
+    #                 af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    # ------------------------------------------------------
+    # Device Connections
+    # ------------------------------------------------------
+    # ------------------------------------------------------
+    #        Node List:
+    #            node1_s1_spine  : Fx_Core3
+    #            node2_s1_vpc_1  : S1_BGW1_Ely_Pri
+    #            node3_s1_vpc_2  : S1_BGW1_Ely_Sec
+    #            node4_s1_leaf_1 : Tecate_Vtep
+    #            node5_s1_access : Paris_L2
+    #            node6_core1 : Gx2B_Core1
+    #            node7_core2 : Gx2B_Core2
+    # ------------------------------------------------------
+
+    missing_config: 
+
+        node1_s1_spine: |
+            switchname Fx_Core3
+            feature telnet
+            feature nxapi
+            feature bash-shell
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature pim
+            feature pim6
+            feature vn-segment-vlan-based
+            feature lacp
+            feature lldp
+            feature bfd
+            feature nv overlay
+
+            ip host cslu-local 10.197.137.91
+            interface breakout module 1 port 49-50,52 map 10g-4x
+            interface breakout module 1 port 53-54 map 50g-2x
+            interface breakout module 1 port 51 map 25g-4x
+
+            ip pim rp-address 11.11.11.11 group-list 224.0.0.0/4
+            ip pim sg-expiry-timer 1000
+            vlan 1
+
+            route-map NextHop_Unchanged permit 10
+            set ip next-hop unchanged
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map RMAP_PERMIT_ALL permit 10
+            route-map permitall permit 10
+
+            vrf context management
+            ip domain-name cisco
+            ip name-server 72.163.128.140
+            ip route 0.0.0.0/0 10.225.127.1
+
+            interface {{nd01_nd04_1_1}}
+            ip address 49.7.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd04_1_2}}
+            ip address 49.8.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd04_1_3}}
+            ip address 49.27.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd04_1_4}}
+            ip address 49.28.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd02_1_1}}
+            ip address 27.50.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd02_1_2}}
+            ip address 28.50.2.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd02_1_3}}
+            ip address 29.50.3.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd02_1_4}}
+            ip address 30.50.4.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd03_1_1}}
+            ip address 33.52.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd03_1_2}}
+            ip address 34.52.2.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd03_1_3}}
+            ip address 35.52.3.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd01_nd03_1_4}}
+            ip address 36.52.4.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface loopback0
+            ip address 192.168.3.1/32
+            ip router ospf 100 area 0.0.0.0
+            icam monitor scale
+
+            cli alias name shwo show
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name ps show port-channel summary
+            cli alias name svpc show vpc
+            cli alias name crs copy r  s
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mvpnbgpneigh show bgp ipv4 mvpn neighbors | in "BGP state|BGP neigh"
+            cli alias name readycheck show logging logfile | in "vdc 1 has come online| ready"
+            cli alias name ready show logging logfile | in ready
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 192.168.3.1
+            router bgp 65001
+            router-id 192.168.3.1
+            reconnect-interval 1
+            log-neighbor-changes
+            address-family ipv4 unicast
+                redistribute direct route-map permitall
+                maximum-paths 64
+                maximum-paths ibgp 64
+            address-family l2vpn evpn
+                maximum-paths mixed 64
+                retain route-target all
+            neighbor 10.10.10.10
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 20.20.20.20
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 27.50.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 28.50.2.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 29.50.3.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 30.30.30.30
+                remote-as 300
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 30.50.4.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 33.52.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 34.52.2.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 35.52.3.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 36.52.4.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 49.7.1.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 49.8.1.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 49.27.1.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 49.28.1.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+
+            no logging console
+ 
+        node7_core2: |
+            hostname Gx2B_Core2
+            feature bash-shell
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature lacp
+            no feature intersight
+
+            interface breakout module 1 port 1,5,7,9,15,19 map 10g-4x
+            interface breakout module 1 port 6,14,18,25 map 50g-2x
+            interface breakout module 1 port 11-12,17,20,27 map 25g-4x
+            vlan 1
+
+            cdp timer 5
+            ip prefix-list plistblockFx3CoreLo0 seq 5 permit 192.168.3.1/32
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map blockFx3CoreLo0 deny 10
+            match ip address prefix-list plistblockFx3CoreLo0
+            route-map blockFx3CoreLo0 permit 10000
+            route-map permitAll permit 10
+
+            interface port-channel301
+            ip address 13.67.71.75/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+
+            interface port-channel401
+            ip address 43.44.111.2/24
+
+            interface port-channel501
+            ip address 23.54.1.1/24
+
+            interface {{nd07_nd03_1_1}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd07_nd03_1_2}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd07_nd03_1_3}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd07_nd03_1_4}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd07_nd02_1_1}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd07_nd02_1_2}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd07_nd02_1_3}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd07_nd02_1_4}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd07_nd04_1_1}}
+            channel-group 501 mode active
+            no shutdown
+
+            interface loopback0
+            ip address 192.168.2.1/32
+            ip router ospf 100 area 0.0.0.0
+            icam monitor scale
+
+            cli alias name shwo show
+            cli alias name ps show port-channel summary
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name ready show logging logfile | in ready
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 192.168.2.1
+            router bgp 65001
+            router-id 192.168.2.1
+            reconnect-interval 1
+            log-neighbor-changes
+            address-family ipv4 unicast
+                redistribute direct route-map permitAll
+                maximum-paths 64
+                maximum-paths ibgp 64
+            address-family l2vpn evpn
+                maximum-paths mixed 64
+                retain route-target all
+            neighbor 10.10.10.10
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 13.67.71.74
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 20.20.20.20
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 23.54.1.2
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blockFx3CoreLo0 out
+                next-hop-self
+            neighbor 30.30.30.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 30.30.30.30
+                remote-as 300
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 43.44.111.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+
+            no logging console
+
+        node6_core1: |
+            hostname Gx2B_Core1
+            feature bash-shell
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature lacp
+            no feature intersight
+
+            interface breakout module 1 port 1,4-5,15,19,21 map 10g-4x
+            interface breakout module 1 port 6,14,18,25 map 50g-2x
+            interface breakout module 1 port 12,17,20,27 map 25g-4x
+
+            vlan 1
+
+            cdp timer 5
+            ip prefix-list addASPfxList seq 5 permit 172.10.10.10/32
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map addAS permit 10
+            match ip address prefix-list addASPfxList
+            set as-path prepend 6001 6002
+            route-map permitall permit 10
+
+            interface {{nd06_nd02_1_1}}
+            ip address 9.11.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd06_nd02_1_2}}
+            ip address 10.11.2.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd06_nd02_1_3}}
+            ip address 3.33.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd06_nd02_1_4}}
+            ip address 4.34.1.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd06_nd03_1_1}}
+            ip address 15.41.1.2/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd06_nd03_1_2}}
+            ip address 16.42.1.2/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd06_nd03_1_3}}
+            ip address 17.43.1.2/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd06_nd03_1_4}}
+            ip address 18.44.1.2/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd06_nd04_1_1}}
+            ip address 53.21.1.2/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd06_nd04_1_2}}
+            ip address 53.21.2.2/24
+            no shutdown
+
+            interface {{nd06_nd04_1_3}}
+            ip address 53.21.3.2/24
+            no shutdown
+
+            interface {{nd06_nd04_1_4}}
+            ip address 53.21.4.2/24
+            no shutdown
+
+            interface loopback0
+            ip address 192.168.1.1/32
+            ip router ospf 100 area 0.0.0.0
+            icam monitor scale
+
+            cli alias name shwo show
+            cli alias name ps show port-channel summary
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name ready show logging logfile | in ready
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 192.168.1.1
+            router bgp 65001
+            router-id 192.168.1.1
+            reconnect-interval 1
+            log-neighbor-changes
+            address-family ipv4 unicast
+                redistribute direct route-map permitall
+                maximum-paths 64
+                maximum-paths ibgp 64
+            address-family l2vpn evpn
+                maximum-paths mixed 64
+                retain route-target all
+            neighbor 3.33.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 3.40.2.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map addAS out
+                next-hop-self
+            neighbor 4.34.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 9.11.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 10.10.10.10
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 10.11.2.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 15.41.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 16.42.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 17.43.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 18.44.1.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 20.20.20.20
+                remote-as 100
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 30.30.30.30
+                remote-as 300
+                update-source loopback0
+                ebgp-multihop 5
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map RMAP_NH_UNCHANGED out
+                rewrite-evpn-rt-asn
+            neighbor 40.40.40.1
+                remote-as 100
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 53.21.1.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 53.21.2.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 53.21.3.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 53.21.4.1
+                remote-as 300
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+
+            no logging console
+
+        node2_s1_vpc_1: |
+            switchname S1_BGW1_Ely_Pri
+            feature telnet
+            feature bash-shell
+            cfs eth distribute
+            feature ngmvpn
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature interface-vlan
+            feature vn-segment-vlan-based
+            feature lacp
+            feature vpc
+            feature nv overlay
+
+            interface breakout module 1 port 49-51 map 10g-4x
+            interface breakout module 1 port 52 map 25g-4x
+
+            fabric forwarding anycast-gateway-mac 0000.baba.baba
+            vlan 1,101-102,301
+            vlan 101
+            vn-segment 100101
+            vlan 102
+            vn-segment 100102
+
+            cdp timer 5
+            ip prefix-list blockPfx seq 5 permit 172.10.10.10/32
+            ip prefix-list te_block seq 5 permit 1.140.140.144/32
+            ip prefix-list tecateNH seq 5 permit 172.30.30.30/32
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map autoMultiPath permit 10
+            set as-path-length difference 1
+            set maximum-paths 9
+            route-map blkPfxRmap deny 10
+            match ip address prefix-list blockPfx
+            route-map filterPolicyTecateNH permit 10
+            match ip address prefix-list tecateNH
+            route-map permitAll permit 10
+            route-map rmapTE permit 10
+            route-map te_block permit 10
+            match ip address prefix-list te_block
+
+            vrf context ka
+            vrf context v1
+                vni 300001 l3
+            rd auto
+            address-family ipv4 unicast
+                route-target both auto
+                route-target both auto evpn
+            address-family ipv6 unicast
+                route-target both auto
+                route-target both auto evpn
+            vpc domain 100
+            peer-switch
+            role priority 1
+            peer-keepalive destination 13.13.13.2 source 13.13.13.1 vrf ka
+            peer-gateway
+            ipv6 nd synchronize
+            ip arp synchronize
+
+
+            interface Vlan1
+            no ip redirects
+            no ipv6 redirects
+
+            interface Vlan101
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 101.1.1.1/16
+            ipv6 address 101:1:1:1::1/64
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface Vlan102
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 102.1.1.1/16
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface Vlan301
+
+            interface port-channel1
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            spanning-tree port type network
+            vpc peer-link
+
+            interface port-channel100
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            vpc 100
+
+            interface port-channel301
+            ip address 13.67.71.74/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+
+            interface nve1
+            no shutdown
+            host-reachability protocol bgp
+            advertise virtual-rmac
+            source-interface loopback1
+            # source-interface hold-down-time 360
+            source-interface hold-down-time 30
+            member vni 100101
+                ingress-replication protocol bgp
+            member vni 100102
+                ingress-replication protocol bgp
+            member vni 300001 associate-vrf
+
+            interface {{nd02_nd07_1_1}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd02_nd07_1_2}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd02_tgen_1_1}}
+            switchport
+            switchport mode trunk
+            spanning-tree port type edge trunk
+            no shutdown
+
+            interface {{nd02_nd06_1_1}}
+            ip address 9.11.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd06_1_2}}
+            ip address 10.11.2.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd03_1_1}}
+            vrf member ka
+            ip address 13.13.13.1/24
+            no shutdown
+
+            interface {{nd02_nd07_1_3}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd02_nd07_1_4}}
+            channel-group 301 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_2}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_3}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd01_1_1}}
+            ip address 27.50.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd01_1_2}}
+            ip address 28.50.2.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd01_1_3}}
+            ip address 29.50.3.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd01_1_4}}
+            ip address 30.50.4.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd06_1_3}}
+            ip address 3.33.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd06_1_4}}
+            ip address 4.34.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd03_1_4}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_5}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_6}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_11}}
+            ip address 1.40.40.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd02_nd05_1_1}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 100 mode active
+            no shutdown
+
+            interface {{nd02_nd05_1_2}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 100 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_7}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_8}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_9}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd02_nd03_1_10}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface loopback0
+            ip address 10.10.10.10/32
+            ip router ospf 100 area 0.0.0.0
+
+            interface loopback1
+            ip address 172.10.10.10/32
+            ip address 10.10.20.20/32 secondary
+            ip router ospf 100 area 0.0.0.0
+
+            interface loopback101
+            vrf member v1
+            ip address 170.3.1.33/32
+            icam monitor scale
+
+            cli alias name ps show port-channel summary
+            cli alias name shwo show
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name ready show logging logfile | in ready
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 10.10.10.10
+            router bgp 100
+            router-id 10.10.10.10
+            reconnect-interval 1
+            address-family ipv4 unicast
+                redistribute direct route-map permitAll
+                maximum-paths 4
+                maximum-paths ibgp 4
+                load-balance egress filter-policy route-map filterPolicyTecateNH
+                load-balance egress multipath auto-policy route-map autoMultiPath
+            address-family ipv6 unicast
+            address-family l2vpn evpn
+                retain route-target all
+                advertise-pip
+                nexthop load-balance egress multisite
+            neighbor 1.40.40.2
+                remote-as 100
+                address-family ipv4 unicast
+                suppress-inactive
+                soft-reconfiguration inbound always
+            neighbor 3.33.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 4.34.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 9.11.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 10.11.2.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 13.67.71.75
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 20.20.20.20
+                remote-as 100
+                update-source loopback0
+                address-family l2vpn evpn
+                allowas-in 3
+                send-community
+                send-community extended
+            neighbor 27.50.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 28.50.2.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 29.50.3.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 30.50.4.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 192.168.1.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.2.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.3.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            vrf v1
+                address-family ipv4 unicast
+                advertise l2vpn evpn
+                redistribute hmm route-map permitAll
+                redistribute direct route-map permitAll
+                maximum-paths 64
+                maximum-paths ibgp 64
+            evpn
+            vni 100101 l2
+                rd auto
+                route-target import auto
+                route-target export auto
+            vni 100102 l2
+                rd auto
+                route-target import auto
+                route-target export auto
+
+            no logging console
+
+        node3_s1_vpc_2: |
+            switchname S1_BGW1_Ely_Sec
+            feature telnet
+            feature bash-shell
+            cfs eth distribute
+            feature ngmvpn
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature interface-vlan
+            feature vn-segment-vlan-based
+            feature lacp
+            feature vpc
+            feature nv overlay
+
+            interface breakout module 1 port 50-51 map 10g-4x
+            fabric forwarding anycast-gateway-mac 0000.baba.baba
+            vlan 1,101-102,301
+            vlan 101
+            vn-segment 100101
+            vlan 102
+            vn-segment 100102
+
+            ip prefix-list blockPfx seq 5 permit 172.10.10.10/32
+            ip prefix-list tecateNH seq 5 permit 172.30.30.30/32
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map autoMultiPath permit 10
+            set as-path-length difference 1
+            set maximum-paths 9
+            route-map blkPfxRmap deny 10
+            match ip address prefix-list blockPfx
+            route-map filterPolicyTecateNH permit 10
+            match ip address prefix-list tecateNH
+            route-map permitAll permit 10
+            route-map rmapTE permit 10
+            route-map te_block permit 10
+            match ip address prefix-list te_block
+            vrf context ka
+            vrf context v1
+                vni 300001 l3
+            rd auto
+            address-family ipv4 unicast
+                route-target both auto
+                route-target both auto evpn
+            address-family ipv6 unicast
+                route-target both auto
+                route-target both auto evpn
+            vpc domain 100
+            peer-switch
+            peer-keepalive destination 13.13.13.1 source 13.13.13.2 vrf ka
+            peer-gateway
+            ipv6 nd synchronize
+            ip arp synchronize
+
+
+            interface Vlan1
+
+            interface Vlan101
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 101.1.1.1/16
+            ipv6 address 101:1:1:1::1/64
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface Vlan102
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 102.1.1.1/16
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface port-channel1
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            spanning-tree port type network
+            vpc peer-link
+
+            interface port-channel100
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            vpc 100
+
+            interface port-channel401
+            ip address 43.44.111.1/24
+
+            interface nve1
+            no shutdown
+            host-reachability protocol bgp
+            advertise virtual-rmac
+            source-interface loopback1
+            source-interface hold-down-time 30
+            member vni 100101
+                ingress-replication protocol bgp
+            member vni 100102
+                ingress-replication protocol bgp
+            member vni 300001 associate-vrf
+
+            interface {{nd03_tgen_1_1}}
+            switchport
+            switchport mode trunk
+            spanning-tree port type edge trunk
+            no shutdown
+
+            interface {{nd03_nd02_1_1}}
+            vrf member ka
+            ip address 13.13.13.2/24
+            no shutdown
+
+            interface {{nd03_nd06_1_1}}
+            ip address 15.41.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd06_1_2}}
+            ip address 16.42.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd06_1_3}}
+            ip address 17.43.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd06_1_4}}
+            ip address 18.44.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd02_1_2}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_3}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd01_1_1}}
+            ip address 33.52.1.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd01_1_2}}
+            ip address 34.52.2.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd01_1_3}}
+            ip address 35.52.3.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd01_1_4}}
+            ip address 36.52.4.1/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd02_1_4}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_5}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_6}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_11}}
+            ip address 1.40.40.2/24
+            ip ospf hello-interval 1
+            ip router ospf 100 area 0.0.0.0
+            no shutdown
+
+            interface {{nd03_nd07_1_1}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd03_nd07_1_2}}
+            channel-group 401 mode active
+            no shutdown
+
+            interface {{nd03_nd05_1_1}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 100 mode active
+            no shutdown
+
+            interface {{nd03_nd05_1_2}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 100 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_7}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_8}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_9}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface {{nd03_nd02_1_10}}
+            switchport
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            channel-group 1 mode active
+            no shutdown
+
+            interface loopback0
+            ip address 20.20.20.20/32
+            ip router ospf 100 area 0.0.0.0
+
+            interface loopback1
+            ip address 172.20.20.20/32
+            ip address 10.10.20.20/32 secondary
+            ip router ospf 100 area 0.0.0.0
+            icam monitor scale
+
+            cli alias name shwo show
+            cli alias name ps show port-channel summary
+            cli alias name svpc show vpc
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name crs copy r  s
+            cli alias name ready show logging logfile | in ready
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mvpnbgpneigh show bgp ipv4 mvpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 20.20.20.20
+            router bgp 100
+            router-id 20.20.20.20
+            reconnect-interval 1
+            address-family ipv4 unicast
+                redistribute direct route-map permitAll
+                maximum-paths 4
+                maximum-paths ibgp 4
+                load-balance egress filter-policy route-map filterPolicyTecateNH
+                load-balance egress multipath auto-policy route-map autoMultiPath
+            address-family ipv6 unicast
+            address-family l2vpn evpn
+                retain route-target all
+                advertise-pip
+                nexthop load-balance egress multisite
+            neighbor 1.40.40.1
+                remote-as 100
+                address-family ipv4 unicast
+                suppress-inactive
+                soft-reconfiguration inbound always
+            neighbor 10.10.10.10
+                remote-as 100
+                update-source loopback0
+                address-family l2vpn evpn
+                allowas-in 3
+                send-community
+                send-community extended
+            neighbor 15.41.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 16.42.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 17.43.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 18.44.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 33.52.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 34.52.2.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 35.52.3.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 36.52.4.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 43.44.111.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                next-hop-self
+            neighbor 192.168.1.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.2.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.3.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            vrf v1
+                address-family ipv4 unicast
+                advertise l2vpn evpn
+                redistribute hmm route-map permitAll
+                redistribute direct route-map permitAll
+                maximum-paths 64
+                maximum-paths ibgp 64
+            evpn
+            vni 100101 l2
+                rd auto
+                route-target import auto
+                route-target export auto
+            vni 100102 l2
+                rd auto
+                route-target import auto
+                route-target export auto
+
+            no logging console
+        
+        node4_s1_leaf_1: |
+            switchname Tecate_Vtep
+            feature telnet
+            feature bash-shell
+            nv overlay evpn
+            feature ospf
+            feature bgp
+            feature interface-vlan
+            feature vn-segment-vlan-based
+            feature lacp
+            feature nv overlay
+
+            interface breakout module 1 port 49-51,53 map 10g-4x
+            ip access-list aclTE_S1BGW
+            10 permit ip any 172.10.10.10/32
+            20 permit ip 172.10.10.10/32 any
+
+            fabric forwarding anycast-gateway-mac 0000.baba.baba
+            vlan 1,101-102,301
+            vlan 101
+            vn-segment 100101
+            vlan 102
+            vn-segment 100102
+
+            cdp timer 5
+            ip prefix-list blockPfx seq 5 permit 172.10.10.10/32
+            ip prefix-list matchTE_S1BGW seq 5 permit 172.10.10.10/32
+            ip prefix-list matchTE_S1BGW seq 10 permit 172.20.20.20/32
+            ip prefix-list matchTE_S1BGW seq 15 permit 10.10.20.20/32
+            ip prefix-list te_block seq 5 permit 1.140.140.144/32
+            ip prefix-list te_block seq 6 permit 172.10.10.10/32
+            ip prefix-list te_block seq 11 permit 10.10.20.20/32
+            route-map RMAP_NH_UNCHANGED permit 10
+            set ip next-hop unchanged
+            route-map autoMultiPath permit 10
+            set as-path-length difference 1
+            set maximum-paths 9
+            route-map blkPfxRmap deny 10
+            match ip address prefix-list blockPfx
+            route-map blkPfxRmap permit 200
+            route-map filterPolicyS1BGWNH permit 10
+            match ip address prefix-list matchTE_S1BGW
+            route-map permitall permit 10
+            route-map rmapTE permit 10
+            match ip address aclTE_S1BGW
+            match ip address prefix-list matchTE_S1BGW
+            route-map te_block permit 10
+            match ip address prefix-list te_block
+            vrf context v1
+            vni 300001 l3
+            rd auto
+            address-family ipv4 unicast
+                route-target both auto
+                route-target both auto evpn
+            address-family ipv6 unicast
+                route-target both auto
+                route-target both auto evpn
+
+
+            interface Vlan1
+
+            interface Vlan101
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 101.1.1.1/16
+            ipv6 address 101:1:1:1::1/64
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface Vlan102
+            no shutdown
+            vrf member v1
+            no ip redirects
+            ip address 102.1.1.1/16
+            no ipv6 redirects
+            fabric forwarding mode anycast-gateway
+
+            interface port-channel501
+            ip address 23.54.1.2/24
+
+            interface nve1
+            no shutdown
+            host-reachability protocol bgp
+            advertise virtual-rmac
+            source-interface loopback1
+            source-interface hold-down-time 30
+            member vni 100101
+                ingress-replication protocol bgp
+            member vni 100102
+                ingress-replication protocol bgp
+            member vni 300001 associate-vrf
+
+            interface {{nd04_nd01_1_1}}
+            ip address 49.7.1.1/24
+            no shutdown
+
+            interface {{nd04_nd01_1_2}}
+            ip address 49.8.1.1/24
+            no shutdown
+
+            interface {{nd04_nd01_1_3}}
+            ip address 49.27.1.1/24
+            no shutdown
+
+            interface {{nd04_nd01_1_4}}
+            ip address 49.28.1.1/24
+            no shutdown
+
+            interface {{nd04_tgen_1_1}}
+            switchport
+            switchport access vlan 101
+            spanning-tree port type edge
+            no shutdown
+
+            interface {{nd04_nd06_1_1}}
+            ip address 53.21.1.1/24
+            ip ospf hello-interval 1
+            no shutdown
+
+            interface {{nd04_nd06_1_2}}
+            ip address 53.21.2.1/24
+            no shutdown
+
+            interface {{nd04_nd06_1_3}}
+            ip address 53.21.3.1/24
+            no shutdown
+
+            interface {{nd04_nd06_1_4}}
+            ip address 53.21.4.1/24
+            no shutdown
+
+            interface {{nd04_nd07_1_1}}
+            channel-group 501 mode active
+            no shutdown
+
+            interface loopback0
+            ip address 30.30.30.30/32
+            ip router ospf 100 area 0.0.0.0
+
+            interface loopback1
+            ip address 172.30.30.30/32
+
+            cli alias name shwo show
+            cli alias name ps show port-channel summary
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name ready show logging logfile | in ready
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mtssum show system internal mts buffers summary
+            cli alias name procshow show processes cpu sort | grep -v "  0.00%"
+            cli alias name vpnv4neigh show bgp vpnv4 unicast neighbors | in "BGP nei|BGP sta"
+            cli alias name svpc show vpc
+            cli alias name crs copy r  s
+            cli alias name mvpnbgpneigh show bgp ipv4 mvpn neighbors | in "BGP state|BGP neigh"
+            cli alias name bgpneigh show ip bgp neighbors  | in i "BGP stat|BGP neigh"
+
+            router ospf 100
+            router-id 30.30.30.30
+            distance 254
+            router bgp 300
+            router-id 30.30.30.30
+            bestpath as-path multipath-relax
+            reconnect-interval 1
+            address-family ipv4 unicast
+                redistribute direct route-map permitall
+                maximum-paths 4
+                maximum-paths ibgp 4
+                load-balance egress filter-policy route-map filterPolicyS1BGWNH
+                load-balance egress multipath auto-policy route-map autoMultiPath
+            address-family ipv6 unicast
+            address-family l2vpn evpn
+                retain route-target all
+                advertise-pip
+                nexthop load-balance egress multisite
+            neighbor 3.40.2.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 23.54.1.1
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 49.7.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 49.8.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 49.27.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 49.28.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 53.21.1.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 53.21.2.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 53.21.3.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 53.21.4.2
+                remote-as 65001
+                ebgp-multihop 5
+                address-family ipv4 unicast
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                route-map blkPfxRmap out
+                next-hop-self
+            neighbor 192.168.1.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.2.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            neighbor 192.168.3.1
+                remote-as 65001
+                update-source loopback0
+                ebgp-multihop 5
+                peer-type fabric-external
+                address-family l2vpn evpn
+                allowas-in 3
+                disable-peer-as-check
+                send-community
+                send-community extended
+                rewrite-evpn-rt-asn
+            vrf v1
+                bestpath as-path multipath-relax
+                address-family ipv4 unicast
+                maximum-paths 64
+                maximum-paths ibgp 64
+            evpn
+            vni 100101 l2
+                rd auto
+                route-target import auto
+                route-target export auto
+
+            no logging console
+
+        node5_s1_access: |
+            switchname Paris_L2
+            feature telnet
+            feature nxapi
+            feature bash-shell
+            feature lacp
+            feature lldp
+
+            ip host cslu-local 10.197.137.91
+            interface breakout module 1 port 49 map 10g-4x
+
+            vlan 1,11-15,101-102,1001-1020
+
+            hardware profile portmode 48x10G+6x100G
+            interface port-channel100
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102,1001-1020
+            mtu 9216
+
+            interface {{nd05_tgen_1_1}}
+            description edge
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102
+            spanning-tree port type edge trunk
+
+            interface {{nd05_nd02_1_1}}
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102,1001-1020
+            mtu 9216
+            channel-group 100 mode active
+
+            interface {{nd05_nd02_1_2}}
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102,1001-1020
+            mtu 9216
+            channel-group 100 mode active
+
+            interface {{nd05_nd03_1_1}}
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102,1001-1020
+            mtu 9216
+            channel-group 100 mode active
+
+            interface {{nd05_nd03_1_2}}
+            switchport mode trunk
+            switchport trunk allowed vlan 101-102,1001-1020
+            mtu 9216
+            channel-group 100 mode active
+
+            icam monitor scale
+
+            cli alias name shwo show
+            cli alias name ps show port-channel summary
+            cli alias name svpc show vpc
+            cli alias name tt terminal session-timeout 0 ; terminal width 200 ; terminal length 53
+            cli alias name crs copy r  s
+            cli alias name ready show logging logfile | in ready
+            cli alias name bgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name l2vpnbgpneigh show bgp l2vpn evpn neighbors | in "BGP state|BGP neigh"
+            cli alias name mvpnbgpneigh show bgp ipv4 mvpn neighbors | in "BGP state|BGP neigh"
+            no logging console
+
+
+    # ------------------------------------------------------
+    # Features to be disabled as part of cleanup
+    # ------------------------------------------------------
+    disable_features:
+        node1_s1_spine: 
+            - lldp
+    #         - lacp
+    #         - ospf
+    #         - pim4
+    #         - bgp
+    #         - vxlan
+    #     node2_s1_vpc_1: 
+    #         - lldp
+    #         - vlan
+    #         - vpc
+    #         - lacp
+    #         - ospf
+    #         - pim4
+    #         - bgp
+    #         - vxlan
+    #     node3_s1_vpc_2: 
+    #         - lldp
+    #         - vlan
+    #         - vpc
+    #         - lacp
+    #         - ospf
+    #         - pim4
+    #         - bgp
+    #         - vxlan
+    #     node4_s1_leaf_1: 
+    #         - lldp
+    #         - vlan
+    #         - lacp
+    #         - ospf
+    #         - pim4
+    #         - bgp
+    #         - vxlan
+    #     node5_s1_access: 
+    #         - lldp
+    #         - lacp
+    
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    # disable_missing_config: 
+    #     node2_s1_vpc_1: |
+    #         no system nve infra-vlans 2
+    #     node3_s1_vpc_2: |
+    #         no system nve infra-vlans 2

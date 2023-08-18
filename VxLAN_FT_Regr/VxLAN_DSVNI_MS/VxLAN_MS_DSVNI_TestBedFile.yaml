@@ -1,0 +1,188 @@
+testbed:
+    name: VxLAN_Featurette
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+        enable:
+            password: nbv12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 192.168.0.100
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123!
+        ntp:
+            server: 1.2.3.4
+devices:
+    LEAF-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.18
+            port: 2011
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.104.102.108
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    BGW-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.18
+            port: 2012
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.104.102.109
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    BGW-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.18
+            port: 2021
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.104.102.100
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    LEAF-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.18
+            port: 2013
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.104.102.163
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.104.102.68"
+          alt:
+            ip: "10.104.102.238"
+            port: 8009
+            protocol: telnet
+topology:
+    LEAF-1:
+        interfaces:
+            LEAF-1_to_BGW-1:
+                intf: Ethernet1/1
+                link: LEAF-1_to_BGW-1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_IXIA:
+                intf: Ethernet1/7
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    BGW-1:
+        interfaces:
+            BGW-1_to_LEAF-1:
+                intf: Ethernet1/1
+                link: BGW-1_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_BGW-2:
+                intf: Ethernet1/15
+                link: BGW-1_to_BGW-2
+                type: ethernet
+                module_type: m3
+    BGW-2:
+        interfaces:
+            BGW-2_to_LEAF-2:
+                intf: Ethernet1/1
+                link: BGW-2_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            BGW-2_to_BGW-1:
+                intf: Ethernet1/15
+                link: BGW-2_to_BGW-1
+                type: ethernet
+                module_type: m3
+    LEAF-2:
+        interfaces:
+            LEAF-2_to_BGW-2:
+                intf: Ethernet1/1
+                link: LEAF-2_to_BGW-2
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/7
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_LEAF-1:
+                intf: 1/13
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-2:
+                intf: 1/5
+                intf: 1/5
+                link: IXIA_to_LEAF-2
+                type: ethernet
+                module_type: m3

@@ -1,0 +1,1674 @@
+parameters:
+    context: cli
+    enable_features:
+        node01:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - vpc
+            - lacp
+            - lldp
+            - telnet
+            - dhcp
+        node02:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - vpc
+            - lacp
+            - lldp
+            - telnet
+            - dhcp
+        node03:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - lacp
+            - lldp
+            - telnet
+        node04:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - lacp
+            - lldp
+            - telnet
+            - dhcp
+        node05_spine:
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+            - telnet
+        node06:
+            - lldp
+            - vlan
+            - lacp
+    disable_features:
+        node01:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - vpc
+            - lacp
+            - lldp
+            - dhcp
+        node02:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - lacp
+            - lldp
+            - dhcp
+        node03:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - vpc
+            - lacp
+            - lldp
+            - dhcp
+        node04:
+            - vxlan
+            - ospf
+            - bgp
+            - pim
+            - vlan
+            - vpc
+            - lacp
+            - lldp
+            - dhcp
+        node05_spine:
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node06:
+            - lldp
+            - vlan
+            - lacp
+    
+    tcam_carving_config:
+        node01: |
+            hardware access-list tcam region ing-racl 512
+            hardware access-list tcam region egr-racl 512
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region egr-ifacl 512
+        node02: |
+            hardware access-list tcam region ing-racl 512
+            hardware access-list tcam region egr-racl 512
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region egr-ifacl 512
+        node03: |
+            hardware access-list tcam region ing-racl 512
+            hardware access-list tcam region egr-racl 512
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region egr-ifacl 512
+        node04: |
+            hardware access-list tcam region ing-racl 512
+            hardware access-list tcam region egr-racl 512
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region egr-ifacl 512
+
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config:
+
+        # SPINE --------------------------
+        node05_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 11.11.11.11
+                    prefix_length: 255.255.255.255
+            
+            # SPINE to LEAF-1
+            nd05_nd01_1_1:
+                enabled: True
+                description: "### To LEAF-1 INT-1 ###"
+                ipv4:
+                    ip: 1.11.1.3
+                    prefix_length: 255.255.255.254
+            nd05_nd01_1_2:
+                    enabled: True
+                    description: "### To LEAF-1 INT-2 ###"
+                    ipv4:
+                        ip: 1.11.2.3
+                        prefix_length: 255.255.255.254
+            
+            # SPINE to LEAF-2
+            nd05_nd02_1_1:
+                enabled: True
+                description: "### To LEAF-2 INT-1 ###"
+                ipv4:
+                    ip: 1.12.1.3
+                    prefix_length: 255.255.255.254
+            nd05_nd02_1_2:
+                enabled: True
+                description: "### To LEAF-2 INT-2 ###"
+                ipv4:
+                    ip: 1.12.2.3
+                    prefix_length: 255.255.255.254
+            
+            # SPINE to LEAF-3
+            nd05_nd03_1_1:
+                enabled: True
+                description: "### To LEAF-3 INT-1 ###"
+                ipv4:
+                    ip: 1.13.1.3
+                    prefix_length: 255.255.255.254
+            nd05_nd03_1_2:
+                enabled: True
+                description: "### To LEAF-3 INT-2 ###"
+                ipv4:
+                    ip: 1.13.2.3
+                    prefix_length: 255.255.255.254
+
+            # SPINE to LEAF-4
+            nd05_nd04_1_1:
+                enabled: True
+                description: "### To LEAF-4 INT-1 ###"
+                ipv4:
+                    ip: 1.14.1.3
+                    prefix_length: 255.255.255.254
+            nd05_nd04_1_2:
+                enabled: True
+                description: "### To LEAF-4 INT-2 ###"
+                ipv4:
+                    ip: 1.14.2.3
+                    prefix_length: 255.255.255.254
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.11.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.11.11.11
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 1.10.10.10
+                    prefix_length: 255.255.255.255
+
+            # LEAF-1 to SPINE
+            nd01_nd05_1_1:
+                enabled: True
+                description: "### To SPINE INT-1 ###"
+                ipv4:
+                    ip: 1.11.1.2
+                    prefix_length: 255.255.255.254
+            nd01_nd05_1_2:
+                enabled: True
+                description: "### To SPINE INT-2 ###"
+                ipv4:
+                    ip: 1.11.2.2
+                    prefix_length: 255.255.255.254
+
+            # VPC Peer-Link
+            nd01_nd02_1_1:
+                enabled: True
+                description: "### To LEAF2 ###"
+                ipv4:
+                    ip: 24.24.24.1
+                    prefix_length: 255.255.255.0
+            nd01_nd02_1_2:
+                enabled: True
+
+            # interfaces to FANOUT
+            nd01_nd06_1_1:
+                enabled: True
+
+            nd01_nd06_1_2:
+                enabled: True
+
+            nd01_nd06_1_3:
+                enabled: True
+
+            nd01_nd06_1_4:
+                enabled: True
+
+            Port-channel10:
+                    channel_group_mode: active
+                    enabled: True
+                    switchport_enable: True
+                    switchport_mode: Trunk
+                    trunk_vlans: "2001-2002"
+                    spanning_tree_port_type: network
+                    vpc_peer-link: true
+                    add_members: nd01_nd02_1_2
+
+            Port-channel11:
+                    enabled: True
+                    switchport_enable: True
+                    switchport_mode: Trunk
+                    trunk_vlans: "2001"
+                    add_members: nd01_nd06_1_1, nd01_nd06_1_2
+            Port-channel12:
+                    enabled: True
+                    switchport_enable: True
+                    switchport_mode: access
+                    access_vlan: "2002"
+                    add_members: nd01_nd06_1_3, nd01_nd06_1_4
+
+            # L2VNI SVI Configs - Set-1
+            Vlan2001-2002:
+                enabled: True
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                vrf: VRF-1
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            
+            # L3VNI SVI Configs
+            Vlan3001:
+                enabled: True
+                description: "L3VNI"
+                ip_forward: True
+                ipv6_forward: False
+                vrf: VRF-1
+                ipv4:
+                    redirect: False
+
+            nd01_tgn01_1_1:
+                enabled: True
+                description: Leaf1 1/47 to Ixia 9/7
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001"
+            
+            nd01_tgn01_1_2:
+                enabled: True
+                description: Leaf1 1/48 to Ixia 9/8
+                switchport_enable: True
+                switchport_mode: access
+                access_vlan: "2002"
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI Set-1
+                    2002001-2002002:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.101.1.1
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # VPC LEAF-2 --------------------------
+        node02:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.12.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### NVE loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.12.12.12
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 1.10.10.10
+                    prefix_length: 255.255.255.255
+
+            # LEAF-2 to SPINE
+            nd02_nd05_1_1:
+                enabled: True
+                description: "### To SPINE INT-1 ###"
+                ipv4:
+                    ip: 1.12.1.2
+                    prefix_length: 255.255.255.254
+            nd02_nd05_1_2:
+                    enabled: True
+                    description: "### To SPINE INT-2 ###"
+                    ipv4:
+                        ip: 1.12.2.2
+                        prefix_length: 255.255.255.254
+            
+            # VPC Peer-Link
+            nd02_nd01_1_1:
+                enabled: True
+                description: "### To LEAF1 ###"
+                ipv4:
+                    ip: 24.24.24.2
+                    prefix_length: 255.255.255.0
+            nd02_nd01_1_2:
+                enabled: True
+
+            # interfaces to FANOUT
+            nd02_nd06_1_1:
+                enabled: True
+
+            nd02_nd06_1_2:
+                enabled: True
+
+            nd02_nd06_1_3:
+                enabled: True
+
+            nd02_nd06_1_4:
+                enabled: True
+
+            Port-channel10:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                spanning_tree_port_type: network
+                vpc_peer-link: true
+                trunk_vlans: "2001-2002"
+                add_members: nd02_nd01_1_2
+            Port-channel11:
+                    enabled: True
+                    switchport_enable: True
+                    switchport_mode: trunk
+                    trunk_vlans: "2001"
+                    add_members: nd02_nd06_1_1, nd02_nd06_1_2
+            Port-channel12:
+                    enabled: True
+                    switchport_enable: True
+                    switchport_mode: access
+                    access_vlan: "2002"
+                    add_members: nd02_nd06_1_3, nd02_nd06_1_4
+
+            # L2VNI SVI Configs - Set-1
+            Vlan2001-2002:
+                enabled: True
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                vrf: VRF-1
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan3001:
+                enabled: True
+                description: "L3VNI"
+                ip_forward: True
+                ipv6_forward: False
+                vrf: VRF-1
+                ipv4:
+                    redirect: False
+            nd02_tgn01_1_1:
+                enabled: True
+                description: Leaf1 1/47 to Ixia 9/9
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001-2002"
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI Set-1
+                    2002001-2002002:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.101.1.1
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # STD LEAF-3 --------------------------
+        node03:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.13.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.13.13.13
+                    prefix_length: 255.255.255.255
+
+            # LEAF-3 to SPINE
+            nd03_nd05_1_1:
+                enabled: True
+                description: "### To SPINE INT-1 ###"
+                ipv4:
+                    ip: 1.13.1.2
+                    prefix_length: 255.255.255.254
+            nd03_nd05_1_2:
+                enabled: True
+                description: "### To SPNE INT-2 ###"
+                ipv4:
+                    ip: 1.13.2.2
+                    prefix_length: 255.255.255.254
+
+            # L2VNI SVI Configs - Set-1
+            Vlan2001-2002:
+                enabled: True
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                vrf: VRF-1
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            
+            # L3VNI SVI Configs
+            Vlan3001:
+                enabled: True
+                description: "L3VNI"
+                ip_forward: True
+                ipv6_forward: False
+                vrf: VRF-1
+                ipv4:
+                    redirect: False
+
+            nd03_tgn01_1_1:
+                enabled: True
+                description: Leaf2 1/103 to Ixia 9/14
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001"
+            nd03_tgn01_1_2:
+                enabled: True
+                description: Leaf2 1/101 to Ixia 9/19
+                switchport_enable: True
+                switchport_mode: access
+                access_vlan: "2002"
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI Set-1
+                    2002001-2002002:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.101.1.1
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # STD LEAF-4 --------------------------
+        node04:
+            
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.14.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.14.14.14
+                    prefix_length: 255.255.255.255
+
+            # LEAF-4 to SPINE
+            nd04_nd05_1_1:
+                enabled: True
+                description: "### To SPINE INT-1 ###"
+                ipv4:
+                    ip: 1.14.1.2
+                    prefix_length: 255.255.255.254
+            nd04_nd05_1_2:
+                enabled: True
+                description: "### To SPNE INT-2 ###"
+                ipv4:
+                    ip: 1.14.2.2
+                    prefix_length: 255.255.255.254
+
+            # L2VNI SVI Configs - Set-1
+            Vlan2001-2002:
+                enabled: True
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                vrf: VRF-1
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan3001:
+                enabled: True
+                description: "L3VNI"
+                ip_forward: True
+                ipv6_forward: False
+                vrf: VRF-1
+                ipv4:
+                    redirect: False
+
+            nd04_tgn01_1_1:
+                enabled: True
+                description: Leaf2 1/47 to Ixia 9/20
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001"
+            
+            nd04_tgn01_1_2:
+                enabled: True
+                description: Leaf2 1/48 to Ixia 9/18
+                switchport_enable: True
+                switchport_mode: access
+                access_vlan: "2002"
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI Set-1
+                    2002001-2002002:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.101.1.1
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        # FANOUT
+        node06:
+            # VPC PO
+            nd06_nd01_1_1:
+                enabled: True
+                
+            nd06_nd01_1_2:
+                enabled: True
+                
+            nd06_nd01_1_3:
+                enabled: True
+                
+            nd06_nd01_1_4:
+                enabled: True
+
+            nd06_nd02_1_1:
+                enabled: True
+                
+            nd06_nd02_1_2:
+                enabled: True
+                
+            nd06_nd02_1_3:
+                enabled: True
+                
+            nd06_nd02_1_4:
+                enabled: True
+                
+            Port-channel200:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001"
+                add_members: nd06_nd01_1_1, nd06_nd02_1_1, nd06_nd01_1_2, nd06_nd02_1_2
+            Port-channel201:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: access
+                access_vlan: "2002"
+                add_members: nd06_nd01_1_3, nd06_nd01_1_4, nd06_nd02_1_3, nd06_nd02_1_4
+
+            nd06_tgn01_1_1:
+                enabled: True
+                description: FAN 1/48 to Ixia 9/12
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2001"
+            
+            nd06_tgn01_1_2:
+                enabled: True
+                description: FAN 1/47 to Ixia 9/10
+                switchport_enable: True
+                switchport_mode: access
+                access_vlan: "2002"
+    # ------------------------------------------------------
+    # OSPF COnfigs
+    # ------------------------------------------------------
+    ospf_config:
+        # SPINE --------------------------
+        node05_spine:
+            default:
+                instance: p1
+                router_id: 11.11.11.11
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # To LEAF-1
+                    nd05_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+                     # To LEAF-2
+                    nd05_nd02_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd02_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    # To LEAF-3
+                    nd05_nd03_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd03_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # To LEAF-4
+                    nd05_nd04_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd05_nd04_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+        # VPC LEAF-1 --------------------------
+        node01:
+            default:
+                instance: p1
+                router_id: 1.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd01_nd05_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd05_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+        
+        # VPC LEAF-2 --------------------------
+        node02:
+            default:
+                instance: p1
+                router_id: 1.12.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd02_nd05_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd05_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+        
+        # STD LEAF --------------------------
+        node03:
+            default:
+                instance: p1
+                router_id: 1.13.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd03_nd05_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd05_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+        
+        # STD LEAF --------------------------
+        node04:
+            default:
+                instance: p1
+                router_id: 1.14.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd04_nd05_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd05_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+    # ------------------------------------------------------
+    # VLAN Configs
+    # ------------------------------------------------------
+    vlan_config:
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            -   vlan: "2001-2002"
+                vn_segment_id: "2002001-2002002"
+            -   vlan: "3001"
+                vn_segment_id: "3003001"
+        # VPC LEAF-2 --------------------------
+        node02:
+            -   vlan: "2001-2002"
+                vn_segment_id: "2002001-2002002"
+            -   vlan: "3001"
+                vn_segment_id: "3003001"
+        # STD LEAF-3 --------------------------
+        node03:
+            -   vlan: "2001-2002"
+                vn_segment_id: "2002001-2002002"
+            -   vlan: "3001"
+                vn_segment_id: "3003001"
+        # STD LEAF-3 --------------------------
+        node04:
+            -   vlan: "2001-2002"
+                vn_segment_id: "2002001-2002002"
+            -   vlan: "3001"
+                vn_segment_id: "3003001"
+        node06:
+            - vlan: "2001-2002"
+    # ------------------------------------------------------
+    # route-map Configs
+    # ------------------------------------------------------
+    route_policy_config:
+
+        # SPINE --------------------------
+        node05_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # VPC LEAF-2 --------------------------
+        node02:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # STD LEAF-3 --------------------------
+        node03:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # STD LEAF-4 --------------------------
+        node04:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+    # ------------------------------------------------------
+    # VxLAN Configs
+    # ------------------------------------------------------
+    vxlan_config:
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # VPC LEAF-2 --------------------------
+        node02:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # STD LEAF-3 --------------------------
+        node03:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # STD LEAF-4 --------------------------
+        node04:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    
+    # ------------------------------------------------------
+    # VxLAN EVPN Configs
+    # ------------------------------------------------------
+    evpn_config:
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            vni_list:
+                -   vni_id: 2002001-2002002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        
+        # VPC LEAF-2 --------------------------
+        node02:
+            vni_list:
+                -   vni_id: 2002001-2002002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # STD LEAF-3 --------------------------
+        node03:
+            vni_list:
+                -   vni_id: 2002001-2002002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        
+        # STD LEAF-4 --------------------------
+        node04:
+            vni_list:
+                -   vni_id: 2002001-2002002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+    # ------------------------------------------------------
+    # VRF Configs
+    # ------------------------------------------------------
+    vrf_config:
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-1"
+                    vni: "3003001-3003001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        # VPC LEAF-2 --------------------------
+        node02:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-1"
+                    vni: "3003001-3003001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # STD LEAF-3 --------------------------
+        node03:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-1"
+                    vni: "3003001-3003001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        
+        # STD LEAF-4 --------------------------
+        node04:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-1"
+                    vni: "3003001-3003001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+    # ------------------------------------------------------
+    # IGMP COnfigs
+    # ------------------------------------------------------
+    igmp_config: {}
+
+    # ------------------------------------------------------
+    # MLD COnfigs
+    # ------------------------------------------------------
+    mld_config: {}
+
+    # ------------------------------------------------------
+    # PIM Configs
+    # ------------------------------------------------------
+    pim_config:
+
+        # SPINE --------------------------
+        node05_spine:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.101.0.0/16
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.105.0.0/16
+                
+                interface_config:    
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+
+                    # To LEAF-1
+                    nd05_nd01_1_1:
+                        mode: sparse-mode
+                    nd05_nd01_1_2:
+                        mode: sparse-mode
+
+                    # To LEAF-2
+                    nd05_nd02_1_1:
+                        mode: sparse-mode
+                    nd05_nd02_1_2:
+                        mode: sparse-mode
+                    
+                    # To LEAF-3
+                    nd05_nd03_1_1:
+                        mode: sparse-mode
+                    nd05_nd03_1_2:
+                        mode: sparse-mode
+
+                    # To LEAF-4
+                    nd05_nd04_1_1:
+                        mode: sparse-mode
+                    nd05_nd04_1_2:
+                        mode: sparse-mode
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.101.0.0/16
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.105.0.0/16
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+
+                    # To Spine
+                    nd01_nd05_1_1:
+                        mode: sparse-mode
+                    nd01_nd05_1_2:
+                        mode: sparse-mode
+
+                    # To Leaf2
+                    nd01_nd02_1_1:
+                        mode: sparse-mode
+
+                    ### L2VNI SVI's
+                    vlan2001-2002:
+                        mode: sparse-mode
+
+                    ### L3VNI SVI's
+                    vlan3001:
+                        mode: sparse-mode
+
+        # VPC LEAF-2 --------------------------
+        node02:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.101.0.0/16
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.105.0.0/16
+                
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+
+                    # To Spine
+                    nd02_nd05_1_1:
+                        mode: sparse-mode
+                    nd02_nd05_1_2:
+                        mode: sparse-mode
+
+                    # To Leaf2
+                    nd02_nd01_1_1:
+                        mode: sparse-mode
+
+                    ### L2VNI SVI's
+                    vlan2001-2002:
+                        mode: sparse-mode
+
+                    ### L3VNI SVI's
+                    vlan3001:
+                        mode: sparse-mode
+
+        # STD LEAF-1 --------------------------
+        node03:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.101.0.0/16
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.105.0.0/16
+                
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+                    # To Spine
+                    nd03_nd05_1_1:
+                        mode: sparse-mode
+                    nd03_nd05_1_2:
+                        mode: sparse-mode
+
+                    ### L2VNI SVI's
+                    vlan2001-2002:
+                        mode: sparse-mode
+
+                    ### L3VNI SVI's
+                    vlan3001:
+                        mode: sparse-mode
+
+        # STD LEAF-2 --------------------------
+        node04:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.101.0.0/16
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.105.0.0/16
+                
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+                    # To Spine
+                    nd04_nd05_1_1:
+                        mode: sparse-mode
+                    nd04_nd05_1_2:
+                        mode: sparse-mode
+
+                    ### L2VNI SVI's
+                    vlan2001-2002:
+                        mode: sparse-mode
+
+                    ### L3VNI SVI's
+                    vlan3001:
+                        mode: sparse-mode
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config:
+
+        # SPINE --------------------------
+        node05_spine:
+            default:
+                bgp_id: 100
+                router_id: 11.11.11.11
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards VTEPS
+                    # Underlay BGP Session
+                    -   neighbor_id: 1.11.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'LEAF-1 Connectivity to 1.11.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 1.12.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'LEAF-2 Connectivity to 1.12.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 1.13.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'LEAF-3 Connectivity to 1.13.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 1.14.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'LEAF-3 Connectivity to 1.14.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+
+            # BGP VRF Configs
+            "VRF-1":
+                bgp_id: 100
+                # prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # VPC LEAF-1 --------------------------
+        node01:
+            default:
+                bgp_id: 100
+                router_id: 1.11.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    # BGP Neighbors towards LEAF2
+                    -   neighbor_id: 24.24.24.2
+                        nbr_remote_as: 100
+                        nbr_description: 'Connectivity to Leaf2 - VPC link'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+            # BGP VRF Configs
+            "VRF-1":
+                bgp_id: 100
+                # prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        # VPC LEAF-2 --------------------------
+        node02:
+            default:
+                bgp_id: 100
+                router_id: 1.12.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                    # BGP Neighbors towards LEAF1
+                    -   neighbor_id: 24.24.24.1
+                        nbr_remote_as: 100
+                        nbr_description: 'Connectivity to Leaf1 - VPC link'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+            # BGP VRF Configs
+            "VRF-1":
+                bgp_id: 100
+                # prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        # STD LEAF-3 --------------------------
+        node03:
+            default:
+                bgp_id: 100
+                router_id: 1.13.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "VRF-1":
+                bgp_id: 100
+                # prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # STD LEAF-4 --------------------------
+        node04:
+            default:
+                bgp_id: 100
+                router_id: 1.14.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "VRF-1":
+                bgp_id: 100
+                # prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    missing_config:
+
+        node05_spine: |
+            router ospf p1
+              maximum-paths 64
+
+        node01: |
+            feature dhcp
+            ip dhcp snooping
+            service dhcp
+            ip dhcp relay
+            ipv6 dhcp relay
+            ip igmp snooping vxlan
+
+            router ospf p1
+              maximum-paths 64
+
+            router bgp 100
+              neighbor 24.24.24.2
+                remote-as 100
+                address-family ipv4 unicast
+                  allowas-in 3
+                  next-hop-self
+                  soft-reconfiguration inbound always
+
+            vpc domain 100
+              peer-switch
+              role priority 3000
+              system-priority 3000
+              peer-keepalive destination 10.105.57.201 source 10.105.57.200 vrf management
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface port-channel11
+              ip verify source dhcp-snooping-vlan
+              spanning-tree port type edge trunk
+              vpc 11
+            interface port-channel12
+              ip verify source dhcp-snooping-vlan
+              spanning-tree port type edge
+              vpc 12
+            interface Ethernet1/47
+                spanning-tree port type edge trunk
+                ip verify source dhcp-snooping-vlan
+            interface Ethernet1/48
+                spanning-tree port type edge
+                ip verify source dhcp-snooping-vlan
+            ip dhcp snooping vlan 2001-2002 evpn
+            ip arp inspection vlan 2001-2002
+
+        node02: |
+            feature dhcp
+            ip dhcp snooping
+            service dhcp
+            ip dhcp relay
+            ipv6 dhcp relay
+            ip igmp snooping vxlan
+
+            router ospf p1
+              maximum-paths 64
+
+            router bgp 100
+              neighbor 24.24.24.1
+                remote-as 100
+              address-family ipv4 unicast
+                allowas-in 3
+                next-hop-self
+                soft-reconfiguration inbound always
+
+            vpc domain 100
+              peer-switch
+              role priority 3001
+              system-priority 3000
+              peer-keepalive destination 10.105.57.200 source 10.105.57.201 vrf management
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface port-channel11
+              ip verify source dhcp-snooping-vlan
+              spanning-tree port type edge trunk
+              vpc 11
+            interface port-channel12
+              ip verify source dhcp-snooping-vlan
+              spanning-tree port type edge
+              vpc 12
+            interface Ethernet1/47
+                spanning-tree port type edge trunk
+                ip verify source dhcp-snooping-vlan
+            ip dhcp snooping vlan 2001-2002 evpn
+            ip arp inspection vlan 2001-2002
+
+        node03: |
+            feature dhcp
+            ip dhcp snooping
+            service dhcp
+            ip dhcp relay
+            ipv6 dhcp relay
+            ip igmp snooping vxlan
+            interface Ethernet1/103
+                spanning-tree port type edge trunk
+                ip verify source dhcp-snooping-vlan
+            interface Ethernet1/101
+                spanning-tree port type edge
+                ip verify source dhcp-snooping-vlan
+            ip dhcp snooping vlan 2001-2002 evpn
+            ip arp inspection vlan 2001-2002
+        
+        node04: |
+            feature dhcp
+            ip dhcp snooping
+            service dhcp
+            ip dhcp relay
+            ipv6 dhcp relay
+            ip igmp snooping vxlan
+            interface Ethernet1/47
+                spanning-tree port type edge trunk
+                ip dhcp snooping trust
+                ip arp inspection trust
+            interface Ethernet1/48
+                spanning-tree port type edge
+                ip dhcp snooping trust
+                ip arp inspection trust
+            ip dhcp snooping vlan 2001-2002 evpn
+            ip arp inspection vlan 2001-2002
+        node06: |
+            interface port-channel 200
+                spanning-tree port type edge trunk
+            interface port-channel 210
+                spanning-tree port type edge trunk
+            interface port-channel 201
+                spanning-tree port type edge
+            interface Ethernet1/47
+                spanning-tree port type edge
+            interface Ethernet1/48
+                spanning-tree port type edge trunk
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    disable_missing_config:
+        node01: |
+            no ip igmp snooping vxlan
+            default interface Ethernet1/47
+            default interface Ethernet1/48
+            default interface Ethernet1/25
+            default interface Ethernet1/7-10
+            no interface port-channel 10-12
+
+        node02: |
+            no ip igmp snooping vxlan
+            default interface Ethernet1/47
+            default interface Ethernet1/7-10
+            default interface Ethernet1/25
+            no interface port-channel 10-12
+            no interface port-channel 110
+
+        node03: |
+            no ip igmp snooping vxlan
+            default interface Ethernet1/103
+            default interface Ethernet1/101
+
+        node04: |
+            no ip igmp snooping vxlan
+            default interface Ethernet1/47
+            default interface Ethernet1/48
+
+        node06: |
+            no interface port-channel 200-201
+            default interface Ethernet1/47
+            default interface Ethernet1/48

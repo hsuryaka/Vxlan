@@ -1,0 +1,181 @@
+# ------------------------------------------------------
+# Define Cleaner modules, device groups / devices
+# ------------------------------------------------------
+
+cleaners:
+    PyatsDeviceClean:
+        module: genie.libs.clean
+        devices: [node1_s1_spine, node2_s1_vpc_1, node3_s1_vpc_2, node4_s1_leaf_1, node5_s1_access]
+
+# ------------------------------------------------------
+# Define clean part for devices
+# ------------------------------------------------------
+
+devices:
+    node1_s1_spine:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+
+                ! -- NTP Configs
+                ntp server 10.105.222.158 use-vrf management
+                clock format 12-hours
+
+                ! -- Management VRF NTP Configs
+                vrf context management
+                    ip domain-name cisco
+                    ip name-server 72.163.128.140
+                ip domain-lookup
+
+                ! -- Smart License configs
+                test license smart dev-cert disable
+                ip host cslu-local 10.197.137.91
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node2_s1_vpc_1:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+
+                ! -- NTP Configs
+                ntp server 10.105.222.158 use-vrf management
+                clock format 12-hours
+
+                ! -- Management VRF NTP Configs
+                vrf context management
+                    ip domain-name cisco
+                    ip name-server 72.163.128.140
+                ip domain-lookup
+
+                ! -- Smart License configs
+                test license smart dev-cert disable
+                ip host cslu-local 10.197.137.91
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node3_s1_vpc_2:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+
+                ! -- NTP Configs
+                ntp server 10.105.222.158 use-vrf management
+                clock format 12-hours
+
+                ! -- Management VRF NTP Configs
+                vrf context management
+                    ip domain-name cisco
+                    ip name-server 72.163.128.140
+                ip domain-lookup
+
+                ! -- Smart License configs
+                test license smart dev-cert disable
+                ip host cslu-local 10.197.137.91
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 49 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node4_s1_leaf_1:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+
+                ! -- NTP Configs
+                ntp server 10.105.222.158 use-vrf management
+                clock format 12-hours
+
+                ! -- Management VRF NTP Configs
+                vrf context management
+                    ip domain-name cisco
+                    ip name-server 72.163.128.140
+                ip domain-lookup
+
+                ! -- Smart License configs
+                test license smart dev-cert disable
+                ip host cslu-local 10.197.137.91
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node5_s1_access:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+
+                ! -- NTP Configs
+                ntp server 10.105.222.158 use-vrf management
+                clock format 12-hours
+
+                ! -- Management VRF NTP Configs
+                vrf context management
+                    ip domain-name cisco
+                    ip name-server 72.163.128.140
+                ip domain-lookup
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 4,5 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+

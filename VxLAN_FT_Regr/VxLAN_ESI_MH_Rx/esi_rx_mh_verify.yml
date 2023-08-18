@@ -1,0 +1,880 @@
+nve_peers:
+    node01:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                100.100.100.2:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.4:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.6:
+                    learn_type: CP
+                    peer_state: up
+                200.200.200.12:
+                    learn_type: CP
+                    peer_state: up
+    node02:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                100.100.100.1:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.4:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.5:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.11:
+                    learn_type: CP
+                    peer_state: up
+                200.200.200.11:
+                    learn_type: CP
+                    peer_state: up
+    node04:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                100.100.100.1:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.2:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.6:
+                    learn_type: CP
+                    peer_state: up
+                200.200.200.12:
+                    learn_type: CP
+                    peer_state: up
+    node05:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                100.100.100.2:
+                    learn_type: CP
+                    peer_state: up
+                200.200.200.12:
+                    learn_type: CP
+                    peer_state: up
+    node06:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                100.100.100.1:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.11:
+                    learn_type: CP
+                    peer_state: up
+                100.100.100.4:
+                    learn_type: CP
+                    peer_state: up
+                200.200.200.11:
+                    learn_type: CP
+                    peer_state: up
+
+bgp_neighbors:
+    node01:
+        total_peers: 26
+        total_established_peers: 26
+        vrf:
+            default:
+                local_as: 1000
+                vrf_peers: 6
+                vrf_established_peers: 6
+                router_id: 90.90.90.1
+                neighbor:
+                    1.2.1.2:
+                        state: established
+                        remote_as: 2000
+                    1.2.2.2:
+                        state: established
+                        remote_as: 2000
+                    1.3.1.3:
+                        state: established
+                        remote_as: 1001
+                    50.50.50.2:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.2:
+                        state: established
+                        remote_as: 2000
+                    90.90.90.3:
+                        state: established
+                        remote_as: 1001
+    node02:
+        total_peers: 51
+        total_established_peers: 51
+        vrf:
+            default:
+                local_as: 2000
+                vrf_peers: 11
+                vrf_established_peers: 11
+                router_id: 90.90.90.2
+                neighbor:
+                    1.2.1.1:
+                        state: established
+                        remote_as: 1000
+                    1.2.2.1:
+                        state: established
+                        remote_as: 1000
+                    2.5.1.5:
+                        state: established
+                        remote_as: 2000
+                    4.2.1.1:
+                        state: established
+                        remote_as: 1000
+                    4.2.2.1:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.1:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.4:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.5:
+                        state: established
+                        remote_as: 2000
+                    3.2.2.1:
+                        state: established
+                        remote_as: 2000
+                    3.2.2.2:
+                        state: established
+                        remote_as: 2000
+                    75.75.1.2:
+                        state: established
+                        remote_as: 2000
+
+    node04:
+        total_peers: 26
+        total_established_peers: 26
+        local_as: 1000
+        vrf:
+            default:
+                local_as: 1000
+                vrf_peers: 6
+                vrf_established_peers: 6
+                router_id: 90.90.90.4
+                neighbor:
+                    4.2.1.2:
+                        state: established
+                        remote_as: 2000
+                    4.2.2.2:
+                        state: established
+                        remote_as: 2000
+                    4.3.1.3:
+                        state: established
+                        remote_as: 1001
+                    50.50.50.1:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.2:
+                        state: established
+                        remote_as: 2000
+                    90.90.90.3:
+                        state: established
+                        remote_as: 1001
+    node05:
+        total_peers: 2
+        total_established_peers: 2
+        local_as: 2000
+        vrf:
+            default:
+                local_as: 2000
+                vrf_peers: 2
+                vrf_established_peers: 2
+                router_id: 90.90.90.5
+                neighbor:
+                    2.5.1.2:
+                        state: established
+                        remote_as: 2000
+                    90.90.90.2:
+                        state: established
+                        remote_as: 2000
+    node03:
+        total_peers: 9
+        total_established_peers: 9
+        local_as: 1001
+        vrf:
+            default:
+                local_as: 1001
+                vrf_peers: 9
+                vrf_established_peers: 9
+                router_id: 90.90.90.3
+                neighbor:
+                    1.3.1.1:
+                        state: established
+                        remote_as: 1000
+                    4.3.1.4:
+                        state: established
+                        remote_as: 1000
+                    6.3.1.6:
+                        state: established
+                        remote_as: 1000
+                    6.7.1.7:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.1:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.4:
+                        state: established
+                        remote_as: 1000
+                    90.90.90.6:
+                        state: established
+                        remote_as: 1000
+                    201.1.1.1:
+                        state: established
+                        remote_as: 1000
+                    201.1.1.2:
+                        state: established
+                        remote_as: 1000
+    node06:
+        total_peers: 2
+        total_established_peers: 2
+        local_as: 1000
+        vrf:
+            default:
+                local_as: 1000
+                vrf_peers: 2
+                vrf_established_peers: 2
+                router_id: 90.90.90.6
+                neighbor:
+                    6.3.1.3:
+                        state: established
+                        remote_as: 1001
+                    90.90.90.3:
+                        state: established
+                        remote_as: 1001
+pim_neighbors:
+    node01:
+        vrf:
+            default:
+                interfaces:
+                    Vlan501:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    50.50.50.2:
+                                        interface: Vlan501
+                    '{{nd01_nd03_1_4}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.3.1.3:
+                                        interface: '{{nd01_nd03_1_4}}'
+    node02:
+        vrf:
+            default:
+                interfaces:
+                    '{{nd02_nd05_1_1}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    2.5.1.5:
+                                        interface: '{{nd02_nd05_1_1}}'
+    node03:
+        vrf:
+            default:
+                interfaces:
+                    '{{nd03_nd01_1_4}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.3.1.1:
+                                        interface: '{{nd03_nd01_1_4}}'
+                    '{{nd03_nd04_1_3}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    4.3.1.4:
+                                        interface: '{{nd03_nd04_1_3}}'
+                    '{{nd03_nd06_1_1}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    6.3.1.6:
+                                        interface: '{{nd03_nd06_1_1}}'
+
+    node04:
+        vrf:
+            default:
+                interfaces:
+                    '{{nd04_nd03_1_3}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    4.3.1.3:
+                                        interface: '{{nd04_nd03_1_3}}'
+                    Vlan501:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    50.50.50.1:
+                                        interface: Vlan501
+
+    node05:
+        vrf:
+            default:
+                interfaces:
+                    '{{nd05_nd02_1_1}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    2.5.1.2:
+                                        interface: '{{nd05_nd02_1_1}}'
+
+    node06:
+        vrf:
+            default:
+                interfaces:
+                    '{{nd06_nd03_1_1}}':
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    6.3.1.3:
+                                        interface: '{{nd06_nd03_1_1}}'
+
+nve_vni_summary:
+    node01:
+        vni:
+            summary:
+                cp_vni_count: 125
+                cp_vni_up: 125
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node02:
+        vni:
+            summary:
+                cp_vni_count: 125
+                cp_vni_up: 125
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node04:
+        vni:
+            summary:
+                cp_vni_count: 125
+                cp_vni_up: 125
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node05:
+        vni:
+            summary:
+                cp_vni_count: 125
+                cp_vni_up: 125
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node06:
+        vni:
+            summary:
+                cp_vni_count: 125
+                cp_vni_up: 125
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+nve_multisite_fabric_links:
+    node01:
+        multisite:
+            fabric_links:
+                '{{nd01_nd03_1_4}}':
+                    if_name: '{{nd01_nd03_1_4}}'
+                    if_state: up
+
+    node02:
+        multisite:
+            fabric_links:
+                '{{nd02_nd05_1_1}}':
+                    if_name: '{{nd02_nd05_1_1}}'
+                    if_state: up
+    node04:
+        multisite:
+            fabric_links:
+                '{{nd04_nd03_1_3}}':
+                    if_name: '{{nd04_nd03_1_3}}'
+                    if_state: up
+
+nve_multisite_dci_links:
+    node01:
+        multisite:
+            dci_links:
+                port-channel11:
+                    if_name: port-channel11
+                    if_state: up
+                port-channel111:
+                    if_name: port-channel111
+                    if_state: up
+    node02:
+        multisite:
+            dci_links:
+                port-channel11:
+                    if_name: port-channel11
+                    if_state: up
+                port-channel111:
+                    if_name: port-channel111
+                    if_state: up
+                '{{nd02_nd04_1_1}}':
+                    if_name: '{{nd02_nd04_1_1}}'
+                    if_state: up
+                '{{nd02_nd04_1_2}}':
+                    if_name: '{{nd02_nd04_1_2}}'
+                    if_state: up
+    node04:
+        multisite:
+            dci_links:
+                '{{nd04_nd02_1_1}}':
+                    if_name: '{{nd04_nd02_1_1}}'
+                    if_state: up
+                '{{nd04_nd02_1_2}}':
+                    if_name: '{{nd04_nd02_1_2}}'
+                    if_state: up
+bgp_l2vpn_evpn_summary:
+    node01:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.1
+                        vrf_local_as: 1000
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 2
+                                capablepeers: 2
+                                neighbor:
+                                    90.90.90.2:
+                                        neighbor: 90.90.90.2
+                                        version: 4
+                                        remoteas: 2000
+                                        state: established
+                                    90.90.90.3:
+                                        neighbor: 90.90.90.3
+                                        version: 4
+                                        remoteas: 1001
+                                        state: established
+    node02:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.2
+                        vrf_local_as: 2000
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 5
+                                capablepeers: 5
+                                neighbor:
+                                    90.90.90.1:
+                                        neighbor: 90.90.90.1
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    90.90.90.4:
+                                        neighbor: 90.90.90.4
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    90.90.90.5:
+                                        neighbor: 90.90.90.5
+                                        version: 4
+                                        remoteas: 2000
+                                        state: established
+    node03:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.3
+                        vrf_local_as: 1001
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 5
+                                capablepeers: 5
+                                neighbor:
+                                    90.90.90.1:
+                                        neighbor: 90.90.90.1
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    90.90.90.4:
+                                        neighbor: 90.90.90.4
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    90.90.90.6:
+                                        neighbor: 90.90.90.6
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    201.1.1.1:
+                                        neighbor: 201.1.1.1
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+                                    201.1.1.2:
+                                        neighbor: 201.1.1.2
+                                        version: 4
+                                        remoteas: 1000
+                                        state: established
+    node04:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.4
+                        vrf_local_as: 1000
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 2
+                                capablepeers: 2
+                                neighbor:
+                                    90.90.90.2:
+                                        neighbor: 90.90.90.2
+                                        version: 4
+                                        remoteas: 2000
+                                        state: established
+                                    90.90.90.3:
+                                        neighbor: 90.90.90.3
+                                        version: 4
+                                        remoteas: 1001
+                                        state: established
+    node05:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.5
+                        vrf_local_as: 2000
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    90.90.90.2:
+                                        neighbor: 90.90.90.2
+                                        version: 4
+                                        remoteas: 2000
+                                        state: established
+    node06:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 90.90.90.6
+                        vrf_local_as: 1000
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    90.90.90.3:
+                                        neighbor: 90.90.90.3
+                                        version: 4
+                                        remoteas: 1001
+                                        state: established
+
+nve_interface_detail:
+    node01:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '100.100.100.1'
+            secondary_ip: '100.100.100.11'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node02:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '100.100.100.2'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: False
+            vip_rmac: 'N/A'
+            sm_state: nve-intf-add-complete
+    node04:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '100.100.100.4'
+            secondary_ip: '100.100.100.11'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node05:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '100.100.100.5'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: False
+            vip_rmac: 'N/A'
+            sm_state: nve-intf-add-complete
+    node06:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '100.100.100.6'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: False
+            vip_rmac: 'N/A'
+            sm_state: nve-intf-add-complete
+verify_ngoam_ping:
+    node01:
+        1:
+            profile: "1"
+            vni: "201005"
+        2:
+            profile: "1"
+            vni: "10013"
+        3:
+            profile: "1"
+            vni: "10023"
+        4:
+            profile: "1"
+            vni: "10034"
+        5:
+            profile: "1"
+            vni: "10014"
+    node04:
+        1:
+            profile: "1"
+            vni: "201005"
+        2:
+            profile: "1"
+            vni: "10013"
+        3:
+            profile: "1"
+            vni: "10023"
+        4:
+            profile: "1"
+            vni: "10034"
+        5:
+            profile: "1"
+            vni: "10014"
+verify_ngoam_pathtrace:
+    node01:
+        1:
+            profile: "1"
+            vni: "201005"
+        2:
+            profile: "1"
+            vni: "10013"
+        3:
+            profile: "1"
+            vni: "10023"
+        4:
+            profile: "1"
+            vni: "10034"
+        5:
+            profile: "1"
+            vni: "10014"
+    node04:
+        1:
+            profile: "1"
+            vni: "201005"
+        2:
+            profile: "1"
+            vni: "10013"
+        3:
+            profile: "1"
+            vni: "10023"
+        4:
+            profile: "1"
+            vni: "10034"
+        5:
+            profile: "1"
+            vni: "10014"
+verify_ngoam_traceroute:
+    node01:
+        1:
+            vrf: "vxlan-1001"
+            source: "11.11.1.1"
+            nodes:
+                - node02
+                - node05
+                - node06
+    node02:
+        1:
+            vrf: "vxlan-1001"
+            source: "11.11.2.1"
+            nodes:
+                - node01
+                - node04
+                - node05
+                - node06
+    node06:
+        1:
+            vrf: "vxlan-1001"
+            source: "11.11.6.1"
+            nodes:
+                - node01
+                - node02
+                - node04
+                - node05
+verify_ngoam_traceroute_loopback:
+    node01:
+        1:
+            destination: "11.11.2.1"
+            vrf: "vxlan-1001"
+            source: "11.11.1.1"
+        2:
+            destination: "11.11.4.1"
+            vrf: "vxlan-1001"
+            source: "11.11.1.1"
+        3:
+            destination: "11.11.5.1"
+            vrf: "vxlan-1001"
+            source: "11.11.1.1"
+        4:
+            destination: "11.11.6.1"
+            vrf: "vxlan-1001"
+            source: "11.11.1.1"
+    node06:
+        1:
+            destination: "11.11.2.1"
+            vrf: "vxlan-1001"
+            source: "11.11.6.1"
+        2:
+            destination: "11.11.4.1"
+            vrf: "vxlan-1001"
+            source: "11.11.6.1"
+        3:
+            destination: "11.11.5.1"
+            vrf: "vxlan-1001"
+            source: "11.11.6.1"
+        4:
+            destination: "11.11.1.1"
+            vrf: "vxlan-1001"
+            source: "11.11.6.1"
+    node02:
+        1:
+            destination: "11.11.1.1"
+            vrf: "vxlan-1001"
+            source: "11.11.2.1"
+        2:
+            destination: "11.11.4.1"
+            vrf: "vxlan-1001"
+            source: "11.11.2.1"
+        3:
+            destination: "11.11.5.1"
+            vrf: "vxlan-1001"
+            source: "11.11.2.1"
+        4:
+            destination: "11.11.6.1"
+            vrf: "vxlan-1001"
+            source: "11.11.2.1"
+
+remote_host_ip_dict:
+    node05:
+        1:
+            destination: "122.1.1.25"
+            vrf: "vxlan-1001"
+        2:
+            destination: "122.1.2.25"
+            vrf: "vxlan-1002"
+        3:
+            destination: "122.1.3.25"
+            vrf: "vxlan-1003"
+        4:
+            destination: "122.1.4.25"
+            vrf: "vxlan-1004"
+        5:
+            destination: "122.1.5.25"
+            vrf: "vxlan-1005"
+    node06:
+        1:
+            destination: "122.1.1.25"
+            vrf: "vxlan-1001"
+        2:
+            destination: "122.1.2.25"
+            vrf: "vxlan-1002"
+        3:
+            destination: "122.1.3.25"
+            vrf: "vxlan-1003"
+        4:
+            destination: "122.1.4.25"
+            vrf: "vxlan-1004"
+        5:
+            destination: "122.1.5.25"
+            vrf: "vxlan-1005"
+expected_ecmp_lst: ['100.100.100.1','100.100.100.4']
+overlay: 'ipv4'
+
+collect_log:
+    node01:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+        - show vpc
+    node04:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+        - show vpc
+    node02:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+    node03:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node05:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node06:
+        - show nve peers
+        - show ip mroute
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+vpc_data:
+    nodes:
+        - node01
+        - node04
+    nve: "nve1"

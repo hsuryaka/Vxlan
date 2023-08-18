@@ -1,0 +1,1156 @@
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+###################################################################
+###                  Initial Configurations                     ###
+###################################################################
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_OR1f_Traffic_Engineering/vxlan_te_bgp_config1.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_OR1f_Traffic_Engineering/vxlan_te_bgp_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+# TC_002_TcamCarvingAndReload:
+#     source:
+#         pkg: lib.triggers.tcam_config.tcam_config
+#         class: TcamCarvingAndReload
+#     trigger_wait_time: 300
+#     timeout_config: 300
+
+# Common Setup to configure the VxLAN
+TC_003_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        #pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+
+TC_004_ConfigureIxia:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/ws/anaghkul-bgl/pvlan_backup/automation/vlan_1000.ixncfg"
+
+TC_005_rem_add_vlan:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_vlan
+    device_dut:
+        - node03
+    vlan_num: 300
+    ip_add: '197.20.20.10/16'
+    vn_segment: 30300
+    vrf:  'myvrf_50000'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_006_rem_add_svi:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_svi
+    device_dut:
+        - node03
+    vlan_num: 301
+    ip_add: '197.21.20.10/16'
+    vrf:  'myvrf_50000'
+
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_007_rem_add_vni_under_nve:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_vni_under_nve
+    device_dut:
+        - node03
+    nve : 1
+    vni : 30301
+
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_008_rem_add_bgp_neighbour:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_bgp_neighbour
+    device_dut:
+        - node03
+    asn : 5000
+    ip_add : '243.10.26.1'
+    intf_ch : nd03_nd01_1_1
+
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_009_rem_add_advertise_pip_virtual_rmac:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_advertise_pip_virtual_rmac
+    device_dut:
+        - node02
+    asn : 3000
+    nve : 1
+
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_010_rem_add_evpn_multisite_dci_tracking:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_evpn_multisite_dci_tracking
+
+    device_dut:
+        - node05
+    intf_ch: nd05_nd06_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_011_rem_add_evpn_multisite_border_gateway:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: rem_add_evpn_multisite_border_gateway
+    device_dut1:
+        - node03
+    device_dut2:        
+        - node01
+        - node02
+        - node03 
+        - node04
+        - node05
+        - node06
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: vxlan_te_bgp_script
+                method: VerifyErrLogs
+                intf1 : nd02_nd01_1_1
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_012_change_nve_source_interface_ip_address:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: change_nve_source_interface_ip_address
+    device_dut1:
+        - node01
+    device_dut2:
+        - node02 
+    device_dut3:
+        - node03
+    device_dut4:
+        - node06 
+    device_dut5:
+        - node05 
+    ip_addr : '243.3.0.6/32'      
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: vxlan_te_bgp_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_013_change_nve_source_interface_vip_address:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: change_nve_source_interface_vip_address
+    device_dut1:
+        - node01
+    device_dut2:
+        - node02 
+    device_dut3:
+        - node03
+    device_dut4:
+        - node05 
+    device_dut5:
+        - node06
+    ip_addr : '243.3.0.7/32'
+    ip_addr1 : '243.3.0.1/32'     
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: vxlan_te_bgp_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_014_change_multisite_id:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: change_multisite_id
+    device_dut1:
+        - node02
+    device_dut2:
+        - node03 
+    device_dut3:
+        - node05
+    id : 3
+    id1 :  4   
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_015_Change_Multisite_Loopback_Interface_IP_Address:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: Change_Multisite_Loopback_Interface_IP_Address
+    device_dut1:
+        - node02
+    device_dut2:
+        - node03 
+    device_dut3:
+        - node05
+    loopback_ip : '101.101.101.90/32' 
+    loopback_ip1 : '101.101.101.91/32'  
+    loopback_id : 101  
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_016_Change_bgp_router_id:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: Change_bgp_router_id
+    device_dut:
+        - node03
+    id : 10.5.0.6
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_017_shut_no_shut_svi:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: shut_no_shut_svi
+    device_dut:
+        - node03
+    vlan : '310-320'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_018_shut_no_shut_nve_source_interface:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: shut_no_shut_nve_source_interface
+    device_dut1:
+        - node02
+    device_dut2:
+        - node03
+    device_dut3:
+        - node05
+    loopback : 1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_019_config_replace:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: config_replace
+    device_dut1:
+        - node02
+    device_dut2:
+        - node03
+    device_dut3:
+        - node05
+    vlan : 11 
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_020_Shut_NoShut_vPC_Primary:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: Shut_NoShut_vPC_Primary
+    device_dut:
+        - node02
+    port_ch : 1 
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_021_TriggerGIRAddConvergence:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerMaintenanceMode
+    trigger_wait_time: 30
+    device_dut:
+      - node02
+    wait_time: '30'
+    start_wait_time: 20
+    stop_wait_time: 100
+    verify_wait_time: 20
+    convergence_time: 240
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_022_TriggerGIRRemoveConvergence:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerNormalMode
+    trigger_wait_time: 30
+    device_dut:
+      - node02
+    wait_time: '30'
+    start_wait_time: 20
+    stop_wait_time: 100
+    verify_wait_time: 20
+    convergence_time: 240
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_023_configure_bfd:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: configure_bfd
+    device_dut1:
+        - node01
+    device_dut2:
+        - node02   
+    asn : 4000
+    asn1 : 3000 
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_024_ixia_host_move:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/ws/anaghkul-bgl/pvlan_backup/automation/vlan_host_move.ixncfg"
+
+TC_025_host_move:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: host_move
+    device_dut1:
+        - node02
+    device_dut2:
+        - node03    
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+                intf1 : nd02_nd01_1_1
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_026_disable_vn_segment_vlan_based_new:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: disable_vn_segment_vlan_based_new
+    device_dut1:
+        - node03
+    device_dut2:        
+        - node01
+        - node02
+        - node03 
+        - node04
+        - node05
+        - node06
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+                intf1 : nd02_nd01_1_1
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute            
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']
+
+TC_027_module_poweroff_and_poweron:
+    source:
+        pkg: vxlan_te_bgp_script
+        class: module_poweroff_and_poweron
+    device_dut1:
+        - node02
+    device_dut2:
+        - node05    
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_ipv4_script
+                method: VerifyErrLogs
+                intf1 : nd02_nd01_1_1                
+            VerifyTERoute:
+                pkg: vxlan_te_bgp_script
+                method: VerifyTERoute          
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    node_intf_list1 : nd02_nd01_1_1
+    node_intf_list2 : nd02_nd01_1_2
+    node_intf_list3 : nd02_nd01_1_3
+    node_intf_list4 : nd02_nd01_1_4
+    node_intf_list5 : nd02_nd06_1_1
+    node_intf_list6 : nd02_nd06_1_2
+    node_intf_list7 : nd02_nd06_1_3
+    node_intf_list8 : nd02_nd06_1_4
+    node : node02
+    node_intf_list9 : nd03_nd01_1_1
+    node_intf_list10 : nd03_nd01_1_2
+    node_intf_list11 : nd03_nd01_1_3
+    node_intf_list12 : nd03_nd01_1_4
+    node_intf_list13 : nd03_nd06_1_1
+    node_intf_list14 : nd03_nd06_1_2
+    node_intf_list15 : nd03_nd06_1_3
+    node_intf_list16 : nd03_nd06_1_4
+    node1 : node03
+    vpc_dut_list: ['node02', 'node05']
+    stdalone_dut_list: ['node03']  

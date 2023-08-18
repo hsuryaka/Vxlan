@@ -1,0 +1,257 @@
+# ------------------------------------------------------
+# Testbed Details
+# ------------------------------------------------------
+testbed:
+    name: ProjectTestbed
+    alias: ProjectTestbed
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-316.cisco.com
+            address: 64.103.221.184
+    custom:
+        owner: Rudrik
+        contacts: rudshah@cisco.com
+
+# ------------------------------------------------------
+#        Node List:
+#
+#            IXIA
+#            SPINE
+#            VTEP-1
+#            VTEP-2
+#            VTEP-3
+#            FANOUT
+#
+# ------------------------------------------------------
+
+devices:
+    # ------------------------------------------------------
+    # Device - IXIA
+    # ------------------------------------------------------
+    IXIA:
+        type: tgn
+        alias: IXIA
+        os: 'ixianative'
+        connections:
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+                ixnetwork_api_server_ip: 10.197.127.23
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.10'
+                ixia_chassis_ip: 10.104.102.68
+                ixia_license_server_ip: 10.104.102.68
+                ixia_port_list: ['2/2', '2/3', '2/5','2/6', '2/7']
+        custom:
+            config: fhs_fact.ixncfg
+
+    # ------------------------------------------------------
+    # Device - SPINE
+    # ------------------------------------------------------
+    SPINE:
+        alias: SPINE
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.104.102.18 
+                port: 2021
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.104.102.55
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.104.102.1
+            msk: 25
+
+    # ------------------------------------------------------
+    # Device - VTEP-1
+    # ------------------------------------------------------
+    VTEP-1:
+        alias: VTEP-1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.104.102.18 
+                port: 2011
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.104.102.108
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.104.102.1
+            msk: 25
+
+    # ------------------------------------------------------
+    # Device - VTEP-2
+    # ------------------------------------------------------
+    VTEP-2:
+        alias: VTEP-2
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.104.102.18 
+                port: 2012
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.104.102.109
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.104.102.1
+            msk: 25
+
+    # ------------------------------------------------------
+    # Device - VTEP-3
+    # ------------------------------------------------------
+    VTEP-3:
+        alias: VTEP-3
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.104.102.18  
+                port: 2013
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.104.102.164
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.104.102.1
+            msk: 25
+
+    # ------------------------------------------------------
+    # Device - FANOUT
+    # ------------------------------------------------------
+    FANOUT:
+        alias: FANOUT
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2018
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.104.102.165
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.104.102.1
+            msk: 25

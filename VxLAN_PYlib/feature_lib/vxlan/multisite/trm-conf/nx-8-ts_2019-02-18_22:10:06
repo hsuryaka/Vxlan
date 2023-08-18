@@ -1,0 +1,563 @@
+
+!Command: show running-config
+!Running configuration last done at: Mon Feb 18 15:17:45 2019
+!Time: Mon Feb 18 22:59:27 2019
+
+version 9.2(3) Bios:version 07.61 
+hostname nx-n9k-leaf8
+vdc nx-n9k-leaf8 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature telnet
+feature nxapi
+feature bash-shell
+feature scp-server
+cfs eth distribute
+feature ngmvpn
+nv overlay evpn
+feature ospf
+feature bgp
+feature ospfv3
+feature pim
+feature pim6
+feature msdp
+feature fabric forwarding
+feature port-security
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lacp
+feature ptp
+feature lldp
+feature bfd
+clock timezone PST -8 0
+clock summer-time PDT 2 Sun Mar 02:00 1 Sun Nov 02:00 60
+feature nv overlay
+
+no password strength-check
+username admin password 5 $5$Epy9OZMb$IVYtQBor2MGv2L5HUuEFOSLZS67cNT/MDjElbIjgbx9  role network-admin
+username admin role network-operator
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 0xf6b401dac9a3cce3f790cb1f1f527c9d priv 0xf6b401dac9a3cce3f790cb1f1f527c9d localizedkey
+snmp-server user admin network-operator
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+snmp-server enable traps snmp authentication
+snmp-server enable traps stpx root-inconsistency
+
+fabric multicast event-history bgp size 51457280
+fabric multicast event-history mrib size 51457280
+fabric multicast event-history pim size 31457280
+fabric multicast event-history internal size 61457280
+fabric forwarding anycast-gateway-mac 0001.0001.0001
+ip pim rp-address 9.9.9.9 group-list 224.0.0.0/4
+ip pim ssm range 232.0.0.0/8
+ip igmp event-history igmp-internal size 81457280
+ip igmp snooping vxlan
+ip routing multicast event-history rib size 61943040
+ip routing multicast event-history mfdm-debugs size 51457280
+ip routing multicast event-history mdt size 51457280
+vlan 1-5,12-15,22-25,100-102
+vlan 2
+  vn-segment 1000002
+vlan 3
+  vn-segment 1000003
+vlan 4
+  vn-segment 1000004
+vlan 5
+  vn-segment 1000005
+vlan 12
+  vn-segment 1000012
+vlan 13
+  vn-segment 1000013
+vlan 14
+  vn-segment 1000014
+vlan 15
+  vn-segment 1000015
+vlan 22
+  vn-segment 1000022
+vlan 23
+  vn-segment 1000023
+vlan 24
+  vn-segment 1000024
+vlan 25
+  vn-segment 1000025
+vlan 100
+  vn-segment 1000100
+vlan 101
+  vn-segment 1000101
+vlan 102
+  vn-segment 1000102
+
+route-map mcast permit 10
+  match ip multicast group 224.0.0.0/4 
+route-map passall permit 10
+vrf context 100
+  vni 1000100
+  ip pim rp-address 100.100.100.100 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context 101
+  vni 1000101
+  ip pim rp-address 101.101.101.101 group-list 224.0.0.0/4
+  ip pim rp-address 101.200.10.10 group-list 226.200.10.0/24
+  ip pim rp-address 101.200.11.11 group-list 226.200.11.0/24
+  ip pim rp-address 101.200.17.17 group-list 226.200.17.0/24
+  ip pim rp-address 200.200.200.200 group-list 226.200.200.0/24
+  ip pim ssm range 232.0.0.0/8
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context 102
+  vni 1000102
+  ip pim rp-address 102.102.102.102 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context management
+  ip route 0.0.0.0/0 172.27.123.1
+hardware access-list tcam region ing-racl 512
+hardware access-list tcam region ing-ifacl 512
+hardware profile portmode 48x25G+2x100G+4x40G
+
+
+nxapi http port 80
+
+
+interface Vlan1
+  no ip redirects
+  no ipv6 redirects
+
+interface Vlan2
+  no shutdown
+  vrf member 100
+  no ip redirects
+  ip address 100.2.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan3
+  no shutdown
+  vrf member 100
+  no ip redirects
+  ip address 100.3.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan12
+  no shutdown
+  vrf member 101
+  no ip redirects
+  ip address 101.12.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan13
+  no shutdown
+  vrf member 101
+  no ip redirects
+  ip address 101.13.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan22
+  no shutdown
+  vrf member 102
+  no ip redirects
+  ip address 102.22.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan23
+  no shutdown
+  vrf member 102
+  no ip redirects
+  ip address 102.23.8.1/16
+  no ipv6 redirects
+  ip pim sparse-mode
+  fabric forwarding mode anycast-gateway
+
+interface Vlan100
+  no shutdown
+  vrf member 100
+  no ip redirects
+  ip forward
+  no ipv6 redirects
+  ip pim sparse-mode
+
+interface Vlan101
+  no shutdown
+  vrf member 101
+  no ip redirects
+  ip forward
+  no ipv6 redirects
+  ip pim sparse-mode
+
+interface Vlan102
+  no shutdown
+  vrf member 102
+  no ip redirects
+  ip forward
+  no ipv6 redirects
+  ip pim sparse-mode
+
+interface port-channel1
+  switchport
+  switchport mode trunk
+  port-channel mode active
+
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+  member vni 1000002
+    mcast-group 235.100.2.1
+  member vni 1000003
+    mcast-group 235.100.3.1
+  member vni 1000012
+    mcast-group 235.101.12.1
+  member vni 1000013
+    mcast-group 235.101.13.1
+  member vni 1000022
+    mcast-group 235.102.22.1
+  member vni 1000023
+    mcast-group 235.102.23.1
+  member vni 1000100 associate-vrf
+    mcast-group 235.100.100.1
+  member vni 1000101 associate-vrf
+    mcast-group 235.101.101.1
+  member vni 1000102 associate-vrf
+    mcast-group 235.102.102.1
+
+interface Ethernet1/1
+  switchport
+  switchport mode trunk
+  no shutdown
+
+interface Ethernet1/2
+  no shutdown
+
+interface Ethernet1/3
+  no shutdown
+
+interface Ethernet1/4
+  no shutdown
+
+interface Ethernet1/5
+  no shutdown
+
+interface Ethernet1/6
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  no shutdown
+
+interface Ethernet1/9
+  no shutdown
+
+interface Ethernet1/10
+  no shutdown
+
+interface Ethernet1/11
+  no shutdown
+
+interface Ethernet1/12
+  no shutdown
+
+interface Ethernet1/13
+  no shutdown
+
+interface Ethernet1/14
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  vrf member de
+  no shutdown
+
+interface Ethernet1/18
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  no shutdown
+
+interface Ethernet1/22
+  no shutdown
+
+interface Ethernet1/23
+  no shutdown
+
+interface Ethernet1/24
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  no shutdown
+
+interface Ethernet1/27
+  no shutdown
+
+interface Ethernet1/28
+  no shutdown
+
+interface Ethernet1/29
+  no shutdown
+
+interface Ethernet1/30
+  no shutdown
+
+interface Ethernet1/31
+  no shutdown
+
+interface Ethernet1/32
+  no shutdown
+
+interface Ethernet1/33
+  no shutdown
+
+interface Ethernet1/34
+  no shutdown
+
+interface Ethernet1/35
+  no shutdown
+
+interface Ethernet1/36
+  no shutdown
+
+interface Ethernet1/37
+  no shutdown
+
+interface Ethernet1/38
+  no shutdown
+
+interface Ethernet1/39
+  no shutdown
+
+interface Ethernet1/40
+  no shutdown
+
+interface Ethernet1/41
+  no shutdown
+
+interface Ethernet1/42
+  no shutdown
+
+interface Ethernet1/43
+  no shutdown
+
+interface Ethernet1/44
+  no shutdown
+
+interface Ethernet1/45
+  switchport
+  switchport mode trunk
+  channel-group 1 mode active
+  no shutdown
+
+interface Ethernet1/46
+  no shutdown
+
+interface Ethernet1/47
+  no shutdown
+
+interface Ethernet1/48
+  ip address 60.60.60.8/24
+  ip router ospf UNDERLAY area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49
+  no shutdown
+
+interface Ethernet1/50
+  no shutdown
+
+interface Ethernet1/51
+  no shutdown
+
+interface Ethernet1/52
+  no shutdown
+
+interface Ethernet1/53
+  no shutdown
+
+interface Ethernet1/54
+  no shutdown
+
+interface mgmt0
+  vrf member management
+  ip address 172.27.123.6/24
+
+interface loopback0
+  ip address 8.8.8.8/32
+  ip router ospf UNDERLAY area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback1
+  ip address 111.111.8.1/32
+  ip router ospf UNDERLAY area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback70
+  shutdown
+  vrf member 100
+  ip address 70.70.70.80/32
+  ip pim sparse-mode
+  ip igmp static-oif 229.1.1.1
+
+interface loopback100
+  vrf member 100
+  ip address 100.100.100.100/32
+  ip pim sparse-mode
+
+interface loopback101
+  vrf member 101
+  ip address 101.101.101.101/32
+  ip pim sparse-mode
+
+interface loopback102
+  vrf member 102
+  ip address 102.102.102.102/32
+  ip pim sparse-mode
+
+interface loopback200
+cli alias name tw term wid 400
+cli alias name mrd0 sh ip mr det vrf default
+cli alias name mrddef show ip mr det vrf def
+cli alias name fmr1 show fabric multicast ipv4 mr vrf 4201
+cli alias name clr clear ip pim event-history ; clear ip routing multicast event-history ; clear fabric multicast event-history ; clear ip igmp snooping event-history ; clear ip igmp event-history
+cli alias name mr0 sh ip mr vrf default
+cli alias name bgp1 show bgp ipv4 mvpn
+cli alias name st switchto vdc
+cli alias name mrd1 show ip mr det vrf 4201
+cli alias name del allow delete boot-image
+cli alias name sb switchback
+cli alias name mrdef show ip mr det vrf def
+cli alias name cp copy scp://vikkamat@10.28.38.28/ws/vikkamat-sjc/gp248-2.bin bootflash: vrf man
+cli alias name bin show routing multicast internal trace l3-route-history
+cli alias name fsa1 show fabric multicast ipv4 sa vrf 4201
+line console
+  exec-timeout 0
+  terminal width  511
+line vty
+  exec-timeout 0
+  logout-warning 0
+boot nxos bootflash:/amit_udb_pip 
+router ospf 1
+  router-id 3.3.3.3
+router ospf 100
+  vrf 4201
+    redistribute direct route-map passall
+    redistribute bgp 100 route-map vikas
+router ospf 17
+  vrf 4201
+router ospf UNDERLAY
+router bgp 11000
+  debug bgp file
+  address-family ipv4 unicast
+    redistribute direct route-map passall
+  address-family ipv4 mvpn
+  address-family l2vpn evpn
+  template peer VTEP-PEERS
+    remote-as 11000
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family ipv4 mvpn
+      allowas-in 4
+      send-community extended
+    address-family l2vpn evpn
+      allowas-in 4
+      send-community
+      send-community extended
+  neighbor 111.111.6.1
+    inherit peer VTEP-PEERS
+  neighbor 111.111.7.1
+    inherit peer VTEP-PEERS
+  neighbor 111.111.11.1
+    inherit peer VTEP-PEERS
+  vrf 100
+    address-family ipv4 unicast
+      network 100.2.8.1/32
+      advertise l2vpn evpn
+      redistribute direct route-map passall
+      redistribute hmm route-map passall
+  vrf 101
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+  vrf 102
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+evpn
+  vni 1000002 l2
+    rd auto
+    route-target import auto
+    route-target import 100:2
+    route-target export auto
+    route-target export 100:2
+  vni 1000012 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 1000022 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 10000002 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+ip pim event-history join-prune size 31457280
+ip pim event-history data-register-receive size 31457280
+ip pim event-history null-register size 31457280
+ip pim event-history bidir size 41457280
+ip pim event-history pim-internal size 41457280
+ip pim event-history vpc size 41457280
+ip igmp snooping event-history vlan size 51457280
+ip igmp snooping event-history igmp-snoop-internal size 51457280
+ip igmp snooping event-history vpc size 51457280
+ip igmp snooping event-history rib size 51457280
+
+no lldp tlv-select management-address v6
+
+

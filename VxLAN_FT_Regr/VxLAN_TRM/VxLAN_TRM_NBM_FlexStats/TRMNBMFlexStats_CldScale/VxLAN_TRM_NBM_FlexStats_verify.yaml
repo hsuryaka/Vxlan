@@ -1,0 +1,631 @@
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : S1-FX3-SPINE
+#            node2_s1_vpc_1  : S1-FX3-LEAF-1
+#            node3_s1_vpc_2  : S1-FX3-LEAF-2
+#            node4_s1_leaf_1 : S1-FX3-BGW-3
+#            node5_s1_access : PVNF-PGW
+# ------------------------------------------------------
+# ------------------------------------------------------
+# OSPF Neighbor Verification
+# ------------------------------------------------------
+ospf_neighbors: 
+    node1_s1_spine:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            port-channel111:
+                                                neighbors:
+                                                    1.11.1.1:                           # <- Remote Neighbor Router ID
+                                                        address: 1.11.1.3               # <- Remote Neighbor Address
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1    # <- Remote Neighbor Router ID
+                                            '{{nd01_nd02_1_3}}':
+                                                neighbors:
+                                                    1.11.1.1:
+                                                        address: 1.11.2.3
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1
+                                            port-channel112:
+                                                neighbors:
+                                                    1.12.1.1:
+                                                        address: 1.12.1.3
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1
+                                            '{{nd01_nd03_1_3}}':
+                                                neighbors:
+                                                    1.12.1.1:
+                                                        address: 1.12.2.3
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1
+                                            port-channel113:
+                                                neighbors:
+                                                    1.13.1.1:
+                                                        address: 1.13.1.3
+                                                        state: full
+                                                        neighbor_router_id: 1.13.1.1
+                                            '{{nd01_nd04_1_3}}':
+                                                neighbors:
+                                                    1.13.1.1:
+                                                        address: 1.13.2.3
+                                                        state: full
+                                                        neighbor_router_id: 1.13.1.1
+            NBM-1:
+                address_family:
+                    ipv4:
+                        instance:
+                            NBM-1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            '{{nd01_nd02_1_4}}':
+                                                neighbors:
+                                                    1.11.1.1:
+                                                        address: 1.11.3.3
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1
+                                            '{{nd01_nd03_1_4}}':
+                                                neighbors:
+                                                    1.12.1.1:
+                                                        address: 1.12.3.3
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1
+                                            '{{nd01_nd04_1_4}}':
+                                                neighbors:
+                                                    1.13.1.1:
+                                                        address: 1.13.3.3
+                                                        state: full
+                                                        neighbor_router_id: 1.13.1.1
+    node2_s1_vpc_1:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            port-channel111:
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.11.1.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd02_nd01_1_3}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.11.2.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd02_nd03_1_4}}':
+                                                neighbors:
+                                                    1.12.1.1:
+                                                        address: 2.2.2.3
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1
+            NBM-1:
+                address_family:
+                    ipv4:
+                        instance:
+                            NBM-1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            '{{nd02_nd01_1_4}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.11.3.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+    node3_s1_vpc_2:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            port-channel112:
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.12.1.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd03_nd01_1_3}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.12.2.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd03_nd02_1_4}}':
+                                                neighbors:
+                                                    1.11.1.1:
+                                                        address: 2.2.2.2
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1
+            NBM-1:
+                address_family:
+                    ipv4:
+                        instance:
+                            NBM-1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            '{{nd03_nd01_1_4}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.12.3.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+    node4_s1_leaf_1:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            port-channel113:
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.13.1.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd04_nd01_1_3}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.13.2.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+            NBM-1:
+                address_family:
+                    ipv4:
+                        instance:
+                            NBM-1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            '{{nd04_nd01_1_4}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.13.3.2
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+
+# ------------------------------------------------------
+# PIM Neighbor Verification
+# ------------------------------------------------------
+pim_neighbors: 
+    node1_s1_spine:
+        vrf:
+            default:
+                interfaces:
+                    port-channel111:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.11.1.3:
+                                        interface: port-channel111
+                    '{{nd01_nd02_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.2.3:
+                                          interface: '{{nd01_nd02_1_3}}'
+                    port-channel112:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.12.1.3:
+                                        interface: port-channel112
+                    '{{nd01_nd03_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.2.3:
+                                          interface: '{{nd01_nd03_1_3}}'
+                    port-channel113:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.13.1.3:
+                                        interface: port-channel113
+                    '{{nd01_nd04_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.2.3:
+                                          interface: '{{nd01_nd04_1_3}}'
+            NBM-1:
+                interfaces:
+                    '{{nd01_nd02_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.3.3:
+                                          interface: '{{nd01_nd02_1_4}}'
+                    '{{nd01_nd03_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.3.3:
+                                          interface: '{{nd01_nd03_1_4}}'
+                    '{{nd01_nd04_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.3.3:
+                                          interface: '{{nd01_nd04_1_4}}'
+
+    node2_s1_vpc_1:
+        vrf:
+            default:
+                interfaces:
+                    port-channel111:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.11.1.2:
+                                        interface: port-channel111
+                    '{{nd02_nd01_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.2.2:
+                                          interface: '{{nd02_nd01_1_3}}'
+            NBM-1:
+                interfaces:
+                    '{{nd02_nd01_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.3.2:
+                                          interface: '{{nd02_nd01_1_4}}'
+    node3_s1_vpc_2:
+        vrf:
+            default:
+                interfaces:
+                    port-channel112:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.12.1.2:
+                                        interface: port-channel112
+                    '{{nd03_nd01_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.2.2:
+                                          interface: '{{nd03_nd01_1_3}}'
+            NBM-1:
+                interfaces:
+                    '{{nd03_nd01_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.3.2:
+                                          interface: '{{nd03_nd01_1_4}}'
+    node4_s1_leaf_1:
+        vrf:
+            default:
+                interfaces:
+                    port-channel113:
+                        address_family:
+                            ipv4:
+                                neighbors:
+                                    1.13.1.2:
+                                        interface: port-channel113
+                    '{{nd04_nd01_1_3}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.2.2:
+                                          interface: '{{nd04_nd01_1_3}}'
+            NBM-1:
+                interfaces:
+                    '{{nd04_nd01_1_4}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.3.2:
+                                          interface: '{{nd04_nd01_1_4}}'
+
+# ------------------------------------------------------
+# BGP Neighbor Verification
+# ------------------------------------------------------
+bgp_neighbors: 
+    node1_s1_spine:
+        total_peers: 3
+        total_established_peers: 3
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 3
+                vrf_established_peers: 3
+                router_id: 11.11.11.11
+                neighbor:
+                    1.11.1.1:
+                        state: established
+                        remote_as: 100
+                    1.12.1.1:
+                        state: established
+                        remote_as: 100
+                    1.13.1.1:
+                        state: established
+                        remote_as: 100
+    node2_s1_vpc_1:
+        total_peers: 1
+        total_established_peers: 1
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 1
+                vrf_established_peers: 1
+                router_id: 1.11.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+    node3_s1_vpc_2:
+        total_peers: 1
+        total_established_peers: 1
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 1
+                vrf_established_peers: 1
+                router_id: 1.12.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+    node4_s1_leaf_1:
+        total_peers: 1
+        total_established_peers: 1
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 1
+                vrf_established_peers: 1
+                router_id: 1.13.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+
+# ------------------------------------------------------
+# BGP L2VPN EVPN Summary Verification
+# ------------------------------------------------------
+bgp_l2vpn_evpn_summary: 
+    node1_s1_spine:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 11.11.11.11
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 3
+                                capablepeers: 3
+                                neighbor:
+                                    1.11.1.1:
+                                        neighbor: 1.11.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    1.12.1.1:
+                                        neighbor: 1.12.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    1.13.1.1:
+                                        neighbor: 1.13.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+    node2_s1_vpc_1:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.11.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+    node3_s1_vpc_2:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.12.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+    node4_s1_leaf_1:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.13.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+
+# ------------------------------------------------------
+# NVE Interface Detail Verification
+# ------------------------------------------------------
+nve_interface_detail: 
+    node2_s1_vpc_1:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '1.11.11.11'
+            secondary_ip: '1.10.10.10'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node3_s1_vpc_2:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '1.12.12.12'
+            secondary_ip: '1.10.10.10'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node4_s1_leaf_1:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '1.13.13.13'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: False
+            sm_state: nve-intf-add-complete
+
+# ------------------------------------------------------
+# NVE Peers Verification
+# ------------------------------------------------------
+nve_peers: 
+    node2_s1_vpc_1:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+    node3_s1_vpc_2:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+    node4_s1_leaf_1:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.10.10.10:
+                    learn_type: CP
+                    peer_state: up
+
+# ------------------------------------------------------
+# NVE VNI Summary Verification
+# ------------------------------------------------------
+nve_vni_summary: 
+    node2_s1_vpc_1:
+        vni:
+            summary:
+                cp_vni_count: 30
+                cp_vni_up: 30
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node3_s1_vpc_2:
+        vni:
+            summary:
+                cp_vni_count: 30
+                cp_vni_up: 30
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node4_s1_leaf_1:
+        vni:
+            summary:
+                cp_vni_count: 30
+                cp_vni_up: 30
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+
+# ------------------------------------------------------
+# Collect Logs
+# ------------------------------------------------------
+collect_log:
+    node1_s1_spine:
+        - show bgp sessions
+        - show ip bgp summary
+    node2_s1_vpc_1:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node3_s1_vpc_2:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node4_s1_leaf_1:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+
+# ------------------------------------------------------
+# Error Logs Check - Exclude Patter
+# ------------------------------------------------------
+err_log_check_exclude_pattern: ''

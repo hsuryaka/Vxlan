@@ -1,0 +1,1950 @@
+
+!Command: show running-config
+!Running configuration last done at: Thu Oct 24 00:08:35 2019
+!Time: Thu Oct 24 12:00:27 2019
+
+version 9.3(3) Bios:version 05.34 
+power redundancy-mode combined force
+
+hostname S1-BGW3
+vdc S1-BGW3 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature telnet
+feature nxapi
+feature bash-shell
+cfs eth distribute
+feature ngmvpn
+nv overlay evpn
+feature ospf
+feature bgp
+feature pim
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lacp
+clock timezone PST -7 0
+feature nv overlay
+evpn multisite border-gateway 1
+feature ngoam
+
+logging level vshd 3
+logging level arp 1
+logging level clis 3
+
+no password strength-check
+username admin password 5 $5$lI.g6PQR$zgRU/21k4GZH1PizdUGoFGH49hZDT07Z8pU3LwCwGX1  role network-admin
+ssh cipher-mode weak
+
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 0x8987858e9ff45b8d54498ed1886aeff8 priv 0x8987858e9ff45b8d54498ed1886aeff8 localizedkey
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+ntp server 172.26.237.22 prefer use-vrf management
+
+fabric multicast event-history bgp size 111943040
+fabric multicast event-history mrib size 111943040
+fabric multicast event-history pim size 50943040
+fabric forwarding anycast-gateway-mac aaaa.bbbb.cccc
+ip routing event-history ufdm-summary size large
+ip routing event-history ufdm-detail size large
+ip routing event-history ufdm size large
+ip routing event-history summary size large
+ip routing event-history recursive-next-hop size large
+ip routing event-history notifications size large
+ip routing event-history modify-route size large
+ip routing event-history loop-detection size large
+ip routing event-history ha size large
+ip routing event-history general size large
+ip routing event-history errors size large
+ip routing event-history detail size large
+ip routing event-history delete-route size large
+ip routing event-history cli size large
+ip routing event-history add-route size large
+ip pim rp-address 1.0.1.1 group-list 224.0.0.0/4
+ip pim log-neighbor-changes
+ip pim ssm route-map ssm-1
+ip pim pre-build-spt
+ip igmp snooping vxlan
+ip routing multicast event-history rib size 111943040
+ip routing multicast event-history mfdm-debugs size 111457280
+ip routing multicast event-history mdt size 51457280
+vlan 1,8-12,51-55,100-120,201-220,1001-1010
+vlan 11
+  vn-segment 11
+vlan 101
+  vn-segment 5101
+vlan 102
+  vn-segment 5102
+vlan 103
+  vn-segment 5103
+vlan 104
+  vn-segment 5104
+vlan 105
+  vn-segment 5105
+vlan 106
+  vn-segment 5106
+vlan 107
+  vn-segment 5107
+vlan 108
+  vn-segment 5108
+vlan 109
+  vn-segment 5109
+vlan 110
+  vn-segment 5110
+vlan 111
+  vn-segment 5111
+vlan 112
+  vn-segment 5112
+vlan 113
+  vn-segment 5113
+vlan 114
+  vn-segment 5114
+vlan 115
+  vn-segment 5115
+vlan 116
+  vn-segment 5116
+vlan 117
+  vn-segment 5117
+vlan 118
+  vn-segment 5118
+vlan 119
+  vn-segment 5119
+vlan 120
+  vn-segment 5120
+vlan 201
+  vn-segment 5201
+vlan 202
+  vn-segment 5202
+vlan 203
+  vn-segment 5203
+vlan 204
+  vn-segment 5204
+vlan 205
+  vn-segment 5205
+vlan 206
+  vn-segment 5206
+vlan 207
+  vn-segment 5207
+vlan 208
+  vn-segment 5208
+vlan 209
+  vn-segment 5209
+vlan 210
+  vn-segment 5210
+vlan 211
+  vn-segment 5211
+vlan 212
+  vn-segment 5212
+vlan 213
+  vn-segment 5213
+vlan 214
+  vn-segment 5214
+vlan 215
+  vn-segment 5215
+vlan 216
+  vn-segment 5216
+vlan 217
+  vn-segment 5217
+vlan 218
+  vn-segment 5218
+vlan 219
+  vn-segment 5219
+vlan 220
+  vn-segment 5220
+vlan 1001
+  vn-segment 51001
+vlan 1002
+  vn-segment 51002
+vlan 1003
+  vn-segment 51003
+vlan 1004
+  vn-segment 51004
+vlan 1005
+  vn-segment 51005
+vlan 1006
+  vn-segment 51006
+vlan 1007
+  vn-segment 51007
+vlan 1008
+  vn-segment 51008
+vlan 1009
+  vn-segment 51009
+vlan 1010
+  vn-segment 51010
+
+spanning-tree vlan 100-120,201-220 priority 8192
+ip prefix-list directallow seq 20 permit 0.0.0.0/0 le 32 
+ip prefix-list directdeny seq 10 deny 1.1.0.0/16 le 32 
+ip prefix-list directdeny seq 15 deny 100.0.0.0/24 le 32 
+route-map allowall permit 10
+route-map directroute-rpm deny 10
+  match ip address prefix-list directdeny 
+route-map directroute-rpm permit 20
+  match ip address prefix-list directallow 
+route-map extroute-policy permit 10
+  set local-preference 200
+route-map filter_ext_route permit 10
+  set community no-advertise 
+route-map mvpn-permitall permit 10
+  set path-selection all advertise
+route-map ssm-1 permit 10
+  match ip multicast group 232.0.0.0/8 
+route-map ssm-1 permit 11
+  match ip multicast group 233.0.0.0/8 
+vrf context management
+  ip route 0.0.0.0/0 172.29.168.1
+vrf context ple
+vrf context trmvrf-1001
+  vni 51001
+  ip pim rp-address 100.0.0.1 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1002
+  vni 51002
+  ip pim rp-address 100.0.0.2 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1003
+  vni 51003
+  ip pim rp-address 100.0.0.3 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1004
+  vni 51004
+  ip pim rp-address 100.0.0.4 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1005
+  vni 51005
+  ip pim rp-address 100.0.0.5 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1006
+  vni 51006
+  ip pim rp-address 100.0.0.6 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1007
+  vni 51007
+  ip pim rp-address 100.0.0.7 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1008
+  vni 51008
+  ip pim rp-address 100.0.0.8 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1009
+  vni 51009
+  ip pim rp-address 100.0.0.9 group-list 224.0.0.0/4
+  ip pim ssm route-map ssm-1
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+vrf context trmvrf-1010
+  vni 51010
+  ip pim ssm range 232.0.0.0/8
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto mvpn
+    route-target both auto evpn
+hardware forwarding unicast trace
+congestion-control random-detect forward-nonecn
+priority-flow-control auto-restore multiplier 100
+
+bloggerd log-dump all
+no bloggerd log-throttle
+bloggerd log-transfer logflash
+
+
+interface Vlan1
+
+interface Vlan101
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1001
+  ip address 1.1.101.1/24
+  ipv6 address 2001:1:101::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan102
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1001
+  ip address 1.1.102.1/24
+  ipv6 address 2001:1:102::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan103
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1001
+  ip address 1.1.103.1/24
+  ipv6 address 2001:1:103::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan104
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1001
+  ip address 1.1.104.1/24
+  ipv6 address 2001:1:104::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan105
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1002
+  ip address 1.1.105.1/24
+  ipv6 address 2001:1:105::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan106
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1002
+  ip address 1.1.106.1/24
+  ipv6 address 2001:1:106::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan107
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1002
+  ip address 1.1.107.1/24
+  ipv6 address 2001:1:107::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan108
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1002
+  ip address 1.1.108.1/24
+  ipv6 address 2001:1:108::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan109
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1003
+  ip address 1.1.109.1/24
+  ipv6 address 2001:1:109::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan110
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1003
+  ip address 1.1.110.1/24
+  ipv6 address 2001:1:10a::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan111
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1003
+  ip address 1.1.111.1/24
+  ipv6 address 2001:1:10b::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan112
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1003
+  ip address 1.1.112.1/24
+  ipv6 address 2001:1:10c::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan113
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1004
+  ip address 1.1.113.1/24
+  ipv6 address 2001:1:10d::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan114
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1004
+  ip address 1.1.114.1/24
+  ipv6 address 2001:1:10e::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan115
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1004
+  ip address 1.1.115.1/24
+  ipv6 address 2001:1:10f::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan116
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1004
+  ip address 1.1.116.1/24
+  ipv6 address 2001:1:110::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan117
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1005
+  ip address 1.1.117.1/24
+  ipv6 address 2001:1:111::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan118
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1005
+  ip address 1.1.118.1/24
+  ipv6 address 2001:1:112::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan119
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1005
+  ip address 1.1.119.1/24
+  ipv6 address 2001:1:113::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan120
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1005
+  ip address 1.1.120.1/24
+  ipv6 address 2001:1:114::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan201
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1006
+  ip address 1.1.201.1/24
+  ipv6 address 2001:1:201::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan202
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1006
+  ip address 1.1.202.1/24
+  ipv6 address 2001:1:202::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan203
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1006
+  ip address 1.1.203.1/24
+  ipv6 address 2001:1:203::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan204
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1006
+  ip address 1.1.204.1/24
+  ipv6 address 2001:1:204::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan205
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1007
+  ip address 1.1.205.1/24
+  ipv6 address 2001:1:205::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan206
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1007
+  ip address 1.1.206.1/24
+  ipv6 address 2001:1:206::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan207
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1007
+  ip address 1.1.207.1/24
+  ipv6 address 2001:1:207::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan208
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1007
+  ip address 1.1.208.1/24
+  ipv6 address 2001:1:208::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan209
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1008
+  ip address 1.1.209.1/24
+  ipv6 address 2001:1:209::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan210
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1008
+  ip address 1.1.210.1/24
+  ipv6 address 2001:1:20a::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan211
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1008
+  ip address 1.1.211.1/24
+  ipv6 address 2001:1:20b::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan212
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1008
+  ip address 1.1.212.1/24
+  ipv6 address 2001:1:20c::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan213
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1009
+  ip address 1.1.213.1/24
+  ipv6 address 2001:1:20d::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan214
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1009
+  ip address 1.1.214.1/24
+  ipv6 address 2001:1:20e::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan215
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1009
+  ip address 1.1.215.1/24
+  ipv6 address 2001:1:20f::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan216
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1009
+  ip address 1.1.216.1/24
+  ipv6 address 2001:1:210::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan217
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1010
+  ip address 1.1.217.1/24
+  ipv6 address 2001:1:211::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan218
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1010
+  ip address 1.1.218.1/24
+  ipv6 address 2001:1:212::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan219
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1010
+  ip address 1.1.219.1/24
+  ipv6 address 2001:1:213::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan220
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1010
+  ip address 1.1.220.1/24
+  ipv6 address 2001:1:214::1/72
+  ip pim sparse-mode
+  ip igmp version 3
+  fabric forwarding mode anycast-gateway
+
+interface Vlan1001
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1001
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1002
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1002
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1003
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1003
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1004
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1004
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1005
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1005
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1006
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1006
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1007
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1007
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1008
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1008
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1009
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1009
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface Vlan1010
+  no shutdown
+  mtu 9216
+  vrf member trmvrf-1010
+  no ip redirects
+  ip forward
+  ipv6 address use-link-local-only
+  no ipv6 redirects
+  ip pim sparse-mode
+  ip igmp version 3
+
+interface port-channel1
+  mtu 9216
+  no ip redirects
+  ip address 32.1.1.1/24
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+  evpn multisite fabric-tracking
+
+interface port-channel2
+  mtu 9216
+  ip address 32.2.1.1/24
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+  evpn multisite fabric-tracking
+
+interface port-channel3
+  mtu 9216
+  ip address 102.8.1.1/24
+  ip pim sparse-mode
+  evpn multisite dci-tracking
+
+interface port-channel4
+  mtu 9216
+  ip address 102.9.1.1/24
+  ip pim sparse-mode
+  evpn multisite dci-tracking
+
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+  multisite border-gateway interface loopback100
+  member vni 11
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 224.1.1.11
+  member vni 5101-5102
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.1
+  member vni 5103-5104
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.2
+  member vni 5105-5106
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.3
+  member vni 5107-5108
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.4
+  member vni 5109-5110
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.5
+  member vni 5111-5112
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.6
+  member vni 5113-5114
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.7
+  member vni 5115-5116
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.8
+  member vni 5117-5118
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.9
+  member vni 5119-5120
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.10
+  member vni 5201-5202
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.11
+  member vni 5203-5204
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.12
+  member vni 5205-5206
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.13
+  member vni 5207-5208
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.14
+  member vni 5209-5210
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.15
+  member vni 5211-5212
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.16
+  member vni 5213-5214
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.17
+  member vni 5215-5216
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.18
+  member vni 5217-5218
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.19
+  member vni 5219-5220
+    suppress-arp
+    multisite ingress-replication
+    mcast-group 225.0.0.20
+  member vni 51001 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.1
+  member vni 51002 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.2
+  member vni 51003 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.3
+  member vni 51004 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.4
+  member vni 51005 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.5
+  member vni 51006 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.6
+  member vni 51007 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.7
+  member vni 51008 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.8
+  member vni 51009 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.9
+  member vni 51010 associate-vrf
+    multisite ingress-replication optimized
+    mcast-group 226.0.0.10
+
+interface Ethernet1/1
+  no link dfe adaptive-tuning
+
+interface Ethernet1/2
+  no link dfe adaptive-tuning
+
+interface Ethernet1/3
+  no link dfe adaptive-tuning
+  no shutdown
+
+interface Ethernet1/4
+  no link dfe adaptive-tuning
+
+interface Ethernet1/5
+  no link dfe adaptive-tuning
+
+interface Ethernet1/6
+  no link dfe adaptive-tuning
+
+interface Ethernet1/7
+  no link dfe adaptive-tuning
+
+interface Ethernet1/8
+  no link dfe adaptive-tuning
+
+interface Ethernet1/9
+  no link dfe adaptive-tuning
+
+interface Ethernet1/10
+  no link dfe adaptive-tuning
+
+interface Ethernet1/11
+  no link dfe adaptive-tuning
+
+interface Ethernet1/12
+  no link dfe adaptive-tuning
+
+interface Ethernet1/13
+  no link dfe adaptive-tuning
+
+interface Ethernet1/14
+  no link dfe adaptive-tuning
+
+interface Ethernet1/15
+  no link dfe adaptive-tuning
+
+interface Ethernet1/16
+  no link dfe adaptive-tuning
+
+interface Ethernet1/17
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 3 mode active
+  no shutdown
+
+interface Ethernet1/18
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 3 mode active
+  no shutdown
+
+interface Ethernet1/19
+  no link dfe adaptive-tuning
+
+interface Ethernet1/20
+  no link dfe adaptive-tuning
+
+interface Ethernet1/21
+  no link dfe adaptive-tuning
+
+interface Ethernet1/22
+  no link dfe adaptive-tuning
+
+interface Ethernet1/23
+  no link dfe adaptive-tuning
+
+interface Ethernet1/24
+  no link dfe adaptive-tuning
+
+interface Ethernet1/25
+  no link dfe adaptive-tuning
+
+interface Ethernet1/26
+  no link dfe adaptive-tuning
+
+interface Ethernet1/27
+  no link dfe adaptive-tuning
+
+interface Ethernet1/28
+  no link dfe adaptive-tuning
+
+interface Ethernet1/29
+  no link dfe adaptive-tuning
+
+interface Ethernet1/30
+  no link dfe adaptive-tuning
+
+interface Ethernet1/31
+  no link dfe adaptive-tuning
+
+interface Ethernet1/32
+  no link dfe adaptive-tuning
+
+interface Ethernet1/33
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 4 mode active
+  no shutdown
+
+interface Ethernet1/34
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 4 mode active
+  no shutdown
+
+interface Ethernet1/35
+  no link dfe adaptive-tuning
+
+interface Ethernet1/36
+  no link dfe adaptive-tuning
+
+interface Ethernet1/37
+  no link dfe adaptive-tuning
+
+interface Ethernet1/38
+  no link dfe adaptive-tuning
+
+interface Ethernet1/39
+  no link dfe adaptive-tuning
+
+interface Ethernet1/40
+  no link dfe adaptive-tuning
+
+interface Ethernet1/41
+  no link dfe adaptive-tuning
+
+interface Ethernet1/42
+  no link dfe adaptive-tuning
+
+interface Ethernet1/43
+  no link dfe adaptive-tuning
+
+interface Ethernet1/44
+  no link dfe adaptive-tuning
+
+interface Ethernet1/45
+  no link dfe adaptive-tuning
+
+interface Ethernet1/46
+  no link dfe adaptive-tuning
+
+interface Ethernet1/47
+  no link dfe adaptive-tuning
+
+interface Ethernet1/48
+  no link dfe adaptive-tuning
+
+interface Ethernet1/49
+  no link dfe adaptive-tuning
+  no ip redirects
+  no shutdown
+
+interface Ethernet1/50
+  no link dfe adaptive-tuning
+
+interface Ethernet1/51
+  no link dfe adaptive-tuning
+  no ip redirects
+
+interface Ethernet1/52
+  no link dfe adaptive-tuning
+
+interface Ethernet1/53
+  no link dfe adaptive-tuning
+
+interface Ethernet1/54
+  no link dfe adaptive-tuning
+
+interface Ethernet1/55
+  no link dfe adaptive-tuning
+
+interface Ethernet1/56
+  no link dfe adaptive-tuning
+
+interface Ethernet1/57
+  no link dfe adaptive-tuning
+
+interface Ethernet1/58
+  no link dfe adaptive-tuning
+
+interface Ethernet1/59
+  no link dfe adaptive-tuning
+
+interface Ethernet1/60
+  no link dfe adaptive-tuning
+
+interface Ethernet1/61
+  no link dfe adaptive-tuning
+
+interface Ethernet1/62
+  no link dfe adaptive-tuning
+
+interface Ethernet1/63
+  no link dfe adaptive-tuning
+
+interface Ethernet1/64
+  no link dfe adaptive-tuning
+
+interface Ethernet1/65
+  no link dfe adaptive-tuning
+
+interface Ethernet1/66
+  no link dfe adaptive-tuning
+
+interface Ethernet1/67
+  no link dfe adaptive-tuning
+
+interface Ethernet1/68
+  no link dfe adaptive-tuning
+
+interface Ethernet1/69
+  no link dfe adaptive-tuning
+
+interface Ethernet1/70
+  no link dfe adaptive-tuning
+
+interface Ethernet1/71
+  no link dfe adaptive-tuning
+
+interface Ethernet1/72
+  no link dfe adaptive-tuning
+
+interface Ethernet1/73
+  no link dfe adaptive-tuning
+
+interface Ethernet1/74
+  no link dfe adaptive-tuning
+
+interface Ethernet1/75
+  no link dfe adaptive-tuning
+
+interface Ethernet1/76
+  no link dfe adaptive-tuning
+
+interface Ethernet1/77
+  no link dfe adaptive-tuning
+
+interface Ethernet1/78
+  no link dfe adaptive-tuning
+
+interface Ethernet1/79
+  no link dfe adaptive-tuning
+
+interface Ethernet1/80
+  no link dfe adaptive-tuning
+
+interface Ethernet1/81
+  no link dfe adaptive-tuning
+
+interface Ethernet1/82
+  no link dfe adaptive-tuning
+
+interface Ethernet1/83
+  no link dfe adaptive-tuning
+
+interface Ethernet1/84
+  no link dfe adaptive-tuning
+
+interface Ethernet1/85
+  no link dfe adaptive-tuning
+
+interface Ethernet1/86
+  no link dfe adaptive-tuning
+
+interface Ethernet1/87
+  no link dfe adaptive-tuning
+
+interface Ethernet1/88
+  no link dfe adaptive-tuning
+
+interface Ethernet1/89
+  no link dfe adaptive-tuning
+
+interface Ethernet1/90
+  no link dfe adaptive-tuning
+
+interface Ethernet1/91
+  no link dfe adaptive-tuning
+
+interface Ethernet1/92
+  no link dfe adaptive-tuning
+
+interface Ethernet1/93
+  no link dfe adaptive-tuning
+
+interface Ethernet1/94
+  no link dfe adaptive-tuning
+
+interface Ethernet1/95
+  no link dfe adaptive-tuning
+
+interface Ethernet1/96
+  no link dfe adaptive-tuning
+
+interface Ethernet1/97
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 1 mode active
+  no shutdown
+
+interface Ethernet1/98
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 1 mode active
+  no shutdown
+
+interface Ethernet1/99
+  no link dfe adaptive-tuning
+
+interface Ethernet1/100
+  no link dfe adaptive-tuning
+
+interface Ethernet1/101
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 2 mode active
+  no shutdown
+
+interface Ethernet1/102
+  mtu 9216
+  no link dfe adaptive-tuning
+  channel-group 2 mode active
+  no shutdown
+
+interface Ethernet1/103
+  no link dfe adaptive-tuning
+
+interface Ethernet1/104
+  no link dfe adaptive-tuning
+
+interface Ethernet1/105
+  no link dfe adaptive-tuning
+
+interface Ethernet1/106
+  no link dfe adaptive-tuning
+
+interface Ethernet1/107
+  no link dfe adaptive-tuning
+  no shutdown
+
+interface Ethernet1/108
+  no link dfe adaptive-tuning
+  no shutdown
+
+interface mgmt0
+  vrf member management
+  ip address 172.29.168.62/24
+
+interface loopback0
+  ip address 96.96.96.96/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback1
+  ip address 2.1.1.22/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback5
+  shutdown
+  ip address 111.111.111.111/32
+  ip address 101.7.7.7/32 secondary
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback11
+  shutdown
+  vrf member trmvrf-1001
+  ip address 100.0.0.1/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback12
+  shutdown
+  vrf member trmvrf-1002
+  ip address 100.0.0.2/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback13
+  shutdown
+  vrf member trmvrf-1003
+  ip address 100.0.0.3/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback14
+  shutdown
+  vrf member trmvrf-1004
+  ip address 100.0.0.4/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback15
+  shutdown
+  vrf member trmvrf-1005
+  ip address 100.0.0.5/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback16
+  shutdown
+  vrf member trmvrf-1006
+  ip address 100.0.0.6/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback17
+  shutdown
+  vrf member trmvrf-1007
+  ip address 100.0.0.7/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback18
+  vrf member trmvrf-1008
+  ip address 100.0.0.8/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback19
+  vrf member trmvrf-1009
+  ip address 100.0.0.9/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback20
+  vrf member trmvrf-1010
+  ip address 100.0.0.10/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback100
+  ip address 3.1.1.1/32
+  ip router ospf 200 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback120
+  shutdown
+  vrf member trmvrf-1001
+  ip address 39.39.39.40/32
+  ip router ospf 200 area 0.0.0.0
+line console
+  speed 115200
+line vty
+router ospf 200
+  router-id 2.1.1.22
+  log-adjacency-changes
+  auto-cost reference-bandwidth 400 Gbps
+  vrf pkeepalive
+  vrf trmvrf-1001
+    router-id 25.0.0.101
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1002
+    router-id 25.0.0.102
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1003
+    router-id 25.0.0.103
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1004
+    router-id 25.0.0.104
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1005
+    router-id 25.0.0.105
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1006
+    router-id 25.0.0.106
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1007
+    router-id 25.0.0.107
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1008
+    router-id 17.0.0.108
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1009
+    router-id 25.0.0.109
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+    log-adjacency-changes
+    auto-cost reference-bandwidth 400 Gbps
+  vrf trmvrf-1010
+    router-id 25.0.0.110
+    redistribute direct route-map allowall
+    redistribute bgp 65001 route-map directroute-rpm
+router bgp 65001
+  debug bgp file
+  router-id 2.1.1.22
+  timers bestpath-limit 600
+  graceful-restart restart-time 300
+  graceful-restart stalepath-time 600
+  bestpath as-path ignore
+  bestpath as-path multipath-relax
+  no enhanced-error
+  event-history periodic size large
+  event-history detail size large
+  address-family ipv4 unicast
+    network 2.1.1.22/32
+    network 3.1.1.1/32
+    network 96.96.96.96/32
+    redistribute ospf 200 route-map allowall
+    maximum-paths 32
+    maximum-paths ibgp 32
+  address-family ipv6 unicast
+    maximum-paths 32
+    maximum-paths ibgp 32
+  address-family ipv4 mvpn
+    maximum-paths 32
+    nexthop route-map allowall
+    retain route-target all
+    additional-paths send
+    additional-paths receive
+    additional-paths selection route-map mvpn-permitall
+  address-family l2vpn evpn
+    maximum-paths 32
+    maximum-paths ibgp 32
+    nexthop route-map allowall
+    retain route-target all
+  template peer DCI-OVERLAY
+    update-source loopback1
+    ebgp-multihop 10
+    peer-type fabric-external
+    address-family ipv4 mvpn
+      send-community
+      send-community extended
+      route-map permitall out
+      rewrite-rt-asn
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+      route-map permitall out
+      rewrite-evpn-rt-asn
+  template peer dciwan
+    update-source loopback1
+    ebgp-multihop 10
+    timers 120 360
+    peer-type fabric-external
+    address-family ipv4 mvpn
+      send-community extended
+      rewrite-rt-asn
+    address-family l2vpn evpn
+      send-community extended
+      rewrite-evpn-rt-asn
+  neighbor 2.1.1.9
+    remote-as 65001
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family ipv6 unicast
+      send-community
+      send-community extended
+  neighbor 2.1.1.10
+    remote-as 65001
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community
+      send-community extended
+    address-family ipv6 unicast
+      send-community
+      send-community extended
+  neighbor 2.1.1.13
+    remote-as 65001
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community extended
+    address-family ipv4 mvpn
+      send-community extended
+    address-family l2vpn evpn
+      send-community extended
+  neighbor 2.1.1.14
+    remote-as 65001
+    update-source loopback1
+    address-family ipv4 unicast
+      send-community extended
+    address-family ipv4 mvpn
+      send-community extended
+    address-family l2vpn evpn
+      send-community extended
+  neighbor 2.1.1.15
+    inherit peer dciwan
+    remote-as 65002
+  neighbor 2.1.1.16
+    inherit peer dciwan
+    remote-as 65002
+  neighbor 2.1.1.17
+    inherit peer dciwan
+    remote-as 65004
+  neighbor 2.1.1.18
+    inherit peer DCI-OVERLAY
+    remote-as 65006
+  neighbor 2.1.1.19
+    inherit peer DCI-OVERLAY
+    remote-as 65006
+  neighbor 102.8.1.2
+    remote-as 65006
+    address-family ipv4 unicast
+      route-map filter_ext_route in
+  neighbor 102.9.1.2
+    remote-as 65006
+    address-family ipv4 unicast
+      route-map filter_ext_route in
+  vrf trmvrf-1001
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1002
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1003
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1004
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1005
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1006
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1007
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1008
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1009
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+  vrf trmvrf-1010
+    timers bestpath-limit 600
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    bestpath as-path multipath-relax
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+    address-family ipv6 unicast
+      advertise l2vpn evpn
+      maximum-paths 32
+      maximum-paths ibgp 32
+evpn
+  vni 11 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5101 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5102 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5103 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5104 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5105 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5106 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5107 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5108 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5109 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5110 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5111 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5112 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5113 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5114 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5115 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5116 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5117 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5118 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5119 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5120 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5201 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5202 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5203 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5204 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5205 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5206 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5207 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5208 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5209 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5210 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5211 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5212 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5213 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5214 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5215 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5216 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5217 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5218 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5219 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 5220 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+ip pim event-history join-prune size 81457280
+ip pim event-history null-register size 21457280
+ip pim event-history bidir size 11457280
+ip pim event-history pim-internal size 81457280
+ip pim event-history vpc size 81457280
+ip igmp snooping event-history vlan size 101457280
+ip igmp snooping event-history igmp-snoop-internal size 101457280
+ip igmp snooping event-history rib size 81457280
+
+logging timestamp microseconds
+no logging console
+cli alias name cpbug copy $1 scp://fangtang@10.22.31.142//auto/Insieme-EOR/eor-qa/cdets/$2 vrf management
+cli alias name cplogin copy scp://fangtang@10.22.31.142//auto/Insieme-EOR/eor-qa/users/fangtang/logs/$1 bootflash: vrf management
+cli alias name bdprofile slot $1 debug hard inter sug dump a $2 s $3 table tah_sug_lub_bdprofiletable $4 
+cli alias name bdstate slot $1 debug hardware internal sug dump a $2 s $3  table tah_sug_lub_bdstatetable $4 
+cli alias name qbdstate slot $1 debug hardware internal sug dump a $2 s $3  table tah_sug_qsmt_bdstate $4 
+cli alias name ifinfo show system internal ethpm info interface ethernet $1 | inc STATIC
+cli alias name lif show system internal eltm info interface ethernet $1 | inc LIF
+cli alias name met slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_qsmt_met $4
+cli alias name dstinfo slot $1 debug hard inter sug dump a $2 s $3 table tah_sug_luc_dstinfotable $4 
+cli alias name ovtbl slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_qsmt_ovtbl $4
+cli alias name rwmet slot $1 debug hard inter sug dump a $2 s $3 table tah_sug_rwx_rwmettable $4 
+cli alias name rwvlanxlate slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_rwx_rwvlanxlatetable 0 3300 | grep key_epg_or_bd=$4
+cli alias name rwencap slot $1 debug hard inter sug dump a $2 s $3 table tah_sug_rwx_rwencaptable $4 
+cli alias name rwsrcaddr slot $1 debug hardware internal sug dump a $2 s $3 tabl tah_sug_rwx_rwsrcaddrtable $4 
+cli alias name pif slot $1 debug hardware internal sug dump asic $2 slice $3  table  tah_sug_lua_piftable $4
+cli alias name rwdmac slot $1 debug hardware internal sug dump a $2 s $3 table tah_sug_rwx_rwdmactable $4
+cli alias name outervlanxlate slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_outervlanxlatekeytable 0 511 | grep $4 
+cli alias name outervlanxlatekey slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_outervlanxlatekeytable 0 511 | grep $4
+cli alias name outervlanxlatedata slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_outervlanxlatedatatable $4 
+cli alias name mytep slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_mytepkeytable 0 511 field-per-line  | grep -B 10 $4
+cli alias name srctep slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_srcteptable 0 8192 changed field-per-line  | grep -B 10 $4
+cli alias name vifstate slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_vifstatetable $4 
+cli alias name vifprofile slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_vifprofiletable $4 
+cli alias name ipmtu slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_luc_ipmtutable $4 
+cli alias name ucpombr slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_luc_ucportchannelmembertable $4 
+cli alias name vifvlanmbr slot $1 debug hardware internal sug dump asic $2 slice $3 table  tah_sug_luc_vifvlanmbrtable $4 
+cli alias name ucpoconfig slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_luc_ucportchannelconfigtable $4
+cli alias name fptile slot $1 debug hardware internal sug dump asic $2 slice $3 fp $4 table $5:tah_sug_fpx_fptile $6
+cli alias name vlanxlate slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_lua_vlanxlatetable 0 33000 | grep $4
+cli alias name tnlmp slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_luc_tnlmultipathcfgtable $4 
+cli alias name tnlmpmbr slot $1 debug hardware internal sug dump asic $2 slice $3 table tah_sug_luc_tnlmultipathmbrtable $4
+cli alias name oscstate show openflow switch 1 controllers | grep -B 5 Role:
+cli alias name stats show openflow switch 1 controllers  stats
+cli alias name ofacount show l2route summary | grep -i ofa
+cli alias name l2mc slot $1 show system internal forwarding tahoe l2 multicast
+cli alias name host slot $1 show hardware internal tah l3  v4host 
+cli alias name lpm slot $1 show hardware internal tah l3  v4lpm 
+cli alias name cpimgdpp copy scp://fangtang@10.22.31.142//auto/ins-bld-tools/builds/REL_7_0_3_I4_1_$1/build/images/final/nxos.7.0.3.I4.1.$2.bin bootflash: vrf management
+cli alias name igmpsn show ip igmp snooping groups summary | grep Total
+cli alias name cpcore copy core://$1/$2 scp://fangtang@10.22.31.142//auto/Insieme-EOR/eor-qa/users/fangtang/cores vrf management
+cli alias name cplog copy $1 scp://fangtang@10.22.31.142//auto/Insieme-EOR/eor-qa/users/fangtang/logs/$2 vrf management
+cli alias name dci sh nve multisite dci-links
+cli alias name fab sh nve multisite fabric-links
+
+

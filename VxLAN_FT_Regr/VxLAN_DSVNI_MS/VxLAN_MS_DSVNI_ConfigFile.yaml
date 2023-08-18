@@ -1,0 +1,190 @@
+FWD_SYS_dict1:
+    VRF_string              : 'EVPN-VRF-'
+    VRF_id_start            : 37
+    VRF_count               : 2
+    VLAN_PER_VRF_count      : 2
+    SPINE_COUNT             : 1
+    BGP_AS_num              : 100
+    OSPF_AS                 : 100
+
+FWD_SYS_dict2:
+    VRF_string              : 'EVPN-VRF-'
+    VRF_id_start            : 37
+    VRF_count               : 2
+    VLAN_PER_VRF_count      : 2
+    SPINE_COUNT             : 1
+    BGP_AS_num              : 200
+    OSPF_AS                 : 100
+
+# LEAF-1 data
+LEAF_1_dict:
+    loop0_ip                : "2.211.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id               : 211
+        spine_loop0_ip      : "2.211.1.10"
+        common_rp           : "100.1.1.1"
+        leaf_spine_po_v4    : "2.211.1.3"
+        leaf_spine_mask_v4  : "/31"
+        leaf_spine_po_v6    : "2001:2:211:1::3"
+        leaf_spine_mask_v6  : "/64"
+        spine_leaf_po_v4    : "2.211.1.2"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:2:211:1::2"
+        spine_leaf_mask_v6  : "/64"
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "2.21.21.21"
+        VPC_VTEP_IP         : "2.30.30.100"
+        l3_mcast_grp_ip     : '224.1.1.10'
+        l2_mcast_grp_ip     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start       : 37
+        l3_vni_start        : 20037
+        l2_vlan_start       : 17
+        l2_vni_start        : 10017
+        l2_vlan_ipv4_start  : '2.1.1.1'
+        l2_vlan_ipv4_mask   : '/24'
+        l2_vlan_ipv6_start  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# BGW-1 data
+BGW_1_dict:
+    loop0_ip                : "2.211.1.10"
+    SPINE_1_UPLINK_PO:
+        po_id               : 211
+        spine_loop0_ip      : "2.211.1.10"
+        common_rp           : "100.1.1.1"
+        leaf_spine_po_v4    : "2.211.1.2"
+        leaf_spine_mask_v4  : "/31"
+        leaf_spine_po_v6    : "2001:2:211:1::2"
+        leaf_spine_mask_v6  : "/64"
+        spine_leaf_po_v4    : "2.211.1.3"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:2:211:1::3"
+        spine_leaf_mask_v6  : "/64"
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "2.210.210.210"
+        l3_mcast_grp_ip     : '224.1.1.10'
+        l2_mcast_grp_ip     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start       : 37
+        l3_vni_start        : 20037
+        l2_vlan_start       : 17
+        l2_vni_start        : 10017
+        l2_vlan_ipv4_start  : '2.1.1.1'
+        l2_vlan_ipv4_mask   : '/24'
+        l2_vlan_ipv6_start  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# LEAF-2 data
+LEAF_2_dict:
+    loop0_ip                : "2.212.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id               : 212
+        spine_loop0_ip      : "2.212.1.10"
+        common_rp           : "100.1.1.1"
+        leaf_spine_po_v4    : "2.212.1.3"
+        leaf_spine_mask_v4  : "/31"
+        leaf_spine_po_v6    : "2001:2:212:1::3"
+        leaf_spine_mask_v6  : "/64"
+        spine_leaf_po_v4    : "2.212.1.2"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:2:212:1::2"
+        spine_leaf_mask_v6  : "/64"
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "2.22.22.22"
+        VPC_VTEP_IP         : "2.30.30.100"
+        l3_mcast_grp_ip     : '224.1.1.10'
+        l2_mcast_grp_ip     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start       : 37
+        l3_vni_start        : 20037
+        l2_vlan_start       : 17
+        l2_vni_start        : 10017
+        l2_vlan_ipv4_start  : '2.1.1.1'
+        l2_vlan_ipv4_mask   : '/24'
+        l2_vlan_ipv6_start  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# BGW-2 data
+BGW_2_dict:
+    loop0_ip                : "2.212.1.10"
+    SPINE_1_UPLINK_PO:
+        po_id               : 212
+        spine_loop0_ip      : "2.212.1.10"
+        common_rp           : "100.1.1.1"
+        leaf_spine_po_v4    : "2.212.1.2"
+        leaf_spine_mask_v4  : "/31"
+        leaf_spine_po_v6    : "2001:2:212:1::2"
+        leaf_spine_mask_v6  : "/64"
+        spine_leaf_po_v4    : "2.212.1.3"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:2:212:1::3"
+        spine_leaf_mask_v6  : "/64"
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "2.220.220.220"
+        l3_mcast_grp_ip     : '224.1.1.10'
+        l2_mcast_grp_ip     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start       : 37
+        l3_vni_start        : 20037
+        l2_vlan_start       : 17
+        l2_vni_start        : 10017
+        l2_vlan_ipv4_start  : '2.1.1.1'
+        l2_vlan_ipv4_mask   : '/24'
+        l2_vlan_ipv6_start  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# Traffic TGEN Data
+
+LEAF_1_TGEN_data:
+    'no_of_ints'            : "4"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:16:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv46'
+    'v4_addr'               : '2.1.1.10'
+    'v4_addr_step'          : '0.0.1.0'
+    'v4_gateway'            : '2.1.1.1'
+    'v4_gateway_step'       : '0.0.1.0'
+    'v4_netmask'            : '255.255.255.0'
+    'v6_addr'               : '2001:2:1:1::10'
+    'v6_addr_step'          : '0:0:0:1::'
+    'v6_gateway'            : '2001:2:1:1::1'
+    'v6_gateway_step'       : '0:0:0:1::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '17'
+    'vlan_id_step'          : '1'
+    'igmp_ver'              : 'v3'
+    'mcast_grp_ip'          : '225.1.1.1'
+    'mcast_grp_ip_step'     : '0.0.1.0'
+    'no_of_grps'            : '1'
+    'no_of_mcast_sources'   : '1'
+
+LEAF_2_TGEN_data:
+    'no_of_ints'            : "4"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:17:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv46'
+    'v4_addr'               : '2.1.1.20'
+    'v4_addr_step'          : '0.0.1.0'
+    'v4_gateway'            : '2.1.1.1'
+    'v4_gateway_step'       : '0.0.1.0'
+    'v4_netmask'            : '255.255.255.0'
+    'v6_addr'               : '2001:2:1:1::20'
+    'v6_addr_step'          : '0:0:0:1::'
+    'v6_gateway'            : '2001:2:1:1::1'
+    'v6_gateway_step'       : '0:0:0:1::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '17'
+    'vlan_id_step'          : '1'
+    'igmp_ver'              : 'v3'
+    'mcast_grp_ip'          : '225.1.1.1'
+    'mcast_grp_ip_step'     : '0.0.1.0'
+    'no_of_grps'            : '1'
+    'no_of_mcast_sources'   : '1'
+

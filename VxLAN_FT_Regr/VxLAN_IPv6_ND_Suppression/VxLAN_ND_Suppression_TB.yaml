@@ -1,0 +1,577 @@
+testbed:
+    name: myTestbed
+    alias: myTestbed
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-316.cisco.com
+            address: 64.103.221.184
+    custom:
+        owner: Hari Shankar
+        contacts: hganapat@cisco.com
+
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : Fx_Core
+#            node2_s1_vpc_1  : S1_BGW1_Ely_Pri
+#            node3_s1_vpc_2  : S1_BGW1_Ely_Sec
+#            node4_s1_leaf_1 : Tecate_Vtep
+#            node5_s1_access : Paris_L2
+# ------------------------------------------------------
+
+devices:
+    
+    # ------------------------------------------------------
+    # SPINE Device
+    # ------------------------------------------------------
+    Fx_Core:
+        alias: node1_s1_spine
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.18
+                port: 2006
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.129
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+            # bo_cfg: ['interface breakout module 1 port 50 map 10g-4x']
+    
+    # ------------------------------------------------------
+    # VPC-1 VTEP Devices
+    # ------------------------------------------------------
+    S1_BGW1_Ely_Pri:
+        alias: node2_s1_vpc_1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.18
+                port: 2026
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.131
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+            # bo_cfg: ['interface breakout module 1 port 50 map 10g-4x']
+    
+    # ------------------------------------------------------
+    # VPC-2 VTEP Devices
+    # ------------------------------------------------------
+    S1_BGW1_Ely_Sec:
+        alias: node3_s1_vpc_2
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.18
+                port: 2027
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.132
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+            #bo_cfg: ['interface breakout module 1 port 49 map 10g-4x']
+
+    # ------------------------------------------------------
+    # STD VTEP Devices
+    # ------------------------------------------------------
+    Tecate_Vtep:
+        alias: node4_s1_leaf_1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.18
+                port: 2005
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.122
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+            #bo_cfg: ['interface breakout module 1 port 49 map 10g-4x']
+
+    # ------------------------------------------------------
+    # VPC ACCESS Devices
+    # ------------------------------------------------------
+    Paris_L2:
+        alias: node5_s1_access
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.18
+                port: 2032
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.225.127.136
+                service_attributes:
+                    execute:
+                        timeout: 600
+                    configure:
+                        timeout: 600
+                        bulk: true
+        custom:
+            execute:
+                timeout: 600
+            configure:
+                timeout: 300
+            abstraction:
+                order: [os, platform]
+            gw: 10.225.127.1
+            msk: 24
+            # bo_cfg: ['interface breakout module 1 port 50 map 10g-4x']
+    
+    # ----------------------------------------------------------------
+    # TGEN Details
+    # ----------------------------------------------------------------
+    # ----------------------------------------------------------------
+    # TGEN Port Mapping
+    # ----------------------------------------------------------------
+    # PORT  -   Node Alias         -   Node Name    -   Device Port
+    # ----------------------------------------------------------------
+    # 3/4   -   node5_s1_access    -   Paris_L2     -   1/11
+    # 8/4   -   node4_s1_leaf_1    -   Tecate_Vtep  -   1/51
+    # ----------------------------------------------------------------
+    ixia:
+        type: tgn
+        alias: ixia
+        os: 'ixianative'
+        connections:
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+                #ixnetwork_api_server_ip: 10.225.127.148
+                ixnetwork_api_server_ip: 10.197.127.120
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.10'
+                ixia_chassis_ip: 10.197.127.16
+                ixia_license_server_ip: 10.197.127.16
+                # ixia_port_list: [ '3/4', '8/4']
+                # ixia_port_list: [ '8/4', '3/4', '8/3']
+                ixia_port_list: [ '8/4', '8/15', '8/3','5/5','5/7']
+        custom:
+            config: ixia_esi_rx.ixncfg
+
+# ------------------------------------------------------
+# Device Connections
+# ------------------------------------------------------
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : Fx_Core
+#            node2_s1_vpc_1  : S1_BGW1_Ely_Pri
+#            node3_s1_vpc_2  : S1_BGW1_Ely_Sec
+#            node4_s1_leaf_1 : Tecate_Vtep
+#            node5_s1_access : Paris_L2
+# ------------------------------------------------------
+topology:
+
+    # Node ID : node1_s1_spine
+    Fx_Core:
+        interfaces:
+            # -- SPINE to VPC-1
+            Ethernet1/50/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd02_1_1
+                link: nd01_nd02_1_1
+            Ethernet1/50/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd02_1_2
+                link: nd01_nd02_1_2
+            Ethernet1/50/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd02_1_3
+                link: nd01_nd02_1_3
+            Ethernet1/50/4:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd02_1_4
+                link: nd01_nd02_1_4
+            # -- SPINE to VPC-2
+            Ethernet1/52/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd03_1_1
+                link: nd01_nd03_1_1
+            Ethernet1/52/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd03_1_2
+                link: nd01_nd03_1_2
+            Ethernet1/52/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd03_1_3
+                link: nd01_nd03_1_3
+            Ethernet1/52/4:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd03_1_4
+                link: nd01_nd03_1_4
+            # -- SPINE to STD
+            Ethernet1/7:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd04_1_1
+                link: nd01_nd04_1_1
+            Ethernet1/8:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd04_1_2
+                link: nd01_nd04_1_2
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd04_1_3
+                link: nd01_nd04_1_3
+            Ethernet1/28:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd01_nd04_1_4
+                link: nd01_nd04_1_4
+                
+    # Node ID : node2_s1_vpc_1
+    S1_BGW1_Ely_Pri:
+        interfaces:
+            # -- VPC-1 to SPINE
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd01_1_1
+                link: nd01_nd02_1_1
+            Ethernet1/28:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd01_1_2
+                link: nd01_nd02_1_2
+            Ethernet1/29:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd01_1_3
+                link: nd01_nd02_1_3
+            Ethernet1/30:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd01_1_4
+                link: nd01_nd02_1_4
+            
+            # -- VPC-1 to VPC-2 keep-alive
+            Ethernet1/51/4:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd03_1_1
+                link: nd02_nd03_1_1
+
+            # -- VPC Pri Orphan port
+            Ethernet1/5:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_tgen_1_1
+                link: nd02_tgen_1_1
+
+            # -- VPC-1 to VPC-2 peer-links
+            Ethernet1/21:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd03_1_2
+                link: nd02_nd03_1_2
+            Ethernet1/22:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd03_1_3
+                link: nd02_nd03_1_3
+
+            # -- VPC-1 to ACCESS
+            Ethernet1/45:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd05_1_1
+                link: nd02_nd05_1_1
+            Ethernet1/46:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd02_nd05_1_2
+                link: nd02_nd05_1_2
+
+    # Node ID : node3_s1_vpc_2
+    S1_BGW1_Ely_Sec:
+        interfaces:
+            # -- VCP-2 to SPINE
+            Ethernet1/33:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd01_1_1
+                link: nd01_nd03_1_1
+            Ethernet1/34:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd01_1_2
+                link: nd01_nd03_1_2
+            Ethernet1/35:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd01_1_3
+                link: nd01_nd03_1_3
+            Ethernet1/36:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd01_1_4
+                link: nd01_nd03_1_4
+
+            # -- VPC-2 to VPC-1 keep-alive
+            Ethernet1/37:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd02_1_1
+                link: nd02_nd03_1_1
+
+            # -- VPC Sec Orphan port
+            Ethernet1/5:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_tgen_1_1
+                link: nd03_tgen_1_1
+
+            # -- VPC-2 to VPC-1 peer-links
+            Ethernet1/51/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd02_1_2
+                link: nd02_nd03_1_2
+            Ethernet1/51/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd02_1_3
+                link: nd02_nd03_1_3
+            
+            # -- VPC-1 to ACCESS
+            Ethernet1/45:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd05_1_1
+                link: nd03_nd05_1_1
+            Ethernet1/46:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd03_nd05_1_2
+                link: nd03_nd05_1_2
+
+    # Node ID : node4_s1_leaf_1
+    Tecate_Vtep:
+        interfaces:
+            # -- STD to SPINE
+            Ethernet1/49/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd04_nd01_1_1
+                link: nd01_nd04_1_1
+            Ethernet1/49/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd04_nd01_1_2
+                link: nd01_nd04_1_2
+            Ethernet1/49/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd04_nd01_1_3
+                link: nd01_nd04_1_3
+            Ethernet1/49/4:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd04_nd01_1_4
+                link: nd01_nd04_1_4
+            
+            # -- STD to IXIA
+            Ethernet1/51/1:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd04_tgen_1_1
+                link: nd04_tgen_1_1
+            Ethernet1/51/2:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd04_tgen_1_2
+                link: nd04_tgen_1_2
+
+    # Node ID : node5_s1_access
+    Paris_L2:
+        interfaces:
+            # -- ACCESS to VPC-1
+            Ethernet1/49/1:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd05_nd02_1_1
+                link: nd02_nd05_1_1
+            Ethernet1/49/2:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd05_nd02_1_2
+                link: nd02_nd05_1_2
+            # -- ACCESS to VPC-2
+            Ethernet1/49/3:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd05_nd03_1_1
+                link: nd03_nd05_1_1
+            Ethernet1/49/4:
+                type: ethernet
+                inf_speed: 1000000
+                alias: nd05_nd03_1_2
+                link: nd03_nd05_1_2
+            
+            # -- S1 LEAF-1 to IXIA
+            Ethernet1/11:
+                type: ethernet
+                inf_speed: 100000
+                alias: nd05_tgen_1_1
+                link: nd05_tgen_1_1
+    
+    # TGEN Links
+    # [ '8/15', '8/4', '8/3']
+    ixia:
+        interfaces:
+            # TGEN to ACCESS
+            # TGEN to STD
+            8/4:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd04_1_1
+                link: nd04_tgen_1_1
+            8/15:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd05_1_1
+                link: nd05_tgen_1_1
+            8/3:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd04_1_2
+                link: nd04_tgen_1_2
+            5/5:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd03_1_1
+                # link: nd03_ixia_1_1     
+                link: nd03_tgen_1_1
+            5/7:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd02_1_1
+                link: nd02_tgen_1_1

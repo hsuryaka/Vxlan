@@ -1,0 +1,1604 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#                 Initial Configurations                           #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-  
+
+# Initialize TB to get ints and data files
+TC_InitializeTestbed:
+    source:
+        #pkg: src.forwarding.vxlan.vxlan_config
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(/ws/team_jdasgupt-bgl/arushike/qinvni/qinvni_config_new.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(/ws/team_jdasgupt-bgl/arushike/qinvni/qinvni_verify.yaml)}"
+    
+# Common Setup to configure the VxLAN
+TC_VxLAN_CommonSetup:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+
+# IXIA-Configuration
+# InitializeIxia:
+#     source:
+#         pkg: qinvni_script
+#         #class: Configure_IXIA_Global
+#         class: ConfigureIxia
+#     tgen_cfg_file: "/ws/team_jdasgupt-bgl/arushike/qinvni/NR3F_sqinvni_auto_arushike_working_latest.ixncfg" 
+    
+InitializeTraffic:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "/ws/team_jdasgupt-bgl/arushike/qinvni/auto_arushike_working_latest.ixncfg"
+    processors:
+        post:
+            verify_ixia_static_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True     
+
+# Sample test config
+TriggerFlapNvevPCPrimary:
+    # Source code of the trigger
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    # Processosr
+    processors:
+    #     # Things to be done before trigger
+    #     pre:
+    #         configQinVNI:
+    #             pkg: qinvni_script
+    #             method: changeInterfaceConfig
+        #Things to be done after trigger
+        post:
+            VerifyTraffic:
+                pkg: qinvni_script
+                method: VerifyTraffic
+    # Trigger paramters
+    # dut's on which Trigger will be done
+    device_dut:
+        - node02_vpcVtep1
+    # QinVNI configs to be done on boxes
+    qinvni_dut_dict : {
+                'node02_vpcVtep1' : {
+                        'interfaces'    : ['po100'], 
+                        'global_cfgs'   : 'system dot1q-tunnel transit vlan 1001-1008',
+                        'intf_configs'  : ['switchport','switchport mode dot1q-tunnel','switchport access vlan 1001','no shut']
+                        },
+                'node03_vpcVtep2' : {
+                        'interfaces'    : ['po100'], 
+                        'global_cfgs'   : 'system dot1q-tunnel transit vlan 1001-1008',
+                        'intf_configs'  : ['switchport','switchport mode dot1q-tunnel','switchport access vlan 1001','no shut']
+                        },
+                }
+                
+    # Default Parameters
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '30'
+
+TriggerNveFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+        - node04_stdVtep3
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30'
+    cli_to_parse: 'show run nv overlay'
+    trigger_wait_time: 60
+    traffic_convergence_time: 120
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+ClearIpRouteVrfAll:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+        - node04_stdVtep3
+    clear_cmd_lst:
+        - clear ip route vrf all *    
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    convergence_time: '240'            
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+
+ClearIpv6RouteVrfAll:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+        - node04_stdVtep3
+    clear_cmd_lst:
+        - clear ipv6 route vrf all *
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    convergence_time: '240'            
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    
+TriggerShutNoShutBgp:
+    source:
+        pkg: genie.libs.sdk.triggers.shutnoshut.bgp.shutnoshut
+        class: TriggerShutNoShutBgp
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+        - node04_stdVtep3
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic    
+    convergence_time: '240'            
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    timeout:
+        max_time: 2000
+        interval: 20
+    wait_for: 20 
+
+l2vlanFlapl2sviFlapNve:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapL2vlanFlapL2sviFlapNve
+    device_dut:
+        - node02_vpcVtep1
+    converge_time: 180
+    vlan_range: "1001-1005"
+    svi_shutnoshut_params:
+        TriggerShutNoShutVlanInterface:
+            devices:
+                - node02_vpcVtep1
+            timeout:
+                max_time: 1000
+                interval: 20
+            static:
+                interface: '(?P<interface>Vlan[1][0][0-9]+)'    
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    
+    
+
+VpcPeerLinkFlapNveFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapNveFlap
+    device_dut:
+        - node02_vpcVtep1
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic    
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+
+DeleteAddNveInterfaceMctFlapNveFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DeleteAddNveInterfaceMctFlapNveFlap
+    device_dut:
+        - node02_vpcVtep1
+    feature_to_remove: 'interface nve1'    
+    converge_time: 220
+    convergence_wait_time: '100'
+    nve_delete_add_params:
+        TriggerUnconfigConfigVxlanNveOverlayInterface:
+            devices:
+                - node02_vpcVtep1
+                
+            timeout:
+                max_time: 1500
+                interval: 30
+            method: checkpoint
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic        
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    
+
+VpcPoFlapUplinkFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPoFlapUplinkFlap
+    device_dut:
+        - node02_vpcVtep1
+    converge_time: 90
+    uplink_list:
+        - Port-channel100
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'            
+            
+TriggerRemoveAddL3VniUnderVrf:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddL3VniUnderVrf
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic  
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+
+TriggerDisableAndEnableNveOverlay:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node02_vpcVtep1
+    feature_to_remove: 'feature nv overlay'    
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic    
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+
+TriggerNoshutIpunnumberedUplinks:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node02_vpcVtep1:
+            - Port-channel211
+        node03_vpcVtep2:
+            - Port-channel212
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic        
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+
+TriggerUplinkPortChannel:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node02_vpcVtep1:
+            - Port-channel211
+        node03_vpcVtep2:
+            - Port-channel212
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic        
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 180
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+    
+TriggerNoshutPortchannelUplinks:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node02_vpcVtep1:
+            - Port-channel211
+        node03_vpcVtep2:
+            - Port-channel212
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic        
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+    
+    
+
+TriggerDeleteAddNveInterface:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node02_vpcVtep1
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    traffic_convergence_time: 120
+    feature_to_remove: 'interface nve1'
+    trigger_wait_time: '60'
+    convergence_wait_time: '180'
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+TriggerDisableEnableFeatureFabricForwarding:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    feature_to_remove: 'feature fabric forwarding'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    trigger_wait_time: '60'
+    convergence_wait_time: '180'
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+
+TriggerFLAPBGP:
+    source:
+        pkg: lib.triggers.flap
+        class: feature_flap.FeatureFlap
+    device_dut:
+    - node02_vpcVtep1
+    traffic_convergence_time: 180
+    feature_to_flap: 'router bgp 200'
+    cli_to_check: 'show running-config bgp'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    trigger_wait_time: '60'
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    convergence_wait_time: '220'
+
+VpcPeerlinkFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerlinkFlap
+    device_dut:
+        - node02_vpcVtep1
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic    
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    converge_time: 200
+    trigger_wait_time: '60'
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    convergence_wait_time: '220'
+
+
+TriggerFlapNvePrimary:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    device_dut:
+        - node02_vpcVtep1
+    cli_to_parse: 'show running-config nv overlay'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+TriggerFlapNveSecondary:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    device_dut:
+        - node03_vpcVtep2
+    cli_to_parse: 'show running-config nv overlay'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+FlapSviRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node02_vpcVtep1
+    svi_range:
+        "1006-1008"
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    converge_time: 60
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+TriggerNveSrcLoopbackFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node02_vpcVtep1
+    loopback_range:
+        "1"
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+TriggerChangeVni:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    traffic_convergence_time: 400
+    source:
+        pkg: lib.triggers.change_config.apply_new_config
+        class: ApplyNewConfig
+    apply_new_config_wait_time: 250    
+    build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: remove_vni
+    - config_builder: BuildVlanConfig
+      config_params: change_vni
+    - config_builder: BuildInterfaceConfig
+      config_params: change_nve_vni
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'  
+
+TriggerRevertVni:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    traffic_convergence_time: 400
+    source:
+        pkg: lib.triggers.change_config.apply_new_config
+        class: ApplyNewConfig
+    apply_new_config_wait_time: 250    
+    build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params:  remove_new_vni
+    - config_builder: BuildVlanConfig
+      config_params:  vni_config
+    - config_builder: BuildInterfaceConfig
+      config_params:  nve_vni_config
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'  
+
+FlapVlanRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapVlanRange
+    device_dut:
+        - node02_vpcVtep1
+    vlan_range:
+        "1001-1005"
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    converge_time: 60
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+# TriggerFabricLinkFlap:
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+#     source:
+#         pkg: lib.triggers.flap
+#         class: interface_flap.FabricLinkFlap
+#     device_dut:
+#         - node03_vpcVtep2
+#     wait_time: '60'
+#     loss_tolerance: 0.01
+#     check_iteration: 2
+#     type: regular
+#     ixia_static: True
+#     traffic_convergence_time: 300
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     trigger_wait_time: '30'
+#     convergence_wait_time: '220'
+
+
+# TriggerRestartIpfib:
+#     source:
+#         pkg: lib.triggers.flap
+#         class: restart_process.RestartProcess
+#     device_dut:
+#         - node02_vpcVtep1
+#     process_list:
+#         - ipfib
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+#     hap_reset : True
+#     hap_reset_conv_time : 400
+#     wait_time: '30' 
+#     ixia_static: True
+#     loss_tolerance: 0.01
+#     check_iteration: 2               
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 60
+#     trigger_wait_time: '30'
+#     convergence_wait_time: '220'
+
+TriggerRestartNve:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - nve
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic    
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+    
+TriggerRestartBgpProcess:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - bgp
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'            
+
+TriggerRestartL2rib:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - l2rib
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    type: regular
+    ixia_static: True
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'
+
+TriggerRestartUrib:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - urib
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    type: regular
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartProcessL2fm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - l2fm
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartProcessUfdm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - ufdm
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartProcessEltm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - Eltm
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    traffic_convergence_time: 120
+
+UplinkNoShutVpcPoNoShutZtraffic:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.UplinkNoShutVpcPoNoShutZtraffic
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    uplink_list:
+        - Port-channel100
+    converge_time: 200   
+
+TriggerAddNgmpvn:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.AddRemoveFeature
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    feature_cli: 'feature ngmvpn'
+    trigger_wait_time: '10'
+    start_wait_time: 2
+    stop_wait_time: 60
+    verify_wait_time: 1    
+    convergence_wait_time: '180'
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    type: regular
+    ixia_static: True
+    traffic_convergence_time: 120
+  
+
+TriggerRemoveNgmpvn:
+    processors:
+    post:
+        verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.AddRemoveFeature
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    feature_cli: 'no feature ngmvpn'
+    trigger_wait_time: '10'
+    start_wait_time: 2
+    stop_wait_time: 60
+    verify_wait_time: 1
+    convergence_wait_time: '200'
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    type: regular
+    ixia_static: True
+    traffic_convergence_time: 120
+
+ClearBgpMvpn:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear_vpn.ClearBgpMvpn
+    device_dut:
+        - node02_vpcVtep1
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30'    
+
+TriggerConfigureReplace:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.ConfigureReplace
+    trigger_wait_time: 30
+    traffic_convergence_time: 300
+    verify_dict:
+        node02_vpcVtep1:
+            test_dut: ['node02_vpcVtep1']
+            cmd: ['no evpn multisite border-gateway','no interface nve 1']
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2    
+
+TriggerRemoveAddPip:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddpip
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    pip_params:
+        asno: 200
+        nve: nve1
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2 
+
+TriggerUnconfigConfigVlanVnsegment:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: genie.libs.sdk.triggers.unconfigconfig.vlan.nxos.unconfigconfig
+        class: TriggerUnconfigConfigVlanVnsegment
+    devices:
+        - node02_vpcVtep1
+    static:
+        vlan: '(?P<vlan>[1][0]+[1-5])'
+    method: 'checkpoint'
+    timeout:
+        max_time: 180
+        interval: 20
+    timeout_recovery:
+        max_time: 300
+        interval: 20
+    num_values:
+        vlan : 10
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2  
+
+ClearIpIgmpSnooping:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear_ip_igmp_snooping.ClearIpIgmpSnooping
+    device_dut:
+        - node02_vpcVtep1
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2  
+
+ClearL2vpnEvpn:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear_vpn.ClearL2VpnEvpn
+    device_dut:
+        - node02_vpcVtep1
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2  
+ 
+TriggerRestartProcessCfs:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - cfs
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    wait_time: '120'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2   
+
+TriggerRestartProcessPim:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02_vpcVtep1
+    process_list:
+        - pim
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic   
+    wait_time: '120'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2  
+
+TriggerClearARPAndMAC:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node02_vpcVtep1
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2  
+
+VpcAccessFlap:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node02_vpcVtep1
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+VpcAccessShut:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessShut
+    device_dut:
+        - node02_vpcVtep1
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+VpcAccessNoShut:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessNoShut
+    device_dut:
+        - node02_vpcVtep1 
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2                     
+
+TriggerFlapVrf:
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node02_vpcVtep1
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    vrfs: ['EVPN-VRF-1','EVPN-VRF-2','EVPN-VRF-3']
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2 
+
+TriggerClearBgpAll:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: genie.libs.sdk.triggers.clear.bgp.nxos.clear
+        class: TriggerClearBgpAll
+    devices:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    timeout:
+        max_time: 180
+        interval: 20
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 60 
+    wait_time: '120'
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2    
+
+TriggerVxlanVlanSuspendActivate:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.SuspendActivateVlan
+    device_dut:
+        - node02_vpcVtep1
+    traffic_convergence_time: 120
+    convergence_wait_time: '180'
+    vlan_range:
+        1001-1005
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2      
+
+TriggerReloadVpcnode:
+    devices:
+        -  'node02_vpcVtep1'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'    
+
+TriggerReloadAscii:
+    processors:
+        post:
+            converge_time:
+                pkg: src.forwarding.vxlan.traffic
+                method: converge_time
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadAscii
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    traffic_convergence_time: 300
+    trigger_wait_time: '300'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '30' 
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    convergence_wait_time: '220' 
+
+
+TriggerReloadTor:
+    devices:
+        -  'node03_vpcVtep2'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    traffic_convergence_time: 300
+    trigger_wait_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node03_vpcVtep2
+    wait_time: '30' 
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    convergence_wait_time: '220'  
+
+
+TriggerVpcReloadPri:
+    devices:
+        -  'node02_vpcVtep1'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node02_vpcVtep1
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'  
+
+TriggerVpcReloadSec:
+    devices:
+        -  'node03_vpcVtep2'
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node03_vpcVtep2 
+    wait_time: '30' 
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    trigger_wait_time: '30'
+    convergence_wait_time: '220'  
+
+TriggerModifyL3Vlan:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ModifyL3Vlan
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    l3_vlan_range: '2006-2008'
+    wait_time: '60'
+    pbr_enabled: False
+    trigger_flag: 'modify'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+TriggerRevertL3Vlan:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ModifyL3Vlan
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    l3_vlan_range: '1006-1008'
+    wait_time: '60'
+    pbr_enabled: False
+    trigger_flag: 'revert'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+TriggerDisableEnableIgmpSnoopingVxlan:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.IgmpSnoopingVxlanDisableEnable
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    cmd1: 'no ip igmp snooping vxlan'
+    cmd2: 'ip igmp snooping vxlan'
+    wait_time: '120'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: '30' 
+
+TriggerDisableEnableMldSnoopingVxlan:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.MldSnoopingVxlanDisableEnable
+    device_dut:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    cmd1: 'no ipv6 mld snooping vxlan'
+    cmd2: 'ipv6 mld snooping vxlan'
+    wait_time: '120'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+TriggerDisableEnablePim:
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        pkg: genie.libs.sdk.triggers.disableenable.mcast.nxos.disableenable
+        class: TriggerDisableEnablePim
+    devices:
+        - node02_vpcVtep1
+        - node03_vpcVtep2
+    traffic_convergence_time: 120
+    timeout:
+        max_time: 180
+        interval: 20
+    method: checkpoint
+    wait_time: '120'
+    trigger_wait_time: 120
+    convergence_wait_time: 600
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2               
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2          
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

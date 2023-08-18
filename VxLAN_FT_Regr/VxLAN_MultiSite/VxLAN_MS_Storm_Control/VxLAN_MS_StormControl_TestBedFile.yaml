@@ -1,0 +1,222 @@
+testbed:
+    name: VxLAN_Featurette
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+        enable:
+            password: nbv12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 192.168.0.100
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123!
+        ntp:
+            server: 1.2.3.4
+devices:
+    Sundown-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        alias: 'LEAF-1'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2039
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.53
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown--2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        alias: 'BGW-1'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2040
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.54
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-3:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        alias: 'BGW-2'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2013
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.225.127.101
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Seoul-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        alias: 'LEAF-2'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2013
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.52
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+          alt:
+            ip: "10.197.127.121"
+            port: 8009
+            protocol: telnet
+topology:
+    Sundown-1:
+        interfaces:
+            LEAF-1_to_BGW-1_1:
+                intf: Ethernet1/9
+                link: LEAF-1_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_BGW-1_2:
+                intf: Ethernet1/10
+                link: LEAF-1_to_BGW-1_2
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    Sundown-2:
+        interfaces:
+            BGW-1_to_LEAF-1_1:
+                intf: Ethernet1/9
+                link: BGW-1_to_LEAF-1_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_LEAF-1_2:
+                intf: Ethernet1/10
+                link: BGW-1_to_LEAF-1_2
+                type: ethernet
+                module_type: m3
+            BGW-1_to_BGW-2_1:
+                intf: Ethernet1/45
+                link: BGW-1_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_BGW-2_2:
+                intf: Ethernet1/16
+                link: BGW-1_to_BGW-2_2
+                type: ethernet
+                module_type: m3
+    Sundown-3:
+        interfaces:
+            BGW-2_to_LEAF-2_1:
+                intf: Ethernet1/51/1
+                link: BGW-2_to_LEAF-2_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_LEAF-2_2:
+                intf: Ethernet1/51/2
+                link: BGW-2_to_LEAF-2_2
+                type: ethernet
+                module_type: m3
+            BGW-2_to_BGW-1_1:
+                intf: Ethernet1/46
+                link: BGW-2_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_BGW-1_2:
+                intf: Ethernet1/16
+                link: BGW-2_to_BGW-1_2
+                type: ethernet
+                module_type: m3
+    Seoul-2:
+        interfaces:
+            LEAF-2_to_BGW-2_1:
+                intf: Ethernet1/39
+                link: LEAF-2_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_BGW-2_2:
+                intf: Ethernet1/40
+                link: LEAF-2_to_BGW-2_2
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_LEAF-1:
+                intf: 4/3
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-2:
+                intf: 4/2
+                intf: 1/5
+                link: IXIA_to_LEAF-2
+                type: ethernet
+                module_type: m3

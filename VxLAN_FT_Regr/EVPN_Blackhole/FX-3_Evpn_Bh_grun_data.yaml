@@ -1,0 +1,1534 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(EVPN_Blackhole/FX-3_Evpn_Bh_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(EVPN_Blackhole/FX-3_Evpn_BH_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+# TcamCarvingAndReload:
+#   source:s
+#     pkg: lib.triggers.tcam_config.tcam_config
+#     class: TcamCarvingAndReload
+#   trigger_wait_time: '700'
+#   timeout: 700
+# Common Setup to configure the VxLAN
+TC_002_CommonSetup:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+
+TC_003_ConfigureIxia:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: IXIA_CONFIGURATION
+
+TC_0020_Config_MAC_BH_on_VPC_Vtep:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Config_MAC_BH_on_VPC_Vtep
+
+TC_0022_Mac_BH_route_on_Standalone_Vtep:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_on_Standalone_Vtep
+    
+TC_0024_Mac_BH_on_VPC_start_Traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_on_VPC_start_Traffic
+
+TC_0025_Config_Mac_BH_onRemoteVtep_Start_traffic:
+   source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Config_Mac_BH_onRemoteVtep_Start_traffic 
+
+TC_0026_Configure_BH_route_static_arp_on_vpcvtep:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Configure_BH_route_static_arp_on_vpcvtep
+
+TC_0029_Mac_BH_route_static_ARP_on_standalonevtep:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_ARP_on_standalonevtep
+
+TC_0031_MAC_BH_route_on_vpc_vtep_start_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: MAC_BH_route_on_vpc_vtep_start_traffic
+
+TC_0032_MAC_BH_route_on_Standalone_vtep_start_traffic:
+  source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: MAC_BH_route_on_vpc_vtep_start_traffic
+
+TC_0034_Mac_BH_route_static_ND_on_VPC_vtep:
+  source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_ND_on_VPC_vtep  
+
+TC_0036_Mac_BH_route_static_ND_on_RemoteVtep:
+  source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_ND_on_RemoteVtep
+  
+TC_0038_ND_MAC_BH_route_on_vpc_vtep_then_start_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: ND_MAC_BH_route_on_vpc_vtep_then_start_traffic
+
+TC_0039_ND_Mac_BH_route_on_standalone_vtep_then_start_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: ND_Mac_BH_route_on_standalone_vtep_then_start_traffic
+
+TC_0041_Mac_BH_route_static_arp_on_vpc_vtep_with_L3_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_arp_on_vpc_ctep_with_L3_traffic
+
+TC_0043_Mac_BH_route_Static_arp_on_standalone_Vtep_with_l3_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_Static_arp_on_standalone_Vtep_with_l3_traffic
+
+TC_0045_Mac_BH_route_on_vpc_vtep_start_L3_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_on_vpc_vtep_start_L3_traffic
+
+TC_0046_Mac_BH_route_on_standalone_vtep_start_L3_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_on_standalone_vtep_start_L3_traffic
+
+TC_0048_Mac_BH_route_static_arp_on_VPC_vtep_with_L3_ipv6_traffic:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_arp_on_VPC_vtep_with_L3_ipv6_traffic
+
+TC_0050_Mac_BH_route_static_arp_on_remote_vtep_with_L3_traffic_ipv6header:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_static_arp_on_remote_vtep_with_L3_traffic_ipv6header
+
+TC_0052_Mac_BH_route_on_vpc_vtep_Start_L3_traffic_with_ipv6_header:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_on_vpc_vtep_Start_L3_traffic_with_ipv6_header
+    
+TC_0053_Mac_BH_route_on_remote_vtep_start_traffic_with_ipv6_header:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Mac_BH_route_on_remote_vtep_start_traffic_with_ipv6_header
+
+TC_0054_Type5_route_with_Null_NH:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Type5_route_with_Null_NH
+
+TC_0060_NS_to_BH_ipv6_host:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: NS_to_BH_ipv6_host
+
+TC_0016_CLI_verification:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: CLI_verification
+
+TC_0075_MAC_BH_static_ARP_for_Orphan_vpc_Host_with_L2Ipv4:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: MAC_BH_static_ARP_for_Orphan_vpc_Host_with_L2Ipv4
+
+TC_0077_MAC_BH_static_ND_for_Orphan_vpc_Host_with_L3Ipv6:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: MAC_BH_static_ND_for_Orphan_vpc_Host_with_L3Ipv6
+
+TC_0076_Prefix_BH_route_for_Orphan_vpc_Host_with_L3Ipv4:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Prefix_BH_route_for_Orphan_vpc_Host_with_L3Ipv4
+
+TC_0078_Prefix_BH_route_for_Orphan_vpc_Host_with_L3Ipv6:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Prefix_BH_route_for_Orphan_vpc_Host_with_L3Ipv6
+
+TC_0079_Cmds_ouputs:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Cmds_ouputs
+
+TC_0073_Arp_cli_should_show_BH_flags:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Arp_cli_should_show_BH_flags
+
+TC_0063_ Verify_New_icmpv6_CLIs:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Verify_New_icmpv6_CLIs
+
+TC_0070_Static_Arp_with_BH_mac_route_Without_suppress_ARP:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Static_Arp_with_BH_mac_route_Without_suppress_ARP
+
+TC_0072_Static_ND_with_BH_mac_route_with_Suppress_ND:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Static_ND_with_BH_mac_route_with_Suppress_ND
+
+TC_0013_L2_mcast_traffic_to_and_from_BH_hosts:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: L2_mcast_traffic_to_and_from_BH_hosts
+
+TC_0068_Configure_Same_static_ARP_on_2_vteps:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Configure_Same_static_ARP_on_2_vteps
+    
+TC-0065_Remote_Static_ARP_entry:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Remote_Static_ARP_entry
+
+
+
+
+
+
+#############################################
+###             Triggers                ####
+############################################
+
+# Trigger Flap Fabric Link Before Converting and Before Scale
+#99_fabric link flap
+TC_0087_BGP_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: BGP_PROCESS_RESTART
+
+TC_0088_ARP_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: ARP_PROCESS_RESTART
+
+TC_0089_icmpv6_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: icmpv6_PROCESS_RESTART
+
+TC_0090_L2FM_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: L2FM_PROCESS_RESTART
+
+TC_0091_L2rib_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: L2rib_PROCESS_RESTART
+
+TC_0092_HMM_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: HMM_PROCESS_RESTART
+
+TC_0093_RPM_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: RPM_PROCESS_RESTART
+
+TC_0094_adjmgr_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: adjmgr_PROCESS_RESTART
+
+TC_0097_NVE_PROCESS_RESTART:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: NVE_PROCESS_RESTART
+
+TC_0099_TriggerFabricLinkFlap_S1_BGW1:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerFabricLinkFlap
+    device_dut:
+        - node3_s1_bgw_1
+    wait_time: '300'
+    cc_dut_list: ['node3_s1_bgw_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic.VERIFY_IXIA_TRAFFIC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+  
+
+#Trigger Flap Fabric Link Before Converting and Before Scale
+TC_010_TriggerFabricLinkFlap_S2_BGW_1:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerFabricLinkFlap
+    device_dut:
+        - node7_s2_bgw_1
+    wait_time: '300'
+    cc_dut_list: ['node7_s2_bgw_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification   
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+
+# # Trigger Flap NVE Source interface loopback
+# #100_nve loopback flap
+TC_0100_TriggerNveSrcLoopbackFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    loopback_range:
+        "1"
+    converge_sec: 240
+    # start_wait_time: 2
+    # stop_wait_time: 10
+    # verify_wait_time: 2
+    # traffic_convergence_time: 120
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+    
+# # Restart Process CLI BGP
+#98_BGP AS restart
+TC_098_TriggerRestartBgpCLI:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node3_s1_bgw_1
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    timeout:
+        max_time: 300
+        interval: 20
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node7_s2_bgw_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+TC_101_FlapSviRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node3_s1_bgw_1
+    svi_range:
+        "1001-1025"
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+
+# Trigger Reload for Site-1 BGW-1
+TC_0079_TriggerReloadBGW_S1_BGW_1:
+    devices:
+        - node3_s1_bgw_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node3_s1_bgw_1', 'node7_s2_bgw_1']
+
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: doCopyRunToStart
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+    
+# Trigger Reload for Site-2 BGW-2
+TC_0080_TriggerReloadBGW_S2_BGW_2:
+    devices:
+        - node7_s2_bgw_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReload
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node7_s2_bgw_1', 'node3_s1_bgw_1']
+    
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: doCopyRunToStart
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+
+TC_0095_TriggerFlapVrf:
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node3_s1_bgw_1
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2','node7_s2_bgw_1']
+    vrfs: ['vrf-1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+
+TC_0096_TriggerMCTFlap:
+# Trigger Host Move Scenario ND Suppression on VPC Pri
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerMCTFlap
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+    device_dut:
+        - node3_s1_bgw_1
+    standalone_dut: ['node4_s1_bgw_2']
+    
+    
+###########################################
+###       Port Security TC's           ###
+##########################################
+TC_0124_Configure_Static_mac_on_vpc_vtep_pointing_to_an_interface_on_the_vpc_vtep:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Configure_Static_mac_on_vpc_vtep_pointing_to_an_interface_on_the_vpc_vtep
+
+##########################################
+###       Negative TC's               ###
+##########################################
+TC_0107_Unknown_Unicast_traffic_Configure_BH_mac_route_to_this_Destmac:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: Unknown_Unicast_traffic_Configure_BH_mac_route_to_this_Destmac
+
+    #--------------------------------#
+    ######## WF-EOR TRIGGERS #########
+    #---------------------------------#
+
+TC_00029_TriggerSSO_S1_BGW_1:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerSSO
+    device:
+        - node3_s1_bgw_1
+    device_dut:
+        - node3_s1_bgw_1
+    cc_dut_list: ['node3_s1_bgw_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    
+
+TC_00027_TriggerReloadLC_S1_BGW_1:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerLCReload
+    device_dut:
+        - node4_s1_bgw_2
+    intf_list:
+        - node4_s1_bgw_2
+    cc_dut_list: ['node4_s1_bgw_2']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            
+
+TC_00026_TriggerReloadFabricModules_S1_BGW_1:
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerFMReload
+    device_dut:
+        - node3_s1_bgw_1
+    intf_list:
+        - node3_s1_bgw_1
+    cc_dut_list: ['node3_s1_bgw_1']
+    timeout:
+        max_time: 500
+        interval: 20
+    num_values:
+        oc: '1'
+    traffic_convergence_time: 300
+    cc_dut_list: ['node3_s1_bgw_1']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+TC_00028_TriggerReloadSC_S1_BGW_1:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    source:
+        pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+        class: TriggerSCReload
+    device_dut:
+        - node4_s1_bgw_2
+    intf_list:
+        - node4_s1_bgw_2
+    cc_dut_list: ['node4_s1_bgw_2']
+    processors:
+        pre:
+            config_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: config_mac_BH
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: VerifyTraffic
+            routeVerification:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: BH_route_verification
+            Unconfig_mac_BH:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: Unconfig_mac_BH
+            remove_Traffic_stream:
+                pkg: VxLAN_FT_Regr.EVPN_Blackhole.FX-3_EVPN_BH_script
+                method: remove_Traffic_stream
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores         
+
+
+
+
+# TC_0091_TriggerRestartProcessL2rib:
+#     source:
+#         pkg: lib.triggers.flap
+#         class: restart_process.RestartProcess
+#     device_dut:
+#         - node01
+#     process_list:
+#         - l2rib
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+# TC_0090_TriggerRestartProcessL2fm:
+#     source:
+#         pkg: lib.triggers.flap
+#         class: restart_process.RestartProcess
+#     device_dut:
+#         - node01
+#     process_list:
+#         - l2fm
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+
+# TC-0097_TriggerRestartProcessNve:
+#     source:
+#         pkg: lib.triggers.flap
+#         class: restart_process.RestartProcess
+#     device_dut:
+#         - node01
+#     process_list:
+#         - nve
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+
+# FlapSviRange:
+#     source:
+#         pkg: lib.triggers.flap
+#         class: interface_flap.FlapSviRange
+#     device_dut:
+#         - node04
+#     svi_range:
+#         "1001-1025"
+#     processors:
+#         post:
+#             verify_traffic:
+#                 pkg: src.forwarding.vxlan.traffic
+#                 method: verify_traffic
+
+# # Reload Fabric Modules
+# TC_026_TriggerReloadFabricModules_S2_BGW_2:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: genie.libs.sdk.triggers.ha.reload.nxos.reload
+#         class: TriggerReloadFabricModule
+#     devices:
+#         - node8_s2_bgw_2
+#     timeout:
+#         max_time: 500
+#         interval: 20
+#     num_values:
+#         oc: '1'
+#     traffic_convergence_time: 300
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# TC_027_TriggerReloadLC_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 60
+#     source:
+#         pkg: lib.triggers.flap
+#         class: eor_triggers.ReloadLC
+#     device_dut:
+#         - node7_s2_bgw_1
+#     intf_list:
+#         - nd07_nd01_1_1
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# TC_028_TriggerConfigRollBack_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 60
+#     trigger_wait_time: 240
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureRollback
+#     verify_dict:
+#         node01:
+#             test_dut: ['node7_s2_bgw_1']
+#             cmd: ['no interface nve 1']
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# TC_029_TriggerSSO_S2_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: TriggerSSO
+#     device_dut:
+#         - node7_s2_bgw_1
+
+# # Trigger NVE delete and config rollback
+# TC_009_TriggerConfigureRollback_intNVE_S1_BGWs:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureRollback
+#     trigger_wait_time: 180
+#     traffic_convergence_time: 180
+#     verify_dict:
+#         node01:
+#             test_dut: ['node3_s2_bgw_1', 'node4_s2_bgw_2']
+#             cmd: ['no interface nve 1']
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Configure IXIA Before Converting and Before Scale
+# TC_002_ConfigureIxiaBeforeScale:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureIxia
+#     datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_128_MSite_Scale/VxLAN_128_MSite_Scale_config.yaml)}"
+
+# # Trigger Remove/Add L3VNI Under VRF Before Converting and Before Scale
+# TC_007_TriggerRemoveAddL3VniUnderVrfBeforeScale_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.remove_add
+#         class: remove_add.RemoveAddL3VniUnderVrf
+#     device_dut:
+#         - node3_s2_bgw_1
+#         - node4_s2_bgw_2
+#     wait_time: '60'
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+
+# # Trigger Delete Recreate VLAN Before Converting and Before Scale
+# TC_008_TriggerDeleteRecreateVlan_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node3_s2_bgw_1
+#         - node4_s2_bgw_2
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "101,103,3-4,7-8"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Trigger Delete Recreate VLAN After Converting and Before Scale
+# TC_017_TriggerDeleteRecreateVlan_S2_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node7_s3_bgw_1
+#         - node8_s3_bgw_2
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "104,106,9-10,13-14"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Reload EOR LC
+# TriggerReloadLC:
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#     source:
+#         pkg: lib.triggers.flap
+#         class: eor_triggers.ReloadLC
+#     device_dut:
+#         - node7_s3_bgw_1
+#     intf_list:
+#         - nd07_nd01_1_1
+
+# # # Sample in script test
+# SampleTest:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: SampleTest
+
+
+  # source:
+  #   pkg: VxLAN_128_MSite_Scale_script
+  #   class: Configure_L2_MACBH
+
+  # device_dut:
+  #   - node03
+  #   - node04
+  #   - node02
+  #   - node05
+
+  # vpc_nodes: ['node03','node04']
+  # enable_blackhole: True
+  # copy_r_s_flag: False
+  # traffic_convergence_time: 180
+  # trigger_wait_time: 60
+  # l2_vlan_lst: ['1001','1002','1003']
+  # vlan_lst: ['1001','1002','1003']
+  # static_mac_addr_lst: ['aaaa.0101.0101' ,'aaaa.1002.1002','aaaa.1003.1003']
+  # mac_addr: ['aaaa.0101.0101' ,'aaaa.1002.1002','aaaa.1003.1003']
+  #remote_static_mac_addr_lst: ['0a:0a:05:05:01:00','0a:0a:06:06:01:00','0a:0a:01:01:01:00','0a:0a:04:04:01:00','0a:0a:03:03:01:00']
+  #trigger_traffic_profile: evpn_black_hole_traffic_l2mac
+
+
+# # Restart Process NVE
+# TC_020_TriggerRestartProcessKillNVE:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#     source:
+#         pkg: genie.libs.sdk.triggers.processrestart.nve.nxos.processrestart
+#         class: TriggerProcessKillRestartNve
+#     devices:
+#         - node3_s1_bgw_1
+#         - node8_s2_bgw_2
+#     timeout:
+#         max_time: 300
+#         interval: 20
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Disable Enable feature nv overlay
+# TC_021_TriggerDisableAndEnableNveOverlay_S1_BGW_1:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.remove_add
+#         class: remove_add.UnConfigConfigFeature
+#     device_dut:
+#         - node3_s1_bgw_1
+#     traffic_convergence_time: 120
+#     feature_to_remove: 'feature nv overlay'
+#     trigger_wait_time: '600'
+#     convergence_wait_time: '220'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Disable Enable feature nv overlay
+# TC_022_TriggerDisableAndEnableNveOverlay_S2_BGW_2:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.remove_add
+#         class: remove_add.UnConfigConfigFeature
+#     device_dut:
+#         - node8_s2_bgw_2
+#     traffic_convergence_time: 120
+#     feature_to_remove: 'feature nv overlay'
+#     trigger_wait_time: '600'
+#     convergence_wait_time: '220'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Remove/Add new L3VNI Under VRF After Converting and Before Scale
+# TC_023_TriggerRemoveAddNewL3VNIUnderVRF:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             doCopyRunToStart:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: doCopyRunToStart
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: TriggerRemoveAddNewL3VNIUnderVRF
+#     device_dut:
+#         - node4_s1_bgw_2
+#         - node7_s2_bgw_1
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+
+# # Trigger Flap NVE Source interface loopback
+# TC_014_TriggerMultisiteSrcLoopbackFlap:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.flap
+#         class: interface_flap.FlapLoopbackRange
+#     device_dut:
+#         - node3_s1_bgw_1
+#         - node8_s2_bgw_2
+#     loopback_range:
+#         "100"
+#     converge_sec: 240
+#     # start_wait_time: 2
+#     # stop_wait_time: 10
+#     # verify_wait_time: 2
+#     # traffic_convergence_time: 120
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Clear ARP and Mac address table
+# TC_015_TriggerClearARPAndMAC:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.clear
+#         class: clear.Clear
+#     device_dut:
+#         - node4_s1_bgw_2
+#         - node7_s2_bgw_1
+#     clear_cmd_lst:
+#         - clear ip arp force-delete
+#         - clear mac address-table dynamic
+#     trigger_wait_time: '30'
+#     convergence_time: '60'
+#     traffic_convergence_time: 120
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Clear IPv4 Route for all VRF's Before Converting and Before Scale
+# TC_016_TriggerClearIPv4RouteVrfAll:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.clear
+#         class: clear.Clear
+#     device_dut:
+#         - node3_s1_bgw_1
+#         - node8_s2_bgw_2
+#     clear_cmd_lst:
+#         - clear ip route vrf all *
+#     trigger_wait_time: '300'
+#     convergence_time: '60'
+#     traffic_convergence_time: 120
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Clear IPv4 Route for all VRF's Before Converting and Before Scale
+# TC_017_TriggerClearIPv6RouteVrfAll:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.clear
+#         class: clear.Clear
+#     device_dut:
+#         - node4_s1_bgw_2
+#         - node7_s2_bgw_1
+#     clear_cmd_lst:
+#         - clear ipv6 route vrf all *
+#     trigger_wait_time: '300'
+#     convergence_time: '60'
+#     traffic_convergence_time: 120
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Clear IP BGP All Before Converting and Before Scale
+# TC_018_TriggerClearBgpAll:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.clear
+#         class: clear.Clear
+#     device_dut:
+#         - node3_s1_bgw_1
+#         - node8_s2_bgw_2
+#     clear_cmd_lst:
+#         - clear ip bgp vrf all *
+#     trigger_wait_time: '300'
+#     convergence_time: '60'
+#     traffic_convergence_time: 120
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Flap DCI Link Before Converting and Before Scale
+# TC_011_TriggerDCILinkFlap_S2_BGW_2:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.flap
+#         class: interface_flap.DCILinkFlap
+#     device_dut:
+#         - node8_s2_bgw_2
+#     wait_time: '300'
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Trigger Flap DCI Link Before Converting and Before Scale
+# TC_009_TriggerDCILinkFlap_S1_BGW_2:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: lib.triggers.flap
+#         class: interface_flap.DCILinkFlap
+#     device_dut:
+#         - node4_s1_bgw_2
+#     wait_time: '300'
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+
+# # # Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+# TC_003_TriggerConvertL3VNIOld2New:
+#     processors:
+#         post:
+#             VerifyErrLogs:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyErrLogs
+#             VerifyCC:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyCC
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: TriggerConvertL3VNIOld2New
+#     device_dut:
+#         - node3_s1_bgw_1
+#         - node4_s1_bgw_2
+#         - node5_s1_leaf_1
+#         - node7_s2_bgw_1
+#         - node8_s2_bgw_2
+#         - node9_s2_leaf_1
+#         - node10_s1_AccessSW
+#     cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+# TC_004_ConfigureScaleMSiteVtepBgpSessionDCI:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureScaleMSiteVtepBgpSessionDCI
+#     device_dut:
+#         - node1_cs_dci
+
+# # # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+# TC_005_ConfigureScaleInterSiteVtepBgpSessionS1Spine:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureScaleInterSiteVtepBgpSessionS1Spine
+#     device_dut:
+#         - node2_s1_spine
+
+# # # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+# TC_006_ConfigureScaleInterSiteVtepBgpSessionS2Spine:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureScaleInterSiteVtepBgpSessionS2Spine
+#     device_dut:
+#         - node6_s2_spine
+
+# # Configure IXIA Before Converting and Before Scale
+# TC_007_ConfigureIxia:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureIxia
+#     tgen_cfg_file: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_128_MSite_Scale/128_Sites_75_L3VNI_150_L2VNI_Fabric_VTEP.ixncfg"

@@ -1,0 +1,180 @@
+system_setup:
+    cfg_persistence: True
+    system_cfg:
+        1:
+            device_name: 'device-1'
+            file_path: '/auto/dc3/absr/pyats/users/absr/otm_infra/inputs/cfg_files/common_pre_test_input.cfg'
+test_attributes:
+    on_failure:
+        core_location: '/ws/pkanduri-bgl/cores/'
+
+testcase:
+
+    1:
+        id: "mac_add_static_nve_peer_ip_nc_delete"
+        description: "validate cli via netconf delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_delete_1"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "process_restart(nve), process_restart(policyelem)"
+                #defop: "merge"
+                datastore: "running"
+                #feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic','unconfigure_CLI', 'compare_pre_and_post_configurations']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_delete.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp_remove.xml"
+                   depth:  2
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+    
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+    2:
+        id: "mac_add_static_nve_peer_ip_nc_delete"
+        description: "validate cli via netconf delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_delete_2"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "interface_shut(nve1), interface_noshut(nve1)"
+                #defop: "merge"
+                datastore: "running"
+                #feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic','unconfigure_CLI', 'compare_pre_and_post_configurations']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_delete.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp_remove.xml"
+                   depth:  2
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+    3:
+        id: "mac_add_static_nve_peer_ip_nc_delete"
+        description: "validate cli via netconf delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_delete_3"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "issu(bootflash://nxos64.10.2.0.125.bin.upg)"
+                #defop: "merge"
+                datastore: "running"
+                #feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic','unconfigure_CLI', 'compare_pre_and_post_configurations']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_delete.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp_remove.xml"
+                   depth:  2
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+    4:
+        id: "mac_add_static_nve_peer_ip_nc_delete"
+        description: "validate cli via netconf delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_delete_4"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "reload_ascii"
+                #defop: "merge"
+                datastore: "running"
+                #feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic','unconfigure_CLI', 'compare_pre_and_post_configurations']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_delete.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp_remove.xml"
+                   depth:  2
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+
+    5:
+        id: "mac_add_static_nve_peer_ip_nc_delete"
+        description: "validate cli via netconf delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_delete_5"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "reload"
+                #defop: "merge"
+                datastore: "running"
+                #feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic','unconfigure_CLI', 'compare_pre_and_post_configurations']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_delete.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp_remove.xml"
+                   depth:  2
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+
+

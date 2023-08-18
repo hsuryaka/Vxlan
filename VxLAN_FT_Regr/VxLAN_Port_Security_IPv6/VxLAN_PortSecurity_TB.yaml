@@ -1,0 +1,442 @@
+testbed:
+    name: VxLan_PortSecurity
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-1882.cisco.com
+            address: 64.103.221.184
+    custom:
+        owner: Rathi Rajendran
+        contacts: ratrajen@cisco.com
+
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : SITE1-SPINE-3132
+#            node2_s1_leaf_1  : SITE1-LEAF1-FX
+#            node3_s1_leaf_2  : SITE1-LEAF2-FX
+#            node4_s1_leaf_3  : SITE1-LEAF3-FX3
+#
+
+devices:
+
+    # ------------------------------------------------------
+    # SPINE Device
+    # ------------------------------------------------------
+    SITE1-SPINE-3132:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2036
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: ssh
+            ip: 10.197.127.112
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+            
+    # ------------------------------------------------------
+    # LEAF-1 Device
+    # ------------------------------------------------------
+    SITE1-LEAF1-FX:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2032
+            arguments:
+                prompt_recovery: True
+            settings:
+                RELOAD_TIMEOUT: 400
+                RELOAD_RECONNECT_WAIT: 400
+                POST_RELOAD_WAIT: 180
+                CONNECTION_TIMEOUT: 150
+                PROMPT_RECOVERY_INTERVAL: 30
+                PROMPT_RECOVERY_RETRIES: 10
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: ssh
+            ip: 10.197.127.116
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+
+    # ------------------------------------------------------
+    # LEAF-2 Device
+    # ------------------------------------------------------
+    SITE1-LEAF2-FX:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2033
+            arguments:
+                prompt_recovery: True
+            settings:
+                RELOAD_TIMEOUT: 400
+                RELOAD_RECONNECT_WAIT: 400
+                POST_RELOAD_WAIT: 180
+                CONNECTION_TIMEOUT: 150
+                PROMPT_RECOVERY_INTERVAL: 30
+                PROMPT_RECOVERY_RETRIES: 10
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: ssh
+            ip: 10.197.127.117
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+
+    # ------------------------------------------------------
+    # LEAF-3 Device
+    # ------------------------------------------------------
+    SITE1-LEAF3-FX3:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2034
+            arguments:
+                prompt_recovery: True
+            settings:
+                RELOAD_TIMEOUT: 400
+                RELOAD_RECONNECT_WAIT: 400
+                POST_RELOAD_WAIT: 180
+                CONNECTION_TIMEOUT: 150
+                PROMPT_RECOVERY_INTERVAL: 30
+                PROMPT_RECOVERY_RETRIES: 10
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: ssh
+            ip: 10.197.127.119
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+
+    FANOUT-3132:
+        type: 'router'
+        os: 'nxos'
+        series: 'n3k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2035
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.99
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    
+    FANOUT-3172:
+        type: 'router'
+        os: 'nxos'
+        series: 'n3k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2037
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.115
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+
+    ixia:
+            type: tgn
+            alias: ixia
+            os: 'ixianative'
+            connections:
+                tgn:
+                    class: genie.trafficgen.ixianative.IxiaNative
+
+                    ixnetwork_api_server_ip: 10.197.127.126
+                    ixnetwork_tcl_port: 8009
+                    ixnetwork_version: '9.10'
+                    ixia_chassis_ip: 10.197.127.16
+                    ixia_license_server_ip: 10.197.127.16
+                    ixia_port_list: ['9/15', '9/21', '9/16', '9/22', '9/10', '9/17']
+                    tgn_config_file1: "/ws/ratrajen-bgl/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_Port_Security/Port_Security_IPv4_Underlay.ixncfg"
+            custom:
+                config: ixia_esi_rx.ixncfg 
+
+topology:
+
+    # Node ID : Site1_Spine_3132
+    SITE1-SPINE-3132:
+        interfaces:
+            # -- SPINE to LEAF-1
+            SPINE_to_LEAF-1:
+                intf: Ethernet1/5/1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            # -- SPINE to LEAF-2
+            SPINE_to_LEAF-2:
+                intf: Ethernet1/5/4
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            # -- SPINE to LEAF-3
+            SPINE_to_LEAF-3:
+                intf: Ethernet1/29
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                module_type: m3
+
+    # Node ID : SITE1-LEAF1-FX 
+    SITE1-LEAF1-FX:
+        interfaces:
+            # -- LEAF-1 to SPINE
+            LEAF-1_to_SPINE:
+                intf: Ethernet1/31
+                link: LEAF-1_to_SPINE
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 to LEAF-2_1
+            LEAF-1_to_LEAF-2_1:
+                intf: Ethernet1/3
+                link: LEAF-1_to_LEAF-2_1
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 to LEAF-2_2
+            LEAF-1_to_LEAF-2_2:
+                intf: Ethernet1/1
+                link: LEAF-1_to_LEAF-2_2
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 to FAN
+            LEAF-1_to_FAN3172:
+                intf: Ethernet1/7
+                link: LEAF-1_to_FAN3172
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 to IXIA
+            LEAF-1_1_to_IXIA:
+                intf: Ethernet1/33
+                link: LEAF-1_1_to_IXIA
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 to IXIA-1
+            LEAF-1_2_to_IXIA:
+                intf: Ethernet1/34
+                link: LEAF-1_2_to_IXIA
+                type: ethernet
+                module_type: m3
+            # -- LEAF-1 FEX to IXIA
+            LEAF-1_FEX_to_IXIA:
+                intf: Ethernet101/1/47
+                link: LEAF-1_FEX_to_IXIA
+                type: ethernet
+                module_type: m3
+
+    # Node ID : SITE1-LEAF2-FX 
+    SITE1-LEAF2-FX:
+        interfaces:
+            # -- LEAF-2 to SPINE
+            LEAF-2_to_SPINE:
+                intf: Ethernet1/32
+                link: LEAF-2_to_SPINE
+                type: ethernet
+                module_type: m3
+            # -- LEAF-2 to LEAF-1_1
+            LEAF-2_to_LEAF-1_1:
+                intf: Ethernet1/3
+                link: LEAF-2_to_LEAF-1_1
+                type: ethernet
+                module_type: m3
+            # -- LEAF-2 to LEAF-1_2
+            LEAF-2_to_LEAF-1_2:
+                intf: Ethernet1/1
+                link: LEAF-2_to_LEAF-1_2
+                type: ethernet
+                module_type: m3
+            # -- LEAF-2 to FAN
+            LEAF-2_to_FAN3172:
+                intf: Ethernet1/7
+                link: LEAF-2_to_FAN3172
+                type: ethernet
+                module_type: m3
+            # -- LEAF-2 to IXIA
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/34
+                link: LEAF-2_to_IXIA
+                type: ethernet
+                module_type: m3
+
+    # Node ID : SITE1-LEAF3-FX3 
+    SITE1-LEAF3-FX3:
+        interfaces:
+            # -- LEAF-3 to SPINE
+            LEAF-3_to_SPINE:
+                intf: Ethernet1/51
+                link: LEAF-3_to_SPINE
+                type: ethernet
+                module_type: m3
+            # -- LEAF-3 to IXIA
+            LEAF-3_to_IXIA:
+                intf: Ethernet1/53
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+            # -- LEAF-3 to FAN 
+            LEAF-3_to_FAN3172:
+                intf: Ethernet1/50/1
+                link: LEAF-3_to_FAN3172
+                type: ethernet
+                module_type: m3                 
+    FANOUT-3132:
+        interfaces:
+            FAN_to_LEAF-1:
+                intf: Ethernet1/5/1
+                link: FAN_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            FAN_to_LEAF-2:
+                intf: Ethernet1/3/1
+                link: FAN_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            FAN_to_LEAF-3:
+                intf: Ethernet1/31
+                link: FAN_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            FAN_to_IXIA:
+                intf: Ethernet1/9/1
+                link: FAN_to_IXIA
+                type: ethernet
+                module_type: m3
+    
+    FANOUT-3172:
+        interfaces:
+            FAN3172_to_LEAF-1:
+                intf: Ethernet1/49/1
+                link: FAN3172_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            FAN3172_to_LEAF-2:
+                intf: Ethernet1/50/1
+                link: FAN3172_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            FAN3172_to_LEAF-3:
+                intf: Ethernet1/5
+                link: FAN3172_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            FAN3172_to_IXIA:
+                intf: Ethernet1/47
+                link: FAN3172_to_IXIA
+                type: ethernet
+                module_type: m3
+    ixia:
+        interfaces:
+            IXIA_to_FAN:
+                intf: 9/20
+                link: IXIA_to_FAN
+                type: ethernet
+                module_type: m3
+            IXIA_to_FAN3172:
+                intf: 9/10
+                link: IXIA_to_FAN3172
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-3:
+                intf: 9/21
+                link: IXIA_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1:
+                intf: 9/15
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-2:
+                intf: 9/17
+                link: IXIA_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1_FEX:
+                intf: Ethernet9/12
+                link: LEAF-1
+                link: IXIA_to_LEAF-1_FEX 
+                type: ethernet
+                module_type: m3

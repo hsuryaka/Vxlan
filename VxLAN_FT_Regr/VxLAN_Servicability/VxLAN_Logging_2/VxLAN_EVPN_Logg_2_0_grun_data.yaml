@@ -1,0 +1,29 @@
+# extends: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_Logging_2/VxLAN_EVPN_Logg_2_0_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_Logging_2/VxLAN_EVPN_Logg_2_0_verify.yaml)}"
+
+# Common Setup to configure the VxLAN
+CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+# Configure IXIA Before Converting and Before Scale
+ConfigureIxia:
+    source:
+        pkg: VxLAN_EVPN_Logg_2_0_ixia_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/havadhut/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_Servicability/VxLAN_Logging_2/VxLAN_EVPN_Logging_2_0.ixncfg"
+
+# Common Cleanup
+CommonCleanup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup

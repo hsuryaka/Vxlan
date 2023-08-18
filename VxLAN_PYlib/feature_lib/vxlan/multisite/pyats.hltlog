@@ -1,0 +1,17 @@
+[2020-10-08 23:09:08]: Started process.  Command line: 
+[2020-10-08 23:09:08]:      port number: 60092
+[2020-10-08 23:09:08]:    timeout value: 120
+[2020-10-08 23:09:08]:       log option: log
+[2020-10-08 23:09:08]: results dir path: /ws/danthoma-bgl/pyats19/multisite
+[2020-10-08 23:09:08]:    log file name: pyats.hltlog
+[2020-10-08 23:09:08]: Working directory is now: /ws/danthoma-bgl/pyats19/multisite
+[2020-10-08 23:09:08]: Sourcing initialization file "stcinit.srv".
+[2020-10-08 23:09:08]: Connecting to port 60092 on 127.0.0.1.
+[2020-10-08 23:09:08]: Creating server socket.
+[2020-10-08 23:09:08]: Generated port number: 45144
+[2020-10-08 23:09:08]: Setting up timeout check.
+[2020-10-08 23:09:08]: Waiting for client connection.
+[2020-10-08 23:09:08]: Client connection from 127.0.0.1 port 48020.
+[2020-10-08 23:09:08]: Executing: <package require SpirentHltApi>
+[2020-10-08 23:09:25]: Return value: <5.09>
+[2020-10-08 23:09:25]: custom_path--/ws/danthoma-bgl/pyats19/multisite

@@ -1,0 +1,1468 @@
+testbed:
+    name: testbed
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+devices:
+    TC-3:
+        type: NEXUS
+        alias: node01
+        model: N9K-C9336C-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.100
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.100
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2021
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    ELY:
+        type: NEXUS
+        alias: node02
+        model: N9K-C93240YC-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            cli:
+                protocol: ssh
+                ip: 10.104.102.55
+                allow_agent: False
+                look_for_keys: True
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.55
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.55
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2023
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    HW-2:
+        type: NEXUS
+        alias: node03
+        model: N9K-C9336C-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.165
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            cli:
+                protocol: ssh
+                ip: 10.104.102.165
+                allow_agent: False
+                look_for_keys: True
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.165
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2018
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    TC-4:
+        type: NEXUS
+        alias: node04
+        model: N9K-C93240YC-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.163
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            cli:
+                protocol: ssh
+                ip: 10.104.102.163
+                allow_agent: False
+                look_for_keys: True
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.163
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2013
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    TC-2:
+        type: NEXUS
+        alias: node05
+        model: N9K-C93240YC-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.109
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            cli:
+                protocol: ssh
+                ip: 10.104.102.109
+                allow_agent: False
+                look_for_keys: True
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.109
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2012
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    HW-1:
+        type: NEXUS
+        alias: node06
+        model: N9K-C93240YC-FX2
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                via: vty
+                class: unicon.Unicon
+            mgmt:
+                protocol: ssh
+                ip: 10.104.102.164
+                allow_agent: False
+                look_for_keys: True
+                ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            cli:
+                protocol: ssh
+                ip: 10.104.102.164
+                allow_agent: False
+                look_for_keys: True
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            vty:
+                protocol: telnet
+                ip: 10.104.102.164
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 20
+                service_attributes:
+                    execute:
+                       timeout: 600
+                    configure:
+                       timeout: 600
+                       bulk: true
+            settings:
+              SERVICE_PROMPT_CONFIG_CMD: ""
+              EXEC_TIMEOUT: 300
+              CONFIG_TIMEOUT: 300
+    ixia:
+        type: ixia
+        alias: ixia
+        os: 'ixianative'
+        connections:
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+                ixnetwork_api_server_ip: 10.104.102.238
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.10'
+                ixia_chassis_ip: 10.104.102.68
+                ixia_license_server_ip: 10.104.102.238
+                ixia_port_list: [ '1/9','2/1','2/3','1/14','2/5','1/15','2/4','1/5','1/16','1/7','2/6','2/2']
+        custom:
+            config: native_ixia.ixncfg
+#    ixia_restpy:
+#        type: ixia
+#        alias: ixia
+#        os: windows
+#        connections:
+#            defaults:
+#                class: lib.config.traffic.tgen_ixia_restpy_api.connection.IxiaRestpyConnection
+#            restpy:
+#                ixia_api_server_ip: 10.22.183.179
+#                ixia_chassis_ip: 172.25.248.188
+#                ClearConfig: True
+#                LogLevel: info
+#                RestPort: 11009
+topology:
+    TC-3:
+        interfaces:
+            Ethernet1/7: # 1/9
+                alias: nd01_tgn01_1_1
+                link: node01-tgn01-link01
+                type: ethernet
+            # Ethernet1/49: # 2/1
+            #     alias: nd01_tgn01_1_2
+            #     link: node01-tgn01-link02
+            #     type: ethernet
+            # Ethernet1/50: # 2/3
+            #     alias: nd01_tgn01_1_3
+            #     link: node01-tgn01-link03
+            #     type: ethernet
+            Ethernet1/54/1:
+                alias: nd01_nd02_1_1
+                link: node01-node02-link1
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/54/2:
+                alias: nd01_nd02_1_2
+                link: node01-node02-link2
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/54/3:
+                alias: nd01_nd02_1_3
+                link: node01-node02-link3
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/54/4:
+                alias: nd01_nd02_1_4
+                link: node01-node02-link4
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/51/1:
+                alias: nd01_nd03_1_1
+                link: node01-node03-link1
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/51/2:
+                alias: nd01_nd03_1_2
+                link: node01-node03-link2
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/51/3:
+                alias: nd01_nd03_1_3
+                link: node01-node03-link3
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/1:
+                alias: nd01_nd04_1_1
+                link: node01-node04-link1
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/2:
+                alias: nd01_nd04_1_2
+                link: node01-node04-link2
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/3:
+                alias: nd01_nd04_1_3
+                link: node01-node04-link3
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/19:
+            #     alias: nd01_nd06_1_1
+            #     link: node01-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/20:
+            #     alias: nd01_nd06_1_2
+            #     link: node01-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/21:
+            #     alias: nd01_nd02_2_3
+            #     link: node01-node02-link11
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/29:
+            #     alias: nd01_nd06_1_3
+            #     link: node01-node06-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/30:
+            #     alias: nd01_nd06_1_4
+            #     link: node01-node06-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/31:
+            #     alias: nd01_nd03_2_1
+            #     link: node01-node03-link9
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/32:
+            #     alias: nd01_nd03_2_2
+            #     link: node01-node03-link10
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/33:
+            #     alias: nd01_nd04_2_4
+            #     link: node01-node04-link16
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/34:
+            #     alias: nd01_nd02_2_4
+            #     link: node01-node02-link12
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/35:
+            #     alias: nd01_nd04_2_2
+            #     link: node01-node04-link14
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/36:
+            #     alias: nd01_nd04_2_3
+            #     link: node01-node04-link15
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/1/1:
+            #     alias: nd01_nd02_1_5
+            #     link: node01-node02-link5
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/2:
+            #     alias: nd01_nd02_1_6
+            #     link: node01-node02-link6
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/3:
+            #     alias: nd01_nd02_1_7
+            #     link: node01-node02-link7
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/4:
+            #     alias: nd01_nd02_1_8
+            #     link: node01-node02-link8
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/3/1:
+            #     alias: nd01_nd04_1_1
+            #     link: node01-node04-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/3/2:
+            #     alias: nd01_nd04_1_2
+            #     link: node01-node04-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/3/3:
+            #     alias: nd01_nd04_1_3
+            #     link: node01-node04-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/3/4:
+            #     alias: nd01_nd04_1_4
+            #     link: node01-node04-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/11/1:
+            #     alias: nd01_nd05_1_1
+            #     link: node01-node05-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/2:
+            #     alias: nd01_nd05_1_2
+            #     link: node01-node05-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/3:
+            #     alias: nd01_nd05_1_3
+            #     link: node01-node05-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/4:
+            #     alias: nd01_nd05_1_4
+            #     link: node01-node05-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/12/1:
+            #     alias: nd01_nd03_1_1
+            #     link: node01-node03-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/12/2:
+            #     alias: nd01_nd03_1_2
+            #     link: node01-node03-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/12/3:
+            #     alias: nd01_nd03_1_3
+            #     link: node01-node03-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/12/4:
+            #     alias: nd01_nd03_1_4
+            #     link: node01-node03-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/13/1:
+            #     alias: nd01_nd02_1_1
+            #     link: node01-node02-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/13/2:
+            #     alias: nd01_nd02_1_2
+            #     link: node01-node02-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/13/3:
+            #     alias: nd01_nd02_1_3
+            #     link: node01-node02-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/13/4:
+            #     alias: nd01_nd02_1_4
+            #     link: node01-node02-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/15/1:
+            #     alias: nd01_nd03_1_5
+            #     link: node01-node03-link5
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/15/2:
+            #     alias: nd01_nd03_1_6
+            #     link: node01-node03-link6
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/15/3:
+            #     alias: nd01_nd03_1_7
+            #     link: node01-node03-link7
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/15/4:
+            #     alias: nd01_nd03_1_8
+            #     link: node01-node03-link8
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/17/1:
+            #     alias: nd01_nd04_1_5
+            #     link: node01-node04-link5
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/17/2:
+            #     alias: nd01_nd04_1_6
+            #     link: node01-node04-link6
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/17/3:
+            #     alias: nd01_nd04_1_7
+            #     link: node01-node04-link7
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/17/4:
+            #     alias: nd01_nd04_1_8
+            #     link: node01-node04-link8
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/25/1:
+            #     alias: nd01_nd04_1_9
+            #     link: node01-node04-link9
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/25/2:
+            #     alias: nd01_nd04_1_10
+            #     link: node01-node04-link10
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/25/3:
+            #     alias: nd01_nd04_1_11
+            #     link: node01-node04-link11
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/25/4:
+            #     alias: nd01_nd04_1_12
+            #     link: node01-node04-link12
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+    ELY:
+        interfaces:
+            Ethernet1/7: # 1/16
+                alias: nd02_tgn01_1_1
+                link: node02-tgn01-link01
+                transceiver: 10Gbase-SR
+                type: ethernet
+            Ethernet1/49: # 2/2
+                alias: nd02_tgn01_1_2
+                link: node02-tgn01-link02
+                transceiver: 10Gbase-SR
+                type: ethernet
+            Ethernet1/54/1:
+                alias: nd02_nd01_1_1
+                link: node01-node02-link1
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/54/2:
+                alias: nd02_nd01_1_2
+                link: node01-node02-link2
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/54/3:
+                alias: nd02_nd01_1_3
+                link: node01-node02-link3
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/54/4:
+                alias: nd02_nd01_1_4
+                link: node01-node02-link4
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/19:
+                alias: nd02_nd04_1_1
+                link: node02-node04-link1
+                type: ethernet
+                transceiver: SFP-H10GB-AOC1M
+            Ethernet1/20:
+                alias: nd02_nd04_1_2
+                link: node02-node04-link2
+                type: ethernet
+                transceiver: SFP-H10GB-AOC1M
+            Ethernet1/45:
+                alias: nd02_nd05_1_1
+                link: node02-node05-link1
+                type: ethernet
+                transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/21:
+            #     alias: nd02_nd03_1_3
+            #     link: node02-node03-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/22:
+            #     alias: nd02_nd03_1_4
+            #     link: node02-node03-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/25:
+            #     alias: nd02_nd01_1_7
+            #     link: node01-node02-link7
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/26:
+            #     alias: nd02_nd01_1_6
+            #     link: node01-node02-link6
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/31:
+            #     alias: nd02_nd05_1_1
+            #     link: node02-node05-link1
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/33:
+            #     alias: nd02_nd04_1_2
+            #     link: node02-node04-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/35:
+            #     alias: nd02_nd05_1_2
+            #     link: node02-node05-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/37:
+            #     alias: nd02_nd04_1_3
+            #     link: node02-node04-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/40:
+            #     alias: nd02_nd05_1_3
+            #     link: node02-node05-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/41:
+            #     alias: nd02_nd05_1_4
+            #     link: node02-node05-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/46:
+            #     alias: nd02_nd04_1_4
+            #     link: node02-node04-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/47:
+            #     alias: nd02_nd01_1_3
+            #     link: node01-node02-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/48:
+            #     alias: nd02_nd01_1_4
+            #     link: node01-node02-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/49:
+            #     alias: nd02_nd01_2_1
+            #     link: node01-node02-link9
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/51:
+            #     alias: nd02_nd06_1_1
+            #     link: node02-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/52:
+            #     alias: nd02_nd04_2_1
+            #     link: node02-node04-link5
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/53:
+            #     alias: nd02_nd03_2_1
+            #     link: node02-node03-link5
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/54:
+            #     alias: nd02_nd01_2_3
+            #     link: node01-node02-link11
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/55:
+            #     alias: nd02_nd03_2_2
+            #     link: node02-node03-link6
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/57:
+            #     alias: nd02_nd04_2_2
+            #     link: node02-node04-link6
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/58:
+            #     alias: nd02_nd01_2_2
+            #     link: node01-node02-link10
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/59:
+            #     alias: nd02_nd01_2_4
+            #     link: node01-node02-link12
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/60:
+            #     alias: nd02_nd06_1_2
+            #     link: node02-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+    HW-2:
+        interfaces:
+            Ethernet1/7: # 1/15
+                alias: nd03_tgn01_1_1
+                link: node03-tgn01-link01
+                transceiver: 10Gbase-SR
+                type: ethernet
+            Ethernet1/50: # 2/4
+                alias: nd03_tgn01_1_2
+                link: node03-tgn01-link02
+                transceiver: 10Gbase-SR
+                type: ethernet
+            Ethernet1/37:
+                alias: nd03_nd01_1_1
+                link: node01-node03-link1
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/38:
+                alias: nd03_nd01_1_2
+                link: node01-node03-link2
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            Ethernet1/39:
+                alias: nd03_nd01_1_3
+                link: node01-node03-link3
+                type: ethernet
+                transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/35:
+            #     alias: nd03_nd01_2_2
+            #     link: node01-node03-link10
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/1/1:
+            #     alias: nd03_nd01_1_1
+            #     link: node01-node03-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/2:
+            #     alias: nd03_nd01_1_2
+            #     link: node01-node03-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/3:
+            #     alias: nd03_nd01_1_3
+            #     link: node01-node03-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/1/4:
+            #     alias: nd03_nd01_1_4
+            #     link: node01-node03-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            Ethernet1/41:
+                alias: nd03_nd04_1_1
+                link: node03-node04-link1
+                type: ethernet
+                transceiver: QSFP40G-4SFP10G-CU2M
+            Ethernet1/42:
+                alias: nd03_nd04_1_2
+                link: node03-node04-link2
+                type: ethernet
+                transceiver: QSFP40G-4SFP10G-CU2M
+            Ethernet1/43:
+                alias: nd03_nd04_1_3
+                link: node03-node04-link3
+                type: ethernet
+                transceiver: QSFP40G-4SFP10G-CU2M
+            Ethernet1/18:
+                alias: nd03_nd06_1_1
+                link: node03-node06-link1
+                type: ethernet
+                transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/7/2:
+            #     alias: nd03_nd02_1_2
+            #     link: node02-node03-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/7/3:
+            #     alias: nd03_nd02_1_3
+            #     link: node02-node03-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/7/4:
+            #     alias: nd03_nd02_1_4
+            #     link: node02-node03-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/9/1:
+            #     alias: nd03_nd05_1_1
+            #     link: node03-node05-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/9/2:
+            #     alias: nd03_nd05_1_2
+            #     link: node03-node05-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/9/3:
+            #     alias: nd03_nd05_1_3
+            #     link: node03-node05-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/9/4:
+            #     alias: nd03_nd05_1_4
+            #     link: node03-node05-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/1:
+            #     alias: nd03_nd01_1_5
+            #     link: node01-node03-link5
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/2:
+            #     alias: nd03_nd01_1_6
+            #     link: node01-node03-link6
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/3:
+            #     alias: nd03_nd01_1_7
+            #     link: node01-node03-link7
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/11/4:
+            #     alias: nd03_nd01_1_8
+            #     link: node01-node03-link8
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU3M
+            # Ethernet1/16/1:
+            #     alias: nd03_nd04_1_5
+            #     link: node03-node04-link5
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/16/2:
+            #     alias: nd03_nd04_1_6
+            #     link: node03-node04-link6
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/16/3:
+            #     alias: nd03_nd04_1_7
+            #     link: node03-node04-link7
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/16/4:
+            #     alias: nd03_nd04_1_8
+            #     link: node03-node04-link8
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/22/1:
+            #     alias: nd03_nd06_1_1
+            #     link: node03-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/22/2:
+            #     alias: nd03_nd06_1_2
+            #     link: node03-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/22/3:
+            #     alias: nd03_nd06_1_3
+            #     link: node03-node06-link3
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/22/4:
+            #     alias: nd03_nd06_1_4
+            #     link: node03-node06-link4
+            #     type: ethernet
+            #     transceiver: QSFP40G-4SFP10G-CU2M
+            # Ethernet1/25:
+            #     alias: nd03_nd04_2_1
+            #     link: node03-node04-link9
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/26:
+            #     alias: nd03_nd04_2_2
+            #     link: node03-node04-link10
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+    TC-4:
+        interfaces:
+            Ethernet1/7: # 1/5
+                alias: nd04_tgn01_1_1
+                link: node04-tgn01-link01
+                transceiver: 10Gbase-SR
+                type: ethernet
+            # Ethernet1/7: # 1/5
+            #     alias: nd04_tgn01_1_2
+            #     link: node04-tgn01-link02
+            #     transceiver: 10Gbase-SR
+            #     type: ethernet
+            Ethernet1/1:
+                alias: nd04_nd01_1_1
+                link: node01-node04-link1
+                type: ethernet
+                transceiver: SFP-H10GB-CU2M
+            Ethernet1/2:
+                alias: nd04_nd01_1_2
+                link: node01-node04-link2
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/3:
+                alias: nd04_nd01_1_3
+                link: node01-node04-link3
+                type: ethernet
+                transceiver: SFP-H10GB-CU3M
+            Ethernet1/19:
+                alias: nd04_nd02_1_1
+                link: node02-node04-link1
+                type: ethernet
+                transceiver: SFP-H10GB-AOC1M
+            Ethernet1/20:
+                alias: nd04_nd02_1_2
+                link: node02-node04-link2
+                type: ethernet
+                transceiver: SFP-H10GB-AOC1M
+            Ethernet1/49/1:
+                alias: nd04_nd03_1_1
+                link: node03-node04-link1
+                type: ethernet
+                transceiver: SFP-H10GB-CU2M
+            Ethernet1/49/2:
+                alias: nd04_nd03_1_2
+                link: node03-node04-link2
+                type: ethernet
+                transceiver: SFP-H10GB-CU2M
+            Ethernet1/49/3:
+                alias: nd04_nd03_1_3
+                link: node03-node04-link3
+                type: ethernet
+                transceiver: SFP-H10GB-CU2M
+            # Ethernet1/19:
+            #     alias: nd04_nd02_1_3
+            #     link: node02-node04-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/21:
+            #     alias: nd04_nd01_1_2
+            #     link: node01-node04-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/22:
+            #     alias: nd04_nd01_1_6
+            #     link: node01-node04-link6
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/23:
+            #     alias: nd04_nd01_1_9
+            #     link: node01-node04-link9
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/24:
+            #     alias: nd04_nd01_1_10
+            #     link: node01-node04-link10
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/25:
+            #     alias: nd04_nd01_1_11
+            #     link: node01-node04-link11
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/26:
+            #     alias: nd04_nd01_1_12
+            #     link: node01-node04-link12
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/30:
+            #     alias: nd04_nd03_1_5
+            #     link: node03-node04-link5
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/31:
+            #     alias: nd04_nd01_1_3
+            #     link: node01-node04-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/32:
+            #     alias: nd04_nd01_1_8
+            #     link: node01-node04-link8
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/36:
+            #     alias: nd04_nd03_1_6
+            #     link: node03-node04-link6
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/37:
+            #     alias: nd04_nd02_1_2
+            #     link: node02-node04-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/39:
+            #     alias: nd04_nd03_1_7
+            #     link: node03-node04-link7
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/40:
+            #     alias: nd04_nd06_1_1
+            #     link: node04-node06-link1
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/42:
+            #     alias: nd04_nd03_1_4
+            #     link: node03-node04-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/43:
+            #     alias: nd04_nd03_1_8
+            #     link: node03-node04-link8
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/45:
+            #     alias: nd04_nd06_1_2
+            #     link: node04-node06-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/46:
+            #     alias: nd04_nd02_1_4
+            #     link: node02-node04-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC1M
+            # Ethernet1/47:
+            #     alias: nd04_nd01_1_7
+            #     link: node01-node04-link7
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/48:
+            #     alias: nd04_nd01_1_4
+            #     link: node01-node04-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/49:
+            #     alias: nd04_nd02_2_1
+            #     link: node02-node04-link5
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/51:
+            #     alias: nd04_nd05_1_1
+            #     link: node04-node05-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/52:
+            #     alias: nd04_nd05_1_2
+            #     link: node04-node05-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/54:
+            #     alias: nd04_nd05_1_3
+            #     link: node04-node05-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/55:
+            #     alias: nd04_nd01_2_1
+            #     link: node01-node04-link13
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/56:
+            #     alias: nd04_nd01_2_3
+            #     link: node01-node04-link15
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/57:
+            #     alias: nd04_nd05_1_4
+            #     link: node04-node05-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/58:
+            #     alias: nd04_nd02_2_2
+            #     link: node02-node04-link6
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/59:
+            #     alias: nd04_nd01_2_4
+            #     link: node01-node04-link16
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/60:
+            #     alias: nd04_nd01_2_2
+            #     link: node01-node04-link14
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/50:
+            #     alias: nd04_nd03_2_1
+            #     link: node03-node04-link9
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/53:
+            #     alias: nd04_nd03_2_2
+            #     link: node03-node04-link10
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+    TC-2:
+        interfaces:
+            Ethernet1/7: # 1/14
+                alias: nd05_tgn01_1_1
+                link: node05-tgn01-link01
+                transceiver: 10Gbase-SR
+                type: ethernet
+            # Ethernet1/50: # 2/5
+            #     alias: nd05_tgn01_1_2
+            #     link: node05-tgn01-link02
+            #     transceiver: 10Gbase-SR
+            #     type: ethernet
+            # Ethernet1/37: # 11/16
+            #     alias: nd05_tgn01_1_3
+            #     link: node05-tgn01-link03
+            #     transceiver: 10Gbase-SR
+            #     type: ethernet
+            Ethernet1/51/1:
+                alias: nd05_nd02_1_1
+                link: node02-node05-link1
+                type: ethernet
+                transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/10:
+            #     alias: nd05_nd01_1_1
+            #     link: node01-node05-link1
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/15:
+            #     alias: nd05_nd03_1_1
+            #     link: node03-node05-link1
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/22:
+            #     alias: nd05_nd02_1_3
+            #     link: node02-node05-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/23:
+            #     alias: nd05_nd01_1_2
+            #     link: node01-node05-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/25:
+            #     alias: nd05_nd03_1_4
+            #     link: node03-node05-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/31:
+            #     alias: nd05_nd01_1_3
+            #     link: node01-node05-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/33:
+            #     alias: nd05_nd03_1_2
+            #     link: node03-node05-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/38:
+            #     alias: nd05_nd02_1_4
+            #     link: node02-node05-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/41:
+            #     alias: nd05_nd03_1_3
+            #     link: node03-node05-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/46:
+            #     alias: nd05_nd01_1_4
+            #     link: node01-node05-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU3M
+            # Ethernet1/48:
+            #     alias: nd05_nd02_1_2
+            #     link: node02-node05-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/49:
+            #     alias: nd05_nd04_1_3
+            #     link: node04-node05-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/51:
+            #     alias: nd05_nd06_1_1
+            #     link: node05-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/52:
+            #     alias: nd05_nd06_1_2
+            #     link: node05-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/54:
+            #     alias: nd05_nd06_1_3
+            #     link: node05-node06-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/55:
+            #     alias: nd05_nd04_1_2
+            #     link: node04-node05-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/57:
+            #     alias: nd05_nd04_1_4
+            #     link: node04-node05-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/58:
+            #     alias: nd05_nd04_1_1
+            #     link: node04-node05-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/60:
+            #     alias: nd05_nd06_1_4
+            #     link: node05-node06-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+    HW-1:
+        interfaces:
+            Ethernet1/7: # 1/7
+                alias: nd06_tgn01_1_1
+                link: node06-tgn01-link01
+                transceiver: 10Gbase-SR
+                type: ethernet
+            # Ethernet1/52: # 2/6
+            #     alias: nd06_tgn01_1_2
+            #     link: node06-tgn01-link02
+            #     transceiver: 10Gbase-SR
+            #     type: ethernet
+            Ethernet1/18:
+                alias: nd06_nd03_1_1
+                link: node03-node06-link1
+                type: ethernet
+                transceiver: SFP-H10GB-CU2M
+            # Ethernet1/13:
+            #     alias: nd06_nd04_1_1
+            #     link: node04-node06-link1
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/22:
+            #     alias: nd06_nd03_1_2
+            #     link: node03-node06-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/30:
+            #     alias: nd06_nd04_1_2
+            #     link: node04-node06-link2
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-AOC2M
+            # Ethernet1/34:
+            #     alias: nd06_nd03_1_3
+            #     link: node03-node06-link3
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/46:
+            #     alias: nd06_nd03_1_4
+            #     link: node03-node06-link4
+            #     type: ethernet
+            #     transceiver: SFP-H10GB-CU2M
+            # Ethernet1/49:
+            #     alias: nd06_nd02_1_1
+            #     link: node02-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/51:
+            #     alias: nd06_nd05_1_1
+            #     link: node05-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/52:
+            #     alias: nd06_nd05_1_2
+            #     link: node05-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/53:
+            #     alias: nd06_nd01_1_2
+            #     link: node01-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/54:
+            #     alias: nd06_nd05_1_3
+            #     link: node05-node06-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/55:
+            #     alias: nd06_nd01_1_3
+            #     link: node01-node06-link3
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/56:
+            #     alias: nd06_nd05_1_4
+            #     link: node05-node06-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/58:
+            #     alias: nd06_nd01_1_4
+            #     link: node01-node06-link4
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/59:
+            #     alias: nd06_nd01_1_1
+            #     link: node01-node06-link1
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+            # Ethernet1/60:
+            #     alias: nd06_nd02_1_2
+            #     link: node02-node06-link2
+            #     type: ethernet
+            #     transceiver: QSFP-H40G-AOC5M
+    ixia:
+        interfaces:
+            1/9: # IXIA port 1
+                type: ethernet
+                alias: tgn01_nd01_1_1
+                link: node01-tgn01-link01
+                speed: 10000
+                intfname: 1to1
+            1/16: # IXIA port 9
+                type: ethernet
+                alias: tgn01_nd02_1_1
+                link: node02-tgn01-link01
+                speed: 10000
+                intfname: 2to1
+            2/2: # IXIA port 9
+                type: ethernet
+                alias: tgn01_nd02_1_2
+                link: node02-tgn01-link01
+                speed: 10000
+                intfname: 2to2
+            1/15: # IXIA port 11
+                type: ethernet
+                alias: tgn01_nd03_1_1
+                link: node03-tgn01-link01
+                speed: 10000
+                intfname: 3to1
+            2/4: # IXIA port 11
+                type: ethernet
+                alias: tgn01_nd03_1_2
+                link: node03-tgn01-link01
+                speed: 10000
+                intfname: 3to2
+            1/5: # IXIA port 13
+                type: ethernet
+                alias: tgn01_nd04_1_1
+                link: node04-tgn01-link01
+                speed: 10000
+                intfname: 4to1
+            1/14: # IXIA port 5
+                type: ethernet
+                alias: tgn01_nd05_1_1
+                link: node05-tgn01-link01
+                speed: 10000
+                intfname: 5to1
+            1/7: # IXIA port 7
+                type: ethernet
+                alias: tgn01_nd06_1_1
+                link: node06-tgn01-link01
+                speed: 10000
+                intfname: 6to1

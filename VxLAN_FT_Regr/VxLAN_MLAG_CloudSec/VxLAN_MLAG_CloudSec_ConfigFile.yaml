@@ -1,0 +1,356 @@
+EVPN_dict:
+    evpn_data               : '101-100101,102-100102'
+FWD_SYS_dict1:
+    VRF_string              : 'TENANT-'
+    VRF_id_start            : 9002001
+    VRF_count               : 1
+    VLAN_PER_VRF_count      : 1
+    SPINE_COUNT             : 1
+    BGP_AS_num              : 100
+    OSPF_AS                 : 100 
+
+# LEAF-1 data
+
+VPC_Node_1_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.1/32"
+    lback_overlay_bgp        : "lo1-172.16.0.1/32"
+    lback_vtep_primary        : "lo100-100.0.0.1/32"
+    lback_vtep_secondary     : "lo100-100.0.0.254/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range          : "101-102,2001"
+        vn_segment          : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name            : "TENANT-9002001"
+        l3_vni              : '9002001'
+    VPC_data:
+        vpc_domain          : '10'
+        vpc_id              : '10'
+        keep_alive_src_ip   : '9.9.9.1' 
+        keep_alive_dst_ip   : '9.9.9.2'
+    SVI_data:
+        l2_l3_vni_vlan      : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name            : 'TENANT-9002001'
+    BGP_config:            
+        AS_num              : '100'
+        router_id           : '172.16.0.1'
+        neighbor_ip_1       : '172.16.0.101'
+        remote_as_1         : '100'
+        update-source_1     : 'loopback1'
+        vrf                 : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip      : "172.16.0.101 "
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "100.0.0.1"
+        VPC_VTEP_IP         : "100.0.0.254"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+
+VPC_Node_2_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.2/32"
+    lback_overlay_bgp        : "lo1-172.16.0.2/32"
+    lback_vtep_primary        : "lo100-100.0.0.2/32"
+    lback_vtep_secondary     : "lo100-100.0.0.254/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range          : "101-102,2001"
+        vn_segment          : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name            : "TENANT-9002001"
+        l3_vni              : '9002001'
+    VPC_data:
+        vpc_domain          : '10'
+        vpc_id              : '10'
+        keep_alive_src_ip   : '9.9.9.2' 
+        keep_alive_dst_ip   : '9.9.9.1'
+    SVI_data:
+        l2_l3_vni_vlan      : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name            : 'TENANT-9002001'
+    BGP_config:            
+        AS_num              : '100'
+        router_id           : '172.16.0.2'
+        address_family      : 'v4,v6,l2vpnevpn' 
+        advertise_pip       : 'No'
+        neighbor_ip_1       : '172.16.0.101'
+        remote_as_1         : '100'
+        update-source_1     : 'loopback1'
+        vrf                 : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip    : "172.16.0.101"
+    NVE_data:
+        src_loop            : 'loopback100'
+        VTEP_IP             : "100.0.0.2"
+        VPC_VTEP_IP         : "100.0.0.254"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+Spine_1_Site_1_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.101/32"
+    lback_overlay_bgp        : "lo1-172.16.0.101/32"
+    lback_pim_rp             : "lo555-5.5.5.5/32"
+    BGP_config:            
+        AS_num              : '100'
+        router_id           : '1.1.0.101'
+        neighbor_ip_1       : '172.16.0.1'
+        remote_as_1         : '100'
+        neighbor_ip_2       : '172.16.0.2'
+        remote_as_2         : '100'
+        neighbor_ip_3       : '172.16.0.201'
+        remote_as_3         : '100'
+        neighbor_ip_4       : '172.16.0.202'
+        remote_as_4         : '100'
+        vrf                 : 'TENANT-9002001'
+
+      
+BGW_1_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.201/32"
+    lback_overlay_bgp        : "lo1-172.16.0.201/32"
+    lback_vtep_primary       : "lo100-100.0.0.201/32"
+    lback_vtep_secondary     : "lo100-100.0.0.253/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range           : "101-102,2001"
+        vn_segment           : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name             : "TENANT-9002001"
+        l3_vni               : '9002001'
+    VPC_data:
+        vpc_domain           : '50'
+        vpc_id               : '50'
+        keep_alive_src_ip    : '14.14.14.1' 
+        keep_alive_dst_ip    : '14.14.14.2'
+    SVI_data:
+        l2_l3_vni_vlan       : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name             : 'TENANT-9002001'
+    BGP_config:            
+        AS_num               : '100'
+        router_id            : '172.16.0.201'
+        neighbor_ip_1        : '10.1.203.2'
+        remote_as_1          : '1000'
+        neighbor_ip_2        : '172.16.0.101'
+        remote_as_2          : '100'
+        neighbor_ip_3        : '172.16.0.251'
+        remote_as_3          : '1000'
+        vrf                  : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip    : "172.16.0.101"
+    NVE_data:
+        src_loop            : 'loopback100'
+        VTEP_IP             : "100.0.0.201"
+        VPC_VTEP_IP         : "100.0.0.253"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+BGW_2_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.202/32"
+    lback_overlay_bgp        : "lo1-172.16.0.202/32"
+    lback_vtep_primary       : "lo100-100.0.0.202/32"
+    lback_vtep_secondary     : "lo100-100.0.0.253/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range           : "101-102,2001"
+        vn_segment           : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name             : "TENANT-9002001"
+        l3_vni               : '9002001'
+    VPC_data:
+        vpc_domain           : '50'
+        vpc_id               : '50'
+        keep_alive_src_ip    : '14.14.14.2' 
+        keep_alive_dst_ip    : '14.14.14.1'
+    SVI_data:
+        l2_l3_vni_vlan       : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name             : 'TENANT-9002001'
+    BGP_config:            
+        AS_num               : '100'
+        router_id            : '172.16.0.202'
+        neighbor_ip_1        : '10.1.204.2'
+        remote_as_1          : '1000'
+        neighbor_ip_2        : '172.16.0.101'
+        remote_as_2          : '100'
+        neighbor_ip_3        : '172.16.0.251'
+        remote_as_3          : '1000'
+        vrf                  : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip      : "172.16.0.101"
+    NVE_data:
+        src_loop            : 'loopback1'
+        VTEP_IP             : "100.0.0.202"
+        VPC_VTEP_IP         : "100.0.0.253"
+    NVE_data:
+        src_loop            : 'loopback100'
+        VTEP_IP             : "100.0.0.201"
+        VPC_VTEP_IP         : "100.0.0.253"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+DCI_Route_Server_1_dict:
+    BGP_config:            
+        AS_num               : '1000'
+        router_id            : '172.16.0.251'
+        neighbor_ip_1        : '10.1.203.1'
+        remote_as_1          : '100'
+        neighbor_ip_2        : '10.1.204.1'
+        remote_as_2          : '100'
+        neighbor_ip_3        : '10.1.222.1'
+        remote_as_3          : '200'
+        neighbor_ip_4        : '172.16.0.201'
+        remote_as_4          : '100'
+        neighbor_ip_5        : '172.16.0.202'
+        remote_as_5          : '100'
+        neighbor_ip_6        : '172.16.0.203'
+        remote_as_6          : '200'
+
+BGW_1_Site_2_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.203/32"
+    lback_overlay_bgp        : "lo1-172.16.0.203/32"
+    lback_vtep_primary       : "lo100-100.0.0.203/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range           : "101-102,2001"
+        vn_segment           : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name             : "TENANT-9002001"
+        l3_vni               : '9002001'
+    SVI_data:
+        l2_l3_vni_vlan       : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name             : 'TENANT-9002001'
+    BGP_config:            
+        AS_num               : '200'
+        router_id            : '172.16.0.203'
+        neighbor_ip_1        : '10.1.222.2'
+        remote_as_1          : '1000'
+        neighbor_ip_2        : '172.16.0.102'
+        remote_as_2          : '200'
+        neighbor_ip_3        : '172.16.0.251'
+        remote_as_3          : '1000'
+        vrf                  : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip       : "172.16.0.102"
+    NVE_data:
+        src_loop            : 'loopback100'
+        VTEP_IP             : "100.0.0.203"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+Spine_1_Site_2_dict:
+    lback_underlay_ospf      : "lo0-1.1.0.102/32"
+    lback_overlay_bgp        : "lo1-172.16.0.102/32"
+    lback_pim_rp             : "lo666-6.6.6.6/32"
+    BGP_config:            
+        AS_num              : '200'
+        router_id           : '172.16.0.102'
+        neighbor_ip_1       : '172.16.0.4'
+        remote_as_1         : '200'
+        update-source_1     : 'loopback1'
+        neighbor_ip_2       : '172.16.0.203'
+        remote_as_2         : '200'
+        update-source_2     : 'loopback1'
+        vrf                 : 'TENANT-9002001'
+
+# LEAF-2 data
+Leaf_02_Site_2_dict:
+    lback_underlay_ospf     : "lo0-1.1.0.4/32"
+    lback_overlay_bgp       : "lo1-172.16.0.4/32"
+    lback_vtep_primary      : "lo100-100.0.0.4/32"
+    VLAN_VNSEGMENT_data:
+        vlan_range          : "101-102,2001"
+        vn_segment          : "101-100101,102-100102,2001-9002001"
+    VRF_data:
+        vrf_name            : "TENANT-9002001"
+        l3_vni              : '9002001'
+    SVI_data:
+        l2_l3_vni_vlan      : '101-192.168.11.254/24,102-192.168.12.254/24,2001-ip forward'
+        vrf_name            : 'TENANT-9002001'
+    BGP_config:            
+        AS_num              : '200'
+        router_id           : '172.16.0.4'
+        neighbor_ip_1       : '172.16.0.102'
+        remote_as_1         : '200'
+        vrf                 : 'TENANT-9002001'
+    SPINE_1_UPLINK_PO:
+        spine_loop0_ip      : "172.16.0.102"
+    NVE_data:
+        src_loop            : 'loopback100'
+        VTEP_IP             : "100.0.0.4"
+        l3_mcast_grp_ip     : '238.0.0.10'
+        l2_mcast_grp_ip     : '238.0.0.10'
+    VNI_data:
+        l3_vlan_start       : 2001
+        l3_vni_start        : 9002001
+        l2_vlan_start       : 101
+        l2_vni_start        : 100101
+
+
+# Traffic TGEN Data
+
+VPC_NODE_TGEN_data:
+    'no_of_ints'            : "1"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:16:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv46'
+    'v4_addr'               : '192.168.11.1'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '192.168.11.254'
+    'v4_gateway_step'       : '0.0.0.1'
+    'v4_netmask'            : '255.255.255.0'
+    'v6_addr'               : '2001:2:1:1::10'
+    'v6_addr_step'          : '0:0:0:1::'
+    'v6_gateway'            : '2001:2:1:1::1'
+    'v6_gateway_step'       : '0:0:0:1::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '101'
+    'vlan_id_step'          : '1'
+    'igmp_ver'              : 'v3'
+    'mcast_grp_ip'          : '225.1.1.1'
+    'mcast_grp_ip_step'     : '0.0.1.0'
+    'no_of_grps'            : '1'
+    'no_of_mcast_sources'   : '1'
+
+LEAF_02_SITE_2_TGEN_data:
+    'no_of_ints'            : "1"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:17:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv46'
+    'v4_addr'               : '192.168.12.1'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '192.168.12.254'
+    'v4_gateway_step'       : '0.0.0.1'
+    'v4_netmask'            : '255.255.255.0'
+    'v6_addr'               : '2001:2:1:1::20'
+    'v6_addr_step'          : '0:0:0:1::'
+    'v6_gateway'            : '2001:2:1:1::1'
+    'v6_gateway_step'       : '0:0:0:1::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '102'
+    'vlan_id_step'          : '1'
+    'igmp_ver'              : 'v3'
+    'mcast_grp_ip'          : '225.1.1.1'
+    'mcast_grp_ip_step'     : '0.0.1.0'
+    'no_of_grps'            : '1'
+    'no_of_mcast_sources'   : '1'
+

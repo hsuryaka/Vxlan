@@ -1,0 +1,722 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+InitializeTestbed:
+  source:
+    pkg: src.forwarding.vxlan.vxlan_config
+    class: InitializeTestbed
+  datafile_path: "esi_mh_config.yml"
+  verify_file_path: "esi_rx_mh_verify.yml"
+InitializeTraffic:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "ixia_esi_cfg.ixncfg"
+    processors:
+        post:
+            verify_ixia_static_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+
+TriggerReloadAscii:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node02
+  traffic_convergence_time: 300
+  trigger_wait_time: '500'
+  ixia_static: True
+  loss_tolerance: 0.01
+  check_iteration: 2
+  device_dut:
+    - node02
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+
+TriggerReloadTor:
+    devices:
+        -  'node02'
+    processors:
+        post:
+          verify_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    traffic_convergence_time: 300
+    trigger_wait_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node02
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+TriggerVpcReloadPri:
+    devices:
+        -  'node01'
+    processors:
+        post:
+          verify_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node02
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+TriggerVpcReloadSec:
+    devices:
+        -  'node04'
+    processors:
+        post:
+          verify_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node02
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+TriggerIssuNative:
+    devices:
+        -  'node01'
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.issu.issu.TriggerIssuNative
+    processors:
+        pre:
+            send_continuous_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_traffic
+        post:
+            verify_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_trafficss
+            verify_l2rib:
+              pkg: VxLAN_ESI_MH
+              method: verifyl2routetype
+            order: [ 'verify_traffic', 'verify_l2rib' ]
+    timeout:
+        max_time: 3600
+        interval: 60
+    traffic_convergence_time: 120
+    mode: 'native'
+    ctrlplane_downtime: 121
+    update_pts_features: ['platform']
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+# SwitchReloadLxc:
+#     device_dut:
+#       - 'node02'
+#     processors:
+#       pre:
+#         send_continuous_traffic:
+#           pkg: src.forwarding.vxlan.traffic
+#           method: verify_traffic
+#       post:
+#         verify_traffic:
+#           pkg: src.forwarding.vxlan.traffic
+#           method: verify_traffic
+#     source:
+#       pkg: src.system.system_config
+#       class: ConfigureLXCMode
+#     timeout:
+#       max_time: 1500
+#       interval: 60
+#     traffic_convergence_time: 600
+#     loss_tolerance: 0.01
+#     check_iteration: 2
+#     ixia_static: True
+
+TriggerIssuLxc:
+    devices:
+        -  'node02'
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.issu.issu.TriggerIssuLxc
+    processors:
+      pre:
+        send_continuous_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        order: [ 'verify_traffic', 'verify_l2rib' ]
+    timeout:
+        max_time: 3600
+        interval: 60
+    traffic_convergence_time: 100
+    mode: 'lxc'
+    update_pts_features: ['platform']
+    loss_tolerance: 0.01
+    check_iteration: 2
+    device_dut:
+      - node02
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+TriggerFabricLinkFlap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node02
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 300
+
+TriggerDCILinkFlap:
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node02
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 300
+
+VpcAccessFlapPri:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node01
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+VpcAccessFlapSec:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node04
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartBgpProcess:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node02
+  process_list:
+    - bgp
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+TriggerRestartNve:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node02
+  process_list:
+    - nve
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+
+TriggerRestartL2rib:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node02
+  process_list:
+    - l2rib
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+TriggerRestartUrib:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node02
+  process_list:
+    - urib
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+TriggerRestartProcessL2fm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04
+    process_list:
+        - l2fm
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        order: [ 'verify_traffic', 'verify_l2rib' ]
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartProcessUfdm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02
+    process_list:
+        - ufdm
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerRestartProcessEltm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node02
+    process_list:
+        - Eltm
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: regular
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+VpcPeerLinkFlapNveFlap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          order: [ 'verify_traffic', 'verify_l2rib' ]
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapNveFlap
+    device_dut:
+        - node04
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+
+TriggerAddCloudsecConfig:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  traffic_convergence_time: 1000
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: add_cloudsec_config
+  wait_time: '100'
+  device_dut:
+    - node02
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+TriggerRemoveCloudsecConfig:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  traffic_convergence_time: 600
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: remove_cloudsec_config
+  copy_rs_flag: False
+  device_dut:
+    - node02
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+
+TriggerEsiNodeDown:
+  processors:
+    post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        order: [ 'verify_traffic', 'verify_l2rib' ]
+  traffic_convergence_time: 600
+  source:
+    pkg: lib.triggers.flap.esi_ixia_flap
+    class: EsiTriggerFlap
+  copy_rs_flag: False
+  device_dut:
+    - node02
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  ixia_params:
+      topology: node07_tgn01
+      outer_device_group: nd07
+      outer_network: nd07_network
+      loopback: nd07_loopback
+      inner_device_group: nd07_vtep
+      esi_index: 1
+      esi_count: 100
+      Active: False
+
+TriggerEsiNodeUp:
+  processors:
+    post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        order: [ 'verify_traffic', 'verify_l2rib' ]
+  traffic_convergence_time: 600
+  source:
+    pkg: lib.triggers.flap.esi_ixia_flap
+    class: EsiTriggerFlap
+  copy_rs_flag: False
+  device_dut:
+    - node02
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: regular
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  ixia_params:
+      topology: node07_tgn01
+      outer_device_group: nd07
+      outer_network: nd07_network
+      loopback: nd07_loopback
+      inner_device_group: nd07_vtep
+      esi_index: 1
+      esi_count: 100
+      Active: True
+SwitchReloadLxc:
+    device_dut:
+      - 'node02'
+    processors:
+      pre:
+        send_continuous_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+    source:
+      pkg: src.system.system_config
+      class: ConfigureLXCMode
+    timeout:
+      max_time: 1500
+      interval: 60
+    traffic_convergence_time: 600
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True

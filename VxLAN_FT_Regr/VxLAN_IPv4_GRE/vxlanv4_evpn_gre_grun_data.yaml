@@ -1,0 +1,1761 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+InitializeTestbed:
+  source:
+    pkg: src.forwarding.vxlan.vxlan_config
+    class: InitializeTestbed
+  datafile_path: "vxlanv4_evpn_gre_config.yml"
+  verify_file_path: "vxlanv4_evpn_gre_verify.yml"
+
+InitializeTraffic:
+    tgen_path: "vxlanv4_evpn_gre_traffic.yml"
+    continuous_traffic: True
+    continuous_traffic_wait_time: 120
+    stop_wait_time: 40
+    pkt_loss_threshold: 2
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+ConfigureIxia:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/pkanduri/automation/repo_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_IPv4_GRE/VxLAN+GRE_Regression.ixncfg"
+
+VpcAccessFlap:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node01
+
+VpcAccessShut:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessShut
+    device_dut:
+        - node01
+
+VpcAccessNoShut:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessNoShut
+    device_dut:
+        - node01
+
+TriggerSwitchover:
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: genie.libs.sdk.triggers.ha.switchover.nxos.switchover
+        class: TriggerSwitchover
+    timeout:
+      max_time: 800
+      interval: 60
+    devices:
+        - node06
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+    traffic_convergence_time: 300
+ReloadLC:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: eor_triggers.ReloadLC
+    device_dut:
+        - node06
+    intf_list:
+        - nd06_nd03_1_1
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerReloadFabricModule:
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+            verify_ecmp:
+                pkg: lib.verify.verify_ecmp
+                method: call_verify_ecmp
+    source:
+        pkg: genie.libs.sdk.triggers.ha.reload.nxos.reload
+        class: TriggerReloadFabricModule
+    devices:
+        - node06
+    timeout:
+        max_time: 500
+        interval: 20
+    num_values:
+        oc: '1'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+    traffic_convergence_time: 300
+
+TriggerReloadLeaf:
+    devices:
+        -  'node06'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+RestartNveIpfibReloadFM:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: restart_nve.RestartNveIpFibReloadLcReloadFM
+    device_dut:
+        - node01
+    reload_params:
+        TriggerReloadFabricModule:
+            devices:
+                - node06
+            timeout:
+                max_time: 500
+                interval: 20
+            num_values:
+                oc: '1'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+UplinkShutVpcPoShutZtraffic:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.UplinkShutVpcPoShutZtraffic
+    device_dut:
+        - node01
+        - node04
+    uplink_list:
+        - Port-channel13
+        - nd01_nd03_1_3
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+UplinkNoShutVpcPoNoShutZtraffic:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 300
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.UplinkNoShutVpcPoNoShutZtraffic
+    device_dut:
+        - node01
+        - node04
+    uplink_list:
+        - Port-channel13
+        - nd01_nd03_1_3
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+VpcPeerLinkFlapl2vlanFlapl2sviFlapNve:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapL2vlanFlapL2sviFlapNve
+    device_dut:
+        - node01
+    converge_time: 180
+    vlan_range: "31-35"
+    svi_shutnoshut_params:
+        TriggerShutNoShutVlanInterface:
+            devices:
+                - node01
+            timeout:
+                max_time: 220
+                interval: 20
+            static:
+                interface: '(?P<interface>Vlan3[1-5])'
+            num_values:
+                'interface' : 5
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+VpcPeerLinkFlapNveFlap:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapNveFlap
+    device_dut:
+        - node04
+    converge_time: 250
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+DeleteAddNveInterfaceMctFlapNveFlap:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DeleteAddNveInterfaceMctFlapNveFlap
+    device_dut:
+        - node01
+    converge_time: 220
+    nve_delete_add_params:
+        TriggerUnconfigConfigVxlanNveOverlayInterface:
+            devices:
+                - node04
+            timeout:
+                max_time: 350
+                interval: 30
+            method: checkpoint
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+ModifyNveLoopbackMctFlap:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.ModifyNveLoopbackMctFlap
+    device_dut:
+        - node01
+        - node04
+    new_loopback: 'loopback21'
+    converge_time: 220
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+RevertNveLoopbackMctFlap:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.RevertNveLoopbackMctFlap
+    device_dut:
+        - node01
+        - node04
+    new_loopback: 'loopback21'
+    old_loopback: 'loopback1'
+    converge_time: 220
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+VpcPoFlapUplinkFlap:
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPoFlapUplinkFlap
+    device_dut:
+        - node01
+    converge_time: 90
+    uplink_list:
+        - Port-channel13
+        - nd01_nd03_1_3
+
+FlapNveFlapVlanFlapSviFlapPeerlink:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNveFlapVlanFlapSviFlapPeerLink
+    device_dut:
+        - node04
+    vlan_range: "41-45"
+    svi_shutnoshut_params:
+        TriggerShutNoShutVlanInterface:
+            devices:
+                - node04
+            timeout:
+                max_time: 500
+                interval: 20
+            static:
+                vlan: '(?P<interface>Vlan4[1-5])'
+            num_values:
+                'interface': 5
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerClearMroute:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node04
+    clear_cmd_lst:
+        - clear ip mroute * vrf all
+    trigger_wait_time: '30'
+    convergence_time: '180'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerChangeNveConfigToIR:
+  processors:
+    post:
+      verify_traffic:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+        method: VerifyTraffic
+  traffic_convergence_time: 100
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: remove_nve_config
+    - config_builder: BuildInterfaceConfig
+      config_params: change_nve_interface_config_to_ir
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+
+TriggerChangeNveConfigToMcast:
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+        method: VerifyTraffic
+  traffic_convergence_time: 100
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: remove_nve_config
+    - config_builder: BuildInterfaceConfig
+      config_params: change_nve_interface_config_to_mcast
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerReloadVpcnodePrimary:
+    devices:
+        -  'node01'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerReloadVpcnodeSecondary:
+    devices:
+        -  'node04'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerDisableEnablePim:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: genie.libs.sdk.triggers.disableenable.mcast.nxos.disableenable
+        class: TriggerDisableEnablePim
+    devices:
+        - node01
+        - node02
+    traffic_convergence_time: 120
+    timeout:
+        max_time: 220
+        interval: 20
+    method: checkpoint
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRemoveAddL3VniUnderVrf:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddL3VniUnderVrf
+    device_dut:
+        - node04
+        - node02
+    wait_time: '60'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerDisableAndEnableNveOverlay:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node02
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '60'
+    convergence_wait_time: '220'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerShutNoShutBgp:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: genie.libs.sdk.triggers.shutnoshut.bgp.shutnoshut
+        class: TriggerShutNoShutBgp
+    devices:
+        - node04
+    timeout:
+        max_time: 250
+        interval: 20
+    wait_for: 20
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRestartIpfib:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04
+    process_list:
+        - ipfib
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    hap_reset : True
+    hap_reset_conv_time : 400
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRestartNve:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04
+    process_list:
+        - nve
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 300
+    restart_converge_time : 600
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+            verify_ecmp:
+                pkg: lib.verify.verify_ecmp
+                method: call_verify_ecmp
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerDeleteAddNveInterface:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node01
+    traffic_convergence_time: 120
+    feature_to_remove: 'interface nve1'
+    trigger_wait_time: '60'
+    convergence_wait_time: '220'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerUplinkIpunnumbered:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node01:
+            - Port-channel13
+    converge_time : 80
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerUplinkPortChannel:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node04:
+            - nd04_nd03_1_3
+        node01:
+            - nd01_nd03_1_3
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerNoshutPortchannelUplinks:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node01:
+            - Port-channel13
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerNoshutIpunnumberedUplinks:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 300
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node04:
+            - nd04_nd03_1_3
+        node01:
+            - nd01_nd03_1_3
+    converge_time : 80
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+Vrflitelinkshut:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node01:
+            - nd01_nd05_1_3
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+VrfliteNoshutlink:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node01:
+            - nd01_nd05_1_3
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+VpcPeerlinkFlap:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerlinkFlap
+    device_dut:
+        - node04
+
+TriggerFlapNvePrimary:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+        class: TriggerFlapNve
+    device_dut:
+        - node01
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TriggerFlapNveSecondary:
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    device_dut:
+        - node04
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+FlapVlanRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapVlanRange
+    device_dut:
+        - node01
+    vlan_range:
+        "31-35"
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    converge_time: 60
+FlapSviRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node04
+    svi_range:
+        "41-45,1004"
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    converge_time: 60
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerDisableEnableBgp:
+    devices:
+        - node04
+    method: 'checkpoint'
+    timeout:
+        max_time: 180
+        interval: 20
+    timeout_recovery:
+        max_time: 300
+        interval: 2
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        class: triggers.disableenable.bgp.nxos.disableenable.TriggerDisableEnableBgp
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerModifyL2andL3VNI:
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.L2andL3VNIChange
+    device_dut:
+        - node01
+        - node02
+        - node04
+        - node06
+    traffic_convergence_time: 180
+    l2vni_start_range: '30001'
+    l3vni_start_range: '301000'
+    trigger_group: 'new_group'
+    trm_mode: False
+    wait_time: '60'
+    node_wait_time: '10'
+    global_mcast_group: '229.0.0.1'
+    trigger_traffic_profile: Ignore_vrf_leak_traffic_check_after_l2l3_vni_change
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRevertL2andL3VNI:
+    processors:
+        post:
+            verify_ecmp:
+                pkg: lib.verify.verify_ecmp
+                method: call_verify_ecmp
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.L2andL3VNIChange
+    device_dut:
+        - node01
+        - node02
+        - node04
+        - node06
+    traffic_convergence_time: 180
+    l2vni_start_range: '30001'
+    l3vni_start_range: '301000'
+    trigger_group: 'revert_vni'
+    trm_mode: False
+    wait_time: '60'
+    node_wait_time: '10'
+    global_mcast_group: '229.0.0.1'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerUnconfigConfigVlanVnsegment:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: genie.libs.sdk.triggers.unconfigconfig.vlan.nxos.unconfigconfig
+        class: TriggerUnconfigConfigVlanVnsegment
+    devices:
+        - node04
+    static:
+        vlan: '(?P<vlan>[1][0]+[1-5])'
+    method: 'checkpoint'
+    timeout:
+        max_time: 180
+        interval: 20
+    timeout_recovery:
+        max_time: 300
+        interval: 20
+    num_values:
+        vlan : 5
+
+TrafficCheckAfterL2L3VNIChange:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "vxlanv4_evpn_traffic.yml"
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+TrafficCheckAfterL2L3VNIRevert:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "vxlanv4_evpn_traffic.yml"
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    igmp_intf: [ 'tgn01_nd03_1_1','tgn01_nd05_1_1','tgn01_nd06_1_1' ]
+
+ClearIpRouteVrfAll:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+            verify_tunnel:
+                pkg: lib.verify.verify_tunnel
+                method: verify_gre_tunnel
+            order: [ 'verify_traffic', 'verify_tunnel' ]
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node04
+    clear_cmd_lst:
+        - clear ip route vrf all *
+    tunnel_duts:
+      - {node01: [Tunnel0]}
+      - {node04: [Tunnel0]}
+      - {node06: [Tunnel0, Tunnel1]}
+    trigger_wait_time: '30'
+    convergence_time: '180'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+ClearIpv6RouteVrfAll:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node04
+    clear_cmd_lst:
+        - clear ip route vrf all *
+    trigger_wait_time: '30'
+    convergence_time: '180'
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+NveFlapDisableEnableBgp:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.NveFlapDisableEnableBgp
+    device_dut:
+        - node04
+    trigger_params:
+        TriggerDisableEnableBgp:
+            devices:
+                - node04
+            method: 'checkpoint'
+            timeout:
+                max_time: 180
+                interval: 20
+            timeout_recovery:
+                max_time: 300
+                interval: 2
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerChangeVni:
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  traffic_convergence_time: 200
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params: remove_vni
+    - config_builder: BuildVlanConfig
+      config_params: change_vni
+    - config_builder: BuildInterfaceConfig
+      config_params: change_nve_vni
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRevertVni:
+  processors:
+    post:
+      verify_traffic:
+        pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+        method: VerifyTraffic
+  traffic_convergence_time: 200
+  source:
+    pkg: lib.triggers.change_config.apply_new_config
+    class: ApplyNewConfig
+  build_config_params:
+    - config_builder: BuildMissingConfig
+      config_params:  remove_new_vni
+    - config_builder: BuildVlanConfig
+      config_params:  vni_config
+    - config_builder: BuildInterfaceConfig
+      config_params:  nve_vni_config
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerFLAPBGP:
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.flap
+    class: feature_flap.FeatureFlap
+  device_dut:
+    - node04
+  traffic_convergence_time: 180
+  feature_to_flap: 'router bgp 1000'
+  cli_to_check: 'show running-config bgp'
+  trigger_wait_time: '60'
+
+TriggerNveSrcLoopbackFlap:
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  source:
+    pkg: lib.triggers.flap
+    class: interface_flap.FlapLoopbackRange
+  device_dut:
+    - node01
+  loopback_range:
+    "1"
+  start_wait_time: 2
+  stop_wait_time: 10
+  verify_wait_time: 2
+  traffic_convergence_time: 120
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerAddNgmpvn:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.AddRemoveFeature
+  device_dut:
+    - node01
+    - node02
+    - node04
+  feature_cli: 'feature ngmvpn'
+  trigger_wait_time: '10'
+  convergence_wait_time: '30'
+
+TriggerRemoveNgmpvn:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    pre:
+        send_continuous_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.AddRemoveFeature
+  device_dut:
+    - node01
+    - node02
+    - node04
+  feature_cli: 'no feature ngmvpn'
+  trigger_wait_time: '10'
+  convergence_wait_time: '30'
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerAddPimUnderL3Vni:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.AddRemovePimUnderL3Vni
+  device_dut:
+    - node01
+    - node02
+    - node04
+  wait_time: '30'
+  trigger_flag: 'config'
+  traffic_convergence_time: 60
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRemovePimUnderL3Vni:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.AddRemovePimUnderL3Vni
+  device_dut:
+    - node01
+    - node02
+    - node04
+  wait_time: '30'
+  trigger_flag: 'remove'
+  traffic_convergence_time: 60
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerDisableEnableIgmpSnoopingVxlan:
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.IgmpSnoopingVxlanDisableEnable
+  device_dut:
+    - node04
+    - node02
+  cmd1: 'no ip igmp snooping vxlan'
+  cmd2: 'ip igmp snooping vxlan'
+  wait_time: '120'
+
+TriggerDisableEnableFeatureFabricForwarding:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.UnConfigConfigFeature
+  device_dut:
+    - node01
+    - node02
+  feature_to_remove: 'feature fabric forwarding'
+  trigger_wait_time: '60'
+  convergence_wait_time: '180'
+
+TriggerVrfLiteIntfFlap:
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  device_dut:
+    - node01
+  intf_list: ['nd01_nd05_1_3.7-8']
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerVrfLiteIntfFlapSecondaryVpc:
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  device_dut:
+    - node04
+  intf_list: ['nd04_nd05_1_3.7-8']
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRestartBgpProcess:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node01
+  process_list:
+    - bgp
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+ClearL2vpnEvpn:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear_vpn.ClearL2VpnEvpn
+    device_dut:
+        - node04
+
+ClearIpIgmpSnooping:
+    start_wait_time: 2
+    stop_wait_time: 60
+    verify_wait_time: 1
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear_ip_igmp_snooping.ClearIpIgmpSnooping
+    device_dut:
+        - node04
+    clear_wait_time : 100
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRestartL2rib:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node04
+  process_list:
+    - l2rib
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+
+TriggerConfigureReplace:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.ConfigureReplace
+  trigger_wait_time: 30
+  traffic_convergence_time: 180
+  verify_dict:
+    node06:
+      test_dut: ['node06']
+      cmd: ['no interface nve 1']
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerModifyL3Vlan:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.change_config
+    class: change_config.ModifyL3Vlan
+  device_dut:
+    - node01
+    - node02
+    - node04
+    - node06
+  l3_vlan_range: '2001-2020'
+  wait_time: '60'
+  pbr_enabled: True
+  trigger_flag: 'modify'
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerRevertL3Vlan:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.change_config
+    class: change_config.ModifyL3Vlan
+  device_dut:
+    - node01
+    - node02
+    - node04
+    - node06
+  l3_vlan_range: '1001-1020'
+  wait_time: '60'
+  pbr_enabled: True
+  trigger_flag: 'revert'
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+TriggerReloadAscii:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node01
+    - node04
+  traffic_convergence_time: 300
+  trigger_wait_time: '600'
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+
+NgoamPing:
+    source:
+        pkg: lib.triggers.ngoam.ngoam
+        class: NgoamPing
+    start_wait_time: 2
+    stop_wait_time: 60
+    verify_wait_time: 1
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+
+NgoamTraceRoute:
+    source:
+        pkg: lib.triggers.ngoam.ngoam
+        class: NgoamTraceRoute
+    start_wait_time: 2
+    stop_wait_time: 60
+    verify_wait_time: 1
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+
+NgoamPathTrace:
+    source:
+        pkg: lib.triggers.ngoam.ngoam
+        class: NgoamPathTrace
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+NgoamTraceRouteWithLoopBack:
+    source:
+        pkg: lib.triggers.ngoam.ngoam
+        class: NgoamTraceRouteWithLoopBack
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+TriggerClearARPAndMAC:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 300
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+
+CFDCSCvy64787:
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  traffic_convergence_time: 100
+  device_dut:
+      - node01
+      - node04
+  source:
+    pkg: src.forwarding.vxlan.vxlan_lib
+    class: vxlan_cfd.CFDCSCvy64787
+  vlan_list: "253,312,314,316,320-321,410-413,415,427,433-434,436-437,440,444,448-449,451,455-456,463-464,549,600-601,651-654,1024,1249"
+  add_config_params: cfd_vpc_consistency_add_vlans_nve_config
+  remove_config_params: cfd_vpc_consistency_remove_vlans_nve
+
+CFDCSCvx24711:
+  source:
+    pkg: src.forwarding.vxlan.vxlan_lib
+    class: vxlan_cfd.CFDCSCvx24711
+  processors:
+    pre:
+      send_continuous_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: send_continuous_traffic
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+  traffic_convergence_time: 100
+  device_dut:
+      - node01
+      - node04
+  cli_to_parse: 'show running-config nv overlay'
+  wait_time: '30'
+  start_wait_time: 2
+  stop_wait_time: 10
+  verify_wait_time: 2
+
+TriggerReloadVpcnode:
+    devices:
+        -  'node01'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        pre:
+            send_continuous_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: send_continuous_traffic
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+
+UplinkShutTunnelPrimaryVPC:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node01:
+            - nd01_nd06_1_1
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+UplinkNoShutTunnelPrimaryVPC:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node01:
+            - nd01_nd06_1_1
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+UplinkShutTunnelSecondaryVPC:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerShutInterface
+    node_intf_list:
+        node04:
+            - port_channel64
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+UplinkNoShutTunnelSecondaryVPC:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.TriggerNoShutInterface
+    node_intf_list:
+        node01:
+            - port_channel64
+    igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+#remove +add tunnel node01
+TriggerRemoveAddTunnelPrimaryVPC:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node01
+    feature_to_remove: 'feature tunnel'
+    trigger_wait_time: '100'
+    convergence_wait_time: '300'
+    copy_r_s: True
+
+  ##remove+add tunnel node 04
+TriggerRemoveAddTunnelSecondaryVPC:
+    processors:
+        post:
+            verify_traffic:
+                pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node04
+    feature_to_remove: 'feature tunnel'
+    trigger_wait_time: '100'
+    convergence_wait_time: '300'
+    copy_r_s: True
+
+
+
+TriggerReloadAsciiNode01:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    post:
+      verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node01
+  traffic_convergence_time: 300
+  trigger_wait_time: '600'
+  #igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]
+
+
+TriggerReloadAsciiNode04:
+  start_wait_time: 2
+  stop_wait_time: 60
+  verify_wait_time: 1
+  processors:
+    post:
+        verify_traffic:
+            pkg: VxLAN_FT_Regr.VxLAN_IPv4_GRE.vxlanv4_evpn_gre_script
+            method: VerifyTraffic
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node04
+  traffic_convergence_time: 300
+  trigger_wait_time: '600'
+  igmp_intf: [ 'tgn01_nd01_1_1','tgn01_nd02_1_1','tgn01_nd04_1_1', 'tgn01_nd06_1_1' ]

@@ -1,0 +1,2661 @@
+# extends: "/auto/dc3-india/hsuryaka/pyATS/automation/repo_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+#extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(pki_cloudsec/cloudsec_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(pki_cloudsec/cloudsec_verify.yaml)}"
+
+
+TC_002_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+#intializing and loading ixia configuration 
+TC_003_ConfigureIxia:
+    source:
+        pkg: cloudsec_script
+        class: ConfigureIxia
+    # tgen_cfg_file: "/ws/jhajajam-bgl/pki_cloudsec/tgn-cloudsec-cfg.ixncfg"
+    tgen_cfg_file: "/users/hsuryaka/Cloudsec/daily.2023-03-17_0010/tgn-cloudsec-cfg.ixncfg"
+    # tgen_cfg_file: "/users/hsuryaka/Cloudsec/daily.2023-03-17_0010/tgn-cloudsec-cfg_org.ixncfg"
+
+# installing PKI certificate to BGW Vtep's
+TC_004_PKI_certificate_installation:
+    source:
+        pkg: cloudsec_script
+        # class: PKI_certificate_installation
+        class: Certificate_Installation
+    device_dut:
+        - node3_s1_bgw_1
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    cmd_wait_time: 10
+    openssl_flag: True
+    trust_point_name: myCA1
+    rsa_label: myKey1
+    cert_size: 1024
+#   invalid_or_expired_certificate_lst: ['CAPrivate_invalid.pem','CAPrivate_expired.pem']
+    cloudsec_tunnel_encryption_session:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+                2.22.22.22:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+
+
+# Migration PSk to PKI certificate
+Migration_ECC_to_RSA_Certificate:
+    processors:
+        post:
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: cloudsec_script
+        class: "Migration_ECC_to_RSA_Certificate"
+    cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+Migration_PSK_from_RSA_Certificate:
+    processors:
+        post:
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: cloudsec_script
+        class: Migration_PSK_from_RSA_Certificate
+    cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+Migration_PSK_to_PKI_with_RSA_Test265_Certificate:
+    processors:
+        post:
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: cloudsec_script
+        class: Migration_PSK_to_PKI_with_RSA_Test265_Certificate
+    cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+Migration_PSK_to_PKI_with_ECC_Certificate:
+    processors:
+        post:
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: cloudsec_script
+        class: Migration_PSK_to_PKI_with_ECC_Certificate
+    cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+    
+# Trigger ASCII Reload on Vteps
+TC_005_TriggerReloadAscii:
+  processors:
+    post:
+        VerifyErrLogs:
+            pkg: cloudsec_script
+            method: VerifyErrLogs
+        VerifyTraffic:
+            pkg: cloudsec_script
+            method: VerifyTraffic
+        check_cores:
+            pkg: lib.verify.verify_core
+            method: call_verify_cores
+        verify_RxStatus:
+            pkg: cloudsec_script
+            method: Verify_TunnelRXstatus
+        verify_Txstatus:
+            pkg: cloudsec_script
+            method: Verify_TunnelTXstatus
+        verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node7_s2_bgw_1
+  traffic_convergence_time: 300
+  trigger_wait_time: '500'
+  ixia_static: True
+  loss_tolerance: 0.01
+  check_iteration: 2
+  cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# vPC peer link shut / no shut
+TC_010_VpcPeerLinkFlapNveFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            Verify_Nve_peer:
+                pkg: cloudsec_script
+                method: verify_show_nve_peers
+    source:
+        pkg: cloudsec_script
+        class: VpcPeerlinkFlap
+    device_dut:
+        - node3_s1_bgw_1
+    wait_time: '200'
+    start_wait_time: 200
+    stop_wait_time: 200
+    verify_wait_time: 200
+    traffic_convergence_time: 360
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Trigger Reload vPC Primary
+TC_014_TriggerVpcReloadPri:
+    device_dut:
+        -  'node3_s1_bgw_1'
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadVpcPrimary
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 3000
+    trigger_wait_time: '300'
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Trigger Reload vPC secondary
+TC_015_TriggerVpcReloadSec:
+    device_dut:
+        -  'node4_s1_bgw_2'
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadVpcSecondary
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 300
+    trigger_wait_time: '300'
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node4_s1_bgw_2
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+   
+
+# Trigger NVE Interface flap
+TC_019_TriggerFlapNve:
+    source:
+        pkg: cloudsec_script
+        class: TriggerFlapNve
+    device_dut:
+        - node3_s1_bgw_1
+    flexStats_dut_list: ['node4_s1_bgw_2']
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            Verify_Nve_peer:
+                pkg: cloudsec_script
+                method: verify_show_nve_peers
+    interface_logical_map:
+        nve_peers:
+            node3_s1_bgw_1:
+                nve1:
+                    nve_name: nve1
+                    peer_ip:
+                        2.11.11.11:
+                            learn_type: CP
+                            peer_state: up
+                        2.22.22.22:
+                            learn_type: CP
+                            peer_state: up
+                        3.21.21.21:
+                            learn_type: CP
+                            peer_state: up
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+
+    
+#Trigger L2SVI flap
+TC_021_FlapL2SviRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node3_s1_bgw_1
+    svi_range:
+        "1001-1150"
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger L3SVI FLAP
+TC_022_FlapL3SviRange:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node3_s1_bgw_1
+    svi_range:
+        "3001-3075"
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger SPINE Reload 
+TC_024_TriggerReload_SPINE:
+    device_dut:
+        - node2_s1_spine
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    traffic_convergence_time: 400
+    trigger_wait_time: '300'
+    timeout:
+        max_time: 2500
+        interval: 60
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+
+# Trigger Reload Both Vpc BGW
+TC_017_TriggerReloadbothvPC:
+    device_dut:
+        - node3_s1_bgw_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    traffic_convergence_time: 400
+    trigger_wait_time: '300'
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2']
+    processors:
+        pre:
+            do_copy_run_start:
+                pkg: cloudsec_script
+                method: do_copy_run_start
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Flap vPC-Leg
+TC_012_VpcAccessFlap:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node3_s1_bgw_1
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    # cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2']
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger remove add vPC Leg
+TC_018_rmandreapplyvPCLeg:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.rmaddportchannel
+    device_dut:
+        - node4_s1_bgw_2
+    feature_cli: 'feature lacp'
+    po_lst: [port-channel1]
+    trigger_wait_time: 60
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2']
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Flap Bgp
+TC_027_TriggerFLAPBGP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: feature_flap.FeatureFlap
+    device_dut:
+        - node3_s1_bgw_1
+    traffic_convergence_time: 180
+    feature_to_flap: 'router bgp 200'
+    cli_to_check: 'show running-config bgp'
+    trigger_wait_time: '60'
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger remove add feature tunnel-encryption 
+TC_026_TriggerDisableEnableFeatureTunnelEncryption:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node3_s1_bgw_1
+    feature_to_remove: 'feature tunnel-encryption'
+    trigger_wait_time: '300'
+    convergence_wait_time: '300'
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Shut noshut vpc memeber port
+TC_011_TriggerNoshutVpcMemberPort:
+    start_wait_time: 200
+    stop_wait_time: 200
+    verify_wait_time: 200
+    traffic_convergence_time: 360
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: FlapInterface
+    device_dut:
+      - node4_s1_bgw_2
+    converge_time: 300
+    interface: [Ethernet1/1, Ethernet1/2]
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Remove add VNI's from NVE
+TC_020_Remove_add_VNIs_from_NVE:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddNveVniMultisiteIngressReplication
+    device_dut:
+        - node4_s1_bgw_2
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    trigger_flag: removeadd
+    vni_list : [2001036-2001043]
+    # cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2']
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Remove/Add tunnel-encryption peer
+TC_21_TriggerRmAddTunnelEncryptionpeer:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: RemoveAddPKITunnelNvePeerIP
+    device_dut:
+        - node4_s1_bgw_2
+    trigger_wait_time: 120
+    convergence_wait_time: 150
+    cloudsec_tunnel_encryption_session:
+        node3_s1_bgw_1:
+        peer:
+            3.21.21.21:
+            policy: system-default-tunenc-policy
+            rxstatus: Secure
+            txstatus: Secure
+        node4_s1_bgw_2:
+        peer:
+            3.21.21.21:
+            policy: system-default-tunenc-policy
+            rxstatus: Secure
+            txstatus: Secure
+        node02:
+        peer:
+            2.21.21.21:
+            policy: system-default-tunenc-policy
+            rxstatus: Secure
+            txstatus: Secure
+            2.22.22.22:
+            policy: system-default-tunenc-policy
+            rxstatus: Secure
+            txstatus: Secure
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Replace tunnel-encryption policy
+TC_022_TriggerChangeTunnelPolicy:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            Verify_TunnelTXstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            Verify_TunnelRXstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 100
+    source:
+        pkg: cloudsec_script
+        class: ChangePKITunnelPolicy
+    policy_dict:
+        policy_name: 'P3'
+        cipher_suite: 'GCM-AES-XPN-128'
+        rekey_time: '1800'
+    trigger_wait_time: 180
+    device_dut:
+        node7_s2_bgw_1 : '2.21.21.21'
+        node3_s1_bgw_1 : '3.21.21.21'
+    cloudsec_tunnel_encryption_session:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                policy: system-default-tunenc-policy
+                rxstatus: Secure
+                txstatus: Secure
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                policy: system-default-tunenc-policy
+                rxstatus: Secure
+                txstatus: Secure
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                keychain: system-default-tunenc-policy
+                rxstatus: Secure
+                txstatus: Secure
+                2.22.22.22:
+                keychain: system-default-tunenc-policy
+                rxstatus: Secure
+                txstatus: Secure
+    cloudsec_tunnel_policy:
+        node3_s1_bgw_1:
+            policy:
+                P3:
+                    cipher: 'GCM-AES-XPN-128'
+                    window: '268435456'
+                    sak_rekey_time: '1800'
+                system-default-tunenc-policy:
+                    cipher: 'GCM-AES-XPN-256'
+                    window: '268435456'
+        node4_s1_bgw_2:
+            policy:
+                P3:
+                    cipher: 'GCM-AES-XPN-128'
+                    window: '268435456'
+                    sak_rekey_time: '1800'
+                system-default-tunenc-policy:
+                    cipher: 'GCM-AES-XPN-256'
+                    window: '268435456'
+        node7_s2_bgw_1:
+            policy:
+                P3:
+                    cipher: 'GCM-AES-XPN-128'
+                    window: '268435456'
+                    sak_rekey_time: '1800'
+                P3:
+                    cipher: 'GCM-AES-XPN-128'
+                    window: '268435456'
+                    sak_rekey_time: '1800'
+                system-default-tunenc-policy:
+                    cipher: 'GCM-AES-XPN-256'
+                    window: '268435456'
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+# trigger Flap VRF
+TC_024a_TriggerFlapVrf:
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node4_s1_bgw_2
+    trigger_wait_time: 240
+    traffic_convergence_time: 400
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    vrfs: ['VRF-8','VRF-9','VRF-1','VRF-10','VRF-11','VRF-12','VRF-13','VRF-14','VRF-15','VRF-16','VRF-17','VRF-18',
+    'VRF-19', 'VRF-2','VRF-20','VRF-21','VRF-22','VRF-23','VRF-24','VRF-25','VRF-26','VRF-27','VRF-28','VRF-29','VRF-3','VRF-30','VRF-31','VRF-32','VRF-33','VRF-34','VRF-35']
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Remove Add VRF
+TC_024b_TriggerRmAddVrf:
+    source:
+        pkg: cloudsec_script
+        class: ConfigureReplace
+    device_dut:
+        - node3_s1_bgw_1
+    # cli_to_parse: 'sh vrf'
+    trigger_wait_time: 300
+    traffic_convergence_time: 400
+    verify_dict:
+        node3_s1_bgw_1:
+            test_dut: [ 'node3_s1_bgw_1' ]
+            cmd: ['no vrf context VRF-1', 'no vrf context VRF-10', 'no vrf context VRF-11', 'no vrf context VRF-12', 'no vrf context VRF-13',
+            'no vrf context VRF-14', 'no vrf context VRF-15', 'no vrf context VRF-16', 'no vrf context VRF-17', 'no vrf context VRF-18', 'no vrf context VRF-19' ] 
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Trigger shut noshut PKI Loopback
+TC_025_TriggershutNoshutPKILoopback:
+    start_wait_time: 200
+    stop_wait_time: 200
+    verify_wait_time: 200
+    traffic_convergence_time: 360
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapInterface
+    device_dut:
+      - node4_s1_bgw_2
+    converge_time: 360
+    interface: [loopback0]
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Modify PKI Loopback
+TriggermodifyPKILoopback:
+    start_wait_time: 200
+    stop_wait_time: 100
+    verify_wait_time: 200
+    traffic_convergence_time: 360
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            # verify_Peer_Ip:
+            #     pkg: cloudsec_script
+            #     method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: ModifyPKILoopbackFlap
+    device_dut:
+      - node3_s1_bgw_1
+    converge_time: 360
+    tunnel_loopback: [loopback0]
+    new_loopback: loopback2
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+# Trigger Remove Add PKI Loopback
+TriggerRemAddPKILoopback:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: RemoveaddPKILoopback
+    device_dut:
+      - node3_s1_bgw_1
+    converge_time: 60
+    tunnel_loopback: [loopback0]
+    # new_loopback: loopback2
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Trigger Modify PKI Loopback IP
+TriggermodifyPKILoopbackIP:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            replace_oldconfig:
+                pkg: cloudsec_script
+                method: replace_oldconfig
+    source:
+        pkg: cloudsec_script
+        class: ModifyPKI_Loopback_Ipaddress
+    device_dut:
+      - node3_s1_bgw_1
+    converge_time: 50
+    tunnel_loopback: [loopback0]
+    new_ip: 2.21.2.1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+
+# Trigger Change VPC Role pripority
+TriggerChangeVPCRolepriority:
+    start_wait_time: 120
+    stop_wait_time: 120
+    verify_wait_time: 120
+    trigger_wait_time: 360
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            replace_oldconfig:
+                pkg: cloudsec_script
+                method: replace_oldconfig
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+# Trigger Remove Add GIR (Maintenance mode)
+TriggerGIRadd:
+    convergence_time: 1200
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerMaintenanceMode
+    traffic_convergence_time: 10
+    trigger_wait_time: 30
+    device_dut:
+      - node3_s1_bgw_1
+TriggerGIRRemove:
+    convergence_time: 1200
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerNormalMode
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 100
+    trigger_wait_time: 30
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+  
+
+#Trigger Restart Process
+TriggerProcessRestart:
+    convergence_time: 1200
+    source:
+        pkg: cloudsec_script
+        class: ProcessRestart
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 100
+    trigger_wait_time: 30
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+TriggerProcessRestart1:
+    convergence_time: 1200
+    source:
+        pkg: cloudsec_script
+        class: ProcessRestart1
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 100
+    trigger_wait_time: 30
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+TriggerProcessRestart2:
+    convergence_time: 1200
+    source:
+        pkg: cloudsec_script
+        class: ProcessRestart2
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 100
+    trigger_wait_time: 30
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+
+# Flap interface in underlay
+TriggerFlapUnderlayIntf:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: FabricOspfLinkFlap
+    device_dut:
+      - node4_s1_bgw_2
+    converge_time: 5
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+
+Block_ISSD_NR2F:
+    source:
+        pkg: cloudsec_script
+        class: Block_ISSD_NR2F
+
+
+
+#-----------------------------------------------------------#
+#                   ECC Testcase's                          #
+#-----------------------------------------------------------#
+
+Migration_RSA_to_ECC_Certificate:
+    source:
+        pkg: cloudsec_script
+        class: Migration_RSA_to_ECC_Certificate
+    
+# Trigger Remove Add PKI Loopback With ECC           
+TriggerRemAddPKILoopbackWithECC:
+    start_wait_time: 120
+    stop_wait_time: 120
+    verify_wait_time: 120
+    traffic_convergence_time: 300
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: RemoveaddPKILoopback
+    device_dut:
+      - node3_s1_bgw_1
+    converge_time: 300
+    tunnel_loopback: [loopback0]
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+
+TriggerRemoveAddPKICertificate:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node7_s2_bgw_1
+    traffic_convergence_time: 120
+    feature_to_remove: 'tunnel-encryption pki trustpoint starcher7_ECC_CA'
+    trigger_wait_time: '60'
+    convergence_wait_time: '180'
+    copy_r_s: True
+    cloudsec_tunnel_encryption_statistics:
+        # node3_s1_bgw_1:
+        #     peer:
+        #         3.21.21.21:
+        #             sak_rx_stats_an:
+        #                 0:
+        #                     unchecked_pkts: '0'
+        #                     delayed_pkts: '0'
+        #                     late_pkts: '0'
+        #                     invalid_pkts: '0'
+        #                     not_valid_pkts: '0'
+        #                     not_using_sa_pkts: '0'
+        #                     unused_sa_pkts: '0'
+        #             sak_tx_stats_an:
+        #                 0:
+        #                     too_long_pkts: '0'
+        #                     untagged_pkts: '0'
+        # node4_s1_bgw_2:
+        #     peer:
+        #         3.21.21.21:
+        #             sak_rx_stats_an:
+        #                 0:
+        #                     unchecked_pkts: '0'
+        #                     delayed_pkts: '0'
+        #                     late_pkts: '0'
+        #                     invalid_pkts: '0'
+        #                     not_valid_pkts: '0'
+        #                     not_using_sa_pkts: '0'
+        #                     unused_sa_pkts: '0'
+        #             sak_tx_stats_an:
+        #                 0:
+        #                     too_long_pkts: '0'
+        #                     untagged_pkts: '0'
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+                2.22.22.22:
+                    sak_rx_stats_an:
+                        0:
+                            unchecked_pkts: '0'
+                            delayed_pkts: '0'
+                            late_pkts: '0'
+                            invalid_pkts: '0'
+                            not_valid_pkts: '0'
+                            not_using_sa_pkts: '0'
+                            unused_sa_pkts: '0'
+                    sak_tx_stats_an:
+                        0:
+                            too_long_pkts: '0'
+                            untagged_pkts: '0'
+    
+
+TriggerFlapNveWithECC:
+    source:
+        pkg: cloudsec_script
+        class: TriggerFlapNve
+    device_dut:
+        - node4_s1_bgw_2
+    #flexStats_dut_list: ['node4_s1_bgw_2']
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '300'
+    start_wait_time: 120
+    stop_wait_time: 120
+    verify_wait_time: 120
+    traffic_convergence_time: 300
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    cloudsec_tunnel_encryption_statistics:
+         node4_s1_bgw_2:
+             peer:
+                 3.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+  
+TriggerNveSrcLoopbackFlapWithECC:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    loopback_range:
+        "1"
+    converge_sec: 300
+    #cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+    processors:
+        pre:
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+    cloudsec_tunnel_encryption_statistics:
+        node4_s1_bgw_2:
+             peer:
+                 3.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+        node7_s2_bgw_1:
+             peer:
+                 2.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+                 2.22.22.22:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+
+
+# Trigger Flap interface towards route-server
+TriggerFlapIntfintoRouteserver:
+    start_wait_time: 220
+    stop_wait_time: 220
+    verify_wait_time: 220
+    traffic_convergence_time: 360
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: cloudsec_script
+        class: FlapInterface
+    device_dut:
+      - node7_s2_bgw_1
+    converge_time: 360
+    interface: [Ethernet1/1, Ethernet1/2, Ethernet1/3, Ethernet1/4]
+    cloudsec_tunnel_encryption_statistics:
+        node7_s2_bgw_1:
+             peer:
+                 2.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+                 2.22.22.22:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+
+
+TriggerProcessRestartTEM:
+    convergence_time: 300
+    source:
+        pkg: cloudsec_script
+        class: RestartTEM
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    traffic_convergence_time: 300
+    trigger_wait_time: 300
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+             peer:
+                 3.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+
+TriggerReloadpeerWithECC:
+    devices:
+        -  'node3_s1_bgw_1'
+    processors:
+         post:
+            verify_Peer_Ip:
+                pkg: cloudsec_script
+                method: verify_Peer_Ip
+            verify_RxStatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelRXstatus
+            verify_Txstatus:
+                pkg: cloudsec_script
+                method: Verify_TunnelTXstatus
+            verify_tunnel_encry_statistics:
+                pkg: cloudsec_script
+                method: verify_cloudsec_tunnel_encryption_statistics
+            VerifyErrLogs:
+                pkg: cloudsec_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: cloudsec_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    wait_time: '300'
+    start_wait_time: 240
+    stop_wait_time: 240
+    verify_wait_time: 240
+    traffic_convergence_time: 300
+    trigger_wait_time: 300
+    timeout:
+        max_time: 600
+        interval: 60
+    device_dut:
+      - node3_s1_bgw_1
+    cloudsec_tunnel_encryption_statistics:
+        node3_s1_bgw_1:
+             peer:
+                 3.21.21.21:
+                     sak_rx_stats_an:
+                         0:
+                             unchecked_pkts: '0'
+                             delayed_pkts: '0'
+                             late_pkts: '0'
+                             invalid_pkts: '0'
+                             not_valid_pkts: '0'
+                             not_using_sa_pkts: '0'
+                             unused_sa_pkts: '0'
+                     sak_tx_stats_an:
+                         0:
+                             too_long_pkts: '0'
+                             untagged_pkts: '0'
+
+
+
+
+
+
+
+Certificate_Installation:
+    source:
+        pkg: cloudsec_script
+        class: Certificate_Installation
+    device_dut:
+        - node3_s1_bgw_1
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    cmd_wait_time: 10
+    openssl_flag: True
+    trust_point_name: myCA1
+    rsa_label: myKey1
+    cert_size: 1024
+#   invalid_or_expired_certificate_lst: ['CAPrivate_invalid.pem','CAPrivate_expired.pem']
+    cloudsec_tunnel_encryption_session:
+        node3_s1_bgw_1:
+            peer:
+                3.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+        node4_s1_bgw_2:
+            peer:
+                3.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+        node7_s2_bgw_1:
+            peer:
+                2.21.21.21:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+                2.22.22.22:
+                    policy: system-default-tunenc-policy
+                    keychain: PKI
+                    rxstatus: Secure
+                    txstatus: Secure
+
+
+TriggerIssuIxiaSuite:
+    devices:
+        -  'node7_s2_bgw_1'
+    source:
+        pkg: lib.triggers.issu.issu
+        class: TriggerIssu
+    processors:
+        pre:
+          start_ixia_static_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: start_ixia_static_traffic
+          convergence_wait_time:
+            pkg: src.forwarding.vxlan.vxlan_lib.convergence_lib
+            method: convergence_wait_time
+        post:
+          verify_ixia_static_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+    timeout:
+        max_time: 9600
+        interval: 60
+    add_convergence_wait_time: 100
+    allow_disruptive: True
+    platform_validation_timeout: 300
+    traffic_convergence_time: 800
+    ixia_static: True
+    use_kstack: True
+    configure_native_boot_mode: True
+    configure_lxc_boot_mode: True
+    ctrlplane_downtime: 165
+    issu_timeout: 3600
+    cfg_timeout: 3600
+    loss_tolerance: 0.01
+    check_iteration: 2
+    update_pts_features: ['platform']
+    config_ver_exclude: ['(vdc\s*.*\s*id)']
+
+
+
+
+TC_100_CommonCleanup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup
+

@@ -1,0 +1,2283 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+###################################################################
+###                  Initial Configurations                     ###
+###################################################################
+
+# Initialize TB to get ints and data files
+InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+        #datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_config.yaml)}"
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_IXIA_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_verify.yaml)}"
+    testsuite_support_min_version: 7.0(3.0)
+    new_l3_vni_min_version: 10.2(2)
+    major_version_default: 10.4(1)
+
+#Common Setup to configure the VxLAN
+CommonSetup:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+
+# TcamCarvingAndReload:
+#     source:
+#         pkg: lib.triggers.tcam_config.tcam_config
+#         class: TcamCarvingAndReload
+#     trigger_wait_time: 700
+#     timeout: 700
+# Display issue with L2route, need to file defect
+
+ParseConfig:
+    source:
+        pkg: FHS_Script_MacMove
+        class: ParseConfig
+    configurationFile: VxLAN_FHS_ixia_traffic.yml
+
+ClearARP:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: '5'
+    convergence_time: '30'
+    processors:
+        pre:
+            reconfigure_fanout:
+                pkg: FHS_Script_MacMove
+                method: reconfigure_fanout_1
+
+ConfigureIxiaTopo1:
+    source:
+        pkg: FHS_Script_MacMove
+        class: ConfigureIxiaTopo1
+    configurationFile: VxLAN_FHS_ixia_traffic.yml
+    device_dut:
+        - node01
+        - node02
+        - node03
+    processors:
+        pre:
+            reconfigure_fanout:
+                pkg: FHS_Script_MacMove
+                method: reconfigure_fanout_1
+ClearARP_1:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: '5'
+    convergence_time: '30'
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            reconfigure_fanout:
+                pkg: FHS_Script_MacMove
+                method: reconfigure_fanout_1
+
+# Primary - bin to upg upgrade
+MacMove_ISSU_Primary_BintoUpg:
+    source:
+        pkg: FHS_Script_MacMove
+        class: ND_ISSU_PRIMARY
+    device_dut:
+        - node01
+        - node02
+    issu_image: nxos64-cs.10.4.0.IMG9.0.375.F.bin.upg
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 400
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            VerifyFHS_Reload:
+                pkg: FHS_Script_MacMove
+                method: mac_move_7
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 600
+
+# Secondary - bin to upg upgrade
+MacMove_ISSU_Secondary_BintoUpg:
+    source:
+        pkg: FHS_Script_MacMove
+        class: ND_ISSU_SECONDARY
+    device_dut:
+        - node01
+        - node02
+    issu_image: 'nxos64-cs.10.4.0.IMG9.0.375.F.bin.upg'
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 400
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            VerifyFHS_Reload:
+                pkg: FHS_Script_MacMove
+                method: mac_move_7
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 600
+
+# Standalone - bin to upg upgrade
+MacMove_ISSU_Standalone_BintoUpg:
+    source:
+        pkg: FHS_Script_MacMove
+        class: ND_ISSU_STANDALONE
+    device_dut:
+        - node01
+        - node02
+    issu_image: 'nxos64-cs.10.4.0.IMG9.0.375.F.bin.upg'
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 180
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            VerifyFHS_Reload:
+                pkg: FHS_Script_MacMove
+                method: mac_move_7
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 600
+
+# clients move between leaf1 orphan port and vPC port
+MacMove_TC01:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_1
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - VPC1
+    trigger_wait_time: 10
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+        post:
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between leaf1 vPC ports
+MacMove_TC02:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_2
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - VPC1
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+        post:
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between leaf1 orphan ports
+MacMove_TC03:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_3
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - VPC1
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_orphan1:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+        post:
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between leaf1 orphan and leaf3 orphan
+MacMove_TC04:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_4
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            configure_fanout_orphan1:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_to_leaf3
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+        post:
+            configure_fanout_orphan1_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyMacMove4_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_4_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between vpc and leaf3 orphan
+MacMove_TC05:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_5
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_5
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+        post:
+            configure_fanout_vpc_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+                parameters:
+                    stop: False
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyMacMove5_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_5_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between leaf1 orphan and leaf2 orphan
+MacMove_TC06:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_6
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_orphan1:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove6:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_6
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            configure_fanout_orphan1_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyMacMove4_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_6_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# clients move between vpc and leaf3 orphan
+MacMove_TC07:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_7
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            configure_fanout_vpc_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+                parameters:
+                    stop: False
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            verifyMacMove5_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_7_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Freeze Case
+MacMove_TC08:
+    source:
+        pkg: FHS_Script_MacMove
+        class: MACMOVE_8
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: 30
+    convergence_time: 30
+    processors:
+        pre:
+            configure_fanout_orphan1_init:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic_init:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_init:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_init:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureOrphan1ToLeaf3_MM1:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_to_leaf3
+            modifyTraffic_MM1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            # WaitForConvergence_1:
+            #     pkg: FHS_Script_MacMove
+            #     method: WaitForConvergence
+            # verifyTraffic_MM1:
+            #     pkg: FHS_Script_MacMove
+            #     method: verifyTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+            # stopTraffic_MM1:
+            #     pkg: FHS_Script_MacMove
+            #     method: stopTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+            configure_fanout_orphan1_MM2:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic_MM2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            # verifyTraffic_MM2:
+            #     pkg: FHS_Script_MacMove
+            #     method: verifyTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC1
+            # stopTraffic_MM2:
+            #     pkg: FHS_Script_MacMove
+            #     method: stopTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC1
+            configureOrphan1ToLeaf3_MM3:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_to_leaf3
+            modifyTraffic_MM2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            # WaitForConvergence_2:
+            #     pkg: FHS_Script_MacMove
+            #     method: WaitForConvergence
+            # verifyTraffic_MM2:
+            #     pkg: FHS_Script_MacMove
+            #     method: verifyTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+            # stopTraffic_MM2:
+            #     pkg: FHS_Script_MacMove
+            #     method: stopTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+            configure_fanout_orphan1_MM3:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic_MM3:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            # verifyTraffic_MM3:
+            #     pkg: FHS_Script_MacMove
+            #     method: verifyTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC1
+            # stopTraffic_MM3:
+            #     pkg: FHS_Script_MacMove
+            #     method: stopTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC1
+            configureOrphan1ToLeaf3_MM3:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_to_leaf3
+            modifyTraffic_MM3:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            configure_fanout_orphan1_MM4:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic_MM4:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureOrphan1ToLeaf3_MM5:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_to_leaf3
+            modifyTraffic_MM5:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC3
+            # WaitForConvergence_3:
+            #     pkg: FHS_Script_MacMove
+            #     method: WaitForConvergence
+            # verifyTraffic_MM3:
+            #     pkg: FHS_Script_MacMove
+            #     method: verifyTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+            # stopTraffic_MM3:
+            #     pkg: FHS_Script_MacMove
+            #     method: stopTraffic
+            #     parameters:
+            #         traffic_intf_list:
+            #             - VPC3
+        post:
+            configure_fanout_orphan1_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_orphan1
+                parameters:
+                    stop: False
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+            # verifyMacMove4_B:
+            #     pkg: FHS_Script_MacMove
+            #     method: MACMOVE_4_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            # stopClient:
+            #     pkg: FHS_Script_MacMove
+            #     method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Primary - Binary Reload after mac move
+MacMove_Binary_Reload_Primary:
+    source:
+        class: ReloadVpcPrimary
+        pkg: lib.triggers.reload.reload
+    device_dut:
+        - node01
+        - node02
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+# Secondary - Binary Reload after mac move
+MacMove_Binary_Reload_Secondary:
+    source:
+        class: ReloadVpcSecondary
+        pkg: lib.triggers.reload.reload
+    device_dut:
+        - node01
+        - node02
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+# Standalone - Binary Reload after mac move
+MacMove_Binary_Reload_standalone:
+    source:
+        class: ReloadVpcSecondary
+        pkg: lib.triggers.reload.reload
+    device_dut:
+        - node03
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+# Primary - ASCII Reload after mac move
+MacMove_ASCII_Reload_Primary:
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadAscii
+    device_dut: 
+        - node01
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_Pre:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence_Post:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            VerifyFHS_Reload:
+                pkg: FHS_Script_MacMove
+                method: mac_move_7
+            stopClient_Post:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient_Post1:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configure_fanout_vpc_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+                parameters:
+                    stop: False
+            clearARP_Post2:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            modifyTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_Post1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 60
+            verifyMacMove7_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_7_B
+            verifyTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient_Post2:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: '600'
+
+MacMove_ASCII_Reload_Secondary:
+    source:
+        class: ReloadAscii
+        pkg: lib.triggers.reload.reload
+    device_dut:
+        - node02
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Pre:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_Pre:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Pre1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence_Post:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 60
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            modifyTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            VerifyFHS_Reload:
+                pkg: FHS_Script_MacMove
+                method: mac_move_7
+            stopClient_Post:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient_Post:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Post1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configure_fanout_vpc_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+                parameters:
+                    stop: False
+            clearARP_Post1:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            modifyTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_Post1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyMacMove7_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_7_B
+            verifyTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_Post2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient_Post1:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: '600'
+
+# standalone - ASCII Reload after mac move
+MacMove_ASCII_Reload_Standalone:
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadAscii
+    device_dut:
+        - node03
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient_Pre:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_Pre:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence_1:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 60
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyFHSFlushout:
+                pkg: FHS_Script
+                method: verifySnoopingL2ribFlushout
+            stopClient_Post:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient_Post:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            WaitForConvergence_2:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 60
+            modifyTraffic_1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic_1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic_1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configure_fanout_vpc_nostop:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+                parameters:
+                    stop: False
+            clearARP_Post1:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            modifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence_3:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyMacMove7_B:
+                pkg: FHS_Script_MacMove
+                method: MACMOVE_7_B
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient_2:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: '600'
+
+# ISSD-Primary : UPG to BIN
+MacMove_ISSD_Primary_UpgtoBin:
+    source:
+        pkg: FHS_Script_MacMove
+        class: D_ISSU_PRIMARY
+    device_dut:
+        - node01
+        - node02
+    issu_image: 'nxos64-cs.10.4.0.IMG9.0.375.F.bin'
+    processors:
+        pre:
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 400
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+# ISSD-Secondary : UPG to BIN
+MacMove_ISSD_Secondary_UpgtoBin:
+    source:
+        pkg: FHS_Script_MacMove
+        class: D_ISSU_SECONDARY
+    device_dut:
+        - node01
+        - node02
+    issu_image: 'nxos64-cs.10.4.0.IMG9.0.375.F.bin'
+    processors:
+        pre:
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 400
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+# ISSD-Standalone : UPG to BIN
+MacMove_ISSD_Standalone_UpgtoBin:
+    source:
+        pkg: FHS_Script_MacMove
+        class: D_ISSU_STANDALONE
+    device_dut:
+        - node01
+        - node02
+    issu_image: 'nxos64-cs.10.4.0.IMG9.0.375.F.bin'
+    processors:
+        pre:
+            configure_fanout_vpc:
+                pkg: FHS_Script_MacMove
+                method: configure_fanout_vpc
+            startClient:
+                pkg: FHS_Script_MacMove
+                method: start_client
+            modifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            verifyTraffic:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            configureMacMove4:
+                pkg: FHS_Script_MacMove
+                method: configure_macmove_7
+            modifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: modifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 30
+            verifyTraffic1:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic1:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+        post:
+            WaitForConvergence:
+                pkg: FHS_Script_MacMove
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 400
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            verifyTraffic2:
+                pkg: FHS_Script_MacMove
+                method: verifyTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopTraffic2:
+                pkg: FHS_Script_MacMove
+                method: stopTraffic
+                parameters:
+                    traffic_intf_list:
+                        - VPC1
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    trigger_wait_time: 400
+
+CLEANUP:
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script_MacMove
+                method: release_client
+            stopServer:
+                pkg: FHS_Script_MacMove
+                method: stop_server
+    source:
+        pkg: FHS_Script_MacMove
+        class: CLEAN_UP

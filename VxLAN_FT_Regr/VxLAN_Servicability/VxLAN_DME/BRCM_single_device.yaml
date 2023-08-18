@@ -1,0 +1,66 @@
+testbed:
+    name: absrvxlanTestbed
+    alias: topologyvxlanTestbed
+    tacacs:
+        login_prompt: "login:"
+        password_prompt: "Password:"
+        username: admin
+    passwords:
+        tacacs: cisco
+        enable: cisco
+        line: cisco
+    servers:
+        tftp:
+            server:  10.127.57.23
+            address: 10.127.57.23 
+            path: ""
+            username: sftpuser123
+            password: sftpuser123 
+
+devices:
+    Haggan-1:
+        type: Nexus 3000
+        alias:  device-1
+        tacacs:
+            login_prompt: "login:"
+            password_prompt: "Password:"
+            username: admin
+        passwords:
+            tacacs: nbv12345
+            enable: nbv12345
+            line: lab
+        connections:
+            a:
+              protocol: telnet
+              ip: 10.127.63.200 
+              port: 2003
+            mgmt:
+                protocol: telnet
+                ip: "10.127.63.95"
+                mask: 255.255.255.0
+                gw: 10.127.63.1
+            alt:
+                protocol: ssh
+                ip: "10.127.63.95"
+            netconf:
+              class: yang.connector.Netconf
+              protocol: netconf
+              ip: "10.127.63.95"
+              port: 830
+              username: admin
+              password: nbv12345
+              hostkey_verify: False
+              look_for_keys: False
+    
+
+topology:
+     Haggan-1:
+        interfaces:
+            nve1:
+                alias: device1_int1
+                link: device1-device2-link1
+                type: ethernet
+                short_name: nve1
+    
+
+

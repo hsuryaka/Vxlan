@@ -1,0 +1,423 @@
+
+testbed:
+    name: VxLAN_MLAG_CloudSec_Feature
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+devices:
+    BGW-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2026
+          vty:
+            protocol: telnet
+            ip: 10.197.127.102
+    BGW-2:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2038
+          vty:
+            protocol: telnet
+            ip: 10.197.127.110
+    BGW-1-Site-2:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2034
+          vty:
+            protocol: telnet
+            ip: 10.197.127.119
+    MLAG-L2-Access-SW-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2037
+          vty:
+            protocol: telnet
+            ip: 10.197.127.115
+    Spine-1-Site-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2036
+          vty:
+            protocol: telnet
+            ip: 10.197.127.112
+    VPC-Node-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2032
+          vty:
+            protocol: telnet
+            ip: 10.197.127.102
+    VPC-Node-2:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2033
+          vty:
+            protocol: telnet
+            ip: 10.197.127.103
+    L2-VPC-Acc-SW-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2035
+          vty:
+            protocol: telnet
+            ip: 10.197.127.99
+    DCI-Route-Server-1:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2030
+          vty:
+            protocol: telnet
+            ip: 10.197.127.116
+    Spine-1-Site-2:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2029
+          vty:
+            protocol: telnet
+            ip: 10.197.127.107
+
+    Leaf-02-Site-2:
+        type: 'nexus 9000 switch'
+        os: 'nxos'
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+                protocol: telnet
+                ip: 10.197.127.17
+                port: 2031
+          vty:
+            protocol: telnet
+            ip: 10.197.127.117
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.16"
+          alt:
+            ip: "10.127.62.195"
+            port: 8009
+            protocol: telnet
+topology:
+    BGW-1:
+        interfaces:
+            BGW-1_to_BGW-2_1:
+                intf: Ethernet1/1
+                link: BGW-1_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_BGW-2_2:
+                intf: Ethernet1/2
+                link: BGW-1_to_BGW-2_2
+                type: ethernet
+                module_type: m3
+            BGW-1_to_BGW-2_3:
+                intf: Ethernet1/3
+                link: BGW-1_to_BGW-2_3
+                type: ethernet
+                module_type: m3
+            BGW-1_to_Spine-1-Site-1_1:
+                intf: Ethernet1/23
+                link: BGW-1_to_Spine-1-Site-1_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_MLAG-L2-Access-SW-1_1:
+                intf: Ethernet1/7
+                link: BGW-1_to_MLAG-L2-Access-SW-1_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_DCI-Route-Server-1_1:
+                intf: Ethernet1/29
+                link: BGW-1_to_DCI-Route-Server-1_1
+                type: ethernet
+                module_type: m3
+            BGW-1_to_IXIA_1:
+                intf: Ethernet1/45
+                link: BGW-1_to_IXIA_1
+                type: ethernet
+                module_type: m3
+    BGW-2:
+        interfaces:
+            BGW-2_to_BGW-1_1:
+                intf: Ethernet1/1
+                link: BGW-2_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_BGW-1_2:
+                intf: Ethernet1/2
+                link: BGW-2_to_BGW-1_2
+                type: ethernet
+                module_type: m3
+            BGW-2_to_BGW-1_3:
+                intf: Ethernet1/3
+                link: BGW-2_to_BGW-1_3
+                type: ethernet
+                module_type: m3
+            BGW-2_to_Spine-1-Site-1_1:
+                intf: Ethernet1/23
+                link: BGW-2_to_Spine-1-Site-1_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_MLAG-L2-Access-SW-1_1:
+                intf: Ethernet1/7
+                link: BGW-2_to_MLAG-L2-Access-SW-1_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_DCI-Route-Server-1_1:
+                intf: Ethernet1/30
+                link: BGW-2_to_DCI-Route-Server-1_1
+                type: ethernet
+                module_type: m3
+            BGW-2_to_IXIA_1:
+                intf: Ethernet1/45
+                link: BGW-2_to_IXIA_1
+                type: ethernet
+                module_type: m3
+    MLAG-L2-Access-SW-1:
+        interfaces:
+            MLAG-L2-Access-SW-1_to_BGW-1_1:
+                intf: Ethernet1/13
+                link: MLAG-L2-Access-SW-1_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            MLAG-L2-Access-SW-1_to_BGW-2_1:
+                intf: Ethernet1/17
+                link: MLAG-L2-Access-SW-1_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            MLAG-L2-Access-SW-1_to_IXIA_1:
+                intf: Ethernet1/47
+                link: MLAG-L2-Access-SW-1_to_IXIA_1
+                type: ethernet
+                module_type: m3
+    Spine-1-Site-1:
+        interfaces:
+            Spine-1-Site-1_to_BGW-1_1:
+                intf: Ethernet1/9/1
+                link: Spine-1-Site-1_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            Spine-1-Site-1_to_BGW-2_1:
+                intf: Ethernet1/10/1
+                link: Spine-1-Site-1_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            Spine-1-Site-1_to_VPC-Node-1_1:
+                intf: Ethernet1/11/1
+                link: Spine-1-Site-1_to_VPC-Node-1_1
+                type: ethernet
+                module_type: m3
+            Spine-1-Site-1_to_VPC-Node-2_1:
+                intf: Ethernet1/12/1
+                link: Spine-1-Site-1_to_VPC-Node-2_1
+                type: ethernet
+                module_type: m3
+    VPC-Node-1:
+        interfaces:
+            VPC-Node-1_to_Spine-1-Site-1_1:
+                intf: Ethernet1/39
+                link: VPC-Node-1_to_Spine-1-Site-1_1 
+                type: ethernet
+                module_type: m3
+            VPC-Node-1_to_VPC-Node-2_1:
+                intf: Ethernet1/1
+                link: VPC-Node-1_to_VPC-Node-2_1
+                type: ethernet
+                module_type: m3
+            VPC-Node-1_to_VPC-Node-2_2:
+                intf: Ethernet1/2
+                link: VPC-Node-1_to_VPC-Node-2_2
+                type: ethernet
+                module_type: m3
+            VPC-Node-1_to_VPC-Node-2_3:
+                intf: Ethernet1/3
+                link: VPC-Node-1_to_VPC-Node-2_3
+                type: ethernet
+                module_type: m3
+            L2-VPC-Acc-SW-1_to_VPC-Node-1_1:
+                intf: Ethernet1/7
+                link: L2-VPC-Acc-SW-1_to_VPC-Node-1_1
+                type: ethernet
+                module_type: m3
+    VPC-Node-2:
+        interfaces:
+            VPC-Node-2_to_Spine-1-Site-1_1:
+                intf: Ethernet1/39
+                link: VPC-Node-2_to_Spine-1-Site-1_1
+                type: ethernet
+                module_type: m3
+            VPC-Node-2_to_VPC-Node-1_1:
+                intf: Ethernet1/1
+                link: VPC-Node-2_to_VPC-Node-1_1
+                type: ethernet
+                module_type: m3
+            VPC-Node-2_to_VPC-Node-1_2:
+                intf: Ethernet1/2
+                link: VPC-Node-2_to_VPC-Node-1_2
+                type: ethernet
+                module_type: m3
+            VPC-Node-2_to_VPC-Node-1_3:
+                intf: Ethernet1/3
+                link: VPC-Node-2_to_VPC-Node-1_3
+                type: ethernet
+                module_type: m3
+            L2-VPC-Acc-SW-1_to_VPC-Node-2_1:
+                intf: Ethernet1/7
+                link: L2-VPC-Acc-SW-1_to_VPC-Node-2_1
+                type: ethernet
+                module_type: m3
+    L2-VPC-Acc-SW-1:
+        interfaces:
+            L2-VPC-Acc-SW-1_to_VPC-Node-1_1:
+                intf: Ethernet1/3/1
+                link: L2-VPC-Acc-SW-1_to_VPC-Node-1_1
+                type: ethernet
+                module_type: m3
+            L2-VPC-Acc-SW-1_to_VPC-Node-2_1:
+                intf: Ethernet1/4/1
+                link: L2-VPC-Acc-SW-1_to_VPC-Node-2_1
+                type: ethernet
+                module_type: m3
+            L2-VPC-Acc-SW-1_to_IXIA_1:
+                intf: Ethernet1/21/1
+                link: L2-VPC-Acc-SW-1_to_IXIA_1
+                type: ethernet
+                module_type: m3
+    DCI-Route-Server-1:
+        interfaces:
+            DCI-Route-Server-1_to_BGW-1_1:
+                intf: Ethernet1/29
+                link: DCI-Route-Server-1_1_to_BGW-1_1
+                type: ethernet
+                module_type: m3
+            DCI-Route-Server-1_to_BGW-2_1:
+                intf: Ethernet1/30
+                link: DCI-Route-Server-1_to_BGW-2_1
+                type: ethernet
+                module_type: m3
+            DCI-Route-Server-1_to_BGW-1-Site-2_1:
+                intf: Ethernet1/49
+                link: DCI-Route-Server-1_to_BGW-1-Site-2_1
+                type: ethernet
+                module_type: m3
+    BGW-1-Site-2:
+        interfaces:
+            BGW-1-Site-2_to_DCI-Route-Server-1_1:
+                intf: Ethernet1/50
+                link: BGW-1-Site-2_to_DCI-Route-Server-1_1
+                type: ethernet
+                module_type: m3
+            BGW-1-Site-2_1_to_Spine-1-Site-2_1:
+                intf: Ethernet1/51
+                link: BGW-1-Site-2_1_to_Spine-1-Site-2_1
+                type: ethernet
+                module_type: m3
+    Spine-1-Site-2:
+        interfaces:
+            Spine-1-Site-2_to_BGW-1-Site-2_1:
+                intf: Ethernet1/103
+                link: Spine-1-Site-2_to_BGW-1-Site-2_1
+                type: ethernet
+                module_type: m3
+            Spine-1-Site-2_to_Leaf-02-Site-2_1:
+                intf: Ethernet1/107
+                link: Spine-1-Site-2_to_Leaf-02-Site-2_1
+                type: ethernet
+                module_type: m3
+    Leaf-02-Site-2:
+        interfaces:
+            Leaf-02-Site-2_to_Spine-1-Site-2_1:
+                intf: Ethernet1/49
+                link: Leaf-02-Site-2_to_Spine-1-Site-2_1
+                type: ethernet
+                module_type: m3
+            Leaf-02-Site-2_to_IXIA_1:
+                intf: Ethernet1/47
+                link: Leaf-02-Site-2_to_IXIA_1
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_1_to_BGW-1:
+                intf: 9/19
+                link: IXIA_1_to_BGW-1
+                type: ethernet
+                module_type: m3
+            IXIA_1_to_L2-VPC-Acc-SW-1:
+                intf: 9/15
+                link: IXIA_1_to_L2-VPC-Acc-SW-1
+                type: ethernet
+                module_type: m3
+            IXIA_1_to_Leaf-02-Site-2:
+                intf: 9/21
+                link: IXIA_1_to_Leaf-02-Site-2
+                type: ethernet
+                module_type: m3
+            IXIA_1_to_MLAG-L2-Access-SW-1:
+                intf: 9/18
+                link: IXIA_1_to_MLAG-L2-Access-SW-1
+                type: ethernet
+                module_type: m3

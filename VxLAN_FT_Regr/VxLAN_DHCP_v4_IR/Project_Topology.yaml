@@ -1,0 +1,323 @@
+---
+tgn_connection:
+  FANOUT:
+    Eth:
+      E1/49: null
+  VTEP-1:
+    Eth:
+      E1/53: null
+  VTEP-2:
+    Eth:
+      E1/53: null
+      E1/54: null
+  VTEP-3:
+    Eth:
+      E1/51: null
+
+vxlan:
+  l2_vlan_start: 1001
+  l2_vlan_scale: 20
+  l2_vni_start: 201001
+  l2_vni_end: 1100
+  l3_vlan_start: 101
+  l3_vlan_scale: 2
+  l3_vni_start: 900101
+  ip_address: 4.1.0.1
+  ipv6_address: 4:0:0:1::1
+  l2vlan_per_vrf: 10
+  mcast_group_start: 239.1.1.1
+
+pim:
+  ssm_range: 232.0.0.0/8
+  pim_rp_address: 100.1.1.2
+
+igp:
+  ospf:
+    VTEP-1:
+      router_id: 1.1.100.11
+      intf1_list:
+        - loopback0
+        - loopback1
+        - loopback2
+        - Eth1/49
+        - Eth1/50
+        
+    VTEP-2:
+      router_id: 1.1.100.21
+      intf1_list:
+        - loopback0
+        - loopback1
+        - loopback2
+        - Eth1/49
+        - Eth1/50
+
+    VTEP-3:
+      router_id: 1.1.100.31
+      intf1_list:
+        - loopback0
+        - loopback1
+        - loopback2
+        - Eth1/49
+        - Eth1/50
+
+    SPINE:
+      router_id: 100.1.1.1
+      intf1_list:
+        - loopback0
+        - loopback1
+        - loopback2
+        - Eth1/11
+        - Eth1/12
+        - Eth1/21
+        - Eth1/22
+        - Eth1/31
+        - Eth1/32
+
+bgp:
+  ibgp:
+    VTEP-1:
+      router_id: 1.1.100.12
+      neigh_list:
+        - 100.1.1.2
+      as_number: 65535
+
+    VTEP-2:
+      router_id: 1.1.1.22
+      neigh_list:
+        - 100.1.1.2
+      as_number: 65535
+
+    VTEP-3:
+      router_id: 1.1.1.32
+      neigh_list:
+        - 100.1.1.2
+      as_number: 65535
+
+    SPINE:
+      router_id: 1.1.1.101
+      neigh_list:
+        - 1.1.100.12
+        - 1.1.100.22
+        - 1.1.100.32
+      as_number: 65535
+
+interfaces:
+  FANOUT:
+    layer2:
+      Port_channel11:
+        name: port-channel 11
+        Description: vpc 11
+        switchport_mode: trunk
+        switchport_vlan: "1005"
+        members:
+          - Eth1/51
+          - Eth1/52
+          - Eth1/53
+          - Eth1/54
+        lacp_mode: active
+      Eth1/49:
+        name: Eth1/49
+        Description: TGN
+        switchport_mode: access
+        switchport_vlan: "1005"
+
+  VTEP-1:
+    loopback:
+      loopback0:
+        ip_add: 1.1.100.11
+        ip_add_secondary: 1.1.1.1
+        Description: loop0
+        prefix_length: "32"
+        ipv6_address: 2012::1/128
+      loopback1:
+        ip_add: 1.1.100.12
+        Description: loop1
+        prefix_length: "32"
+        ipv6_address: 2012::2/128
+      loopback2:
+        ip_add: 1.1.100.13
+        Description: loop2
+        prefix_length: "32"
+        ipv6_address: 2012::3/128
+    layer3:
+      Eth1/49:
+        Description: To_Spine
+        ip_add: loopback 0
+      Eth1/50:
+        Description: To_Spine
+        ip_add: loopback 0
+    layer2:
+      Port_channel1:
+        name: port-channel 1
+        Description: peer-link
+        switchport_mode: trunk
+        switchport_vlan: 1001-1101
+        vpc: peer-link
+        members:
+          - Eth1/1
+          - Eth1/2
+          - Eth1/3
+          - Eth1/4
+      Port_channel11:
+        name: port-channel 11
+        Description: vpc 11
+        switchport_mode: trunk
+        switchport_vlan: "1005"
+        vpc: "11"
+        members:
+          - Eth1/51
+          - Eth1/52
+      Eth1/53:
+        name: Eth1/53
+        Description: TGN
+        switchport_mode: access
+        switchport_vlan: "1005"
+    vpc:
+      domain_id: "1"
+      keepalive_dst_ip: 10.104.102.109
+      keepalive_src_ip: 10.104.102.108
+      keepalive_vrf: management
+
+  VTEP-2:
+    loopback:
+      loopback0:
+        ip_add: 1.1.100.21
+        ip_add_secondary: 1.1.1.1
+        Description: loop0
+        prefix_length: "32"
+        ipv6_address: 2021::1/128
+      loopback1:
+        ip_add: 1.1.100.22
+        Description: loop1
+        prefix_length: "32"
+        ipv6_address: 2022::2/128
+      loopback2:
+        ip_add: 1.1.100.23
+        Description: loop2
+        prefix_length: "32"
+        ipv6_address: 2023::3/128
+    layer3:
+      Eth1/49:
+        Description: To_Spine
+        ip_add: loopback 0
+      Eth1/50:
+        Description: To_Spine
+        ip_add: loopback 0
+    layer2:
+      Port_channel1:
+        name: port-channel 1
+        Description: peer-link
+        switchport_mode: trunk
+        switchport_vlan: 1001-1101
+        vpc: peer-link
+        members:
+          - Eth1/1
+          - Eth1/2
+          - Eth1/3
+          - Eth1/4
+      Port_channel11:
+        name: port-channel 11
+        Description: vpc 11
+        switchport_mode: trunk
+        switchport_vlan: "1005"
+        vpc: "11"
+        members:
+          - Eth1/51
+          - Eth1/52
+      Eth1/53:
+        name: Eth1/53
+        Description: TGN
+        switchport_mode: access
+        switchport_vlan: "1005"
+      Eth1/54:
+        name: Eth1/54
+        Description: TGN
+        switchport_mode: access
+        switchport_vlan: "1005"
+    vpc:
+      domain_id: "1"
+      keepalive_dst_ip: 10.104.102.108
+      keepalive_src_ip: 10.104.102.109
+      keepalive_vrf: management
+
+  VTEP-3:
+    loopback:
+      loopback0:
+        ip_add: 1.1.100.31
+        Description: loop0
+        prefix_length: "32"
+        ipv6_address: 2031::1/128
+      loopback1:
+        ip_add: 1.1.100.32
+        Description: loop1
+        prefix_length: "32"
+        ipv6_address: 2032::2/128
+      loopback2:
+        ip_add: 1.1.100.33
+        Description: loop2
+        prefix_length: "32"
+        ipv6_address: 2033::3/128
+    layer3:
+      Eth1/49:
+        Description: To_Spine
+        ip_add: loopback 0
+      Eth1/50:
+        Description: To_Spine
+        ip_add: loopback 0
+    layer2:
+      Eth1/51:
+        name: Eth1/51
+        Description: TGN
+        switchport_mode: access
+        switchport_vlan: "1005"
+
+  SPINE:
+    loopback:
+      loopback0:
+        ip_add: 100.1.1.1
+        Description: loop0
+        prefix_length: "32"
+        ipv6_address: 2412::1/128
+      loopback1:
+        ip_add: 100.1.1.2
+        Description: loop1
+        prefix_length: "32"
+        ipv6_address: 2412::2/128
+      loopback2:
+        ip_add: 100.1.1.3
+        Description: loop2
+        prefix_length: "32"
+        ipv6_address: 2412::3/128
+    layer3:
+      Eth1/11:
+        Description: To VTEP-1
+        ip_add: loopback 0
+      Eth1/12:
+        Description: To VTEP-1
+        ip_add: loopback 0
+      Eth1/21:
+        Description: To VTEP-2
+        ip_add: loopback 0
+      Eth1/22:
+        Description: To VTEP-2
+        ip_add: loopback 0
+      Eth1/31:
+        Description: To VTEP-3
+        ip_add: loopback 0
+      Eth1/32:
+        Description: To VTEP-3
+        ip_add: loopback 0
+
+vxlan_route:
+  VTEP-1:
+    interface : 'loopback 99'
+    ip_address : '99.1.1.11/32'
+    vrf : 'vxlan-900101'
+  VTEP-2:
+    interface : 'loopback 99'
+    ip_address : '99.1.1.12/32'
+    vrf : 'vxlan-900101'
+  VTEP-3:
+    interface : 'loopback 99'
+    ip_address : '99.1.1.13/32'
+    vrf : 'vxlan-900101'

@@ -1,0 +1,417 @@
+testbed:
+    name: VxLAN_EVPN_L#_BUD_NODE
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+        enable:
+            password: nbv12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 64.103.221.184
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123
+        ntp:
+            server: 1.2.3.4
+devices:
+    WFR_SPINE:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            port: 2003
+            ip: "10.197.127.14"
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.70
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9508_1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2008
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2009
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.71
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9508_2:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2005
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2007
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.72
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9504_1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2019
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2020
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.74
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    FAN-1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2023
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.76
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.16"
+          alt:
+            ip: "10.197.127.122"
+            port: 8009
+            protocol: telnet
+topology:
+    WFR_SPINE:
+        interfaces:
+            SPINE_to_LEAF-1_1:
+                intf: Ethernet1/1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_2:
+                intf: Ethernet1/2
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_3:
+                intf: Ethernet1/17
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_4:
+                intf: Ethernet1/18
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-2_1:
+                intf: Ethernet1/6
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_2:
+                intf: Ethernet1/8
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_3:
+                intf: Ethernet1/19
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_4:
+                intf: Ethernet1/20
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-3_1:
+                intf: Ethernet1/9
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+            SPINE_to_LEAF-3_2:
+                intf: Ethernet1/11
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+            SPINE_to_LEAF-3_3:
+                intf: Ethernet1/23
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+    N9508_1:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet4/1
+                link: LEAF-1_to_LEAF-2_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet5/1
+                link: LEAF-1_to_LEAF-2_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet4/3
+                link: LEAF-1_to_SPINE_1
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_2:
+                intf: Ethernet4/9
+                link: LEAF-1_to_SPINE_2
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_3:
+                intf: Ethernet3/5
+                link: LEAF-1_to_SPINE_3
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_4:
+                intf: Ethernet3/6
+                link: LEAF-1_to_SPINE_4
+                type: ethernet
+                PO : 211
+            LEAF_to_FAN_1:
+                intf: Ethernet4/10
+                link: LEAF-1_to_FAN_1
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_2:
+                intf: Ethernet4/11
+                link: LEAF-1_to_FAN_2
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_3:
+                intf: Ethernet5/11
+                link: LEAF-1_to_FAN_3
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_4:
+                intf: Ethernet3/20
+                link: LEAF-1_to_FAN_4
+                type: ethernet
+                PO : 200
+            LEAF_to_IXIA:
+                intf: Ethernet4/16
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    N9508_2:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet4/1
+                link: LEAF-2_to_LEAF-1_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet4/2
+                link: LEAF-2_to_LEAF-1_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet4/5
+                link: LEAF-2_to_SPINE_1
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_2:
+                intf: Ethernet4/13
+                link: LEAF-2_to_SPINE_2
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_3:
+                intf: Ethernet3/5
+                link: LEAF-2_to_SPINE_3
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_4:
+                intf: Ethernet3/6
+                link: LEAF-2_to_SPINE_4
+                type: ethernet
+                PO : 212
+            LEAF_to_FAN_1:
+                intf: Ethernet4/10
+                link: LEAF-2_to_FAN_1
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_2:
+                intf: Ethernet4/11
+                link: LEAF-2_to_FAN_2
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_3:
+                intf: Ethernet4/12
+                link: LEAF-2_to_FAN_3
+                type: ethernet
+                PO : 200
+            LEAF_to_FAN_4:
+                intf: Ethernet3/20
+                link: LEAF-2_to_FAN_4
+                type: ethernet
+                PO : 200
+    N9504_1:
+        interfaces:
+            LEAF_to_SPINE_1:
+                intf: Ethernet2/2
+                link: LEAF-3_to_SPINE_1
+                type: ethernet
+                PO : 213
+            LEAF_to_SPINE_2:
+                intf: Ethernet3/5
+                link: LEAF-3_to_SPINE_2
+                type: ethernet
+                PO : 213
+            LEAF_to_SPINE_3:
+                intf: Ethernet4/49
+                link: LEAF-3_to_SPINE_3
+                type: ethernet
+                PO : 213
+            LEAF_to_IXIA:
+                intf: Ethernet2/16
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+    FAN-1:
+        interfaces:
+            FAN_to_LEAF-1_1:
+                intf: Ethernet1/9
+                link: FAN_to_LEAF-1
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-1_2:
+                intf: Ethernet1/5
+                link: FAN_to_LEAF-1
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-1_3:
+                intf: Ethernet1/6
+                link: FAN_to_LEAF-1
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-1_4:
+                intf: Ethernet1/21
+                link: FAN_to_LEAF-1
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-2_1:
+                intf: Ethernet1/10
+                link: FAN_to_LEAF-2
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-2_2:
+                intf: Ethernet1/7
+                link: FAN_to_LEAF-2
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-2_3:
+                intf: Ethernet1/8
+                link: FAN_to_LEAF-2
+                type: ethernet
+                PO : 200
+            FAN_to_LEAF-2_4:
+                intf: Ethernet1/22
+                link: FAN_to_LEAF-2
+                type: ethernet
+                PO : 200
+            FAN_to_IXIA:
+                intf: Ethernet1/32
+                link: FAN_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_FAN-1:
+                intf: 7/6
+                link: IXIA_to_FAN
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-3:
+                intf: 7/4
+                link: IXIA_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1:
+                intf: 7/2
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3

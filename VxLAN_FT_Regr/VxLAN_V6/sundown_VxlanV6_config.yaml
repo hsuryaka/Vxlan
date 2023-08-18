@@ -1,0 +1,3411 @@
+skip_configSetup_dict: tcam_config_dict,ospfv2_config_dict,ospfv3_config_dict,bgp_config_dict,
+         
+dut:
+    uut1:
+        feature: telnet,bash-shell,scp-server,ospf,bgp,ospfv3,pim,interface-vlan,vn-segment-vlan-based,lacp,nv overlay
+    uut2:
+        feature: telnet,bash-shell,scp-server,ospf,bgp,ospfv3,pim,interface-vlan,vn-segment-vlan-based,lacp,nv overlay
+    uut3:
+        feature: telnet,bash-shell,scp-server,lacp
+    uut4:
+        feature: telnet,bash-shell,scp-server,ospf,bgp,ospfv3,pim,interface-vlan,vn-segment-vlan-based,lacp,nv overlay
+    uut33:
+        feature: telnet,bash-shell,nxapi,scp-server,lacp,ospf,ospfv3,bgp,pim,interface-vlan
+
+tcam_config_dict:
+    uut1:
+         arp-ether: -size 256 -double_wide True
+    uut2:
+         arp-ether: -size 256 -double_wide True
+    uut4:
+         arp-ether: -size 256 -double_wide True
+         
+interface_config_dict:
+   portchannel:
+        uut1:
+               port-channel4096:  -memberList "uut1_uut2_1 uut1_uut2_2"   -mode switchport -switchportmode trunk 
+               port-channel1:  -memberList "uut1_uut3_1 uut1_uut3_2"   -mode switchport -switchportmode trunk -allowed_vlan_list 701-800
+        uut2:
+               port-channel4096:  -memberList "uut2_uut1_1 uut2_uut1_2"   -mode switchport -switchportmode trunk 
+               port-channel1:  -memberList "uut2_uut3_1 uut2_uut3_2"   -mode switchport -switchportmode trunk -allowed_vlan_list 701-800
+        uut3:
+               port-channel1:  -memberList "uut3_uut1_1 uut3_uut1_2 uut3_uut2_1 uut3_uut2_1"   -mode switchport -switchportmode trunk -allowed_vlan_list 701-800        
+   ethernet:
+       uut1:
+            uut1_uut33_1:  -mode no switchport -admin_state up -ipv4_addr 107.1.1.1 -ipv4_prf_len 24 -ipv6_addr 107:1:1::1 -ipv6_prf_len 64
+            uut1_uut33_2:  -mode no switchport -admin_state up -ipv4_addr 107.1.2.1 -ipv4_prf_len 24 -ipv6_addr 107:1:2::1 -ipv6_prf_len 64
+            uut1_uut2_3:  -mode no switchport -admin_state up -ipv4_addr  93.94.1.1 -ipv4_prf_len 24 -ipv6_addr 93:94:1::1 -ipv6_prf_len 64
+            uut1_uut3_1: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut1_uut3_2: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut1_uut2_1: -channelGroup 4096 -channelGroupMode active -switchMode switchport 
+            uut1_uut2_2: -channelGroup 4096 -channelGroupMode active -switchMode switchport 
+            uut1_TG1_1: -mode switchport -switchportmode trunk -spanning_tree_edge True
+       uut2:
+            uut2_uut33_1:  -mode no switchport -admin_state up -ipv4_addr 108.1.1.1 -ipv4_prf_len 24 -ipv6_addr 108:1:1::1 -ipv6_prf_len 64
+            uut2_uut33_2:  -mode no switchport -admin_state up -ipv4_addr 108.1.2.1 -ipv4_prf_len 24 -ipv6_addr 108:1:2::1 -ipv6_prf_len 64
+            uut2_uut1_3:  -mode no switchport -admin_state up -ipv4_addr  93.94.1.2 -ipv4_prf_len 24 -ipv6_addr 93:94:1::2 -ipv6_prf_len 64
+            uut2_uut3_1: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut2_uut3_2: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut2_uut1_1: -channelGroup 4096 -channelGroupMode active -switchMode switchport 
+            uut2_uut1_2: -channelGroup 4096 -channelGroupMode active -switchMode switchport 
+            uut2_TG1_1: -mode switchport -switchportmode trunk -spanning_tree_edge True
+       uut3:
+            uut3_uut1_1: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut3_uut1_2: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut3_uut2_1: -channelGroup 1 -channelGroupMode active -switchMode switchport
+            uut3_uut2_2: -channelGroup 1 -channelGroupMode active -switchMode switchport 
+            uut3_TG1_1: -mode switchport -switchportmode trunk -spanning_tree_edge True
+       uut4:
+            uut4_uut33_1:  -mode no switchport -admin_state up -ipv4_addr 111.1.1.1 -ipv4_prf_len 24 -ipv6_addr 111:1:1::1 -ipv6_prf_len 64
+            uut4_uut33_2:  -mode no switchport -admin_state up -ipv4_addr 111.1.2.1 -ipv4_prf_len 24 -ipv6_addr 111:1:2::1 -ipv6_prf_len 64
+            uut4_TG1_1: -mode switchport -switchportmode trunk -spanning_tree_edge True
+       uut33:
+            uut33_uut1_1:  -mode no switchport -admin_state up -ipv4_addr 107.1.1.2 -ipv4_prf_len 24 -ipv6_addr 107:1:1::2 -ipv6_prf_len 64
+            uut33_uut1_2:  -mode no switchport -admin_state up -ipv4_addr 107.1.2.2 -ipv4_prf_len 24 -ipv6_addr 107:1:2::2 -ipv6_prf_len 64
+            uut33_uut2_1:  -mode no switchport -admin_state up -ipv4_addr 108.1.1.2 -ipv4_prf_len 24 -ipv6_addr 108:1:1::2 -ipv6_prf_len 64
+            uut33_uut2_2:  -mode no switchport -admin_state up -ipv4_addr 108.1.2.2 -ipv4_prf_len 24 -ipv6_addr 108:1:2::2 -ipv6_prf_len 64
+            uut33_uut4_1:  -mode no switchport -admin_state up -ipv4_addr 111.1.1.2 -ipv4_prf_len 24 -ipv6_addr 111:1:1::2 -ipv6_prf_len 64
+            uut33_uut4_2:  -mode no switchport -admin_state up -ipv4_addr 111.1.2.2 -ipv4_prf_len 24 -ipv6_addr 111:1:2::2 -ipv6_prf_len 64
+   loopback:
+        uut1:
+               loopback701: -ipv6_addr 1111:1111:1111:1111:1111:1111:1111:1111 -ipv6_prf_len 128
+               loopback702: -ipv6_addr 1212:1212:1212:1212:1212:1212:1212:1212 -ipv6_prf_len 128
+        uut2:
+               loopback701: -ipv6_addr 2222:2222:2222:2222:2222:2222:2222:2221 -ipv6_prf_len 128
+               loopback702: -ipv6_addr 1212:1212:1212:1212:1212:1212:1212:1212 -ipv6_prf_len 128
+        uut4:
+               loopback701: -ipv6_addr 3333:3333:3333:3333:3333:3333:3333:3331 -ipv6_prf_len 128
+        uut33:
+               loopback0: -ipv4_addr 45.45.45.1 -ipv4_prf_len 32 
+
+ospfv2_config_dict:
+        uut1:
+            vxlan:
+                router_configs:
+                    default: -router_id 93.1.11.1
+                interface_configs:
+                     uut1_uut33_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut1_uut33_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut1_uut2_3:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0                
+        uut2:
+            vxlan:
+                router_configs:
+                    default: -router_id 94.1.11.1
+                interface_configs:
+                     uut2_uut33_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut2_uut33_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut2_uut1_3:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+        uut4:
+            vxlan:
+                router_configs:
+                    default: -router_id 81.1.11.1
+                interface_configs:
+                     uut4_uut33_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut4_uut33_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0                      
+        uut33:
+            vxlan:
+                router_configs:
+                    default: -router_id 88.1.11.1
+                interface_configs:
+                     uut33_uut1_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut33_uut1_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut33_uut2_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut33_uut2_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut33_uut4_1:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut33_uut4_2:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                        -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+ospfv3_config_dict:
+        uut1:
+            instance_config:
+                vxlan: -router_id 93.1.111.1 -maximum_paths 16
+            area_config:
+                0: -vrf_name default -instance_name vxlan -area_type external_capable
+            interface_config:
+                 uut1_uut33_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut1_uut33_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut1_uut2_3: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 loopback701: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 loopback702: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+        uut2:
+            instance_config:
+                vxlan: -router_id 94.1.111.1 -maximum_paths 16
+            area_config:
+                0: -vrf_name default -instance_name vxlan -area_type external_capable
+            interface_config:
+                 uut2_uut33_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut2_uut33_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut2_uut1_3: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 loopback701: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 loopback702: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+        uut4:
+            instance_config:
+                vxlan: -router_id 81.1.111.1 -maximum_paths 16
+            area_config:
+                0: -vrf_name default -instance_name vxlan -area_type external_capable
+            interface_config:
+                 uut4_uut33_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut4_uut33_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 loopback701: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+        uut33:
+            instance_config:
+                vxlan: -router_id 88.1.111.1 -maximum_paths 16
+            area_config:
+                0: -vrf_name default -instance_name vxlan -area_type external_capable
+            interface_config:
+                 uut33_uut1_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut33_uut1_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut33_uut2_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut33_uut2_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut33_uut4_1: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4
+                 uut33_uut4_2: -vrf_name default -instance_name vxlan -area_id 0 -hello_interval 1 -dead_interval 4       
+
+bgp_config_dict:
+   uut1:
+      65100:
+        default:
+         router_configs:
+             -router_id 93.1.1.1 -log_neighbor_changes True -reconnect-interval 1
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             ipv6_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             l2vpn:
+                 -maximum_paths 64 -maximum_paths_ibgp 64 -advertise_pip True
+         templates:
+             V4-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv4_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+             V6-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv6_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+         neighbors:
+             ipv4:
+               107.1.1.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               107.1.2.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               93.94.1.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+             ipv6:
+               107:1:1::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               107:1:2::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               93:94:1::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+   uut2:
+      65100:
+        default:
+         router_configs:
+             -router_id 94.1.1.1 -log_neighbor_changes True -reconnect-interval 1
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             ipv6_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             l2vpn:
+                 -maximum_paths 64 -maximum_paths_ibgp 64 -advertise_pip True
+         templates:
+             V4-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv4_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+             V6-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv6_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+         neighbors:
+             ipv4:
+               108.1.1.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               108.1.2.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               93.94.1.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+             ipv6:
+               108:1:1::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               108:1:2::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               93:94:1::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+   uut4:
+      65100:
+        default:
+         router_configs:
+             -router_id 81.1.1.1 -log_neighbor_changes True -reconnect-interval 1
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             ipv6_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             l2vpn:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+         templates:
+             V4-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv4_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+             V6-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv6_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+         neighbors:
+             ipv4:
+               111.1.1.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               111.1.2.2:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+             ipv6:
+               111:1:1::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               111:1:2::2:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+   uut33:
+      65100:
+        default:
+         router_configs:
+             -router_id 88.1.1.1 -log_neighbor_changes True -reconnect-interval 1
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             ipv6_unicast:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+             l2vpn:
+                 -maximum_paths 64 -maximum_paths_ibgp 64
+         templates:
+             V4-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv4_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+             V6-BGP-L2VPN:
+               config:
+                 -remote_as 65100 -log_neighbor_changes True
+               address_family:
+                 ipv6_unicast:
+                   -soft_reconfiguration True -send_community True  -allow_as_in 3 -send_community_extended True -next_hop_self True -route_reflector_client True
+                 l2vpn:
+                   -send_community True  -allow_as_in 3 -send_community_extended True -route_reflector_client True
+         neighbors:
+             ipv4:
+               107.1.1.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               107.1.2.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN             
+               108.1.1.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               108.1.2.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               111.1.1.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+               111.1.2.1:
+                 template_params:
+                   -inherit_peer V4-BGP-L2VPN
+             ipv6:
+               107:1:1::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               107:1:2::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               108:1:1::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               108:1:2::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               111:1:1::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+               111:1:2::1:
+                 template_params:
+                   -inherit_peer V6-BGP-L2VPN
+vpc_config_dict:
+    uut1:
+        vpc_domain: 
+            -domain_id 1 
+            -system_mac 00:01:55:55:55:55 
+            -system_priority 32667 
+            -role_priority 100 
+            -peer_keepalive_src_ipv4_addr 10.197.127.53 
+            -peer_keepalive_dst_ipv4_addr 10.197.127.54 
+            -peer_switch True -peer_gateway True 
+            -arp_synchronize True 
+            -peer_keepalive_vrf management
+            -nd_synchronize True
+        vpc_peer_link: -pc_no 4096
+        vpc_port_channels:
+            port-channel1: -members uut1_uut3_1,uut1_uut3_2 -pc_no 1 -vpc_id 1 -port_mode trunk
+        vlans: -vlan_id 1
+    uut2:
+        vpc_domain: 
+            -domain_id 1 
+            -system_mac 00:01:55:55:55:55 
+            -system_priority 32667 
+            -role_priority 200 
+            -peer_keepalive_src_ipv4_addr 10.197.127.54
+            -peer_keepalive_dst_ipv4_addr 10.197.127.53 
+            -peer_switch True -peer_gateway True 
+            -arp_synchronize True 
+            -peer_keepalive_vrf management
+            -nd_synchronize True
+        vpc_peer_link: -pc_no 4096
+        vpc_port_channels:
+            port-channel1: -members uut2_uut3_1,uut2_uut3_2  -pc_no 1 -vpc_id 1 -port_mode trunk
+        vlans: -vlan_id 1
+scale_config_dict:
+    uut1:
+        global:
+            vlan: 
+                -no_of_l2_vlans 100 
+                -l2_vlan_start 701 
+                -l2_vni_start 1701 
+                -no_of_l3_vlans 50 
+                -l3_vlan_start 801 
+                -l3_vni_start 70001
+            vrf:
+                -no_of_vrf 50
+                -vrf_start V6-001
+                -vrf_vni_start 70001
+                -rd auto
+                -v4_af True
+                -v4_af_rt_both auto
+                -v4_af_rt_both_evpn auto
+                -v6_af True
+                -v6_af_rt_both auto
+                -v6_af_rt_both_evpn auto
+            vxlan:
+                -anycast_gateway_mac 0000.1234.5678
+            bgp:
+                -no_of_vrf 50
+                -vrf_start V6-1
+                -af_v4_enable True
+                -af_v6_enable True
+                -advertise_l2vpn_evpn True
+                -max_path_ebgp 64
+                -max_path_ibgp 64
+        interface:
+            svi:
+                -no_of_l2_vni_svi 100
+                -l2_vni_svi_start 701
+                -l2_vni_svi_ipv4_start 195.100.1.1
+                -l2_vni_svi_ipv4_mask 24
+                -l2_vni_svi_ipv6_start 195:100:1::1
+                -l2_vni_svi_ipv6_mask 64
+                -no_of_l3_vni_svi 50
+                -l3_vni_svi_start 801
+                -l3_vni_svi_ipv4_start forward
+                -l3_vni_svi_ipv6_start forward
+                -anycast_gw True
+                -shutdown False
+                -no_of_l2_vni_svi_per_vrf 2               
+                -vrf_start_name V6-1
+            nve:
+                -host_reachability_protocol_bgp True
+                -shutdown False
+                -advertise_virtual_rmac True
+                -source_interface loopback701
+                -anycast loopback702
+                -source_interface_hold_down_time 30
+                -no_of_l2_vni 100
+                -l2_vni_start 1701
+                -evpn_ir True
+                -no_of_l3_vni 50
+                -l3_vni_start 70001
+        evpn:
+            -no_of_vnis 100 
+            -l2_vni_start 1701
+            -rd auto 
+            -route_target_import_list auto 
+            -route_target_export_list auto 
+    uut2:
+        global:
+            vlan: 
+                -no_of_l2_vlans 100 
+                -l2_vlan_start 701 
+                -l2_vni_start 1701 
+                -no_of_l3_vlans 50 
+                -l3_vlan_start 801 
+                -l3_vni_start 70001
+            vrf:
+                -no_of_vrf 50
+                -vrf_start V6-001
+                -vrf_vni_start 70001
+                -rd auto
+                -v4_af True
+                -v4_af_rt_both auto
+                -v4_af_rt_both_evpn auto
+                -v6_af True
+                -v6_af_rt_both auto
+                -v6_af_rt_both_evpn auto
+            vxlan:
+                -anycast_gateway_mac 0000.1234.5678
+            bgp:
+                -no_of_vrf 50
+                -vrf_start V6-1
+                -af_v4_enable True
+                -af_v6_enable True
+                -advertise_l2vpn_evpn True
+                -max_path_ebgp 64
+                -max_path_ibgp 64
+        interface:
+            svi:
+                -no_of_l2_vni_svi 100
+                -l2_vni_svi_start 701
+                -l2_vni_svi_ipv4_start 195.100.1.1
+                -l2_vni_svi_ipv4_mask 24
+                -l2_vni_svi_ipv6_start 195:100:1::1
+                -l2_vni_svi_ipv6_mask 64
+                -no_of_l3_vni_svi 50
+                -l3_vni_svi_start 801
+                -l3_vni_svi_ipv4_start forward
+                -l3_vni_svi_ipv6_start forward
+                -anycast_gw True
+                -shutdown False
+                -no_of_l2_vni_svi_per_vrf 2               
+                -vrf_start_name V6-1
+            nve:
+                -host_reachability_protocol_bgp True
+                -shutdown False
+                -advertise_virtual_rmac True
+                -source_interface loopback701
+                -anycast loopback702
+                -source_interface_hold_down_time 30
+                -no_of_l2_vni 100
+                -l2_vni_start 1701
+                -evpn_ir True
+                -no_of_l3_vni 50
+                -l3_vni_start 70001   
+        evpn:
+            -no_of_vnis 100 
+            -l2_vni_start 1701
+            -rd auto 
+            -route_target_import_list auto 
+            -route_target_export_list auto                              
+    uut4:
+        global:
+            vlan: 
+                -no_of_l2_vlans 100 
+                -l2_vlan_start 701 
+                -l2_vni_start 1701 
+                -no_of_l3_vlans 50 
+                -l3_vlan_start 801 
+                -l3_vni_start 70001
+            vrf:
+                -no_of_vrf 50
+                -vrf_start V6-1
+                -vrf_vni_start 70001
+                -rd auto
+                -v4_af True
+                -v4_af_rt_both auto
+                -v4_af_rt_both_evpn auto
+                -v6_af True
+                -v6_af_rt_both auto
+                -v6_af_rt_both_evpn auto
+            vxlan:
+                -anycast_gateway_mac 0000.1234.5678
+            bgp:
+                -no_of_vrf 50
+                -vrf_start V6-1
+                -af_v4_enable True
+                -af_v6_enable True
+                -advertise_l2vpn_evpn True
+                -max_path_ebgp 64
+                -max_path_ibgp 64
+        interface:
+            svi:
+                -no_of_l2_vni_svi 100
+                -l2_vni_svi_start 701
+                -l2_vni_svi_ipv4_start 195.100.1.1
+                -l2_vni_svi_ipv4_mask 24
+                -l2_vni_svi_ipv6_start 195:100:1::1
+                -l2_vni_svi_ipv6_mask 64
+                -no_of_l3_vni_svi 50
+                -l3_vni_svi_start 801
+                -l3_vni_svi_ipv4_start forward
+                -l3_vni_svi_ipv6_start forward
+                -anycast_gw True
+                -shutdown False
+                -no_of_l2_vni_svi_per_vrf 2               
+                -vrf_start_name V6-1
+            nve:
+                -host_reachability_protocol_bgp True
+                -shutdown False
+                -source_interface loopback701
+                -source_interface_hold_down_time 30
+                -no_of_l2_vni 100
+                -l2_vni_start 1701
+                -evpn_ir True
+                -no_of_l3_vni 50
+                -l3_vni_start 70001
+        evpn:
+            -no_of_vnis 100 
+            -l2_vni_start 1701
+            -rd auto 
+            -route_target_import_list auto 
+            -route_target_export_list auto 
+    uut3:
+        global:
+            vlan: 
+                -no_of_l2_vlans 100 
+                -l2_vlan_start 701 
+TG:
+    TG1:
+        global:
+            ports: 
+                4/4: True
+                4/3: True
+                4/6: True
+                4/1: True
+        skip_traffic_items: 'RAW3-RAW6'
+        
+        TRF001:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 701 -ip_addr_start 195.100.1.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.1.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 701 -ip_addr_start 195.100.1.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.1.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 701 -ip_addr_start 195.100.1.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.1.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 702 -ip_addr_start 195.100.2.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.2.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-001 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF002:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 703 -ip_addr_start 195.100.3.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.3.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 703 -ip_addr_start 195.100.3.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.3.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 703 -ip_addr_start 195.100.3.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.3.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 704 -ip_addr_start 195.100.4.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.4.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-002 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF003:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 705 -ip_addr_start 195.100.5.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.5.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 705 -ip_addr_start 195.100.5.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.5.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 705 -ip_addr_start 195.100.5.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.5.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 706 -ip_addr_start 195.100.6.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.6.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-003 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF004:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 707 -ip_addr_start 195.100.7.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.7.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 707 -ip_addr_start 195.100.7.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.7.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 707 -ip_addr_start 195.100.7.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.7.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 708 -ip_addr_start 195.100.8.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.8.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-004 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF005:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 709 -ip_addr_start 195.100.9.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.9.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 709 -ip_addr_start 195.100.9.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.9.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 709 -ip_addr_start 195.100.9.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.9.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 710 -ip_addr_start 195.100.10.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.10.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-005 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF006:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 711 -ip_addr_start 195.100.11.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.11.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 711 -ip_addr_start 195.100.11.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.11.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 711 -ip_addr_start 195.100.11.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.11.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 712 -ip_addr_start 195.100.12.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.12.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-006 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF007:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 713 -ip_addr_start 195.100.13.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.13.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 713 -ip_addr_start 195.100.13.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.13.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 713 -ip_addr_start 195.100.13.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.13.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 714 -ip_addr_start 195.100.14.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.14.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-007 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF008:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 715 -ip_addr_start 195.100.15.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.15.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 715 -ip_addr_start 195.100.15.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.15.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 715 -ip_addr_start 195.100.15.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.15.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 716 -ip_addr_start 195.100.16.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.16.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-008 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF009:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 717 -ip_addr_start 195.100.17.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.17.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 717 -ip_addr_start 195.100.17.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.17.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 717 -ip_addr_start 195.100.17.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.17.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 718 -ip_addr_start 195.100.18.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.18.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-009 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF010:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 719 -ip_addr_start 195.100.19.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.19.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 719 -ip_addr_start 195.100.19.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.19.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 719 -ip_addr_start 195.100.19.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.19.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 720 -ip_addr_start 195.100.20.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.20.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-010 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF011:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 721 -ip_addr_start 195.100.21.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.21.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 721 -ip_addr_start 195.100.21.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.21.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 721 -ip_addr_start 195.100.21.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.21.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 722 -ip_addr_start 195.100.22.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.22.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-011 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF012:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 723 -ip_addr_start 195.100.23.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.23.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 723 -ip_addr_start 195.100.23.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.23.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 723 -ip_addr_start 195.100.23.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.23.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 724 -ip_addr_start 195.100.24.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.24.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-012 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF013:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 725 -ip_addr_start 195.100.25.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.25.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 725 -ip_addr_start 195.100.25.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.25.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 725 -ip_addr_start 195.100.25.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.25.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 726 -ip_addr_start 195.100.26.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.26.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-013 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF014:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 727 -ip_addr_start 195.100.27.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.27.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 727 -ip_addr_start 195.100.27.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.27.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 727 -ip_addr_start 195.100.27.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.27.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 728 -ip_addr_start 195.100.28.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.28.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-014 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF015:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 729 -ip_addr_start 195.100.29.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.29.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 729 -ip_addr_start 195.100.29.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.29.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 729 -ip_addr_start 195.100.29.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.29.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 730 -ip_addr_start 195.100.30.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.30.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-015 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF016:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 731 -ip_addr_start 195.100.31.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.31.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 731 -ip_addr_start 195.100.31.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.31.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 731 -ip_addr_start 195.100.31.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.31.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 732 -ip_addr_start 195.100.32.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.32.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-016 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF017:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 733 -ip_addr_start 195.100.33.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.33.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 733 -ip_addr_start 195.100.33.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.33.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 733 -ip_addr_start 195.100.33.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.33.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 734 -ip_addr_start 195.100.34.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.34.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-017 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF018:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 735 -ip_addr_start 195.100.35.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.35.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 735 -ip_addr_start 195.100.35.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.35.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 735 -ip_addr_start 195.100.35.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.35.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 736 -ip_addr_start 195.100.36.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.36.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-018 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF019:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 737 -ip_addr_start 195.100.37.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.37.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 737 -ip_addr_start 195.100.37.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.37.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 737 -ip_addr_start 195.100.37.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.37.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 738 -ip_addr_start 195.100.38.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.38.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-019 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF020:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 739 -ip_addr_start 195.100.39.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.39.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 739 -ip_addr_start 195.100.39.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.39.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 739 -ip_addr_start 195.100.39.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.39.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 740 -ip_addr_start 195.100.40.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.40.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-020 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF021:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 741 -ip_addr_start 195.100.41.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.41.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 741 -ip_addr_start 195.100.41.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.41.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 741 -ip_addr_start 195.100.41.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.41.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 742 -ip_addr_start 195.100.42.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.42.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-021 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF022:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 743 -ip_addr_start 195.100.43.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.43.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 743 -ip_addr_start 195.100.43.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.43.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 743 -ip_addr_start 195.100.43.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.43.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 744 -ip_addr_start 195.100.44.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.44.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-022 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF023:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 745 -ip_addr_start 195.100.45.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.45.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 745 -ip_addr_start 195.100.45.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.45.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 745 -ip_addr_start 195.100.45.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.45.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 746 -ip_addr_start 195.100.46.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.46.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-023 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF024:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 747 -ip_addr_start 195.100.47.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.47.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 747 -ip_addr_start 195.100.47.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.47.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 747 -ip_addr_start 195.100.47.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.47.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 748 -ip_addr_start 195.100.48.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.48.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-024 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TRF025:
+            tg_interface_config_dict:
+                4/4: -no_of_intf 5 -no_of_vlans 1 -vlan_start 749 -ip_addr_start 195.100.49.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.49.1 -mode config -vlan 1
+                4/3: -no_of_intf 5 -no_of_vlans 1 -vlan_start 749 -ip_addr_start 195.100.49.16 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.49.1 -mode config -vlan 1
+                4/6: -no_of_intf 5 -no_of_vlans 1 -vlan_start 749 -ip_addr_start 195.100.49.21 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.49.1 -mode config -vlan 1
+                4/1: -no_of_intf 15 -no_of_vlans 1 -vlan_start 750 -ip_addr_start 195.100.50.11 -netmask 255.255.255.255 -ip_addr_step 0.0.0.1 -ipv4_network_step 0.0.1.0 -gateway 195.100.50.1 -mode config -vlan 1
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name VRF-V6-025 -convert_to_raw 0 -bidirectional 1 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one 
+        RAW001:
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-BCAST-DECAP -circuit_type raw -rate_pps 20000 -mac_dst ff:ff:ff:ff:ff:ff -mac_src 00:00:00:77:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item -frame_size 100 
+        RAW002:
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-UUC-DECAP -circuit_type raw -rate_pps 20000 -mac_dst 00:00:00:99:99:99 -mac_src 00:00:00:88:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item  -frame_size 100
+#        RAW003:
+#            traffic_config_dict: 
+#                source: [4/1]
+#                receivers: [4/4,4/3,4/6]
+#                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-MCAST-DECAP -circuit_type raw -rate_pps 20000 -mac_dst 01:00:5e:09:09:09 -mac_src 00:00:00:88:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item      
+#        RAW004:
+#            traffic_config_dict: 
+#                source: [4/4]
+#                receivers: [1/4,1/5,1/7]
+#                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-BCAST-ENCAP -circuit_type raw -rate_pps 20000 -mac_dst ff:ff:ff:ff:ff:ff -mac_src 00:00:00:33:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item      
+#        RAW005:
+#            traffic_config_dict: 
+#                source: [4/3]
+#                receivers: [1/2,1/5,1/7]
+#                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-UUC-ENCAP -circuit_type raw -rate_pps 20000 -mac_dst 00:00:00:88:88:88 -mac_src 00:00:00:44:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item
+#        RAW006:
+#            traffic_config_dict: 
+#                source: [4/6]
+#                receivers: [1/2,1/4,1/7]
+#                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-MCAST-ENCAP -circuit_type raw -rate_pps 20000 -mac_dst 01:00:5e:12:34:56 -mac_src 00:00:00:55:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item      
+        JUMBO001:
+            traffic_config_dict: 
+                source: [4/6]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-JUMBO-ENCAP -circuit_type raw -rate_pps 20000 -mac_dst ff:ff:ff:ff:ff:ff -mac_src 00:00:00:33:00:01 -mac_src_mode increment -mac_src_step 00:00:00:00:00:01 -mac_src_count 100 -vlan enable -vlan_id 701 -vlan_id_mode increment -vlan_id_step 1 -vlan_id_count 100 -track_by traffic_item -frame_size 2000 
+        TEST-001:
+            traffic_config_dict: 
+                source: [4/6]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name RAW-STREAM -circuit_type raw -rate_pps 20000 -mac_dst 00:00:12:34:56:78 -mac_src 00:00:00:22:00:01 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 0 -vlan_id_count 1  -l3_protocol ipv4 -ip_src_addr 195.100.1.45 -ip_dst_addr 99.99.99.100 -ip_dst_mode increment -ip_dst_count 100 -ip_dst_step 0.0.0.1 -track_by traffic_item -frame_size 200
+        TEST-002:
+            traffic_config_dict: 
+                source: [4/6]
+                receivers: [4/1,4/3,4/4]
+                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-JUMBO-ENCAP -circuit_type raw -rate_pps 20000 -mac_dst 00:00:00:65:65:65 -mac_src 00:00:00:33:00:01 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 1 -vlan_id_count 1 -track_by traffic_item -frame_size 200 
+        TEST-003:
+            traffic_config_dict: 
+                source: [4/6]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name RAW-STREAM -circuit_type raw -rate_pps 20000 -mac_dst 00:00:00:54:54:54 -mac_src 00:00:00:22:00:01 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 0 -vlan_id_count 1  -l3_protocol ipv4 -ip_src_addr 195.100.1.15 -ip_dst_addr 195.100.1.55 -ip_dst_mode fixed -ip_dst_count 1 -ip_dst_step 0.0.0.0 -track_by traffic_item -frame_size 200
+        TEST-004:
+            traffic_config_dict: 
+                source: [4/6]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name RAW-STREAM -circuit_type raw -rate_pps 20000 -mac_dst 00:00:00:74:74:74 -mac_src 00:00:00:22:00:01 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 0 -vlan_id_count 1  -l3_protocol ipv6 -ipv6_src_addr 195:100:1::15 -ipv6_dst_addr 195:100:1::55 -ipv6_dst_mode fixed -ipv6_dst_count 1 -ipv6_dst_step 0.0.0.0 -track_by traffic_item -frame_size 200
+        TEST-005:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/4]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-006:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/6]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-007:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-008:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-009:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-010:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanBcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst ff:ff:ff:ff:ff:ff
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-011:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanMcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 01:00:5e:11:22:33
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+
+        TEST-012:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/4]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-013:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/6]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-014:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-015:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-016:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1,4/4,4/6]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-017:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1,4/4,4/6]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst ff:ff:ff:ff:ff:ff
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-018:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1,4/4,4/6]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV4Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 01:00:5e:32:32:31
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1:1:1:1:1:1:1:1
+                        -ipv6_dst_addr 2:2:2:2:2:2:2:2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv4
+                        -ip_src_addr 195.100.1.11
+                        -ip_dst_addr 195.100.1.55
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-019:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/4]
+                params:
+                    host_params:
+                        -mode config
+                        -intf_ip_addr 195.100.1.150
+                        -gateway 195.100.1.1
+                        -vlan 1
+                        -vlan_id 701
+                        -src_mac_addr 00:00:00:74:74:74
+                        -netmask 255.255.255.255
+                        -arp_send_req 1
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv4
+                        -ip_src_addr 1.1.1.1
+                        -ip_dst_addr 2.2.2.2
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-020:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/6]
+                params:
+                    host_params:
+                        -mode config
+                        -intf_ip_addr 195.100.1.151
+                        -gateway 195.100.1.1
+                        -vlan 1
+                        -vlan_id 701
+                        -src_mac_addr 00:00:00:74:74:75
+                        -netmask 255.255.255.255
+                        -arp_send_req 1
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6PayloadInnerVxlanV4
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:75
+                        -mac_src 00:00:00:22:00:02
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv4
+                        -ip_src_addr 1.1.1.1
+                        -ip_dst_addr 2.2.2.2
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43232
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::12
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-021:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-022:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-023:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-024:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanBcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst ff:ff:ff:ff:ff:ff
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-025:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanMcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 01:00:5e:11:22:33
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195:100:1::11
+                        -ipv6_dst_addr 195:100:1::55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-026:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/4]
+                params:
+                    host_params:
+                        -mode config
+                        -intf_ip_addr 195.100.1.150
+                        -gateway 195.100.1.1
+                        -vlan 1
+                        -vlan_id 701
+                        -src_mac_addr 00:00:00:74:84:74
+                        -netmask 255.255.255.255
+                        -arp_send_req 1
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:84:74
+                        -mac_src 00:00:00:33:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv4
+                        -ip_src_addr 1.1.1.1
+                        -ip_dst_addr 2.2.2.2
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-027:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/6]
+                params:
+                    host_params:
+                        -mode config
+                        -intf_ip_addr 195.100.1.151
+                        -gateway 195.100.1.1
+                        -vlan 1
+                        -vlan_id 701
+                        -src_mac_addr 00:00:00:74:84:75
+                        -netmask 255.255.255.255
+                        -arp_send_req 1
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6PayloadInnerVxlanV4
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:84:75
+                        -mac_src 00:00:00:22:00:02
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv4
+                        -ip_src_addr 1.1.1.1
+                        -ip_dst_addr 2.2.2.2
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43232
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-028:
+            traffic_config_dict: 
+                source: [4/3]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-029:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/6]
+                actual_receiver: [4/1]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-030:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:74:74:74
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-031:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanBcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst ff:ff:ff:ff:ff:ff
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-032:
+            traffic_config_dict: 
+                source: [4/6]
+                capable_receivers: [4/1,4/4,4/3]
+                actual_receiver: [4/1,4/4,4/3]
+                params: 
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name NestedVxlanMcastTrafficV6Payload
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 01:00:5e:11:22:33
+                        -mac_src 00:00:00:22:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 1.1.1.1
+                        -ipv6_dst_addr 2.2.2.2 
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+                    UDPHeader:
+                        -mode modify_or_insert
+                        -stack_index 4
+                        -l4_protocol udp
+                        -udp_src_port 43231
+                        -udp_dst_port 4789
+                    VxlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 5
+                        -pt_handle vxlan
+                    VNIHeader:
+                        -mode set_field_values
+                        -pt_handle Vxlan
+                        -field_handle vxlan.header.vni-3
+                        -field_valueType singleValue
+                        -field_singleValue 10001
+                    EthernetHeader2:
+                        -mode modify_or_insert
+                        -stack_index 6
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:55:34:42
+                        -mac_src 00:00:00:34:43:23 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1
+                    IPHeader2:
+                        -mode modify_or_insert
+                        -stack_index 7
+                        -l3_protocol ipv6 
+                        -ipv6_src_addr 195.100.1.11
+                        -ipv6_dst_addr 195.100.1.55
+                        -ipv6_dst_mode fixed 
+                        -ipv6_dst_count 1 
+                        -ipv6_dst_step 0.0.0.0
+        TEST-033:
+            traffic_config_dict: 
+                source: [4/1]
+                first_receiver: [4/3]
+                second_receiver: [4/4]
+                params:
+                    host_params:
+                        -mode config
+                        -intf_ip_addr 195.100.1.160
+                        -gateway 195.100.1.1
+                        -vlan 1
+                        -vlan_id 701
+                        -src_mac_addr 00:00:00:95.01:01
+                        -netmask 255.255.255.255
+                        -arp_send_req 1
+                    Traffic_End_points: 
+                        -mode create 
+                        -circuit_type raw
+                        -bidirectional 0
+                        -name HostMobilityOrphanToOrphan
+                    StreamParameters:
+                        -mode modify
+                        -rate_pps 20000
+                        -transmit_mode continuous 
+                        -track_by traffic_item
+                        -frame_size 200
+                    EthernetHeader1:
+                        -mode modify_or_insert
+                        -stack_index 1
+                        -l2_encap ethernet_ii
+                        -mac_dst 00:00:00:95.01:01
+                        -mac_src 00:00:00:33:00:01 
+                        -mac_src_mode fixed 
+                        -mac_src_step 00:00:00:00:00:00 
+                        -mac_src_count 1 
+                    VlanHeader:
+                        -mode modify_or_insert
+                        -stack_index 2
+                        -vlan enable 
+                        -vlan_id 701 
+                        -vlan_id_mode fixed 
+                        -vlan_id_step 0 
+                        -vlan_id_count 1  
+                    IPHeader1:
+                        -mode modify_or_insert
+                        -stack_index 3
+                        -l3_protocol ipv4
+                        -ip_src_addr 1.1.1.1
+                        -ip_dst_addr 2.2.2.2
+                        -ip_dst_mode fixed 
+                        -ip_dst_count 1 
+                        -ip_dst_step 0.0.0.0
+        TEST-034:
+            tg_interface_config_dict:
+                4/4: -mode config -intf_ip_addr 195.100.1.101 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:01 -arp_send_req 0
+                4/3: -mode config -intf_ip_addr 195.100.1.101 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:01 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.2.101 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:01 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/3]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_Orphan_Orphan -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-035:
+            tg_interface_config_dict:
+                4/3: -mode config -intf_ip_addr 195.100.1.102 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:02 -arp_send_req 0
+                4/6: -mode config -intf_ip_addr 195.100.1.102 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:02 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.2.102 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:02 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/3]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_Orphans_to_VPC -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-036:
+            tg_interface_config_dict:
+                4/3: -mode config -intf_ip_addr 195.100.2.103 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:03 -arp_send_req 0
+                4/4: -mode config -intf_ip_addr 195.100.1.103 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:03 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.1.103 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:03 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/3]
+                receivers: [4/4]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_Orphans_to_RemoteVTEP -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-037:
+            tg_interface_config_dict:
+                4/6: -mode config -intf_ip_addr 195.100.1.104 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:04 -arp_send_req 0
+                4/3: -mode config -intf_ip_addr 195.100.1.104 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:04 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.2.104 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:04 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/6]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_VPC_To_Orphan1 -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-038:
+            tg_interface_config_dict:
+                4/6: -mode config -intf_ip_addr 195.100.1.105 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:05 -arp_send_req 0
+                4/4: -mode config -intf_ip_addr 195.100.2.105 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:05 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.1.105 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:05 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/4]
+                receivers: [4/6]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_VPC_To_REmote VTEP -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-039:
+            tg_interface_config_dict:
+                4/6: -mode config -intf_ip_addr 195.100.1.106 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:06 -arp_send_req 0
+                4/4: -mode config -intf_ip_addr 195.100.2.106 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:06 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.1.106 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:06 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/4]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_RemoteVTEP_To_VPC -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-040:
+            tg_interface_config_dict:
+                4/3: -mode config -intf_ip_addr 195.100.1.107 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:07 -arp_send_req 0
+                4/4: -mode config -intf_ip_addr 195.100.2.107 -netmask 255.255.255.255 -gateway 195.100.2.1 -vlan 1 -vlan_id 702 -src_mac_addr 00:00:00:51:00:07 -arp_send_req 0
+                4/1: -mode config -intf_ip_addr 195.100.1.107 -netmask 255.255.255.255 -gateway 195.100.1.1 -vlan 1 -vlan_id 701 -src_mac_addr 00:00:00:21:21:07 -arp_send_req 0
+            traffic_config_dict: 
+                source: [4/4]
+                receivers: [4/1]
+                params: -mode create -transmit_mode continuous -name HOST_Mobility_RemoteVTEP_To_Orphan -convert_to_raw 0 -bidirectional 0 -rate_pps 20000 -length_mode auto -track_by traffic_item -circuit_endpoint_type ipv4 -src_dest_mesh one_to_one      
+        TEST-041:
+            traffic_config_dict: 
+                source: [4/1]
+                receivers: [4/4,4/3,4/6]
+                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-MCAST-IGMP_SNOOPING -circuit_type raw -rate_pps 20000 -mac_dst 01:00:5e:33:44:55 -mac_src 00:00:00:77:00:10 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 0 -vlan_id_count 1  -l3_protocol ipv4 -ip_src_addr 195.100.1.103 -ip_dst_addr 228.51.68.85 -ip_dst_mode increment -ip_dst_count 100 -ip_dst_step 0.0.0.1 -track_by traffic_item -frame_size 200 
+#                params: -mode create -transmit_mode continuous -name BUM-TRAFFIC-MCAST-IGMP_SNOOPING -circuit_type raw -rate_pps 20000 -mac_dst 01:00:5e:33:44:55 -mac_src 00:00:00:77:00:10 -mac_src_mode fixed -mac_src_step 00:00:00:00:00:00 -mac_src_count 1 -vlan enable -vlan_id 701 -vlan_id_mode fixed -vlan_id_step 1 -vlan_id_count 1 -track_by traffic_item -frame_size 100 
+
+trigger_dict:
+    TRIG-003:
+        trigger_dut: [uut1,uut2]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-004:
+        trigger_dut: [uut1,uut2]
+        traffic_to_consider: 'RAW001-RAW002'
+        no_of_vlans: 2
+    TRIG-005:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-008:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+        no_of_vlans: 2
+    TRIG-009:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+        no_of_vlans: 2
+    TRIG-010:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+        no_of_vlans: 2
+    TRIG-011:
+        trigger_dut: [uut1,uut2,uut33]
+        traffic_to_consider: 'RAW001-RAW002'
+    modify-uplink:
+        traffic_to_consider: 'RAW001-RAW002'
+        interfaces: 
+            uut1: "uut1_uut33_1 uut1_uut33_2"
+            uut2: "uut2_uut33_1 uut2_uut33_2"
+            uut33: "uut33_uut1_1 uut33_uut1_2 uut33_uut2_1 uut33_uut2_2"
+        portchannel:
+            uut1:
+                port-channel101: -memberlist uut1_uut33_1 -mode no switchport -ipv4_addr 107.1.1.1 -ipv4_prf_len 24 -ipv6_addr 107:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+                port-channel102: -memberlist uut1_uut33_2 -mode no switchport -ipv4_addr 107.1.2.1 -ipv4_prf_len 24 -ipv6_addr 107:1:2::1 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+            uut2:
+                port-channel201: -memberlist uut2_uut33_1 -mode no switchport -ipv4_addr 108.1.1.1 -ipv4_prf_len 24 -ipv6_addr 108:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+                port-channel202: -memberlist uut2_uut33_2 -mode no switchport -ipv4_addr 108.1.2.1 -ipv4_prf_len 24 -ipv6_addr 108:1:2::1 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+            uut33:
+                port-channel101: -memberlist uut33_uut1_1 -mode no switchport -ipv4_addr 107.1.1.2 -ipv4_prf_len 24 -ipv6_addr 107:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+                port-channel102: -memberlist uut33_uut1_2 -mode no switchport -ipv4_addr 107.1.2.2 -ipv4_prf_len 24 -ipv6_addr 107:1:2::2 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+                port-channel201: -memberlist uut33_uut2_1 -mode no switchport -ipv4_addr 108.1.1.2 -ipv4_prf_len 24 -ipv6_addr 108:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+                port-channel202: -memberlist uut33_uut2_2 -mode no switchport -ipv4_addr 108.1.2.2 -ipv4_prf_len 24 -ipv6_addr 108:1:2::2 -ipv6_prf_len 64 -ospf True -ospfv3 True -pim_state True
+        svi:
+            uut1:
+                vlan101: -memberlist uut1_uut33_1 -mode switchport -switchportmode trunk -allowed_vlan_list 101 -ipv4_addr 107.1.1.1/24 -ipv6_addr 107:1:1::1/64 -ospf True -ospfv3 True -pim_state True
+                vlan102: -memberlist uut1_uut33_2 -mode switchport -switchportmode trunk -allowed_vlan_list 102 -ipv4_addr 107.1.2.1/24 -ipv6_addr 107:1:2::1/64 -ospf True -ospfv3 True -pim_state True
+            uut2:
+                vlan201: -memberlist uut2_uut33_1 -mode switchport -switchportmode trunk -allowed_vlan_list 201 -ipv4_addr 108.1.1.1/24 -ipv6_addr 108:1:1::1/64 -ospf True -ospfv3 True -pim_state True
+                vlan202: -memberlist uut2_uut33_2 -mode switchport -switchportmode trunk -allowed_vlan_list 202 -ipv4_addr 108.1.2.1/24 -ipv6_addr 108:1:2::1/64 -ospf True -ospfv3 True -pim_state True
+            uut33:
+                vlan101: -memberlist uut33_uut1_1 -mode switchport -switchportmode trunk -allowed_vlan_list 101 -ipv4_addr 107.1.1.2/24 -ipv6_addr 107:1:1::2/64 -ospf True -ospfv3 True -pim_state True
+                vlan102: -memberlist uut33_uut1_2 -mode switchport -switchportmode trunk -allowed_vlan_list 102 -ipv4_addr 107.1.2.2/24 -ipv6_addr 107:1:2::2/64 -ospf True -ospfv3 True -pim_state True
+                vlan201: -memberlist uut33_uut2_1 -mode switchport -switchportmode trunk -allowed_vlan_list 201 -ipv4_addr 108.1.1.2/24 -ipv6_addr 108:1:1::2/64 -ospf True -ospfv3 True -pim_state True
+                vlan202: -memberlist uut33_uut2_2 -mode switchport -switchportmode trunk -allowed_vlan_list 202 -ipv4_addr 108.1.2.2/24 -ipv6_addr 108:1:2::2/64 -ospf True -ospfv3 True -pim_state True                
+    TRIG-014:
+        traffic_to_consider: 'RAW001-RAW002'        
+    TRIG-016:
+        trigger_dut: [uut1]
+        traffic_to_consider: 'TRF001'
+    TRIG-043:
+        trigger_dut: [uut1,uut2]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-044:
+        trigger_dut: [uut1,uut2]
+        traffic_to_consider: 'RAW001-RAW002'
+        no_of_iterations: 1
+    TRIG-045:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-046:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-047:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'        
+    TRIG-048:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'  
+    TRIG-049:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'  
+    TRIG-050:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'               
+    TRIG-051:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-052:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'
+    TRIG-053:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'        
+    TRIG-054:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'  
+    TRIG-055:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'  
+    TRIG-056:
+        trigger_dut: [uut1,uut2,uut3]
+        traffic_to_consider: 'RAW001-RAW002'          
+    TRIG-060:
+        trigger_dut: [uut1,uut2,uut33,uut4]
+        traffic_to_consider: 'RAW001-RAW002'
+        interfaces: 
+            uut1: "uut1_uut33_1 uut1_uut33_2"
+            uut2: "uut2_uut33_1 uut2_uut33_2"
+            uut4: "uut4_uut33_1 uut4_uut33_2"
+            uut33: "uut33_uut1_1 uut33_uut1_2 uut33_uut2_1 uut33_uut2_2 uut33_uut4_1 uut33_uut4_2"
+        portchannel:
+            uut1:
+                port-channel101: -memberlist uut1_uut33_1 uut1_uut33_2 -mode no switchport -ipv4_addr 107.1.1.1 -ipv4_prf_len 24 -ipv6_addr 107:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut2:
+                port-channel201: -memberlist uut2_uut33_1 uut2_uut33_2 -mode no switchport -ipv4_addr 108.1.1.1 -ipv4_prf_len 24 -ipv6_addr 108:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut4:
+                port-channel301: -memberlist uut4_uut33_1 uut4_uut33_2 -mode no switchport -ipv4_addr 111.1.1.1 -ipv4_prf_len 24 -ipv6_addr 111:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut33:
+                port-channel101: -memberlist uut33_uut1_1 uut33_uut1_2 -mode no switchport -ipv4_addr 107.1.1.2 -ipv4_prf_len 24 -ipv6_addr 107:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel201: -memberlist uut33_uut2_1 uut33_uut2_2 -mode no switchport -ipv4_addr 108.1.1.2 -ipv4_prf_len 24 -ipv6_addr 108:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel301: -memberlist uut33_uut4_1 uut33_uut4_2 -mode no switchport -ipv4_addr 111.1.1.2 -ipv4_prf_len 24 -ipv6_addr 111:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+    TRIG-061:
+        trigger_dut: [uut1,uut2,uut33,uut4]
+        traffic_to_consider: 'RAW001-RAW002'
+        interfaces: 
+            uut1: "uut1_uut33_1 uut1_uut33_2"
+            uut2: "uut2_uut33_1 uut2_uut33_2"
+            uut4: "uut4_uut33_1 uut4_uut33_2"
+            uut33: "uut33_uut1_1 uut33_uut1_2 uut33_uut2_1 uut33_uut2_2 uut33_uut4_1 uut33_uut4_2"
+        portchannel:
+            uut1:
+                port-channel101: -memberlist uut1_uut33_1 uut1_uut33_2 -mode no switchport -ipv4_addr 107.1.1.1 -ipv4_prf_len 24 -ipv6_addr 107:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut2:
+                port-channel201: -memberlist uut2_uut33_1 uut2_uut33_2 -mode no switchport -ipv4_addr 108.1.1.1 -ipv4_prf_len 24 -ipv6_addr 108:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut4:
+                port-channel301: -memberlist uut4_uut33_1 uut4_uut33_2 -mode no switchport -ipv4_addr 111.1.1.1 -ipv4_prf_len 24 -ipv6_addr 111:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut33:
+                port-channel101: -memberlist uut33_uut1_1 uut33_uut1_2 -mode no switchport -ipv4_addr 107.1.1.2 -ipv4_prf_len 24 -ipv6_addr 107:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel201: -memberlist uut33_uut2_1 uut33_uut2_2 -mode no switchport -ipv4_addr 108.1.1.2 -ipv4_prf_len 24 -ipv6_addr 108:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel301: -memberlist uut33_uut4_1 uut33_uut4_2 -mode no switchport -ipv4_addr 111.1.1.2 -ipv4_prf_len 24 -ipv6_addr 111:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+    TRIG-062:
+        trigger_dut: [uut1,uut2,uut33,uut4]
+        traffic_to_consider: 'RAW001-RAW002'
+        interfaces: 
+            uut1: "uut1_uut33_1 uut1_uut33_2"
+            uut2: "uut2_uut33_1 uut2_uut33_2"
+            uut4: "uut4_uut33_1 uut4_uut33_2"
+            uut33: "uut33_uut1_1 uut33_uut1_2 uut33_uut2_1 uut33_uut2_2 uut33_uut4_1 uut33_uut4_2"
+        portchannel:
+            uut1:
+                port-channel101: -memberlist uut1_uut33_1 uut1_uut33_2 -mode no switchport -ipv4_addr 107.1.1.1 -ipv4_prf_len 24 -ipv6_addr 107:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut2:
+                port-channel201: -memberlist uut2_uut33_1 uut2_uut33_2 -mode no switchport -ipv4_addr 108.1.1.1 -ipv4_prf_len 24 -ipv6_addr 108:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut4:
+                port-channel301: -memberlist uut4_uut33_1 uut4_uut33_2 -mode no switchport -ipv4_addr 111.1.1.1 -ipv4_prf_len 24 -ipv6_addr 111:1:1::1 -ipv6_prf_len 64 -ospf True -ospfv3 True
+            uut33:
+                port-channel101: -memberlist uut33_uut1_1 uut33_uut1_2 -mode no switchport -ipv4_addr 107.1.1.2 -ipv4_prf_len 24 -ipv6_addr 107:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel201: -memberlist uut33_uut2_1 uut33_uut2_2 -mode no switchport -ipv4_addr 108.1.1.2 -ipv4_prf_len 24 -ipv6_addr 108:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True
+                port-channel301: -memberlist uut33_uut4_1 uut33_uut4_2 -mode no switchport -ipv4_addr 111.1.1.2 -ipv4_prf_len 24 -ipv6_addr 111:1:1::2 -ipv6_prf_len 64 -ospf True -ospfv3 True                

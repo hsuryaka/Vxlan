@@ -1,0 +1,29 @@
+devices:
+  Paris1:
+    connections:
+      cli:
+        ip: 10.127.62.16
+        port: 2065
+        protocol: telnet
+    credentials:
+      default:
+        password: nbv12345
+        username: admin
+      enable:
+        password: nbv12345
+    os: nxos
+    type: nxos
+  Paris2:
+    connections:
+      cli:
+        ip: 10.127.62.16
+        port: 2066
+        protocol: telnet
+    credentials:
+      default:
+        password: nbv12346
+        username: admin
+      enable:
+        password: nbv12346
+    os: nxos
+    type: nxos

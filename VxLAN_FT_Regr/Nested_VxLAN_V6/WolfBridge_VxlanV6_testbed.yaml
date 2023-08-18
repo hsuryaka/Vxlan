@@ -1,0 +1,256 @@
+testbed:
+    name: WolfBridge-VxlanV6-testbed
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+        
+devices:
+    N9508_1:
+        os: nxos
+        type: VPC_VTEP
+        alias: uut1
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2005
+            b:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2007
+            vty:
+                protocol: telnet
+                ip: 10.197.127.71
+    N9508_2:
+        os: nxos
+        type: VPC_VTEP
+        alias: uut2
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2008
+            b:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2009
+            vty:
+                protocol: telnet
+                ip: 10.197.127.72
+
+    FAN-1:
+        os: nxos
+        type: L2_SWITCH
+        alias: uut3
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2023
+            vty:
+                protocol: telnet
+                ip: 10.197.127.74
+    N9504_1:
+        os: nxos
+        type: STANDALONE_VTEP
+        alias: uut4
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2021
+            b:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2022
+            vty:
+                protocol: telnet
+                ip: 10.197.127.73
+
+    SPINE:
+        os: nxos
+        type: SPINE
+        alias: uut33
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2010
+            vty:
+                protocol: telnet
+                ip: 10.197.127.70
+    ixia:
+        type: ixia
+        alias: TG1
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.197.127.16
+                tcl_server: 10.197.127.121
+                ixnetwork_tcl_server: 10.197.127.121
+                username: Administrator
+                reset: 1
+                
+topology:
+    uut1:
+        interfaces:
+            Eth2/31:
+                alias: uut1_uut33_1
+                link: uut1_uut33_1
+                type: ethernet
+            Eth2/32:
+                alias: uut1_uut33_2
+                link: uut1_uut33_2
+                type: ethernet          
+            Eth2/1/1:
+                alias: uut1_uut3_1
+                link: uut1_uut3_1
+                type: ethernet
+            Eth2/1/2:
+                alias: uut1_uut3_2
+                link: uut1_uut3_2
+                type: ethernet    
+            Eth2/17:
+                alias: uut1_uut2_1
+                link: uut1_uut2_1
+                type: ethernet   
+            Eth2/18:
+                alias: uut1_uut2_2
+                link: uut1_uut2_2
+                type: ethernet   
+            Eth2/19:
+                alias: uut1_uut2_3
+                link: uut1_uut2_3
+                type: ethernet                      
+            Eth2/11/1:
+                alias: uut1_TG1_1
+                link: uut1_TG1_1
+                type: ethernet
+    uut2:
+        interfaces:
+            Eth7/25:
+                alias: uut2_uut33_1
+                link: uut2_uut33_1
+                type: ethernet
+            Eth7/26:
+                alias: uut2_uut33_2
+                link: uut2_uut33_2
+                type: ethernet          
+            Eth7/1/1:
+                alias: uut2_uut3_1
+                link: uut2_uut3_1
+                type: ethernet
+            Eth7/1/2:
+                alias: uut2_uut3_2
+                link: uut2_uut3_2
+                type: ethernet    
+            Eth7/17:
+                alias: uut2_uut1_1
+                link: uut1_uut2_1
+                type: ethernet   
+            Eth7/18:
+                alias: uut2_uut1_2
+                link: uut1_uut1_2
+                type: ethernet   
+            Eth7/19:
+                alias: uut2_uut1_3
+                link: uut1_uut2_3
+                type: ethernet                      
+            Eth2/23:
+                alias: uut2_TG1_1
+                link: uut2_TG1_1
+                type: ethernet
+    uut3:
+        interfaces:
+            Eth1/49/1:
+                alias: uut3_uut2_1
+                link: uut2_uut3_1
+                type: ethernet
+            Eth1/49/2:
+                alias: uut3_uut2_2
+                link: uut2_uut3_2
+                type: ethernet
+            Eth1/45:
+                alias: uut3_uut1_1
+                link: uut1_uut3_1
+                type: ethernet
+            Eth1/46:
+                alias: uut3_uut1_2
+                link: uut1_uut3_2
+                type: ethernet
+            Eth1/54/1:
+                alias: uut3_TG1_1
+                link: uut3_TG1_1
+                type: ethernet
+    uut4:
+        interfaces:
+            Eth2/29:
+                alias: uut4_uut33_1
+                link: uut4_uut33_1
+                type: ethernet
+            Eth2/30:
+                alias: uut4_uut33_2
+                link: uut4_uut33_2
+                type: ethernet                          
+            Eth2/3:
+                alias: uut4_TG1_1
+                link: uut4_TG1_1
+                type: ethernet
+    uut33:
+        interfaces:
+            Eth1/25:
+                alias: uut33_uut2_1
+                link: uut2_uut33_1
+                type: ethernet
+            Eth1/26:
+                alias: uut33_uut2_2
+                link: uut2_uut33_2
+                type: ethernet
+            Eth1/53:
+                alias: uut33_uut1_1
+                link: uut1_uut33_1
+                type: ethernet
+            Eth1/54:
+                alias: uut33_uut1_2
+                link: uut1_uut33_2
+                type: ethernet
+            Eth1/29:
+                alias: uut33_uut4_1
+                link: uut4_uut33_1
+                type: ethernet
+            Eth1/30:
+                alias: uut33_uut4_2
+                link: uut4_uut33_2
+                type: ethernet
+    TG1:
+        interfaces:
+            3/2:
+                alias: TG1_uut2_1
+                link: uut2_TG1_1 
+                type: ethernet
+            3/1:
+                alias: TG1_uut1_1
+                link: uut1_TG1_1 
+                type: ethernet
+            3/5:
+                alias: TG1_uut3_1
+                link: uut3_TG1_1 
+                type: ethernet
+            3/3:
+                alias: TG1_uut4_1
+                link: uut4_TG1_1 
+                type: ethernet

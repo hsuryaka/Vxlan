@@ -1,0 +1,201 @@
+# ------------------------------------------------------
+#        Node List:
+#
+#            node01        : SPINE
+#            node02    : TECATE-1
+#            node03     : SUMPIN
+#            node04          : Fan2
+#            node05      : TECATE-2
+# ------------------------------------------------------                                   
+
+# ------------------------------------------------------
+# PIM Neighbor Verification
+# ------------------------------------------------------
+pim_neighbors: {}
+
+# ------------------------------------------------------
+# BGP Neighbor Verification
+# ------------------------------------------------------
+bgp_neighbors: 
+
+    node01:
+        total_peers: 15
+        total_established_peers: 15
+        vrf:
+            default:
+                local_as: 4000
+                # vrf_peers: 3
+                # vrf_established_peers: 12
+                router_id: 10.5.0.2
+                neighbor:
+                    10.10.10.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.11.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.12.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.13.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.22.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.23.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.24.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.25.2:
+                        state: established
+                        remote_as: 3000
+                    10.10.26.2:
+                        state: established
+                        remote_as: 5000
+                    10.10.27.2:
+                        state: established
+                        remote_as: 5000
+                    10.10.28.2:
+                        state: established
+                        remote_as: 5000
+                    10.10.29.2:
+                        state: established
+                        remote_as: 5000
+    node02:
+        total_peers: 10
+        total_established_peers: 10
+        vrf:
+            default:
+                local_as: 3000
+                # vrf_peers: 1
+                # vrf_established_peers: 1
+                router_id: 10.5.0.1
+                neighbor:
+                    10.10.10.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.11.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.12.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.13.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.34.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.35.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.40.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.41.1:                       
+                        state: established
+                        remote_as: 4000
+    node03:
+        total_peers: 10
+        total_established_peers: 10
+        vrf:
+            default:
+                local_as: 5000
+                # vrf_peers: 1
+                # vrf_established_peers: 1
+                router_id: 10.5.0.3
+                neighbor:
+                    10.10.26.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.27.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.28.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.29.1:
+                        state: established
+                        remote_as: 4000
+                    10.10.38.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.39.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.44.1:                       
+                        state: established
+                        remote_as: 4000
+                    10.10.45.1:                       
+                        state: established
+                        remote_as: 4000
+
+
+# ------------------------------------------------------
+# BGP L2VPN EVPN Summary Verification
+# ------------------------------------------------------
+bgp_l2vpn_evpn_summary: {}
+   
+# ------------------------------------------------------
+# NVE Peers Verification
+# ------------------------------------------------------
+nve_peers: 
+    node02:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                10.3.0.3:
+                    learn_type: CP
+                    peer_state: up
+    node03:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                10.3.0.1:
+                    learn_type: CP
+                    peer_state: up
+            peer_ip:
+                10.3.0.2:
+                    learn_type: CP
+                    peer_state: up
+            peer_ip:
+                10.3.0.4:
+                    learn_type: CP
+                    peer_state: up
+    
+    node05:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                10.3.0.3:
+                    learn_type: CP
+                    peer_state: up
+
+
+# ------------------------------------------------------
+# Collect Logs
+# ------------------------------------------------------
+# collect_log:
+    node01:
+        - show bgp sessions
+        - show ip bgp summary
+    node02:
+        - show nve peers
+#        show ospfv3 neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        
+    node03:
+        - show nve peers
+#          show ospfv3 neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        
+    
+# ------------------------------------------------------
+# Error Logs Check - Exclude Patter
+# ------------------------------------------------------
+err_log_check_exclude_pattern: ''

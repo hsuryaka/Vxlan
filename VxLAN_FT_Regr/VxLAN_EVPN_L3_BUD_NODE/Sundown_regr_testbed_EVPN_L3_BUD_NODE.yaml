@@ -1,0 +1,339 @@
+testbed:
+    name: VxLAN_EVPN_L3_BUD_NODE
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+        enable:
+            password: nbv12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 64.103.221.184
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123
+        ntp:
+            server: 1.2.3.4
+devices:
+    SPINE:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            port: 2041
+            ip: "10.197.127.14"
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.57
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2039
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          
+          alt:
+            protocol: telnet
+            ip: 10.197.127.53
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-2:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2040
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+         
+          alt:
+            protocol: telnet
+            ip: 10.197.127.54
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Seoul-1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2035
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+         
+          alt:
+            protocol: telnet
+            ip: 10.197.127.51
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    END-NODE-FX2:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2010
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.79
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.16"
+          alt:
+            ip: "10.197.127.121"
+            port: 8009
+            protocol: telnet
+topology:
+    SPINE:
+        interfaces:
+            SPINE_to_LEAF-1_1:
+                intf: Ethernet1/16
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_2:
+                intf: Ethernet1/17
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_3:
+                intf: Ethernet1/18
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-1_4:
+                intf: Ethernet1/19
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 211
+            SPINE_to_LEAF-2_1:
+                intf: Ethernet1/20
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_2:
+                intf: Ethernet1/21
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_3:
+                intf: Ethernet1/22
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-2_4:
+                intf: Ethernet1/23
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 212
+            SPINE_to_LEAF-3_1:
+                intf: Ethernet1/1
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+            SPINE_to_LEAF-3_2:
+                intf: Ethernet1/2
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+            SPINE_to_LEAF-3_3:
+                intf: Ethernet1/3
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 213
+    Sundown-1:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet1/9
+                link: LEAF-1_to_LEAF-2_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet1/10
+                link: LEAF-1_to_LEAF-2_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/1
+                link: LEAF-1_to_SPINE_1
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_2:
+                intf: Ethernet1/2
+                link: LEAF-1_to_SPINE_2
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_3:
+                intf: Ethernet1/3
+                link: LEAF-1_to_SPINE_3
+                type: ethernet
+                PO : 211
+            LEAF_to_SPINE_4:
+                intf: Ethernet1/4
+                link: LEAF-1_to_SPINE_4
+                type: ethernet
+                PO : 211
+            LEAF_to_FAN_1:
+                intf: Ethernet1/40
+                link: LEAF-1_to_FAN_1
+                type: ethernet
+                PO : 200
+            LEAF_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    Sundown-2:
+        interfaces:
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet1/9
+                link: LEAF-2_to_LEAF-1_PKA_1
+                type: ethernet
+            LEAF_to_MCT:
+                intf: Ethernet1/10
+                link: LEAF-2_to_LEAF-1_MCT_2
+                type: ethernet
+                PO : 100
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/1
+                link: LEAF-2_to_SPINE_1
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_2:
+                intf: Ethernet1/2
+                link: LEAF-2_to_SPINE_2
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_3:
+                intf: Ethernet1/3
+                link: LEAF-2_to_SPINE_3
+                type: ethernet
+                PO : 212
+            LEAF_to_SPINE_4:
+                intf: Ethernet1/4
+                link: LEAF-2_to_SPINE_4
+                type: ethernet
+                PO : 212
+            LEAF_to_FAN_1:
+                intf: Ethernet1/41
+                link: LEAF-2_to_FAN_1
+                type: ethernet
+                PO : 200
+    Seoul-1:
+        interfaces:
+            LEAF_to_SPINE_1:
+                intf: Ethernet1/1
+                link: LEAF-3_to_SPINE_1
+                type: ethernet
+                PO : 213
+            LEAF_to_SPINE_2:
+                intf: Ethernet1/2
+                link: LEAF-3_to_SPINE_2
+                type: ethernet
+                PO : 213
+            LEAF_to_SPINE_3:
+                intf: Ethernet1/3
+                link: LEAF-3_to_SPINE_3
+                type: ethernet
+                PO : 213
+            LEAF_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3
+    END-NODE-FX2:
+        interfaces:
+            FAN_to_LEAF-1_1:
+                intf: Ethernet1/40
+                link: FAN_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            FAN_to_LEAF-2_1:
+                intf: Ethernet1/41
+                link: FAN_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            FAN_to_IXIA:
+                intf: Ethernet1/48
+                link: FAN_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_FAN:
+                intf: 4/8
+                link: IXIA_to_FAN
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-3:
+                intf: 4/1
+                link: IXIA_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1:
+                intf: 4/3
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3

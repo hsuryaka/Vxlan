@@ -1,0 +1,683 @@
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#                   Testbed Details                                #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+testbed:
+    name: Abhinay_Setup
+    alias: arushike_qinvni_single-site_Vega_setup
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+    servers:
+        tftp:
+            server: 10.127.63.241.cisco.com
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: bgl-ads-4837.cisco.com
+            address: 64.104.151.214          
+    custom:
+        owner: Abhinay Tirumalapuram
+        contacts: arushike@cisco.com
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#    Node List:                                                    #
+#            node01_spine        : SPINE                           #
+#            node02_vpcVtep1     : VTEP-1                          #
+#            node03_vpcVtep2     : VTEP-2                          #
+#            node04_stdVtep3     : VTEP-3                          #
+#            node05_vpcFANOUT    : FANOUT                          #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#                   Device Details                                 #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+devices:
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #              Device - FX-SPINE - node01_spine        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    SPINE:
+        alias: node01_spine
+        type: n3k
+        platform: n3k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.12
+                port: 2015
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.197.127.75
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+        custom:
+            execute:
+                timeout: 240
+            configure:
+                timeout: 240
+            abstraction:
+                order: [os, platform]
+            gw: 10.197.127.1
+            msk: 24
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #           Device - VTEP-1 - node02_vpcVtep1          #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    VTEP-1:
+        alias: node02_vpcVtep1
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.12
+                port: 2018
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.197.127.78
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+        custom:
+            execute:
+                timeout: 240
+            configure:
+                timeout: 240
+            abstraction:
+                order: [os, platform]
+            gw: 10.197.127.1
+            msk: 24
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #           Device - VTEP-2 - node03_vpcVtep2          #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    VTEP-2:
+        alias: node03_vpcVtep2
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.12
+                port: 2003
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.197.127.107
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+        custom:
+            execute:
+                timeout: 240
+            configure:
+                timeout: 240
+            abstraction:
+                order: [os, platform]
+            gw: 10.197.127.1
+            msk: 24
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #           Device - VTEP-3 - node04_stdVtep3          #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    VTEP-3:
+        alias: node04_stdVtep3
+        type: n9k
+        platform: n9k
+        os: nxos
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.12
+                port: 2020
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+            vty:
+                protocol: ssh
+                ip: 10.197.127.27
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: true
+        custom:
+            execute:
+                timeout: 240
+            configure:
+                timeout: 240
+            abstraction:
+                order: [os, platform]
+            gw: 10.197.127.1
+            msk: 24
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #               Device - FANOUT - node05_vpcFANOUT     #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    QI-Access:
+        alias: node05_vpcFANOUT
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+            defaults:
+                class: unicon.Unicon
+            a:
+                protocol: telnet
+                ip: 10.197.127.12
+                port: 2005
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: false
+            vty:
+                protocol: telnet
+                ip: 10.197.127.112
+                service_attributes:
+                    execute:
+                        timeout: 240
+                    configure:
+                        timeout: 240
+                        bulk: false
+
+        custom:
+            execute:
+                timeout: 240
+            configure:
+                timeout: 240
+            abstraction:
+                order: [os, platform]
+            gw: 10.197.127.1
+            msk: 24
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                             TGEN Details                               #
+    # -----------------------------------------------------------------------#
+    # -----------------------------------------------------------------------#
+    #                             TGEN Port Mapping                          #
+    # -----------------------------------------------------------------------#
+    # PORT  -      Node Alias       -      Node Name      -   Device Port    #
+    # -----------------------------------------------------------------------#
+    # 4/9  -   node02_vpcVtep1     -        VTEP-1       -      1/48      #
+    # 4/10  -   node03_vpcVtep2     -        VTEP-2       -      1/48      #
+    # 4/12  -   node04_stdVtep3     -        VTEP-3       -      1/48        #
+    # 4/11  -   node05_vpcFANOUT    -        FANOUT       -      1/48        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    # VM Information
+    ixia:
+        type: ixia
+        alias: ixia
+        os: 'ixianative'
+        connections:   
+            tgn:
+                class: genie.trafficgen.ixianative.IxiaNative
+                ixnetwork_api_server_ip: 10.78.61.122
+                ixnetwork_tcl_port: 8009
+                ixnetwork_version: '9.10'
+                ixia_chassis_ip: 10.197.127.16
+                ixia_license_server_ip: 10.197.127.16
+                ixia_port_list: ['4/9','4/10','4/11','4/12']
+        custom:
+            config: NR3F_sqinvni_auto_arushike_working_latest.ixncfg
+
+    # ixia_restpy:
+    #    type: ixia
+    #    alias: ixia
+    #    os: windows
+    #    connections:
+    #        defaults:
+    #            class: lib.config.traffic.tgen_ixia_restpy_api.connection.IxiaRestpyConnection
+    #        restpy:
+    #            ixia_api_server_ip: 10.78.61.122
+    #            ixia_chassis_ip: 10.197.127.16
+    #            ClearConfig: True
+    #            LogLevel: info
+    #            RestPort: 11009
+
+  #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+  #    Node List:                                                    #
+  #            node01_spine        : SPINE                           #
+  #            node02_vpcVtep1     : VTEP-1                          #
+  #            node03_vpcVtep2     : VTEP-2                          #
+  #            node04_stdVtep3     : VTEP-3                          #
+  #            node05_vpcFANOUT    : FANOUT                          #
+  #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#                   Topology Details                               #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+topology:
+
+    # Node ID : node01_spine
+    SPINE:
+        interfaces:
+            # -- towards VTEP-1 as Link-1
+            Ethernet1/2/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_1
+                link: nd01_nd02_1_1
+            # -- towards VTEP-1 as Link-2
+            Ethernet1/2/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_2
+                link: nd01_nd02_1_2
+            # -- towards VTEP-1 as Link-3
+            Ethernet1/2/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_3
+                link: nd01_nd02_1_3
+            # -- towards VTEP-1 as Link-4
+            Ethernet1/2/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd02_1_4
+                link: nd01_nd02_1_4    
+            # -- towards VTEP-2 as Link-1
+            Ethernet1/10/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd03_1_1
+                link: nd01_nd03_1_1
+            # -- towards VTEP-2 as Link-2
+            Ethernet1/10/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd03_1_2
+                link: nd01_nd03_1_2
+            # -- towards VTEP-2 as Link-3
+            Ethernet1/10/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd03_1_3
+                link: nd01_nd03_1_3
+            # -- towards VTEP-2 as Link-4
+            Ethernet1/10/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd03_1_4
+                link: nd01_nd03_1_4   
+            # -- towards VTEP-3 as Link-1
+            Ethernet1/18/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_1
+                link: nd01_nd04_1_1     
+            # -- towards VTEP-3 as Link-2
+            Ethernet1/18/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_2
+                link: nd01_nd04_1_2
+            # -- towards VTEP-3 as Link-1
+            Ethernet1/18/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_3
+                link: nd01_nd04_1_3    
+            # -- towards VTEP-3 as Link-2
+            Ethernet1/18/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd01_nd04_1_4
+                link: nd01_nd04_1_4     
+
+    # Node ID : node02_vpcVtep1
+    VTEP-1:
+        interfaces:
+            # -- towards SPINE as Link-1
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_1
+                link: nd01_nd02_1_1
+            # -- towards SPINE as Link-2
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_2
+                link: nd01_nd02_1_2
+            # -- towards SPINE as Link-3
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_3
+                link: nd01_nd02_1_3
+            # -- towards SPINE as Link-4
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd01_1_4
+                link: nd01_nd02_1_4                 
+            # -- towards VTEP-2 as VPC Link-1
+            Ethernet1/21:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd03_1_1
+                link: nd02_nd03_1_1
+            # -- towards VTEP-2 as VPC Link-2
+            Ethernet1/22:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd03_1_2
+                link: nd02_nd03_1_2
+            # -- towards VTEP-2 as VPC Link-3
+            Ethernet1/23:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd03_1_3
+                link: nd02_nd03_1_3
+            # -- towards VTEP-2 as VPC Link-4
+            Ethernet1/24:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd03_1_4
+                link: nd02_nd03_1_4
+            # -- towards FANOUT as Link-1
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_1
+                link: nd02_nd05_1_1
+            # -- towards FANOUT as Link-2
+            Ethernet1/26:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_2
+                link: nd02_nd05_1_2
+            # -- towards FANOUT as Link-3
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_3
+                link: nd02_nd05_1_3
+            # -- towards FANOUT as Link-4
+            Ethernet1/28:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_nd05_1_4
+                link: nd02_nd05_1_4                  
+            # -- towards T.GEN
+            Eth1/48:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd02_tgen_1_1
+                link: nd02_tgen_1_1
+
+    # Node ID : node03_vpcVtep2
+    VTEP-2:
+        interfaces:
+            # -- towards SPINE as Link-1
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd01_1_1
+                link: nd01_nd03_1_1
+            # -- towards SPINE as Link-2
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd01_1_2
+                link: nd01_nd03_1_2
+            # -- towards SPINE as Link-3
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd01_1_3
+                link: nd01_nd03_1_3
+            # -- towards SPINE as Link-4
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd01_1_4
+                link: nd01_nd03_1_4                   
+            # -- towards VTEP-1 as VPC Link-1
+            Ethernet1/21:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd02_1_1
+                link: nd02_nd03_1_1
+            # -- towards VTEP-1 as VPC Link-2
+            Ethernet1/22:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd02_1_2
+                link: nd02_nd03_1_2
+            # -- towards VTEP-1 as VPC Link-3
+            Ethernet1/23:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd02_1_3
+                link: nd02_nd03_1_3
+            # -- towards VTEP-1 as VPC Link-4
+            Ethernet1/24:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd02_1_4
+                link: nd02_nd03_1_4
+            # -- towards FANOUT as Link-1
+            Ethernet1/29:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_1
+                link: nd03_nd05_1_1
+            # -- towards FANOUT as Link-2
+            Ethernet1/30:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_2
+                link: nd03_nd05_1_2
+            # -- towards FANOUT as Link-3
+            Ethernet1/31:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_3
+                link: nd03_nd05_1_3
+            # -- towards FANOUT as Link-3
+            Ethernet1/32:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_nd05_1_4
+                link: nd03_nd05_1_4                   
+            # -- towards T.GEN as Link-1
+            Eth1/48:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd03_tgen_1_1
+                link: nd03_tgen_1_1
+            # # -- towards T.GEN as Link-2
+            # Ethernet1/54/2:
+            #     type: ethernet
+            #     inf_speed: 10000
+            #     alias: nd03_tgen_1_2
+            #     link: nd03_tgen_1_2               
+
+    # Node ID : node04_stdVtep3
+    VTEP-3:
+        interfaces:
+            # -- towards SPINE as Link-1
+            Ethernet1/1:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_1
+                link: nd01_nd04_1_1
+            # -- towards SPINE as Link-2
+            Ethernet1/2:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_2
+                link: nd01_nd04_1_2
+            # -- towards SPINE as Link-3
+            Ethernet1/3:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_3
+                link: nd01_nd04_1_3
+            # -- towards SPINE as Link-4
+            Ethernet1/4:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_nd01_1_4
+                link: nd01_nd04_1_4                   
+            # -- towards T.GEN
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd04_tgen_1_1
+                link: nd04_tgen_1_1
+
+    # Node ID : node05_vpcFANOUT
+    QI-Access:
+        interfaces:
+            # -- towards VTEP-1 as Link-1
+            Ethernet1/25:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_1
+                link: nd02_nd05_1_1
+            # -- towards VTEP-1 as Link-2
+            Ethernet1/26:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_2
+                link: nd02_nd05_1_2
+            # -- towards VTEP-1 as Link-3
+            Ethernet1/27:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_3
+                link: nd02_nd05_1_3
+            # -- towards VTEP-1 as Link-4
+            Ethernet1/28:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd02_1_4
+                link: nd02_nd05_1_4                   
+            # -- towards VTEP-2 as Link-1
+            Ethernet1/29:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_1
+                link: nd03_nd05_1_1
+            # -- towards VTEP-2 as Link-2
+            Ethernet1/30:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_2
+                link: nd03_nd05_1_2 
+            # -- towards VTEP-2 as Link-3
+            Ethernet1/31:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_3
+                link: nd03_nd05_1_3
+            # -- towards VTEP-2 as Link-4
+            Ethernet1/32:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_nd03_1_4
+                link: nd03_nd05_1_4                  
+            # -- towards T.GEN
+            Ethernet1/48:
+                type: ethernet
+                inf_speed: 10000
+                alias: nd05_tgen_1_1
+                link: nd05_tgen_1_1
+            # Note : Using this Link as vpcPRIMARY Host-2
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    # TGEN Links                                                       #
+    # [4/9, 4/10, 4/11, 4/12]                                         #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    ixia:
+        interfaces:
+            # T.GEN towards VTEP-1
+            4/9:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd02_1_1
+                link: nd02_tgen_1_1
+                #intfname: 2to1
+            # T.GEN towads VTEP-2
+            4/10:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd03_1_1
+                link: nd03_tgen_1_1
+                #intfname: 3to1
+            # T.GEN to FANOUT
+            4/11:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd05_1_1
+                link: nd05_tgen_1_1
+                #intfname: 5to1
+            # T.GEN towads VTEP-3
+            4/12:
+                type: fiber
+                inf_speed: 100000
+                alias: tgen_nd04_1_1
+                link: nd04_tgen_1_1
+                #intfname: 4to1    

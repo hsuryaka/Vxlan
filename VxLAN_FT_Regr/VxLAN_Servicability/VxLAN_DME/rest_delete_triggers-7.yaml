@@ -1,0 +1,180 @@
+system_setup:
+    cfg_persistence: True
+    system_cfg:
+        1:
+            device_name: 'device-1'
+            file_path: '/auto/dc3/absr/pyats/users/absr/otm_infra/inputs/cfg_files/common_pre_test_input.cfg'
+test_attributes:
+    on_failure:
+        core_location: '/ws/pkanduri-bgl/cores/'
+
+testcase:
+    1:
+        id: "mac_add_static_nve_peer_ip_rest_delete"
+        description: "validate cli and rest Delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_delete_1"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                Operation: "delete"
+                trigger: "process_restart(nve), process_restart(policyelem)"
+                skip_phase: ['compare_pre_and_post_configurations']
+                #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+                local_persistence: True  
+                expected: 200
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                   depth:  5
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+    
+        mode: "rest"
+        yang: "none"
+        device_name: "device-1"
+        
+    2:
+        id: "mac_add_static_nve_peer_ip_rest_delete"
+        description: "validate cli and rest Delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_delete_2"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                Operation: "delete"
+                trigger: "interface_shut(nve1), interface_noshut(nve1)"
+                skip_phase: ['compare_pre_and_post_configurations']
+                #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+                local_persistence: True  
+                expected: 200
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                   depth:  5
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: False
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+    
+        mode: "rest"
+        yang: "none"
+        device_name: "device-1"
+        
+##    3:
+##        id: "mac_add_static_nve_peer_ip_rest_delete"
+##        description: "validate cli and rest Delete for mac address static on nve interface"
+##        feature:
+##            1:
+##                id: "mac_add_static_nve_peer_ip_rest_delete_3"
+##                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+##                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+##                Operation: "delete"
+###                trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+##                skip_phase: ['compare_pre_and_post_configurations']
+#                #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+#                local_persistence: False  
+#                expected: 200
+#                oper:
+#                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+#                   depth:  5
+#                   match: {'peerIpv4': '2.23.23.23'}
+#                   match_expected: True 
+#                show_verification:
+#                     1:
+#                          command: "sh run | i 'static 0011.0022.0033'"
+#                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+#    
+#        mode: "rest"
+#        yang: "none"
+#        device_name: "device-1"
+        
+    3:
+        id: "mac_add_static_nve_peer_ip_rest_delete"
+        description: "validate cli and rest Delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_delete_4"
+                dn: "/api/mo/sys/mac/static/vni-10001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                Operation: "delete"
+                trigger: "reload_ascii"
+                skip_phase: ['compare_pre_and_post_configurations']
+                #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+                local_persistence: False  
+                expected: 200
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                   depth:  5
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True 
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+    
+        mode: "rest"
+        yang: "none"
+        device_name: "device-1"
+
+
+    4:
+        id: "mac_add_static_nve_peer_ip_rest_delete"
+        description: "validate cli and rest Delete for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_delete_4"
+                dn: "/api/mo/sys/mac/static/vni-10001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                Operation: "delete"
+                trigger: "reload"
+                skip_phase: ['compare_pre_and_post_configurations']
+                #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+                local_persistence: False
+                expected: 200
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                   depth:  5
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+
+        mode: "rest"
+        yang: "none"
+        device_name: "device-1"
+
+
+    #5:
+    #    id: "mac_add_static_nve_peer_ip_rest_delete"
+    #    description: "validate cli and rest Delete for mac address static on nve interface"
+    #    feature:
+    #        1:
+    #            id: "mac_add_static_nve_peer_ip_rest_delete_3"
+    #            dn: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+    #            command: "mac address-table static 0011.0022.0033 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+    #            Operation: "delete"
+    #            trigger: "issu(bootflash://nxos.10.1.0.20.bin.upg)"
+    #            skip_phase: ['compare_pre_and_post_configurations']
+    #            #skip_phase: ['configure_via_CLI','unconfigure_CLI','compare_pre_and_post_configurations']
+    #            local_persistence: False  
+    #            expected: 200
+    #            oper:
+    #               object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+    #               depth:  5
+    #               match: {'peerIpv4': '2.23.23.23'}
+    #               match_expected: True 
+    #            show_verification:
+    #                 1:
+    #                      command: "sh run | i 'static 0011.0022.0033'"
+    #                      expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/delete-mac-static.txt"
+    #
+    #    mode: "rest"
+    #    yang: "none"
+    #    device_name: "device-1"

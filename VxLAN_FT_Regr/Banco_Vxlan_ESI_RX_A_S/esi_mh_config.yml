@@ -1,0 +1,195 @@
+
+parameters:
+    running_config_templates:
+       node01: node01_updated.cfg
+       node02: node02_updated.cfg
+       node03: node03_updated.cfg
+       node04: node04_updated.cfg
+       node05: node05_updated.cfg
+       node06: node06_updated.cfg
+    add_cloudsec_config:
+       node02: |
+          interface loopback21
+              ip address 100.100.200.1/32
+
+          feature tunnel-encryption
+          tunnel-encryption must-secure-policy
+          tunnel-encryption source-interface loopback21
+          evpn multisite border-gateway 200
+               dci-advertise-pip
+          interface port-channel11
+             tunnel-encryption
+          interface port-channel111
+             tunnel-encryption
+          interface {{nd02_nd04_1_1}}
+             tunnel-encryption
+          interface {{nd02_nd04_1_2}}
+             tunnel-encryption
+          key chain kc1 tunnel-encryption
+            key 1000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+            key 2000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+          key chain kc2 tunnel-encryption
+            key 1000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585440 cryptographic-algorithm AES_128_CMAC
+            key 2000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+          tunnel-encryption policy kc1
+            cipher-suite GCM-AES-XPN-128
+            sak-rekey-time 2500000
+          tunnel-encryption policy kc2
+            cipher-suite GCM-AES-XPN-128
+            sak-rekey-time 2500000
+          tunnel-encryption peer-ip 100.100.100.1
+            keychain kc1 policy kc1
+          tunnel-encryption peer-ip 100.100.100.4
+            keychain kc2 policy kc2
+       node01: |
+          feature tunnel-encryption
+          interface loopback21
+             ip address 100.100.101.1/32
+          ip prefix-list pip_ip seq 6 permit 100.100.100.4/32
+          ip prefix-list pip_ip seq 7 permit 100.100.201.1/32
+          route-map pip_ip permit 5
+            match ip address prefix-list pip_ip
+            set as-path prepend 1000 1000 1000 1000
+          ip prefix-list pfx100-1 seq 5 permit 100.100.100.1/32 
+          ip prefix-list pfx100-1 seq 10 permit 90.90.90.1/32 
+          ip prefix-list pfx100-4 seq 5 permit 100.100.100.4/32 
+          ip prefix-list pfx100-4 seq 10 permit 90.90.90.1/32
+          route-map MED permit 10
+            match ip address prefix-list pfx100-1 
+            set metric 100 
+          route-map MED permit 20
+            match ip address prefix-list pfx100-4 
+            set metric 200
+          route-map pip_ip permit 6
+          key chain kc1 tunnel-encryption
+            key 1000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+            key 2000
+              key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+          evpn multisite border-gateway 100
+              dci-advertise-pip
+
+          tunnel-encryption source-interface loopback21
+          tunnel-encryption policy kc1
+            cipher-suite GCM-AES-XPN-128
+            sak-rekey-time 2500000
+          tunnel-encryption peer-ip 100.100.100.2
+            keychain kc1 policy kc1
+          interface port-channel11
+            tunnel-encryption
+          interface port-channel111
+            tunnel-encryption
+          router bgp 1000
+             neighbor 1.2.1.2
+               address-family ipv4 unicast
+                 ! -- route-map pip_ip out
+                 route-map MED out
+             neighbor 1.2.2.2
+               address-family ipv4 unicast
+                 ! -- route-map pip_ip out
+                 route-map MED out
+
+       node04: |
+          feature tunnel-encryption
+          interface loopback21
+            ip address 100.100.201.1/32
+          ip prefix-list pip_ip seq 5 permit 100.100.100.1/32
+          ip prefix-list pip_ip seq 6 permit 100.100.101.1/32
+          route-map pip_ip permit 5
+            match ip address prefix-list pip_ip
+            set as-path prepend 1000 1000 1000
+          ip prefix-list pfx100-1 seq 5 permit 100.100.100.1/32 
+          ip prefix-list pfx100-1 seq 10 permit 90.90.90.4/32 
+          ip prefix-list pfx100-4 seq 5 permit 100.100.100.4/32 
+          ip prefix-list pfx100-4 seq 10 permit 90.90.90.4/32
+          route-map MED permit 10
+            match ip address prefix-list pfx100-1 
+            set metric 100 
+          route-map MED permit 20
+            match ip address prefix-list pfx100-4 
+            set metric 200
+          route-map pip_ip permit 6
+          tunnel-encryption source-interface loopback21
+          key chain kc2 tunnel-encryption
+             key 1000
+               key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+             key 2000
+               key-octet-string 7 075e731f1a5c4f524f43595f507f7d73706267714752405459070b0b0701585419 cryptographic-algorithm AES_128_CMAC
+          evpn multisite border-gateway 100
+              dci-advertise-pip
+          tunnel-encryption policy kc2
+            cipher-suite GCM-AES-XPN-128
+            sak-rekey-time 2500000
+          tunnel-encryption peer-ip 100.100.100.2
+            keychain kc2 policy kc2
+          interface port-channel64
+            tunnel-encryption
+          interface {{nd04_nd02_1_1}}
+            tunnel-encryption
+          interface {{nd04_nd02_1_2}}
+            tunnel-encryption
+          router bgp 1000
+            neighbor 4.2.1.2
+              address-family ipv4 unicast
+                ! -- route-map pip_ip out
+                route-map MED out
+            neighbor 4.2.2.2
+              address-family ipv4 unicast
+                ! -- route-map pip_ip out
+                route-map MED out
+
+
+    remove_cloudsec_config:
+       node02: |
+          no feature tunnel-encryption
+          sleep 80
+          evpn multisite border-gateway 200
+               no dci-advertise-pip
+
+       node01: |
+          no feature tunnel-encryption
+          sleep 80
+          evpn multisite border-gateway 100
+              no dci-advertise-pip
+          no ip prefix-list pfx100-1 seq 5 permit 100.100.100.1/32 
+          no ip prefix-list pfx100-1 seq 10 permit 90.90.90.4/32 
+          no ip prefix-list pfx100-4 seq 5 permit 100.100.100.4/32 
+          no ip prefix-list pfx100-4 seq 10 permit 90.90.90.4/32
+          no route-map MED permit 10
+          no route-map MED permit 20
+          router bgp 1000
+             neighbor 1.2.1.2
+               address-family ipv4 unicast
+                 ! -- route-map pip_ip out
+                 no route-map MED out
+             neighbor 1.2.2.2
+               address-family ipv4 unicast
+                 ! -- route-map pip_ip out
+                 no route-map MED out
+
+       node04: |
+          no feature tunnel-encryption
+          sleep 80
+          evpn multisite border-gateway 100
+              no dci-advertise-pip
+          no ip prefix-list pfx100-1 seq 5 permit 100.100.100.1/32 
+          no ip prefix-list pfx100-1 seq 10 permit 90.90.90.4/32 
+          no ip prefix-list pfx100-4 seq 5 permit 100.100.100.4/32 
+          no ip prefix-list pfx100-4 seq 10 permit 90.90.90.4/32
+          no route-map MED permit 10
+          no route-map MED permit 20
+          router bgp 1000
+            neighbor 4.2.1.2
+              address-family ipv4 unicast
+                ! -- route-map pip_ip out
+                no route-map MED out
+            neighbor 4.2.2.2
+              address-family ipv4 unicast
+                ! -- route-map pip_ip out
+                no route-map MED out
+
+

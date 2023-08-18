@@ -1,0 +1,3033 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+###################################################################
+###                  Initial Configurations                     ###
+###################################################################
+
+# Initialize TB to get ints and data files
+InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+        #datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_config.yaml)}"
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_IXIA_Triggers_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_FHS/VxLAN_FHS_verify.yaml)}"
+    testsuite_support_min_version: 7.0(3.0)
+    new_l3_vni_min_version: 10.2(2)
+
+#Common Setup to configure the VxLAN
+CommonSetup:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+
+# TcamCarvingAndReload:
+#     source:
+#         pkg: lib.triggers.tcam_config.tcam_config
+#         class: TcamCarvingAndReload
+#     trigger_wait_time: 700
+#     timeout: 700
+ClearARP:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: '5'
+    convergence_time: '30'
+
+ParseConfigs:
+    source:
+        pkg: FHS_Script
+        class: ParseConfigs
+    configurationFile: VxLAN_FHS_ixia_traffic.yml
+    device_dut:
+        - node01
+        - node02
+        - node03
+
+ConfigureIxiaTopo1:
+    source:
+        pkg: FHS_Script
+        class: ConfigureIxiaTopo1
+    configurationFile: VxLAN_FHS_ixia_traffic.yml
+
+ClearARP_1:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    device_dut:
+        - node01
+        - node02
+        - node03
+    trigger_wait_time: '5'
+    convergence_time: '30'
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: release_client
+
+# Trigger 1 Access port flap - shut no shut
+# Trigger 8 vPC Port flap - shut no shut
+TRIGGER_001_008:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_1_8
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPH
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+        post:
+            stopClient_Post:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_Post1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_Post1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_Post1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_Post1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_Post1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_Post1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 3 Access Port - Remove add configs 
+# Reconfigure with config replace
+TRIGGER_003_043:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_3_43
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+        post:
+            stopClient_Post:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_Post1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_Post1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_Post1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_Post1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_Post1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_Post1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 3 Access Port - Remove add configs
+# Trigger 10 vPC port -Remove add configs 
+TRIGGER_003_010:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_3_10
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPH
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03    
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+        post:
+            releaseClient:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_Post1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_Post1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_Post:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_Post1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_Post1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_Post1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 4 Uplink/L3 interface flap - shut no shut
+TRIGGER_TC004:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_4
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - Ethernet1/27
+            - Ethernet1/28
+        node02:
+            - Ethernet1/37
+            - Ethernet1/38
+        node03:
+            - Ethernet1/3
+            - Ethernet1/4
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+        post:
+            stopClient_Post:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_Post1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_Post1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_Post1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_Post1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_Post1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_Post1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    
+# Trigger 5 Uplink/L3 interface flap - remote shut no shut
+TRIGGER_TC005:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_5
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    spine: node05_spine
+    spine_intf_list:
+        - Ethernet1/107/1
+        - Ethernet1/107/2
+        - Ethernet1/107/4
+        - Ethernet1/98/2
+        - Ethernet1/3
+        - Ethernet1/4
+    traffic_wait_time: 40
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient_Pre:
+                pkg: FHS_Script
+                method: release_client
+            clearARP_Pre:
+                pkg: FHS_Script
+                method: clear_ARP
+                parameters:
+                    device_dut:
+                        - node01
+                        - node02
+                        - node03
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient_post:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP_Post:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_Post1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_Post1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_Post1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_Post1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_Post1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_Post1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 6 Uplink/L3 ip address change
+TRIGGER_TC006:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_6
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    intf_list:
+        node01:
+            - Ethernet1/27
+            - Ethernet1/28
+        node02:
+            - Ethernet1/37
+            - Ethernet1/38
+        node03:
+            - Ethernet1/3
+            - Ethernet1/4
+    convergence_time: 30
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 7 Uplink/L3 interface - Remove add configs
+TRIGGER_TC007:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_7
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    intf_list:
+        node01:
+            - Ethernet1/27
+            - Ethernet1/28
+        node02:
+            - Ethernet1/37
+            - Ethernet1/38
+        node03:
+            - Ethernet1/3
+            - Ethernet1/4
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 11 MCT flapp
+TRIGGER_TC011:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_11
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - Ethernet1/25
+        node02:
+            - Ethernet1/25
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 12  vTEP loopback shut no shut
+TRIGGER_TC012:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_12
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - loopback0
+            - loopback1
+        node02:
+            - loopback0
+            - loopback1
+        node03:
+            - loopback0
+            - loopback1
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 13 loopback IP remove / add
+TRIGGER_TC013:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_13
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - loopback0
+            - loopback1
+        node02:
+            - loopback0
+            - loopback1
+        node03:
+            - loopback0
+            - loopback1
+    traffic_wait_time: 120
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 14 loopback IP change
+TRIGGER_TC014:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_14
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - loopback0
+            - loopback1
+        node02:
+            - loopback0
+            - loopback1
+        node03:
+            - loopback0
+            - loopback1
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 15 loopback remove / add 
+TRIGGER_TC015:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_15
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    intf_list:
+        node01:
+            - loopback0
+            - loopback1
+        node02:
+            - loopback0
+            - loopback1
+        node03:
+            - loopback0
+            - loopback1
+    convergence_time: 60
+    processors:
+        pre:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 16 nve shut
+TRIGGER_TC016:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_16
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    convergence_time: 60
+    processors:
+        pre:
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            releaseClient:
+                pkg: FHS_Script
+                method: release_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_2:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 17 nve remove/add
+TRIGGER_TC017:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_17
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPHAN
+    device_dut:
+        - node01
+        - node02
+        - node03
+    convergence_time: 60
+    processors:
+        pre:
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+        post:
+            WaitForConvergence_1:
+                pkg: FHS_Script
+                method: WaitForConvergence
+                parameters:
+                    convergence_time: 120
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            releaseClient:
+                pkg: FHS_Script
+                method: release_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient_1:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence_2:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            modifyTraffic_1:
+                pkg: FHS_Script
+                method: modifyTraffic
+            verifyTraffic_1:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic_1:
+                pkg: FHS_Script
+                method: stopTraffic
+            verifyFHS_1:
+                pkg: FHS_Script
+                method: verifyFHS
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 18A vlan flap
+TRIGGER_TC018A:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapVlanRange
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    vlan_range: '2001-2002'
+    traffic_wait_time: 120
+    converge_time: 60
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 18B SVI flap
+TRIGGER_TC018B:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPH
+    svi_range: '2001-2002'
+    traffic_wait_time: 120
+    convergence_time: 60
+    converge_time: 60
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger 19 vrf flap
+TRIGGER_TC019:
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    vrfs: ['VRF-1']
+    traffic_wait_time: 120
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    
+# Process Restart am - adgj_mgr
+TRIGGER_TC020:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "adjmgr"
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart arp
+TRIGGER_TC021:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "arp"
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart bgp
+TRIGGER_TC022:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "bgp"
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart dhcp snooping - dhcp_snoop
+# TC Status: Failed, need to file bug
+TRIGGER_TC023:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "dhcp_snoop"
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+        - VPC1
+        - VPC2
+        - LEAF2-ORPH
+    trigger_wait_time: 60
+    convergence_time: 180
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart hmm
+TRIGGER_TC024:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "hmm"
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart l2fm
+TRIGGER_TC025:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "l2fm"
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart l2rib
+TRIGGER_TC026:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "l2rib"
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Process Restart mtm - mts_mgr
+TRIGGER_TC027:
+    source:
+        pkg: FHS_Script
+        class: Process_Restart
+    device_dut:
+        - node01
+        - node02
+        - node03
+    process: "mts_mgr"
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear ip arp *
+TRIGGER_TC029:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear ip arp
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    vrf_list: 
+        - VRF-1
+    trigger_wait_time: 30
+    convergence_time: 120
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear mac address-table dynamic
+TRIGGER_TC030:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear mac address-table dynamic
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 30
+    convergence_time: 120
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear IGP
+TRIGGER_TC031:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear ip ospf neighbor *
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 30
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear bgp tables
+TRIGGER_TC032:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear ip bgp *
+        - clear bgp l2 evpn *
+    traffic_intf_list:
+        - LEAF2
+        - VPC2
+    trigger_wait_time: 30
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear bgp peering
+TRIGGER_TC033:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear bgp all *
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 30
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: clear ip mroute
+TRIGGER_TC034:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear ip mroute *
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 30
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: remove add ip dhcp snooping trust from access interface
+TRIGGER_TC035:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemAddCLI
+    device_dut:
+        - node04
+    copy_r_s: True
+    cli_execute: 'interface e1/47 ; no ip dhcp snooping trust'
+    traffic_intf_list:
+        - LEAF2
+        - VPC2
+    trigger_wait_time: 30
+    convergence_time: 180
+    convergence_wait_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+TRIGGER_TC036:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_36
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    intf_list:
+        node01:
+            - Ethernet1/47
+            - Ethernet1/48
+        node02:
+            - Ethernet1/47
+        node03:
+            - Ethernet1/103
+            - Ethernet1/101
+    trigger_wait_time: 30
+    convergence_time: 300
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: remove feature nv overly & nve overlay evpn
+TRIGGER_TC037:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemAddCLI
+    device_dut:
+        - node01
+        - node02
+        - node03
+    cli_execute: 'no feature nv overlay ; no nv overlay evpn'
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    convergence_time: 300
+    convergence_wait_time: 300
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: remove feature dhcp
+TRIGGER_TC038:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemAddCLI
+    device_dut:
+        - node01
+        - node02
+        - node03
+    cli_execute: 'no feature dhcp'
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_time: 120
+    convergence_wait_time: 300
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: multiple clear triggers
+TRIGGER_TC039:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear mac address-table dynamic
+        - clear ip arp vrf VRF-1 force-delete
+        - clear ip dhcp snooping binding
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: Uplink Shut VpcPo Shut Ztraffic
+TRIGGER_TC040:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.UplinkShutVpcPoShutZtraffic
+    device_dut:
+        - node01
+        - node02
+    uplink_list:
+        - Port-channel11
+        - nd01_nd05_1_1
+        - nd01_nd05_1_2
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    converge_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: Uplink No Shut VpcPo NoShut Ztraffic
+TRIGGER_TC041:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.UplinkNoShutVpcPoNoShutZtraffic
+    device_dut:
+        - node01
+        - node02
+    uplink_list:
+        - Port-channel12
+        - nd01_nd05_1_1
+        - nd01_nd05_1_2
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    trigger_wait_time: 60
+    converge_time: 180
+    loss: 5.0
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: VPC failover - Primary to Secondary role change
+TRIGGER_TC042_A:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node01
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    vpc_role_priority: 3002
+    trigger_wait_time: 60
+    convergence_time: 180
+    vpc_dut: 'primary'
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: VPC failover - Secondary to primary role change
+TRIGGER_TC042_B:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node01
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    vpc_role_priority: 3000
+    vpc_dut: 'secondary'
+    trigger_wait_time: 30
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            verifyNVEPeers:
+                pkg: src.forwarding.vxlan.vxlan_verify
+                method: verify_nve_peers
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: trunk to access
+TRIGGER_TC044:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_44
+    device_dut:
+        - node01
+        - node02
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC1
+        - LEAF2
+    intf_list:
+        node01:
+            - Ethernet1/47
+            - port-channel11
+        node02:
+            - Ethernet1/47
+            - port-channel11
+        node03:
+            - Ethernet1/103
+    trigger_wait_time: 60
+    convergence_time: 180
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: access to trunk
+TRIGGER_TC045:
+    source:
+        pkg: FHS_Script
+        class: TRIGGER_45
+    device_dut:
+        - node01
+        - node03
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC2
+    intf_list:
+        node01:
+            - Ethernet1/48
+            - port-channel12
+        node01:
+            - port-channel12
+        node03:
+            - Ethernet1/101
+    trigger_wait_time: 120
+    convergence_time: 180
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyTraffic:
+                pkg: FHS_Script
+                method: verifyTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: Remove add member vni on interface nve1
+TRIGGER_TC046:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemAddCLI
+    device_dut:
+        - node01
+        - node02
+        - node03
+    copy_r_s: True
+    cli_execute: 'interface nve1 ; no member vni 2002001-2002002 ; no member vni 3003001 associate-vrf'
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_wait_time: 60
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: Remove / Add VRF
+TRIGGER_TC047:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddVrf
+    device_dut:
+        - node01
+        - node02
+        - node03
+    copy_r_s: True
+    cli_to_parse:
+        - vrf context VRF-1
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    wait_time: 60
+    convergence_time: 180
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: Clear mac, arp snooping table and then do multiple DORA
+TRIGGER_TC048:
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+        - node02
+        - node03
+    clear_cmd_lst:
+        - clear mac address-table dynamic
+        - clear ip arp vrf VRF-1 force-delete
+        - clear ip dhcp snooping binding
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    trigger_wait_time: 60
+    convergence_time: 60
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: EOR switchover
+TRIGGER_TC050:
+    source:
+        pkg: genie.libs.sdk.triggers.ha.switchover.nxos.switchover
+        class: TriggerSwitchover
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN1
+        - VPC2
+    timeout:
+      max_time: 800
+      interval: 60
+    drop: True
+    trigger_wait_time: 60
+    convergence_time: 180
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            clearARP:
+                pkg: FHS_Script
+                method: clear_ARP
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            WaitForConvergence:
+                pkg: FHS_Script
+                method: WaitForConvergence
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: FM Reload
+TRIGGER_TC051:
+    source:
+        pkg: genie.libs.sdk.triggers.ha.reload.nxos.reload
+        class: TriggerReloadFabricModule
+    device_dut:
+        - node01
+        - node02
+        - node03
+    traffic_intf_list:
+        - ORPHAN2
+        - VPC1
+    timeout:
+      max_time: 800
+      interval: 60
+    num_values:
+        oc: '1'
+    drop: True
+    trigger_wait_time: 60
+    convergence_time: 180
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            # stopClient:
+            #     pkg: FHS_Script
+            #     method: stop_client
+            # startClient:
+            #     pkg: FHS_Script
+            #     method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# TRIGGER: EOR Lince Card Reload
+TRIGGER_TC054_A:
+    source:
+        pkg: lib.triggers.flap
+        class: eor_triggers.ReloadLC
+    device_dut:
+        - node01
+    traffic_intf_list:
+        - ORPHAN1
+        - ORPHAN2
+    intf_list:
+        - nd01_nd05_1_1
+    drop: True
+    processors:
+        pre:
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            clearSnoopStats:
+                pkg: FHS_Script
+                method: clearSnoopingStats
+            startContinuousTraffic:
+                pkg: FHS_Script
+                method: startContTraffic
+        post:
+            stopClient:
+                pkg: FHS_Script
+                method: stop_client
+            startClient:
+                pkg: FHS_Script
+                method: start_client
+            verifyFHS:
+                pkg: FHS_Script
+                method: verifyFHS
+            verifyContinuousTraffic:
+                pkg: FHS_Script
+                method: verifyContTraffic
+            stopTraffic:
+                pkg: FHS_Script
+                method: stopTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+CleanUp:
+    source:
+        pkg: FHS_Script
+        class: CLEAN_UP
+    
+    processors:
+        post:
+            stopServerClient:
+                pkg: FHS_Script
+                method: stop_client
+            stopServer:
+                pkg: FHS_Script
+                method: stop_server
+
+CommonCleanup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup

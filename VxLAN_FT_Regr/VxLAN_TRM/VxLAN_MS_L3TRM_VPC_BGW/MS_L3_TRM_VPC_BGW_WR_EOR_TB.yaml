@@ -1,0 +1,848 @@
+testbed:
+    name: multisite_testbed
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+
+devices:
+    N9508_1:
+        type: 'Site1_VPC_BGW_1'
+        os: 'nxos'
+        alias: uut1
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2008
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2009
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.71
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9508_2:
+        type: 'Site1_VPC_BGW_2'
+        os: 'nxos'
+        alias: uut2
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2005
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2007
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.72
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    FAN-1:
+        type: 'Site1_vpc_access_switch'
+        os: 'nxos'
+        alias: uut3
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2023
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.76
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    WFR_SPINE:
+        type: 'Site1_Spine_1'
+        os: 'nxos'
+        alias: uut4
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2003
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.70
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9504_1:
+        type: 'Site1_Leaf_1'
+        os: 'nxos'
+        alias: uut5
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2019
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2020
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.73
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-1:
+        type: 'Site2_BGW_1'
+        os: 'nxos'
+        alias: uut6
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2039
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.53
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-2:
+        type: 'Site2_Leaf_1'
+        os: 'nxos'
+        alias: uut7
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2040
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.54
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-3:
+        type: 'Site3_BGW_1'
+        os: 'nxos'
+        alias: uut8
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2013
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.225.127.101
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Seoul-2:
+        type: 'Site3_LEAF_1'
+        os: 'nxos'
+        alias: uut9
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2036
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.52
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    EXT-RP-GX-TOR-1:
+        type: 'DCI-CORE-01'
+        os: 'nxos'
+        alias: uut10
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2015
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.81
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    L3-EXT-DCI-GX-TOR-2:
+        type: 'DCI-CORE-02'
+        os: 'nxos'
+        alias: uut11
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2016
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.82
+            prompts:
+                login: r'login:'
+                password: r'Password:'         
+    END-NODE-FX2:
+        type: 'External-Router'
+        os: 'nxos'
+        alias: uut12
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2010
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          vty:
+            protocol: telnet
+            ip: 10.197.127.79
+            prompts:
+                login: r'login:'
+                password: r'Password:' 
+    ixia:
+        type: ixia
+        alias: TG1
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.197.127.16
+                tcl_server: 10.197.127.122
+                ixnetwork_tcl_server: 10.197.127.122
+                username: Administrator
+                reset: 1               
+topology:
+    uut1:
+        interfaces:
+            #----- VPC-BGW-1 to VPC-BGW-2
+            # = GX 400G breakout Links
+            Eth4/1/1:
+                alias: uut1_uut2_1
+                link: uut1_uut2_1
+                type: ethernet
+            Eth4/1/2:
+                alias: uut1_uut2_2
+                link: uut1_uut2_2
+                type: ethernet
+            Eth4/1/3:
+                alias: uut1_uut2_3
+                link: uut1_uut2_3
+                type: ethernet
+            Eth4/1/4:
+                alias: uut1_uut2_4
+                link: uut1_uut2_4
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/1:
+                alias: uut1_uut2_5
+                link: uut1_uut2_5
+                type: ethernet
+            #----- VPC-BGW-1 to ACCESS
+            # = GX Links
+            Eth4/10:
+                alias: uut1_uut3_1
+                link: uut1_uut3_1
+                type: ethernet
+            Eth4/11:
+                alias: uut1_uut3_2
+                link: uut1_uut3_2
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/20:
+                alias: uut1_uut3_3
+                link: uut1_uut3_3
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth2/9:
+                alias: uut1_uut3_4
+                link: uut1_uut3_4
+                type: ethernet
+            #----- VPC-BGW-1 to SPINE
+            # = GX Link
+            Eth4/3:
+                alias: uut1_uut4_1
+                link: uut1_uut4_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth2/19:
+                alias: uut1_uut4_2
+                link: uut1_uut4_2
+                type: ethernet
+            #----- VPC-BGW-1 to DCI-1
+            # = GX Link
+            Eth4/6:
+                alias: uut1_uut10_1
+                link: uut1_uut10_1
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/9:
+                alias: uut1_uut10_2
+                link: uut1_uut10_2
+                type: ethernet
+            #----- VPC-BGW-1 to DCI-2
+            # = GX Link
+            Eth4/13:
+                alias: uut1_uut11_1
+                link: uut1_uut11_1
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/13:
+                alias: uut1_uut11_2
+                link: uut1_uut11_2
+                type: ethernet
+            #----- VPC-BGW-1 to External-router
+            Eth4/15:
+                alias: uut1_uut12_1
+                link: uut1_uut12_1
+                type: ethernet                
+            #----- VPC-BGW-1 to TGEN
+            Eth4/16:
+                alias: uut1_TG1_1
+                link: uut1_TG1_1
+                type: ethernet
+    uut2:
+        interfaces:
+            #----- VPC-BGW-2 to VPC-BGW-1
+            # = GX 400G breakout Links
+            Eth4/1/1:
+                alias: uut2_uut1_1
+                link: uut1_uut2_1
+                type: ethernet
+            Eth4/1/2:
+                alias: uut2_uut1_2
+                link: uut1_uut2_2
+                type: ethernet
+            Eth4/1/3:
+                alias: uut2_uut1_3
+                link: uut1_uut2_3
+                type: ethernet
+            Eth4/1/4:
+                alias: uut2_uut1_4
+                link: uut1_uut2_4
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/1:
+                alias: uut2_uut1_5
+                link: uut1_uut2_5
+                type: ethernet
+            #----- VPC-BGW-2 to ACCESS
+            # = GX Links            
+            Eth4/11:
+                alias: uut2_uut3_1
+                link: uut2_uut3_1
+                type: ethernet
+            Eth4/12:
+                alias: uut2_uut3_2
+                link: uut2_uut3_2
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/20:
+                alias: uut2_uut3_3
+                link: uut2_uut3_3
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth2/9:
+                alias: uut2_uut3_4
+                link: uut2_uut3_4
+                type: ethernet
+            #----- VPC-BGW-2 to SPINE
+            # = GX Links
+            Eth4/3:
+                alias: uut2_uut4_1
+                link: uut2_uut4_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth2/23:
+                alias: uut2_uut4_2
+                link: uut2_uut4_2
+                type: ethernet
+            #----- VPC-BGW-2 to DCI-1
+            # = GX Links
+            Eth4/6:
+                alias: uut2_uut10_1
+                link: uut2_uut10_1
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/11:
+                alias: uut2_uut10_2
+                link: uut2_uut10_2
+                type: ethernet
+            #----- VPC-BGW-2 to DCI-2
+            # = GX Links
+            Eth4/7:
+                alias: uut2_uut11_1
+                link: uut2_uut11_1
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth3/15:
+                alias: uut2_uut11_2
+                link: uut2_uut11_2
+                type: ethernet                
+            #----- VPC-BGW-2 to External-router
+            Eth4/15:
+                alias: uut2_uut12_1
+                link: uut2_uut12_1
+                type: ethernet
+            #----- VPC-BGW-2 to TGEN
+            Eth4/16:
+                alias: uut2_TG1_1
+                link: uut2_TG1_1
+                type: ethernet
+    uut3:
+        interfaces:
+            #----- ACCESS to VPC-BGW-1
+            # = GX Links
+            Eth1/9:
+                alias: uut3_uut1_1
+                link: uut1_uut3_1
+                type: ethernet
+            Eth1/5:
+                alias: uut3_uut1_2
+                link: uut1_uut3_2
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth1/21:
+                alias: uut3_uut1_3
+                link: uut1_uut3_3
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth1/6:
+                alias: uut3_uut1_4
+                link: uut1_uut3_4
+                type: ethernet
+            #----- ACCESS to VPC-BGW-2
+            # = GX Links
+            Eth1/7:
+                alias: uut3_uut2_1
+                link: uut2_uut3_1
+                type: ethernet
+            Eth1/8:
+                alias: uut3_uut2_2
+                link: uut2_uut3_2
+                type: ethernet
+            # = JPlus Legacy LC
+            Eth1/22:
+                alias: uut3_uut2_3
+                link: uut2_uut3_3
+                type: ethernet 
+            # = Kerry Legacy LC
+            Eth1/10:
+                alias: uut3_uut2_4
+                link: uut2_uut3_4
+                type: ethernet
+            #----- ACCESS to TGEN
+            Eth1/32:
+                alias: uut3_TG1_1
+                link: uut3_TG1_1
+                type: ethernet
+    uut4:
+        interfaces:
+            #----- SPINE to VPC-BGW-1
+            # = GX Links
+            Eth1/1:
+                alias: uut4_uut1_1
+                link: uut1_uut4_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth1/4:
+                alias: uut4_uut1_2
+                link: uut1_uut4_2
+                type: ethernet
+            #----- SPINE to VPC-BGW-2
+            # = GX Links
+            Eth1/7:
+                alias: uut4_uut2_1
+                link: uut2_uut4_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth1/10:
+                alias: uut4_uut2_2
+                link: uut2_uut4_2
+                type: ethernet
+            #----- SPINE to LEAF-3
+            # = GX Links
+            Eth1/13:
+                alias: uut4_uut5_1
+                link: uut4_uut5_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth1/26:
+                alias: uut4_uut5_2
+                link: uut4_uut5_2
+                type: ethernet
+    uut5:
+        interfaces:
+            #----- LEAF-3 to SPINE
+            # = GX Links
+            Eth2/2:
+                alias: uut5_uut4_1
+                link: uut4_uut5_1
+                type: ethernet
+            # = Kerry Legacy LC
+            Eth1/13:
+                alias: uut5_uut4_2
+                link: uut4_uut5_2
+                type: ethernet
+            #----- LEAF-3 to TGEN
+            Eth2/16:
+                alias: uut5_TG1_1
+                link: uut5_TG1_1
+                type: ethernet
+    uut6:
+        interfaces:
+            #----- Site2-BGW to DCI-1
+            Eth1/25:
+                alias: uut6_uut10_1
+                link: uut6_uut10_1
+                type: ethernet
+            Eth1/26:
+                alias: uut6_uut10_2
+                link: uut6_uut10_2
+                type: ethernet
+            #----- Site2-BGW to DCI-2
+            Eth1/31:
+                alias: uut6_uut11_1
+                link: uut6_uut11_1
+                type: ethernet
+            Eth1/32:
+                alias: uut6_uut11_2
+                link: uut6_uut11_2
+                type: ethernet
+            #----- Site2-BGW to Site2-LEAF
+            Eth1/9:
+                alias: uut6_uut7_1
+                link: uut6_uut7_1
+                type: ethernet
+            Eth1/10:
+                alias: uut6_uut7_2
+                link: uut6_uut7_2
+                type: ethernet
+            #----- Site2-BGW to TGEN
+            Eth1/20:
+                alias: uut6_TG1_1
+                link: uut6_TG1_1
+                type: ethernet
+    uut7:
+        interfaces:
+            #----- Site2-LEAF to Site2-BGW
+            Eth1/9:
+                alias: uut7_uut6_1
+                link: uut6_uut7_1
+                type: ethernet
+            Eth1/10:
+                alias: uut7_uut6_2
+                link: uut6_uut7_2
+                type: ethernet
+            #----- Site2-LEAF to TGEN
+            Eth1/20:
+                alias: uut7_TG1_1
+                link: uut7_TG1_1
+                type: ethernet
+    uut8:
+        interfaces:
+            #----- Site3-BGW to DCI-1
+            Eth1/25:
+                alias: uut8_uut10_1
+                link: uut8_uut10_1
+                type: ethernet
+            Eth1/26:
+                alias: uut8_uut10_2
+                link: uut8_uut10_2
+                type: ethernet
+            #----- Site3-BGW to DCI-2
+            Eth1/31:
+                alias: uut8_uut11_1
+                link: uut8_uut11_1
+                type: ethernet
+            Eth1/32:
+                alias: uut8_uut11_2
+                link: uut8_uut11_2
+                type: ethernet
+            #----- Site3-BGW to Site3-LEAF
+            Eth1/51/1:
+                alias: uut8_uut9_1
+                link: uut8_uut9_1
+                type: ethernet
+            Eth1/51/2:
+                alias: uut8_uut9_2
+                link: uut8_uut9_2
+                type: ethernet
+            #----- Site3-BGW to TGEN
+            Eth1/20:
+                alias: uut8_TG1_1
+                link: uut8_TG1_1
+                type: ethernet
+    uut9:
+        interfaces:
+            #----- Site3-LEAF to Site3-BGW
+            Eth1/39:
+                alias: uut9_uut8_1
+                link: uut8_uut9_1
+                type: ethernet
+            Eth1/40:
+                alias: uut9_uut8_2
+                link: uut8_uut9_2
+                type: ethernet
+            #----- Site3-LEAF to TGEN
+            Eth1/20:
+                alias: uut9_TG1_1
+                link: uut9_TG1_1
+                type: ethernet
+    uut10:
+        interfaces:
+            #----- DCI-1 to VPC-BGW-1
+            Eth1/3:
+                alias: uut10_uut1_1
+                link: uut1_uut10_1
+                type: ethernet
+            Eth1/5:
+                alias: uut10_uut1_2
+                link: uut1_uut10_2
+                type: ethernet
+            #----- DCI-1 to VPC-BGW-2
+            Eth1/9:
+                alias: uut10_uut2_1
+                link: uut2_uut10_1
+                type: ethernet
+            Eth1/10:
+                alias: uut10_uut2_2
+                link: uut2_uut10_2
+                type: ethernet
+            #----- DCI-1 to Site2-BGW
+            Eth1/17/1:
+                alias: uut10_uut6_1
+                link: uut6_uut10_1
+                type: ethernet
+            Eth1/17/2:
+                alias: uut10_uut6_2
+                link: uut6_uut10_2
+                type: ethernet
+            #----- DCI-1 to Site3-BGW
+            Eth1/21/1:
+                alias: uut10_uut8_1
+                link: uut8_uut10_1
+                type: ethernet
+            Eth1/21/2:
+                alias: uut10_uut8_2
+                link: uut8_uut10_2
+                type: ethernet
+    uut11:
+        interfaces:
+            #----- DCI-2 to VPC-BGW-1
+            Eth1/3:
+                alias: uut11_uut1_1
+                link: uut1_uut11_1
+                type: ethernet
+            Eth1/5:
+                alias: uut11_uut1_2
+                link: uut1_uut11_2
+                type: ethernet
+            #----- DCI-2 to VPC-BGW-1
+            Eth1/9:
+                alias: uut11_uut2_1
+                link: uut2_uut11_1
+                type: ethernet
+            Eth1/10:
+                alias: uut11_uut2_2
+                link: uut2_uut11_2
+                type: ethernet
+            #----- DCI-2 to Site2-BGW
+            Eth1/17/1:
+                alias: uut11_uut6_1
+                link: uut6_uut11_1
+                type: ethernet
+            Eth1/17/2:
+                alias: uut11_uut6_2
+                link: uut6_uut11_2
+                type: ethernet
+            #----- DCI-2 to Site3-BGW
+            Eth1/21/1:
+                alias: uut11_uut8_1
+                link: uut8_uut11_1
+                type: ethernet
+            Eth1/21/2:
+                alias: uut11_uut8_2
+                link: uut8_uut11_2
+                type: ethernet
+    uut12:
+        interfaces:
+            #----- External-router to VPC-BGW-1
+            Eth1/49:
+                alias: uut12_uut1_1
+                link: uut1_uut12_1
+                type: ethernet
+            #----- External-router to VPC-BGW-2
+            Eth1/50:
+                alias: uut12_uut2_1
+                link: uut2_uut12_1
+                type: ethernet        
+            #----- External-router to TGEN
+            Eth1/48:
+                alias: uut12_TG1_1
+                link: uut12_TG1_1
+                type: ethernet
+    TG1:
+        interfaces:
+            #----- TGEN to VPC-BGW-1
+            7/2:
+                alias: TG1_uut1_1
+                link: uut1_TG1_1 
+                type: ethernet
+            #----- TGEN to VPC-BGW-2
+            7/3:
+                alias: TG1_uut2_1
+                link: uut2_TG1_1 
+                type: ethernet
+            #----- TGEN to VPC-ACCESS
+            7/6:
+                alias: TG1_uut3_1
+                link: uut3_TG1_1 
+                type: ethernet
+            #----- TGEN to Site1-LEAF
+            7/4:
+                alias: TG1_uut5_1
+                link: uut5_TG1_1 
+                type: ethernet
+            #----- TGEN to Site2-BGW
+            4/3:
+                alias: TG1_uut6_1
+                link: uut6_TG1_1 
+                type: ethernet
+            #----- TGEN to Site2-LEAF
+            4/4:
+                alias: TG1_uut7_1
+                link: uut7_TG1_1 
+                type: ethernet
+            #----- TGEN to Site3-BGW
+            8/5:
+                alias: TG1_uut8_1
+                link: uut8_TG1_1 
+                type: ethernet
+            #----- TGEN to Site3-LEAF
+            4/2:
+                alias: TG1_uut9_1
+                link: uut9_TG1_1 
+                type: ethernet
+            #----- TGEN to External-router
+            4/8:
+                alias: TG1_uut12_1
+                link: uut12_TG1_1 
+                type: ethernet                  

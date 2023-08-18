@@ -1,0 +1,1362 @@
+devices:
+    image_server:
+       type: 'LnxServer'
+       connections:
+           a:
+               protocol: scp
+               ip: 10.127.63.241
+               port: 22
+
+       credentials:
+           default:
+               password: password
+               username: swadmin
+
+    tgn1:
+       type: 'stc'
+       connections:
+           a:      {protocol: telnet, ip: 10.127.62.251}
+           labsvr: {protocol: telnet, ip: 10.127.62.233}
+
+
+    SD1:
+        os: nxos
+        type: 'router'
+        alias: "bgw1site1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2025
+
+            alt:
+                ip: 10.127.62.234
+                protocol: telnet
+
+
+    SD2:
+        os: nxos
+        type: 'router'
+        alias: "bgw2site1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2021
+
+            alt:
+                ip: 10.127.62.244
+                protocol: telnet
+
+
+
+    Tetly1:
+        os: nxos
+        type: 'router'
+        alias: "spine1site1"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2063
+            #alt:
+            #    protocol: telnet
+            #    ip: 10.127.62.248
+
+    QI2CR1:
+        os: nxos
+        type: 'router'
+        alias: "spine2site1"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2033
+
+            #alt:
+            #    ip: 10.127.62.8
+            #    protocol: telnet 
+             
+
+    Hagan-1:
+        os: nxos
+        type: 'router'
+        alias: "leaf1site1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+ 
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2028
+
+            alt:
+                ip: 10.127.62.249
+                protocol: telnet 
+
+
+
+    T2P1:
+        os: nxos
+        type: 'router'
+        alias: "sw1site1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+ 
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2027
+
+    Paris1:
+        os: nxos
+        type: 'router'
+        alias: "ext1site1"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+ 
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2065
+
+
+
+    Ta1:
+        os: nxos
+        type: 'router'
+        alias: "bgw1site2"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2030
+
+            alt:
+                ip: 10.127.62.235
+                protocol: telnet
+
+
+    Ta2:
+        os: nxos
+        type: 'router'
+        alias: "bgw2site2"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2031
+
+            alt:
+                ip: 10.127.62.232
+                protocol: telnet
+
+    Nep3:
+        os: nxos
+        type: 'router'
+        alias: "spine1site2"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2038
+            #alt:
+            #    protocol: telnet
+            #    ip: 10.127.62.248
+
+    Hagan-2:
+        os: nxos
+        type: 'router'
+        alias: "leaf1site2"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+ 
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2039
+
+            alt:
+                ip: 10.127.62.7
+                protocol: telnet 
+
+    QI1:
+        os: nxos
+        type: 'router'
+        alias: "sw1site2"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2032
+
+            #alt:
+            #    ip: 10.127.62.8
+            #    protocol: telnet 
+
+
+    Ta3:
+        os: nxos
+        type: 'router'
+        alias: "bgw1site3"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2006
+
+            alt:
+                ip: 10.127.62.245
+                protocol: telnet
+
+    Hagan-3:
+        os: nxos
+        type: 'router'
+        alias: "leaf1site3"
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2041
+            #alt:
+            #    protocol: telnet
+            #    ip: 10.127.62.248
+
+
+    n9k1:
+        os: nxos
+        type: 'router'
+        alias: "sw1site3"
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345
+
+ 
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2034
+
+            alt:
+                ip: 10.127.62.235
+                protocol: telnet 
+
+
+
+    Spine1:
+        os: nxos
+        type: 'router'
+        alias: "dci1"
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2036
+
+            #alt:
+            #    ip: 10.127.62.233
+            #    protocol: telnet
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345 
+
+
+    Spine2:
+        os: nxos
+        type: 'router'
+        alias: "dci2"
+
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: "10.127.62.16"
+                port: 2037
+
+            alt:
+                ip: 10.127.62.233
+                protocol: telnet
+
+        credentials:
+          default:
+            password: nbv12345
+            username: admin
+          enable:
+            password: nbv12345 
+
+
+
+topology:
+    bgw1site1:
+        interfaces:
+            bgw1site1_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "tgn"
+
+            bgw1site1_spine1site1_intf1:
+                intf: "Eth1/54"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            bgw1site1_spine2site1_intf1:
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            bgw1site1_dci1_intf1:
+                intf: "Eth1/52/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_11_01"
+                ipv4: 111.1.1.1/30
+
+            bgw1site1_dci2_intf1:
+                intf: "Eth1/51/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_11_02"
+                ipv4: 111.2.1.1/30
+
+            bgw1site1_ext1site1_intf1:
+                intf: "Eth1/48"
+                link: link-1
+                type: Eth
+                alias: "bgw_ext_11"
+                ipv4: 44.1.1.1/30 
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.0.0.111/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.1.1.11/32
+                pim: 'yes'
+
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 91.1.1.1/32
+                pim: 'yes'
+
+    ext1site1:
+        interfaces:
+            ext1site1_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                ipv4: 144.1.1.2/30 
+                alias: "tgn_external"
+
+            ext1site1_bgw1site1_intf1:
+                intf: "Eth1/39"
+                link: link-1
+                type: Eth
+                alias: "bgw_external_11"
+                ipv4: 44.1.1.2/30 
+
+    bgw2site1:
+        interfaces:
+            bgw2site1_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "tgn"
+
+            bgw2site1_spine1site1_intf1:
+                intf: "Eth1/54"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw2site1_spine2site1_intf1:
+                intf: "Eth1/10"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw2site1_dci1_intf1:
+                intf: "Eth1/52/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_12_01"
+                ipv4: 111.3.1.1/30
+
+            bgw1site1_dci2_intf1:
+                intf: "Eth1/51/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_12_02"
+                ipv4: 111.4.1.1/30
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.0.0.112/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.1.1.12/32
+                pim: 'yes'
+
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 91.1.1.1/32
+                pim: 'yes'
+
+  
+    spine1site1:
+        interfaces:
+            spine1site1_bgw1site1_intf1:
+                intf: "Eth1/11"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine1site1_bgw2site1_intf1:
+                intf: "Eth1/12"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            spine1site1_leaf1site1_intf1:
+                intf: "Eth1/2"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            spine1site1_leaf1site1_intf2:
+                intf: "Eth1/4"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+ 
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.0.0.100/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.1.1.1/32
+                pim: 'yes'
+
+
+    spine2site1:
+        interfaces:
+            spine2site1_bgw1site1_intf1:
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine2site1_bgw2site1_intf1:
+                intf: "Eth1/20"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            spine2site1_leaf1site1_intf1:
+                intf: "Eth1/41"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine2site1_leaf1site1_intf2:
+                intf: "Eth1/42"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine2site1_leaf1site1_intf3:
+                intf: "Eth1/43"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+ 
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.0.0.200/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.1.1.2/32
+                pim: 'yes'
+
+            spine2site1_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "tgn"
+                ipv4: "111.0.0.1/8"
+
+    leaf1site1:
+        interfaces:
+            leaf1site1_spine1site1_intf1:
+                intf: "Eth1/17"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            leaf1site1_spine1site1_intf2:
+                intf: "Eth1/19"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            leaf1site1_spine2site1_intf1:
+                intf: "Eth1/15/1"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            leaf1site1_spine2site1_intf2:
+                intf: "Eth1/15/2"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            leaf1site1_spine2site1_intf3:
+                intf: "Eth1/15/3"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            leaf1site1_sw1site1_intf1:
+                intf: "Eth1/11"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+
+            leaf1site1_sw1site2_intf2:
+                intf: "Eth1/13"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+ 
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.0.0.11/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 1.1.1.111/32
+                pim: 'yes'
+
+   
+  
+    sw1site1:
+        interfaces:
+            sw1site1_leaf1site1_intf1:
+                intf: "Eth1/10"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+
+            sw1site1_leaf1site1_intf2:
+                intf: "Eth1/13"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+ 
+            sw1site1_tgn1_intf1:
+                intf: "Eth1/2"
+                link: link-1
+                type: 'sw1dc1_tgn1'
+                alias: 'tgn'
+
+
+
+
+    bgw1site2:
+        interfaces:
+            bgw1site2_spine1site2_intf1:
+                intf: "Eth1/52"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw1site2_spine1site2_intf2:
+                intf: "Eth1/53"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw1site2_dci1_intf1:
+                intf: "Eth1/55"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_21_01"
+                ipv4: 112.1.1.1/30
+
+            bgw1site2_dci2_intf1:
+                intf: "Eth1/50"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_21_02"
+                ipv4: 112.2.1.1/30
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.0.0.111/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.1.1.11/32
+                pim: 'yes'
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 92.1.1.1/32
+                pim: 'yes'
+
+
+            bgw1site2_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "tgn"
+
+    bgw2site2:
+        interfaces:
+            bgw2site2_spine1site2_intf1:
+                intf: "Eth1/52"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            #bgw2site2_spine1site2_intf2:
+            #    intf: "Eth1/53"
+            #    link: link-1
+            #    type: Eth
+                #alias: "leaf_spine"
+            #    alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw2site2_dci1_intf1:
+                intf: "Eth1/55"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_22_01"
+                ipv4: 112.3.1.1/30
+
+            bgw2site2_dci2_intf1:
+                intf: "Eth1/50"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_22_02"
+                ipv4: 112.4.1.1/30
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.0.0.112/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.1.1.12/32
+                pim: 'yes'
+
+            bgw1site2_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "tgn"
+
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 92.1.1.1/32
+                pim: 'yes'
+
+
+    spine1site2:
+        interfaces:
+            spine1site2_bgw1site2_intf1:
+                intf: "Eth1/17"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine1site2_bgw1site2_intf2:
+                intf: "Eth1/18"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            spine1site2_bgw2site2_intf1:
+                intf: "Eth1/19"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            #spine1site2_bgw2site2_intf2:
+            #    intf: "Eth1/20"
+            #    link: link-1
+            #    type: Eth
+                #alias: "leaf_spine"
+            #    alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            spine1site2_leaf1site2_intf1:
+                intf: "Eth1/12"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.0.0.100/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.1.1.1/32
+                pim: 'yes'
+ 
+ 
+
+    leaf1site2:
+        interfaces:
+            leaf1site2_spine1site2_intf1:
+                intf: "Eth1/12"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+
+            leaf1site2_sw1site2_intf1:
+                intf: "Eth1/8/2"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+
+            leaf1site2_sw1site2_intf2:
+                intf: "Eth1/8/3"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+
+            leaf1site2_sw1site2_intf3:
+                intf: "Eth1/8/4"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+       
+ 
+            #leaf1site2_tgn1_intf1:
+            #    intf: "Eth1/11"
+            #    link: link-1
+            #    type: Eth
+            #    alias: "tgn"
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.0.0.11/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 2.1.1.111/32
+                pim: 'yes'
+
+    sw1site2:
+        interfaces:
+            sw1site2_leaf1site2_intf1:
+                intf: "Eth1/38"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+
+            sw1site2_leaf1site2_intf2:
+                intf: "Eth1/39"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+
+            sw1site2_leaf1site2_intf3:
+                intf: "Eth1/40"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+
+            sw1site2_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: 'sw1dc2_tgn1'
+                alias: 'tgn'
+
+
+
+    bgw1site3:
+        interfaces:
+            bgw1site3_spine1site2_intf1:
+                intf: "Eth1/51"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw1site3_spine1site2_intf2:
+                intf: "Eth1/52"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            bgw1site3_dci1_intf1:
+                intf: "Eth1/49"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_31_01"
+                ipv4: 113.1.1.1/30
+
+            bgw1site3_dci2_intf1:
+                intf: "Eth1/50"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_31_02"
+                ipv4: 113.2.1.1/30
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 3.0.0.111/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 3.1.1.11/32
+                pim: 'yes'
+
+            bgw1site2_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: Eth
+                alias: "tgn"
+
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 93.1.1.1/32
+                pim: 'yes'
+
+    
+    leaf1site3:
+        interfaces:
+            leaf1site1_spine1site1_intf1:
+                intf: "Eth1/23"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            leaf1site1_spine1site1_intf2:
+                intf: "Eth1/24"
+                link: link-1
+                type: Eth
+                #alias: "leaf_spine"
+                alias: "leaf_spine_unnumbered"
+                #ipv4: unnumbered
+
+            leaf1site1_sw1site1_intf1:
+                intf: "Eth1/19"
+                link: link-1
+                type: Eth
+                alias: "leaf_po_101"
+
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 3.0.0.11/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 3.1.1.111/32
+                pim: 'yes'
+  
+    sw1site3:
+        interfaces:
+            sw1site1_leaf1site1_intf1:
+                intf: "Eth2/1"
+                link: link-1
+                type: fiber
+                alias: "leaf_po_101"
+ 
+            sw1site1_tgn1_intf1:
+                intf: "Eth1/1"
+                link: link-1
+                type: 'sw1site1_tgn1'
+                alias: 'tgn'
+
+    dci1:
+        interfaces:
+            dci1_tgn1_intf1: 
+                intf: "Eth1/1/1"
+                link: link-1
+                type: fiber
+                ipv4: "199.0.0.1/8"
+                pim: 'yes'
+
+            dci1_bgw1site1_intf1:
+                intf: "Eth1/17/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_11_01"
+                ipv4: 111.1.1.2/30
+
+            dci1_bgw2site1_intf1:
+                intf: "Eth1/18/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_12_01"
+                ipv4: 111.3.1.2/30
+
+
+            dci1_bgw1site2_intf1:
+                intf: "Eth1/21"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_21_01"
+                ipv4: 112.1.1.2/30
+
+            dci1_bgw2site2_intf1:
+                intf: "Eth1/23"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_22_01"
+                ipv4: 112.3.1.2/30
+
+            dci1_bgw1site3_intf1:
+                intf: "Eth1/25"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_31_01"
+                ipv4: 113.1.1.2/30
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 10.0.0.1/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 10.1.1.1/32
+                pim: 'yes'
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 99.99.99.1/32
+                pim: 'yes'
+
+
+    dci2:
+        interfaces:
+            dci2_bgw1site1_intf1:
+                intf: "Eth1/18/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_11_02"
+                ipv4: 111.2.1.2/30
+
+            dci2_bgw2site1_intf1:
+                intf: "Eth1/17/1"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_12_02"
+                ipv4: 111.4.1.2/30
+
+            dci2_bgw1site2_intf1:
+                intf: "Eth1/9"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_21_02"
+                ipv4: 112.2.1.2/30
+
+            dci2_bgw2site2_intf1:
+                intf: "Eth1/10"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_22_02"
+                ipv4: 112.4.1.2/30
+
+            dci2_bgw1site3_intf1:
+                intf: "Eth1/25"
+                link: link-1
+                type: Eth
+                alias: "bgw_dci_31_02"
+                ipv4: 113.2.1.2/30
+
+            loopback0:
+                intf: "loopback0"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 10.0.0.2/32
+                pim: 'yes'
+
+            loopback1:
+                intf: "loopback1"
+                link: link-2
+                type: loopback
+                alias: "loop"                              
+                ipv4: 10.1.1.2/32
+                pim: 'yes'
+ 
+
+            loopback100:
+                intf: "loopback100"
+                link: link-2
+                type: loopback
+                alias: "loop_dci"                              
+                ipv4: 99.99.99.2/32
+                pim: 'yes'
+
+
+    tgn1:
+        interfaces:
+            tgn1_sw1site1_intf1:
+                intf: "2/5"
+                link: link-1
+                type: fiber
+
+            tgn1_sw1site2_intf1:
+                intf: "1/4"
+                link: link-1
+                type: fiber
+                alias: "Orphan31"
+
+            tgn1_sw1site3_intf1:
+                intf: "1/8"
+                link: link-1
+                type: fiber
+                alias: "Orphan31"
+
+            tgn1_bgw1site1_intf1:
+                intf: "1/17"
+                link: link-1
+                type: fiber
+
+            tgn1_spine2site1_intf1:
+                intf: "1/12"
+                link: link-1
+                type: fiber
+
+            tgn1_bgw1site2_intf1:
+                intf: "1/15"
+                link: link-1
+                type: fiber
+
+            tgn1_dci1_intf1:
+                intf: "1/16"
+                link: link-1
+                type: fiber
+
+            tgn1_ext1site1_intf1:
+                intf: "1/2"
+                link: link-1
+                type: fiber

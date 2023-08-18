@@ -1,0 +1,339 @@
+testbed:
+    name: VxLAN_PVNF
+    credentials:
+        default:
+            username: admin
+            password: nbv12345
+        enable:
+            password: nbv12345
+    # Should be same as the server declared under devices
+    servers:
+        tftp:
+            server: n3k-qa-image
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: 1.2.3.4
+devices:
+    n3k-qa-image:
+        type: 'linux'
+        os: 'linux'
+        credentials:
+            default:
+                username: swadmin
+                password: password
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            linux:
+                protocol: ssh
+                ip: 10.127.63.241
+    SPINE:
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2019
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.225.127.69
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    LEAF-1:
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2023
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.225.127.73
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    LEAF-2:
+        type: n9k
+        platform: n9k
+        os: nxos
+        model: n9300
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2024
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+            service_attributes:
+                execute:
+                    timeout: 600
+                configure:
+                    timeout: 600
+                    bulk: true
+          alt:
+            protocol: telnet
+            ip: 10.225.127.74
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+            service_attributes:
+                execute:
+                    timeout: 600
+                configure:
+                    timeout: 600
+                    bulk: true
+        custom:
+            abstraction:
+                order: [os, platform, model]
+    LEAF-3:
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2022
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.225.127.72
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    BL:
+        type: n9k
+        platform: n9k
+        os: nxos
+        model: n9300
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2021
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+            service_attributes:
+                execute:
+                    timeout: 600
+                configure:
+                    timeout: 600
+                    bulk: true
+          alt:
+            protocol: telnet
+            ip: 10.225.127.71
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+            service_attributes:
+                execute:
+                    timeout: 600
+                configure:
+                    timeout: 600
+                    bulk: true
+        custom:
+            abstraction:
+                order: [os, platform, model]
+    PVNF-PGW:
+        type: n9k
+        platform: n9k
+        os: nxos
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.225.127.43
+            port: 2014
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.56
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.225.127.36"
+          alt:
+            ip: "10.197.127.87"
+            port: 8009
+            protocol: telnet
+topology:
+    SPINE:
+        interfaces:
+            Ethernet1/5:
+                alias: SPINE_to_BL
+                link: SPINE_to_BL
+                type: ethernet
+            Ethernet1/13:
+                alias: SPINE_to_LEAF-1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/17:
+                alias: SPINE_to_LEAF-2
+                link: SPINE_to_LEAF-2
+                type: ethernet
+            Ethernet1/9:
+                alias: SPINE_to_LEAF-3
+                link: SPINE_to_LEAF-3
+                type: ethernet
+    LEAF-1:
+        interfaces:
+            Ethernet1/1:
+                alias: LEAF-1_to_SPINE
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/15:
+                alias: LEAF-1_to_PGW_1
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+            Ethernet1/16:
+                alias: LEAF-1_to_PGW_2
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+            Ethernet1/48:
+                alias: LEAF-1_to_IXIA
+                link: LEAF-1_to_IXIA
+                type: ethernet
+    LEAF-2:
+        interfaces:
+            Ethernet1/49/1:
+                alias: LEAF-2_to_SPINE
+                link: SPINE_to_LEAF-2
+                type: ethernet    
+            Ethernet1/15:
+                alias: LEAF-2_to_PGW_1
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+            Ethernet1/16:
+                alias: LEAF-2_to_PGW_2
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+    LEAF-3:
+        interfaces:
+            Ethernet1/1:
+                alias: LEAF-3_to_SPINE
+                link: SPINE_to_LEAF-3
+                type: ethernet 
+            Ethernet1/15:
+                alias: LEAF-3_to_PGW_1
+                link: LEAF-3_to_PGW_1
+                type: ethernet 
+            Ethernet1/16:
+                alias: LEAF-3_to_PGW_2
+                link: LEAF-3_to_PGW_2
+                type: ethernet 
+    BL:
+        interfaces:
+            Ethernet1/1:
+                alias: BL_to_SPINE
+                link: SPINE_to_BL
+                type: ethernet
+            Ethernet1/48:
+                alias: BL_to_IXIA
+                link: BL_to_IXIA
+                type: ethernet
+    PVNF-PGW:
+        interfaces:
+            Ethernet1/4/1:
+                alias: PGW_to_LEAF-1_1
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+            Ethernet1/4/2:
+                alias: PGW_to_LEAF-1_2
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+            Ethernet1/5/1:
+                alias: PGW_to_LEAF-2_1
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+            Ethernet1/5/2:
+                alias: PGW_to_LEAF-2_2
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+            Ethernet1/3/1:
+                alias: PGW_to_LEAF-3_1
+                link: LEAF-3_to_PGW_1
+                type: ethernet
+            Ethernet1/3/2:
+                alias: PGW_to_LEAF-3_2
+                link: LEAF-3_to_PGW_2
+                type: ethernet
+            Ethernet1/34:
+                alias: PGW_to_IXIA
+                link: PGW_to_IXIA
+                type: ethernet
+    IXIA:
+        interfaces:
+            7/14:
+                alias: IXIA_to_BL
+                link: BL_to_IXIA
+                type: ethernet
+            7/16:
+                alias: IXIA_to_LEAF-1
+                link: LEAF-1_to_IXIA
+                type: ethernet
+            8/16:
+                alias: IXIA_to_PGW
+                link: PGW_to_IXIA
+                type: ethernet

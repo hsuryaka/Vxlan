@@ -1,0 +1,5269 @@
+
+!Command: show running-config
+!Running configuration last done at: Tue Aug  6 16:35:22 2019
+!Time: Fri Aug  9 15:47:35 2019
+
+version 9.3(1) Bios:version 07.65 
+switchname pod2-ext-rp2
+vdc pod2-ext-rp2 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource u4route-mem minimum 248 maximum 248
+  limit-resource u6route-mem minimum 96 maximum 96
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature telnet
+feature bash-shell
+feature tacacs+
+cfs eth distribute
+feature ospf
+feature bgp
+feature pim
+feature isis
+feature lacp
+feature lldp
+clock timezone PST -8 0
+clock summer-time PST 2 Sun Mar 02:00 1 Sun Nov 02:00 60
+
+logging level bgp 2
+
+no password strength-check
+username admin password 5 $5$XZ7.VoUr$lo3RSccd8hA/53vsX3iwwhBF6vCDNheoWQgvZ0FotP0  role network-admin
+ip domain-lookup
+copp profile strict
+snmp-server user admin network-admin auth md5 0x22184cd34677367860f42c23c47571d7 priv 0x22184cd34677367860f42c23c47571d7 localizedkey
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+ntp server 10.22.31.142 use-vrf management
+ntp server 172.31.201.208 use-vrf management
+
+ip pim rp-address 200.200.200.200 group-list 224.0.0.0/4
+ip pim ssm range 232.0.0.0/8
+ip pim pre-build-spt
+ip igmp snooping vxlan
+vlan 1,100
+
+ip as-path access-list as6001 seq 10 deny "65001"
+ip as-path access-list as6002 seq 10 deny "65002"
+route-map all-routes permit 10
+route-map allowall permit 10
+route-map filterhosts65001 deny 10
+  match as-path as6001 
+route-map filterhosts65002 deny 10
+  match as-path as6002 
+vrf context management
+  ip route 0.0.0.0/0 172.31.200.1
+vrf context trmvrf-3001
+  ip pim rp-address 102.1.1.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.1.1 102.1.1.2
+  ip pim anycast-rp 102.1.1.1 102.1.1.3
+vrf context trmvrf-3002
+  ip pim rp-address 102.1.2.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.2.1 102.1.2.2
+  ip pim anycast-rp 102.1.2.1 102.1.2.3
+vrf context trmvrf-3003
+  ip pim rp-address 102.1.3.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.3.1 102.1.3.2
+  ip pim anycast-rp 102.1.3.1 102.1.3.3
+vrf context trmvrf-3004
+  ip pim rp-address 102.1.4.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.4.1 102.1.4.2
+  ip pim anycast-rp 102.1.4.1 102.1.4.3
+vrf context trmvrf-3005
+  ip pim rp-address 102.1.5.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.5.1 102.1.5.2
+  ip pim anycast-rp 102.1.5.1 102.1.5.3
+vrf context trmvrf-3006
+  ip pim rp-address 102.1.6.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.6.1 102.1.6.2
+  ip pim anycast-rp 102.1.6.1 102.1.6.3
+vrf context trmvrf-3007
+  ip pim rp-address 102.1.7.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.7.1 102.1.7.2
+  ip pim anycast-rp 102.1.7.1 102.1.7.3
+vrf context trmvrf-3008
+  ip pim rp-address 102.1.8.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.8.1 102.1.8.2
+  ip pim anycast-rp 102.1.8.1 102.1.8.3
+vrf context trmvrf-3009
+  ip pim rp-address 102.1.9.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.9.1 102.1.9.2
+  ip pim anycast-rp 102.1.9.1 102.1.9.3
+vrf context trmvrf-3010
+  ip pim rp-address 102.1.10.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.10.1 102.1.10.2
+  ip pim anycast-rp 102.1.10.1 102.1.10.3
+vrf context trmvrf-30100
+vrf context trmvrf-3011
+  ip pim rp-address 102.1.11.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.11.1 102.1.11.2
+  ip pim anycast-rp 102.1.11.1 102.1.11.3
+vrf context trmvrf-3012
+  ip pim rp-address 102.1.12.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.12.1 102.1.12.2
+  ip pim anycast-rp 102.1.12.1 102.1.12.3
+vrf context trmvrf-3013
+  ip pim rp-address 102.1.13.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.13.1 102.1.13.2
+  ip pim anycast-rp 102.1.13.1 102.1.13.3
+vrf context trmvrf-3014
+  ip pim rp-address 102.1.14.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.14.1 102.1.14.2
+  ip pim anycast-rp 102.1.14.1 102.1.14.3
+vrf context trmvrf-3015
+  ip pim rp-address 102.1.15.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.15.1 102.1.15.2
+  ip pim anycast-rp 102.1.15.1 102.1.15.3
+vrf context trmvrf-3016
+  ip pim rp-address 102.1.16.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.16.1 102.1.16.2
+  ip pim anycast-rp 102.1.16.1 102.1.16.3
+vrf context trmvrf-3017
+  ip pim rp-address 102.1.17.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.17.1 102.1.17.2
+  ip pim anycast-rp 102.1.17.1 102.1.17.3
+vrf context trmvrf-3018
+  ip pim rp-address 102.1.18.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.18.1 102.1.18.2
+  ip pim anycast-rp 102.1.18.1 102.1.18.3
+vrf context trmvrf-3019
+  ip pim rp-address 102.1.19.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.19.1 102.1.19.2
+  ip pim anycast-rp 102.1.19.1 102.1.19.3
+vrf context trmvrf-3020
+  ip pim rp-address 102.1.20.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.20.1 102.1.20.2
+  ip pim anycast-rp 102.1.20.1 102.1.20.3
+vrf context trmvrf-3021
+  ip pim rp-address 102.1.21.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.21.1 102.1.21.2
+  ip pim anycast-rp 102.1.21.1 102.1.21.3
+vrf context trmvrf-3022
+  ip pim rp-address 102.1.22.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.22.1 102.1.22.2
+  ip pim anycast-rp 102.1.22.1 102.1.22.3
+vrf context trmvrf-3023
+  ip pim rp-address 102.1.23.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.23.1 102.1.23.2
+  ip pim anycast-rp 102.1.23.1 102.1.23.3
+vrf context trmvrf-3024
+  ip pim rp-address 102.1.24.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.24.1 102.1.24.2
+  ip pim anycast-rp 102.1.24.1 102.1.24.3
+vrf context trmvrf-3025
+  ip pim rp-address 102.1.25.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.25.1 102.1.25.2
+  ip pim anycast-rp 102.1.25.1 102.1.25.3
+vrf context trmvrf-3026
+  ip pim rp-address 102.1.26.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.26.1 102.1.26.2
+  ip pim anycast-rp 102.1.26.1 102.1.26.3
+vrf context trmvrf-3027
+  ip pim rp-address 102.1.27.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.27.1 102.1.27.2
+  ip pim anycast-rp 102.1.27.1 102.1.27.3
+vrf context trmvrf-3028
+  ip pim rp-address 102.1.28.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.28.1 102.1.28.2
+  ip pim anycast-rp 102.1.28.1 102.1.28.3
+vrf context trmvrf-3029
+  ip pim rp-address 102.1.29.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.29.1 102.1.29.2
+  ip pim anycast-rp 102.1.29.1 102.1.29.3
+vrf context trmvrf-3030
+  ip pim rp-address 102.1.30.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.30.1 102.1.30.2
+  ip pim anycast-rp 102.1.30.1 102.1.30.3
+vrf context trmvrf-3031
+  ip pim rp-address 102.1.31.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.31.1 102.1.31.2
+  ip pim anycast-rp 102.1.31.1 102.1.31.3
+vrf context trmvrf-3032
+  ip pim rp-address 102.1.32.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.32.1 102.1.32.2
+  ip pim anycast-rp 102.1.32.1 102.1.32.3
+vrf context trmvrf-3033
+  ip pim rp-address 102.1.33.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.33.1 102.1.33.2
+  ip pim anycast-rp 102.1.33.1 102.1.33.3
+vrf context trmvrf-3034
+  ip pim rp-address 102.1.34.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.34.1 102.1.34.2
+  ip pim anycast-rp 102.1.34.1 102.1.34.3
+vrf context trmvrf-3035
+  ip pim rp-address 102.1.35.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.35.1 102.1.35.2
+  ip pim anycast-rp 102.1.35.1 102.1.35.3
+vrf context trmvrf-3036
+  ip pim rp-address 102.1.36.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.36.1 102.1.36.2
+  ip pim anycast-rp 102.1.36.1 102.1.36.3
+vrf context trmvrf-3037
+  ip pim rp-address 102.1.37.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.37.1 102.1.37.2
+  ip pim anycast-rp 102.1.37.1 102.1.37.3
+vrf context trmvrf-3038
+  ip pim rp-address 102.1.38.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.38.1 102.1.38.2
+  ip pim anycast-rp 102.1.38.1 102.1.38.3
+vrf context trmvrf-3039
+  ip pim rp-address 102.1.39.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.39.1 102.1.39.2
+  ip pim anycast-rp 102.1.39.1 102.1.39.3
+vrf context trmvrf-3040
+  ip pim rp-address 102.1.40.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.40.1 102.1.40.2
+  ip pim anycast-rp 102.1.40.1 102.1.40.3
+vrf context trmvrf-3041
+  ip pim rp-address 102.1.41.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.41.1 102.1.41.2
+  ip pim anycast-rp 102.1.41.1 102.1.41.3
+vrf context trmvrf-3042
+  ip pim rp-address 102.1.42.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.42.1 102.1.42.2
+  ip pim anycast-rp 102.1.42.1 102.1.42.3
+vrf context trmvrf-3043
+  ip pim rp-address 102.1.43.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.43.1 102.1.43.2
+  ip pim anycast-rp 102.1.43.1 102.1.43.3
+vrf context trmvrf-3044
+  ip pim rp-address 102.1.44.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.44.1 102.1.44.2
+  ip pim anycast-rp 102.1.44.1 102.1.44.3
+vrf context trmvrf-3045
+  ip pim rp-address 102.1.45.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.45.1 102.1.45.2
+  ip pim anycast-rp 102.1.45.1 102.1.45.3
+vrf context trmvrf-3046
+  ip pim rp-address 102.1.46.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.46.1 102.1.46.2
+  ip pim anycast-rp 102.1.46.1 102.1.46.3
+vrf context trmvrf-3047
+  ip pim rp-address 102.1.47.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.47.1 102.1.47.2
+  ip pim anycast-rp 102.1.47.1 102.1.47.3
+vrf context trmvrf-3048
+  ip pim rp-address 102.1.48.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.48.1 102.1.48.2
+  ip pim anycast-rp 102.1.48.1 102.1.48.3
+vrf context trmvrf-3049
+  ip pim rp-address 102.1.49.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.49.1 102.1.49.2
+  ip pim anycast-rp 102.1.49.1 102.1.49.3
+vrf context trmvrf-3050
+  ip pim rp-address 102.1.50.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.50.1 102.1.50.2
+  ip pim anycast-rp 102.1.50.1 102.1.50.3
+vrf context trmvrf-3051
+  ip pim rp-address 102.1.51.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3052
+  ip pim rp-address 102.1.52.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3053
+  ip pim rp-address 102.1.53.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3054
+  ip pim rp-address 102.1.54.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3055
+  ip pim rp-address 102.1.55.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3056
+  ip pim rp-address 102.1.56.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3057
+  ip pim rp-address 102.1.57.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3058
+  ip pim rp-address 102.1.58.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3059
+  ip pim rp-address 102.1.59.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3060
+  ip pim rp-address 102.1.60.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3061
+  ip pim rp-address 102.1.61.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3062
+  ip pim rp-address 102.1.62.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3063
+  ip pim rp-address 102.1.63.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3064
+  ip pim rp-address 102.1.64.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3065
+  ip pim rp-address 102.1.65.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3066
+  ip pim rp-address 102.1.66.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3067
+  ip pim rp-address 102.1.67.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3068
+  ip pim rp-address 102.1.68.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3069
+  ip pim rp-address 102.1.69.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3070
+  ip pim rp-address 102.1.70.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3071
+  ip pim rp-address 102.1.71.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3072
+  ip pim rp-address 102.1.72.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3073
+  ip pim rp-address 102.1.73.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3074
+  ip pim rp-address 102.1.74.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3075
+  ip pim rp-address 102.1.75.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3076
+  ip pim rp-address 102.1.76.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3077
+  ip pim rp-address 102.1.77.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3078
+  ip pim rp-address 102.1.78.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3079
+  ip pim rp-address 102.1.79.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3080
+  ip pim rp-address 102.1.80.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3081
+  ip pim rp-address 102.1.81.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3082
+  ip pim rp-address 102.1.82.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3083
+  ip pim rp-address 102.1.83.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3084
+  ip pim rp-address 102.1.84.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3085
+  ip pim rp-address 102.1.85.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3086
+  ip pim rp-address 102.1.86.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3087
+  ip pim rp-address 102.1.87.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3088
+  ip pim rp-address 102.1.88.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3089
+  ip pim rp-address 102.1.89.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3090
+  ip pim rp-address 102.1.90.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3091
+  ip pim rp-address 102.1.91.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3092
+  ip pim rp-address 102.1.92.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3093
+  ip pim rp-address 102.1.93.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3094
+  ip pim rp-address 102.1.94.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3095
+  ip pim rp-address 102.1.95.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3096
+  ip pim rp-address 102.1.96.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3097
+  ip pim rp-address 102.1.97.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3098
+  ip pim rp-address 102.1.98.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3099
+  ip pim rp-address 102.1.99.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+vrf context trmvrf-3100
+  ip pim rp-address 102.1.100.1 group-list 224.0.0.0/4
+  ip pim ssm range 232.0.0.0/8
+  ip pim anycast-rp 102.1.100.1 102.1.100.2
+  ip pim anycast-rp 102.1.100.1 102.1.100.3
+
+
+interface port-channel62
+
+interface port-channel62.1
+  encapsulation dot1q 101
+  vrf member trmvrf-3001
+  ip address 192.104.1.2/24
+  ip router isis isis_ext
+  isis passive-interface level-2
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.2
+  encapsulation dot1q 102
+  vrf member trmvrf-3002
+  ip address 192.104.2.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.3
+  encapsulation dot1q 103
+  vrf member trmvrf-3003
+  ip address 192.104.3.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.4
+  encapsulation dot1q 104
+  vrf member trmvrf-3004
+  ip address 192.104.4.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.5
+  encapsulation dot1q 105
+  vrf member trmvrf-3005
+  ip address 192.104.5.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.6
+  encapsulation dot1q 106
+  vrf member trmvrf-3006
+  ip address 192.104.6.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.7
+  encapsulation dot1q 107
+  vrf member trmvrf-3007
+  ip address 192.104.7.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.8
+  encapsulation dot1q 108
+  vrf member trmvrf-3008
+  ip address 192.104.8.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.9
+  encapsulation dot1q 109
+  vrf member trmvrf-3009
+  ip address 192.104.9.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.10
+  encapsulation dot1q 110
+  vrf member trmvrf-3010
+  ip address 192.104.10.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.11
+  encapsulation dot1q 111
+  vrf member trmvrf-3011
+  ip address 192.104.11.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.12
+  encapsulation dot1q 112
+  vrf member trmvrf-3012
+  ip address 192.104.12.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.13
+  encapsulation dot1q 113
+  vrf member trmvrf-3013
+  ip address 192.104.13.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.14
+  encapsulation dot1q 114
+  vrf member trmvrf-3014
+  ip address 192.104.14.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.15
+  encapsulation dot1q 115
+  vrf member trmvrf-3015
+  ip address 192.104.15.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.16
+  encapsulation dot1q 116
+  vrf member trmvrf-3016
+  ip address 192.104.16.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.17
+  encapsulation dot1q 117
+  vrf member trmvrf-3017
+  ip address 192.104.17.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.18
+  encapsulation dot1q 118
+  vrf member trmvrf-3018
+  ip address 192.104.18.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.19
+  encapsulation dot1q 119
+  vrf member trmvrf-3019
+  ip address 192.104.19.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.20
+  encapsulation dot1q 120
+  vrf member trmvrf-3020
+  ip address 192.104.20.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.21
+  encapsulation dot1q 121
+  vrf member trmvrf-3021
+  ip address 192.104.21.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.22
+  encapsulation dot1q 122
+  vrf member trmvrf-3022
+  ip address 192.104.22.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.23
+  encapsulation dot1q 123
+  vrf member trmvrf-3023
+  ip address 192.104.23.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.24
+  encapsulation dot1q 124
+  vrf member trmvrf-3024
+  ip address 192.104.24.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.25
+  encapsulation dot1q 125
+  vrf member trmvrf-3025
+  ip address 192.104.25.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.26
+  encapsulation dot1q 126
+  vrf member trmvrf-3026
+  ip address 192.104.26.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.27
+  encapsulation dot1q 127
+  vrf member trmvrf-3027
+  ip address 192.104.27.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.28
+  encapsulation dot1q 128
+  vrf member trmvrf-3028
+  ip address 192.104.28.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.29
+  encapsulation dot1q 129
+  vrf member trmvrf-3029
+  ip address 192.104.29.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.30
+  encapsulation dot1q 130
+  vrf member trmvrf-3030
+  ip address 192.104.30.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.31
+  encapsulation dot1q 131
+  vrf member trmvrf-3031
+  ip address 192.104.31.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.32
+  encapsulation dot1q 132
+  vrf member trmvrf-3032
+  ip address 192.104.32.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.33
+  encapsulation dot1q 133
+  vrf member trmvrf-3033
+  ip address 192.104.33.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.34
+  encapsulation dot1q 134
+  vrf member trmvrf-3034
+  ip address 192.104.34.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.35
+  encapsulation dot1q 135
+  vrf member trmvrf-3035
+  ip address 192.104.35.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.36
+  encapsulation dot1q 136
+  vrf member trmvrf-3036
+  ip address 192.104.36.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.37
+  encapsulation dot1q 137
+  vrf member trmvrf-3037
+  ip address 192.104.37.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.38
+  encapsulation dot1q 138
+  vrf member trmvrf-3038
+  ip address 192.104.38.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.39
+  encapsulation dot1q 139
+  vrf member trmvrf-3039
+  ip address 192.104.39.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.40
+  encapsulation dot1q 140
+  vrf member trmvrf-3040
+  ip address 192.104.40.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.41
+  encapsulation dot1q 141
+  vrf member trmvrf-3041
+  ip address 192.104.41.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.42
+  encapsulation dot1q 142
+  vrf member trmvrf-3042
+  ip address 192.104.42.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.43
+  encapsulation dot1q 143
+  vrf member trmvrf-3043
+  ip address 192.104.43.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.44
+  encapsulation dot1q 144
+  vrf member trmvrf-3044
+  ip address 192.104.44.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.45
+  encapsulation dot1q 145
+  vrf member trmvrf-3045
+  ip address 192.104.45.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.46
+  encapsulation dot1q 146
+  vrf member trmvrf-3046
+  ip address 192.104.46.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.47
+  encapsulation dot1q 147
+  vrf member trmvrf-3047
+  ip address 192.104.47.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.48
+  encapsulation dot1q 148
+  vrf member trmvrf-3048
+  ip address 192.104.48.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.49
+  encapsulation dot1q 149
+  vrf member trmvrf-3049
+  ip address 192.104.49.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.50
+  encapsulation dot1q 150
+  vrf member trmvrf-3050
+  ip address 192.104.50.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.51
+  encapsulation dot1q 151
+  vrf member trmvrf-3051
+  ip address 192.104.51.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.52
+  encapsulation dot1q 152
+  vrf member trmvrf-3052
+  ip address 192.104.52.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.53
+  encapsulation dot1q 153
+  vrf member trmvrf-3053
+  ip address 192.104.53.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.54
+  encapsulation dot1q 154
+  vrf member trmvrf-3054
+  ip address 192.104.54.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.55
+  encapsulation dot1q 155
+  vrf member trmvrf-3055
+  ip address 192.104.55.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.56
+  encapsulation dot1q 156
+  vrf member trmvrf-3056
+  ip address 192.104.56.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.57
+  encapsulation dot1q 157
+  vrf member trmvrf-3057
+  ip address 192.104.57.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.58
+  encapsulation dot1q 158
+  vrf member trmvrf-3058
+  ip address 192.104.58.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.59
+  encapsulation dot1q 159
+  vrf member trmvrf-3059
+  ip address 192.104.59.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.60
+  encapsulation dot1q 160
+  vrf member trmvrf-3060
+  ip address 192.104.60.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.61
+  encapsulation dot1q 161
+  vrf member trmvrf-3061
+  ip address 192.104.61.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.62
+  encapsulation dot1q 162
+  vrf member trmvrf-3062
+  ip address 192.104.62.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.63
+  encapsulation dot1q 163
+  vrf member trmvrf-3063
+  ip address 192.104.63.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.64
+  encapsulation dot1q 164
+  vrf member trmvrf-3064
+  ip address 192.104.64.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.65
+  encapsulation dot1q 165
+  vrf member trmvrf-3065
+  ip address 192.104.65.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.66
+  encapsulation dot1q 166
+  vrf member trmvrf-3066
+  ip address 192.104.66.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.67
+  encapsulation dot1q 167
+  vrf member trmvrf-3067
+  ip address 192.104.67.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.68
+  encapsulation dot1q 168
+  vrf member trmvrf-3068
+  ip address 192.104.68.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.69
+  encapsulation dot1q 169
+  vrf member trmvrf-3069
+  ip address 192.104.69.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.70
+  encapsulation dot1q 170
+  vrf member trmvrf-3070
+  ip address 192.104.70.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.71
+  encapsulation dot1q 171
+  vrf member trmvrf-3071
+  ip address 192.104.71.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.72
+  encapsulation dot1q 172
+  vrf member trmvrf-3072
+  ip address 192.104.72.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.73
+  encapsulation dot1q 173
+  vrf member trmvrf-3073
+  ip address 192.104.73.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.74
+  encapsulation dot1q 174
+  vrf member trmvrf-3074
+  ip address 192.104.74.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.75
+  encapsulation dot1q 175
+  vrf member trmvrf-3075
+  ip address 192.104.75.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.76
+  encapsulation dot1q 176
+  vrf member trmvrf-3076
+  ip address 192.104.76.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.77
+  encapsulation dot1q 177
+  vrf member trmvrf-3077
+  ip address 192.104.77.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.78
+  encapsulation dot1q 178
+  vrf member trmvrf-3078
+  ip address 192.104.78.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.79
+  encapsulation dot1q 179
+  vrf member trmvrf-3079
+  ip address 192.104.79.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.80
+  encapsulation dot1q 180
+  vrf member trmvrf-3080
+  ip address 192.104.80.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.81
+  encapsulation dot1q 181
+  vrf member trmvrf-3081
+  ip address 192.104.81.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.82
+  encapsulation dot1q 182
+  vrf member trmvrf-3082
+  ip address 192.104.82.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.83
+  encapsulation dot1q 183
+  vrf member trmvrf-3083
+  ip address 192.104.83.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.84
+  encapsulation dot1q 184
+  vrf member trmvrf-3084
+  ip address 192.104.84.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.85
+  encapsulation dot1q 185
+  vrf member trmvrf-3085
+  ip address 192.104.85.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.86
+  encapsulation dot1q 186
+  vrf member trmvrf-3086
+  ip address 192.104.86.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.87
+  encapsulation dot1q 187
+  vrf member trmvrf-3087
+  ip address 192.104.87.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.88
+  encapsulation dot1q 188
+  vrf member trmvrf-3088
+  ip address 192.104.88.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.89
+  encapsulation dot1q 189
+  vrf member trmvrf-3089
+  ip address 192.104.89.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.90
+  encapsulation dot1q 190
+  vrf member trmvrf-3090
+  ip address 192.104.90.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.91
+  encapsulation dot1q 191
+  vrf member trmvrf-3091
+  ip address 192.104.91.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.92
+  encapsulation dot1q 192
+  vrf member trmvrf-3092
+  ip address 192.104.92.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.93
+  encapsulation dot1q 193
+  vrf member trmvrf-3093
+  ip address 192.104.93.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.94
+  encapsulation dot1q 194
+  vrf member trmvrf-3094
+  ip address 192.104.94.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.95
+  encapsulation dot1q 195
+  vrf member trmvrf-3095
+  ip address 192.104.95.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.96
+  encapsulation dot1q 196
+  vrf member trmvrf-3096
+  ip address 192.104.96.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.97
+  encapsulation dot1q 197
+  vrf member trmvrf-3097
+  ip address 192.104.97.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.98
+  encapsulation dot1q 198
+  vrf member trmvrf-3098
+  ip address 192.104.98.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.99
+  encapsulation dot1q 199
+  vrf member trmvrf-3099
+  ip address 192.104.99.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel62.100
+  encapsulation dot1q 200
+  vrf member trmvrf-3100
+  ip address 192.104.100.2/24
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface port-channel1001
+  description link to site1
+  ip address 193.11.1.2/24
+  ip ospf passive-interface
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  ip pim passive
+
+interface Ethernet1/1
+  no shutdown
+
+interface Ethernet1/2
+  no shutdown
+
+interface Ethernet1/3
+  no shutdown
+
+interface Ethernet1/4
+  no shutdown
+
+interface Ethernet1/5
+  no shutdown
+
+interface Ethernet1/6
+  no shutdown
+
+interface Ethernet1/7
+  no shutdown
+
+interface Ethernet1/8
+  no shutdown
+
+interface Ethernet1/9
+  no shutdown
+
+interface Ethernet1/10
+  no shutdown
+
+interface Ethernet1/11
+  channel-group 62 mode active
+  no shutdown
+
+interface Ethernet1/12
+  channel-group 62 mode active
+  no shutdown
+
+interface Ethernet1/13
+  channel-group 62 mode active
+  no shutdown
+
+interface Ethernet1/14
+  channel-group 62 mode active
+  no shutdown
+
+interface Ethernet1/15
+  no shutdown
+
+interface Ethernet1/16
+  no shutdown
+
+interface Ethernet1/17
+  no shutdown
+
+interface Ethernet1/18
+  no shutdown
+
+interface Ethernet1/19
+  no shutdown
+
+interface Ethernet1/20
+  no shutdown
+
+interface Ethernet1/21
+  no shutdown
+
+interface Ethernet1/22
+  no shutdown
+
+interface Ethernet1/23
+  no shutdown
+
+interface Ethernet1/24
+  no shutdown
+
+interface Ethernet1/25
+  no shutdown
+
+interface Ethernet1/26
+  no shutdown
+
+interface Ethernet1/27
+  no shutdown
+
+interface Ethernet1/28
+  no shutdown
+
+interface Ethernet1/29
+  no shutdown
+
+interface Ethernet1/30
+  no shutdown
+
+interface Ethernet1/31
+  no shutdown
+
+interface Ethernet1/32
+  no shutdown
+
+interface Ethernet1/33
+  no shutdown
+
+interface Ethernet1/34
+  no shutdown
+
+interface Ethernet1/35
+  no shutdown
+
+interface Ethernet1/36
+  no shutdown
+
+interface Ethernet1/37
+  no shutdown
+
+interface Ethernet1/38
+  no shutdown
+
+interface Ethernet1/39
+  no shutdown
+
+interface Ethernet1/40
+  no shutdown
+
+interface Ethernet1/41
+  no shutdown
+
+interface Ethernet1/41.1
+  encapsulation dot1q 201
+  vrf member trmvrf-3001
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.2
+  encapsulation dot1q 202
+  vrf member trmvrf-3002
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.3
+  encapsulation dot1q 203
+  vrf member trmvrf-3003
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.4
+  encapsulation dot1q 204
+  vrf member trmvrf-3004
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.5
+  encapsulation dot1q 205
+  vrf member trmvrf-3005
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.6
+  encapsulation dot1q 206
+  vrf member trmvrf-3006
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.7
+  encapsulation dot1q 207
+  vrf member trmvrf-3007
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.8
+  encapsulation dot1q 208
+  vrf member trmvrf-3008
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.9
+  encapsulation dot1q 209
+  vrf member trmvrf-3009
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.10
+  encapsulation dot1q 210
+  vrf member trmvrf-3010
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.11
+  encapsulation dot1q 211
+  vrf member trmvrf-3011
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.12
+  encapsulation dot1q 212
+  vrf member trmvrf-3012
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/41.13
+  encapsulation dot1q 213
+  vrf member trmvrf-3013
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42
+  no shutdown
+
+interface Ethernet1/42.1
+  encapsulation dot1q 101
+  vrf member trmvrf-3001
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.2
+  encapsulation dot1q 102
+  vrf member trmvrf-3002
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.3
+  encapsulation dot1q 103
+  vrf member trmvrf-3003
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.4
+  encapsulation dot1q 104
+  vrf member trmvrf-3004
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.5
+  encapsulation dot1q 105
+  vrf member trmvrf-3005
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.6
+  encapsulation dot1q 106
+  vrf member trmvrf-3006
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.7
+  encapsulation dot1q 107
+  vrf member trmvrf-3007
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.8
+  encapsulation dot1q 108
+  vrf member trmvrf-3008
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.9
+  encapsulation dot1q 109
+  vrf member trmvrf-3009
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.10
+  encapsulation dot1q 110
+  vrf member trmvrf-3010
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.11
+  encapsulation dot1q 111
+  vrf member trmvrf-3011
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.12
+  encapsulation dot1q 112
+  vrf member trmvrf-3012
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/42.13
+  encapsulation dot1q 113
+  vrf member trmvrf-3013
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface Ethernet1/43
+  no shutdown
+
+interface Ethernet1/44
+  no shutdown
+
+interface Ethernet1/45
+  no shutdown
+
+interface Ethernet1/46
+  no shutdown
+
+interface Ethernet1/47
+  no shutdown
+
+interface Ethernet1/48
+  no shutdown
+
+interface Ethernet1/49
+  no shutdown
+
+interface Ethernet1/49.1
+  encapsulation dot1q 2501
+  vrf member trmvrf-3001
+  ip address 192.106.1.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.2
+  encapsulation dot1q 2502
+  vrf member trmvrf-3002
+  ip address 192.106.2.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.3
+  encapsulation dot1q 2503
+  vrf member trmvrf-3003
+  ip address 192.106.3.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.4
+  encapsulation dot1q 2504
+  vrf member trmvrf-3004
+  ip address 192.106.4.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.5
+  encapsulation dot1q 2505
+  vrf member trmvrf-3005
+  ip address 192.106.5.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.6
+  encapsulation dot1q 2506
+  vrf member trmvrf-3006
+  ip address 192.106.6.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.7
+  encapsulation dot1q 2507
+  vrf member trmvrf-3007
+  ip address 192.106.7.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.8
+  encapsulation dot1q 2508
+  vrf member trmvrf-3008
+  ip address 192.106.8.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.9
+  encapsulation dot1q 2509
+  vrf member trmvrf-3009
+  ip address 192.106.9.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.10
+  encapsulation dot1q 2510
+  vrf member trmvrf-3010
+  ip address 192.106.10.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.11
+  encapsulation dot1q 2511
+  vrf member trmvrf-3011
+  ip address 192.106.11.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.12
+  encapsulation dot1q 2512
+  vrf member trmvrf-3012
+  ip address 192.106.12.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.13
+  encapsulation dot1q 2513
+  vrf member trmvrf-3013
+  ip address 192.106.13.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.14
+  encapsulation dot1q 2514
+  vrf member trmvrf-3014
+  ip address 192.106.14.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.15
+  encapsulation dot1q 2515
+  vrf member trmvrf-3015
+  ip address 192.106.15.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.16
+  encapsulation dot1q 2516
+  vrf member trmvrf-3016
+  ip address 192.106.16.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.17
+  encapsulation dot1q 2517
+  vrf member trmvrf-3017
+  ip address 192.106.17.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.18
+  encapsulation dot1q 2518
+  vrf member trmvrf-3018
+  ip address 192.106.18.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.19
+  encapsulation dot1q 2519
+  vrf member trmvrf-3019
+  ip address 192.106.19.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.20
+  encapsulation dot1q 2520
+  vrf member trmvrf-3020
+  ip address 192.106.20.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.21
+  encapsulation dot1q 2521
+  vrf member trmvrf-3021
+  ip address 192.106.21.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.22
+  encapsulation dot1q 2522
+  vrf member trmvrf-3022
+  ip address 192.106.22.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.23
+  encapsulation dot1q 2523
+  vrf member trmvrf-3023
+  ip address 192.106.23.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.24
+  encapsulation dot1q 2524
+  vrf member trmvrf-3024
+  ip address 192.106.24.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.25
+  encapsulation dot1q 2525
+  vrf member trmvrf-3025
+  ip address 192.106.25.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.26
+  encapsulation dot1q 2526
+  vrf member trmvrf-3026
+  ip address 192.106.26.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.27
+  encapsulation dot1q 2527
+  vrf member trmvrf-3027
+  ip address 192.106.27.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.28
+  encapsulation dot1q 2528
+  vrf member trmvrf-3028
+  ip address 192.106.28.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.29
+  encapsulation dot1q 2529
+  vrf member trmvrf-3029
+  ip address 192.106.29.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.30
+  encapsulation dot1q 2530
+  vrf member trmvrf-3030
+  ip address 192.106.30.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.31
+  encapsulation dot1q 2531
+  vrf member trmvrf-3031
+  ip address 192.106.31.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.32
+  encapsulation dot1q 2532
+  vrf member trmvrf-3032
+  ip address 192.106.32.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.33
+  encapsulation dot1q 2533
+  vrf member trmvrf-3033
+  ip address 192.106.33.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.34
+  encapsulation dot1q 2534
+  vrf member trmvrf-3034
+  ip address 192.106.34.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.35
+  encapsulation dot1q 2535
+  vrf member trmvrf-3035
+  ip address 192.106.35.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.36
+  encapsulation dot1q 2536
+  vrf member trmvrf-3036
+  ip address 192.106.36.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.37
+  encapsulation dot1q 2537
+  vrf member trmvrf-3037
+  ip address 192.106.37.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.38
+  encapsulation dot1q 2538
+  vrf member trmvrf-3038
+  ip address 192.106.38.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.39
+  encapsulation dot1q 2539
+  vrf member trmvrf-3039
+  ip address 192.106.39.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.40
+  encapsulation dot1q 2540
+  vrf member trmvrf-3040
+  ip address 192.106.40.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.41
+  encapsulation dot1q 2541
+  vrf member trmvrf-3041
+  ip address 192.106.41.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.42
+  encapsulation dot1q 2542
+  vrf member trmvrf-3042
+  ip address 192.106.42.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.43
+  encapsulation dot1q 2543
+  vrf member trmvrf-3043
+  ip address 192.106.43.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.44
+  encapsulation dot1q 2544
+  vrf member trmvrf-3044
+  ip address 192.106.44.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.45
+  encapsulation dot1q 2545
+  vrf member trmvrf-3045
+  ip address 192.106.45.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.46
+  encapsulation dot1q 2546
+  vrf member trmvrf-3046
+  ip address 192.106.46.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.47
+  encapsulation dot1q 2547
+  vrf member trmvrf-3047
+  ip address 192.106.47.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.48
+  encapsulation dot1q 2548
+  vrf member trmvrf-3048
+  ip address 192.106.48.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.49
+  encapsulation dot1q 2549
+  vrf member trmvrf-3049
+  ip address 192.106.49.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.50
+  encapsulation dot1q 2550
+  vrf member trmvrf-3050
+  ip address 192.106.50.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.51
+  encapsulation dot1q 2551
+  vrf member trmvrf-3051
+  ip address 192.106.51.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.52
+  encapsulation dot1q 2552
+  vrf member trmvrf-3052
+  ip address 192.106.52.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.53
+  encapsulation dot1q 2553
+  vrf member trmvrf-3053
+  ip address 192.106.53.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.54
+  encapsulation dot1q 2554
+  vrf member trmvrf-3054
+  ip address 192.106.54.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.55
+  encapsulation dot1q 2555
+  vrf member trmvrf-3055
+  ip address 192.106.55.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.56
+  encapsulation dot1q 2556
+  vrf member trmvrf-3056
+  ip address 192.106.56.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.57
+  encapsulation dot1q 2557
+  vrf member trmvrf-3057
+  ip address 192.106.57.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.58
+  encapsulation dot1q 2558
+  vrf member trmvrf-3058
+  ip address 192.106.58.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.59
+  encapsulation dot1q 2559
+  vrf member trmvrf-3059
+  ip address 192.106.59.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.60
+  encapsulation dot1q 2560
+  vrf member trmvrf-3060
+  ip address 192.106.60.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.61
+  encapsulation dot1q 2561
+  vrf member trmvrf-3061
+  ip address 192.106.61.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.62
+  encapsulation dot1q 2562
+  vrf member trmvrf-3062
+  ip address 192.106.62.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.63
+  encapsulation dot1q 2563
+  vrf member trmvrf-3063
+  ip address 192.106.63.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.64
+  encapsulation dot1q 2564
+  vrf member trmvrf-3064
+  ip address 192.106.64.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.65
+  encapsulation dot1q 2565
+  vrf member trmvrf-3065
+  ip address 192.106.65.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.66
+  encapsulation dot1q 2566
+  vrf member trmvrf-3066
+  ip address 192.106.66.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.67
+  encapsulation dot1q 2567
+  vrf member trmvrf-3067
+  ip address 192.106.67.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.68
+  encapsulation dot1q 2568
+  vrf member trmvrf-3068
+  ip address 192.106.68.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.69
+  encapsulation dot1q 2569
+  vrf member trmvrf-3069
+  ip address 192.106.69.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.70
+  encapsulation dot1q 2570
+  vrf member trmvrf-3070
+  ip address 192.106.70.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.71
+  encapsulation dot1q 2571
+  vrf member trmvrf-3071
+  ip address 192.106.71.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.72
+  encapsulation dot1q 2572
+  vrf member trmvrf-3072
+  ip address 192.106.72.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.73
+  encapsulation dot1q 2573
+  vrf member trmvrf-3073
+  ip address 192.106.73.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.74
+  encapsulation dot1q 2574
+  vrf member trmvrf-3074
+  ip address 192.106.74.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.75
+  encapsulation dot1q 2575
+  vrf member trmvrf-3075
+  ip address 192.106.75.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.76
+  encapsulation dot1q 2576
+  vrf member trmvrf-3076
+  ip address 192.106.76.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.77
+  encapsulation dot1q 2577
+  vrf member trmvrf-3077
+  ip address 192.106.77.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.78
+  encapsulation dot1q 2578
+  vrf member trmvrf-3078
+  ip address 192.106.78.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.79
+  encapsulation dot1q 2579
+  vrf member trmvrf-3079
+  ip address 192.106.79.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.80
+  encapsulation dot1q 2580
+  vrf member trmvrf-3080
+  ip address 192.106.80.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.81
+  encapsulation dot1q 2581
+  vrf member trmvrf-3081
+  ip address 192.106.81.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.82
+  encapsulation dot1q 2582
+  vrf member trmvrf-3082
+  ip address 192.106.82.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.83
+  encapsulation dot1q 2583
+  vrf member trmvrf-3083
+  ip address 192.106.83.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.84
+  encapsulation dot1q 2584
+  vrf member trmvrf-3084
+  ip address 192.106.84.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.85
+  encapsulation dot1q 2585
+  vrf member trmvrf-3085
+  ip address 192.106.85.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.86
+  encapsulation dot1q 2586
+  vrf member trmvrf-3086
+  ip address 192.106.86.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.87
+  encapsulation dot1q 2587
+  vrf member trmvrf-3087
+  ip address 192.106.87.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.88
+  encapsulation dot1q 2588
+  vrf member trmvrf-3088
+  ip address 192.106.88.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.89
+  encapsulation dot1q 2589
+  vrf member trmvrf-3089
+  ip address 192.106.89.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.90
+  encapsulation dot1q 2590
+  vrf member trmvrf-3090
+  ip address 192.106.90.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.91
+  encapsulation dot1q 2591
+  vrf member trmvrf-3091
+  ip address 192.106.91.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.92
+  encapsulation dot1q 2592
+  vrf member trmvrf-3092
+  ip address 192.106.92.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.93
+  encapsulation dot1q 2593
+  vrf member trmvrf-3093
+  ip address 192.106.93.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.94
+  encapsulation dot1q 2594
+  vrf member trmvrf-3094
+  ip address 192.106.94.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.95
+  encapsulation dot1q 2595
+  vrf member trmvrf-3095
+  ip address 192.106.95.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.96
+  encapsulation dot1q 2596
+  vrf member trmvrf-3096
+  ip address 192.106.96.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.97
+  encapsulation dot1q 2597
+  vrf member trmvrf-3097
+  ip address 192.106.97.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.98
+  encapsulation dot1q 2598
+  vrf member trmvrf-3098
+  ip address 192.106.98.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.99
+  encapsulation dot1q 2599
+  vrf member trmvrf-3099
+  ip address 192.106.99.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/49.100
+  encapsulation dot1q 2600
+  vrf member trmvrf-3100
+  ip address 192.106.100.1/24
+  isis network point-to-point
+  ip router isis isis_ext
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/50
+  channel-group 1001 mode active
+  no shutdown
+
+interface Ethernet1/51
+  mtu 9216
+  ip address 192.24.6.2/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+  no shutdown
+
+interface Ethernet1/52
+  no shutdown
+
+interface Ethernet1/53
+  description link to spine3
+  mtu 9216
+  ip address 192.24.1.2/24
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface Ethernet1/54
+  description link to spine4
+
+interface mgmt0
+  vrf member management
+  ip address 172.31.203.226/21
+
+interface loopback1
+  ip address 201.1.1.24/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback2
+  ip address 201.201.201.24/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback3
+  ip address 201.201.201.223/32
+  ip router ospf ospf_1 area 0.0.0.0
+  ip pim sparse-mode
+
+interface loopback301
+  vrf member trmvrf-3001
+  ip address 102.1.1.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback302
+  vrf member trmvrf-3002
+  ip address 102.1.2.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback303
+  vrf member trmvrf-3003
+  ip address 102.1.3.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback304
+  vrf member trmvrf-3004
+  ip address 102.1.4.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback305
+  vrf member trmvrf-3005
+  ip address 102.1.5.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback306
+  vrf member trmvrf-3006
+  ip address 102.1.6.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback307
+  vrf member trmvrf-3007
+  ip address 102.1.7.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback308
+  vrf member trmvrf-3008
+  ip address 102.1.8.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback309
+  vrf member trmvrf-3009
+  ip address 102.1.9.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback310
+  vrf member trmvrf-3010
+  ip address 102.1.10.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback311
+  vrf member trmvrf-3011
+  ip address 102.1.11.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback312
+  vrf member trmvrf-3012
+  ip address 102.1.12.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback313
+  vrf member trmvrf-3013
+  ip address 102.1.13.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback314
+  vrf member trmvrf-3014
+  ip address 102.1.14.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback315
+  vrf member trmvrf-3015
+  ip address 102.1.15.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback316
+  vrf member trmvrf-3016
+  ip address 102.1.16.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback317
+  vrf member trmvrf-3017
+  ip address 102.1.17.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback318
+  vrf member trmvrf-3018
+  ip address 102.1.18.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback319
+  vrf member trmvrf-3019
+  ip address 102.1.19.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback320
+  vrf member trmvrf-3020
+  ip address 102.1.20.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback321
+  vrf member trmvrf-3021
+  ip address 102.1.21.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback322
+  vrf member trmvrf-3022
+  ip address 102.1.22.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback323
+  vrf member trmvrf-3023
+  ip address 102.1.23.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback324
+  vrf member trmvrf-3024
+  ip address 102.1.24.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback325
+  vrf member trmvrf-3025
+  ip address 102.1.25.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback326
+  vrf member trmvrf-3026
+  ip address 102.1.26.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback327
+  vrf member trmvrf-3027
+  ip address 102.1.27.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback328
+  vrf member trmvrf-3028
+  ip address 102.1.28.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback329
+  vrf member trmvrf-3029
+  ip address 102.1.29.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback330
+  vrf member trmvrf-3030
+  ip address 102.1.30.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback331
+  vrf member trmvrf-3031
+  ip address 102.1.31.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback332
+  vrf member trmvrf-3032
+  ip address 102.1.32.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback333
+  vrf member trmvrf-3033
+  ip address 102.1.33.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback334
+  vrf member trmvrf-3034
+  ip address 102.1.34.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback335
+  vrf member trmvrf-3035
+  ip address 102.1.35.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback336
+  vrf member trmvrf-3036
+  ip address 102.1.36.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback337
+  vrf member trmvrf-3037
+  ip address 102.1.37.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback338
+  vrf member trmvrf-3038
+  ip address 102.1.38.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback339
+  vrf member trmvrf-3039
+  ip address 102.1.39.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback340
+  vrf member trmvrf-3040
+  ip address 102.1.40.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback341
+  vrf member trmvrf-3041
+  ip address 102.1.41.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback342
+  vrf member trmvrf-3042
+  ip address 102.1.42.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback343
+  vrf member trmvrf-3043
+  ip address 102.1.43.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback344
+  vrf member trmvrf-3044
+  ip address 102.1.44.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback345
+  vrf member trmvrf-3045
+  ip address 102.1.45.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback346
+  vrf member trmvrf-3046
+  ip address 102.1.46.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback347
+  vrf member trmvrf-3047
+  ip address 102.1.47.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback348
+  vrf member trmvrf-3048
+  ip address 102.1.48.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback349
+  vrf member trmvrf-3049
+  ip address 102.1.49.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback350
+  vrf member trmvrf-3050
+  ip address 102.1.50.3/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback501
+  vrf member trmvrf-3001
+  ip address 102.1.1.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback502
+  vrf member trmvrf-3002
+  ip address 102.1.2.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback503
+  vrf member trmvrf-3003
+  ip address 102.1.3.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback504
+  vrf member trmvrf-3004
+  ip address 102.1.4.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback505
+  vrf member trmvrf-3005
+  ip address 102.1.5.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback506
+  vrf member trmvrf-3006
+  ip address 102.1.6.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback507
+  vrf member trmvrf-3007
+  ip address 102.1.7.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback508
+  vrf member trmvrf-3008
+  ip address 102.1.8.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback509
+  vrf member trmvrf-3009
+  ip address 102.1.9.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback510
+  vrf member trmvrf-3010
+  ip address 102.1.10.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback511
+  vrf member trmvrf-3011
+  ip address 102.1.11.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback512
+  vrf member trmvrf-3012
+  ip address 102.1.12.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback513
+  vrf member trmvrf-3013
+  ip address 102.1.13.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback514
+  vrf member trmvrf-3014
+  ip address 102.1.14.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback515
+  vrf member trmvrf-3015
+  ip address 102.1.15.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback516
+  vrf member trmvrf-3016
+  ip address 102.1.16.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback517
+  vrf member trmvrf-3017
+  ip address 102.1.17.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback518
+  vrf member trmvrf-3018
+  ip address 102.1.18.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback519
+  vrf member trmvrf-3019
+  ip address 102.1.19.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback520
+  vrf member trmvrf-3020
+  ip address 102.1.20.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback521
+  vrf member trmvrf-3021
+  ip address 102.1.21.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback522
+  vrf member trmvrf-3022
+  ip address 102.1.22.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback523
+  vrf member trmvrf-3023
+  ip address 102.1.23.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback524
+  vrf member trmvrf-3024
+  ip address 102.1.24.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback525
+  vrf member trmvrf-3025
+  ip address 102.1.25.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback526
+  vrf member trmvrf-3026
+  ip address 102.1.26.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback527
+  vrf member trmvrf-3027
+  ip address 102.1.27.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback528
+  vrf member trmvrf-3028
+  ip address 102.1.28.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback529
+  vrf member trmvrf-3029
+  ip address 102.1.29.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback530
+  vrf member trmvrf-3030
+  ip address 102.1.30.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback531
+  vrf member trmvrf-3031
+  ip address 102.1.31.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback532
+  vrf member trmvrf-3032
+  ip address 102.1.32.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback533
+  vrf member trmvrf-3033
+  ip address 102.1.33.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback534
+  vrf member trmvrf-3034
+  ip address 102.1.34.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback535
+  vrf member trmvrf-3035
+  ip address 102.1.35.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback536
+  vrf member trmvrf-3036
+  ip address 102.1.36.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback537
+  vrf member trmvrf-3037
+  ip address 102.1.37.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback538
+  vrf member trmvrf-3038
+  ip address 102.1.38.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback539
+  vrf member trmvrf-3039
+  ip address 102.1.39.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback540
+  vrf member trmvrf-3040
+  ip address 102.1.40.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback541
+  vrf member trmvrf-3041
+  ip address 102.1.41.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback542
+  vrf member trmvrf-3042
+  ip address 102.1.42.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback543
+  vrf member trmvrf-3043
+  ip address 102.1.43.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback544
+  vrf member trmvrf-3044
+  ip address 102.1.44.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback545
+  vrf member trmvrf-3045
+  ip address 102.1.45.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback546
+  vrf member trmvrf-3046
+  ip address 102.1.46.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback547
+  vrf member trmvrf-3047
+  ip address 102.1.47.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback548
+  vrf member trmvrf-3048
+  ip address 102.1.48.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback549
+  vrf member trmvrf-3049
+  ip address 102.1.49.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback550
+  vrf member trmvrf-3050
+  ip address 102.1.50.1/32
+  ip router isis isis_ext
+  ip pim sparse-mode
+
+interface loopback801
+  vrf member trmvrf-3001
+  ip address 103.1.1.4/32
+  ip pim sparse-mode
+
+interface loopback802
+  vrf member trmvrf-3002
+  ip address 103.1.2.4/32
+  ip pim sparse-mode
+
+interface loopback803
+  vrf member trmvrf-3003
+  ip address 103.1.3.4/32
+  ip pim sparse-mode
+
+interface loopback804
+  vrf member trmvrf-3004
+  ip address 103.1.4.4/32
+  ip pim sparse-mode
+
+interface loopback805
+  vrf member trmvrf-3005
+  ip address 103.1.5.4/32
+  ip pim sparse-mode
+
+interface loopback806
+  vrf member trmvrf-3006
+  ip address 103.1.6.4/32
+  ip pim sparse-mode
+
+interface loopback807
+  vrf member trmvrf-3007
+  ip address 103.1.7.4/32
+  ip pim sparse-mode
+
+interface loopback808
+  vrf member trmvrf-3008
+  ip address 103.1.8.4/32
+  ip pim sparse-mode
+
+interface loopback809
+  vrf member trmvrf-3009
+  ip address 103.1.9.4/32
+  ip pim sparse-mode
+
+interface loopback810
+  vrf member trmvrf-3010
+  ip address 103.1.10.4/32
+  ip pim sparse-mode
+
+interface loopback811
+  vrf member trmvrf-3011
+  ip address 103.1.11.4/32
+  ip pim sparse-mode
+
+interface loopback812
+  vrf member trmvrf-3012
+  ip address 103.1.12.4/32
+  ip pim sparse-mode
+
+interface loopback813
+  vrf member trmvrf-3013
+  ip address 103.1.13.4/32
+  ip pim sparse-mode
+
+interface loopback814
+  vrf member trmvrf-3014
+  ip address 103.1.14.4/32
+  ip pim sparse-mode
+
+interface loopback815
+  vrf member trmvrf-3015
+  ip address 103.1.15.4/32
+  ip pim sparse-mode
+
+interface loopback816
+  vrf member trmvrf-3016
+  ip address 103.1.16.4/32
+  ip pim sparse-mode
+
+interface loopback817
+  vrf member trmvrf-3017
+  ip address 103.1.17.4/32
+  ip pim sparse-mode
+
+interface loopback818
+  vrf member trmvrf-3018
+  ip address 103.1.18.4/32
+  ip pim sparse-mode
+
+interface loopback819
+  vrf member trmvrf-3019
+  ip address 103.1.19.4/32
+  ip pim sparse-mode
+
+interface loopback820
+  vrf member trmvrf-3020
+  ip address 103.1.20.4/32
+  ip pim sparse-mode
+
+interface loopback821
+  vrf member trmvrf-3021
+  ip address 103.1.21.4/32
+  ip pim sparse-mode
+
+interface loopback822
+  vrf member trmvrf-3022
+  ip address 103.1.22.4/32
+  ip pim sparse-mode
+
+interface loopback823
+  vrf member trmvrf-3023
+  ip address 103.1.23.4/32
+  ip pim sparse-mode
+
+interface loopback824
+  vrf member trmvrf-3024
+  ip address 103.1.24.4/32
+  ip pim sparse-mode
+
+interface loopback825
+  vrf member trmvrf-3025
+  ip address 103.1.25.4/32
+  ip pim sparse-mode
+
+interface loopback826
+  vrf member trmvrf-3026
+  ip address 103.1.26.4/32
+  ip pim sparse-mode
+
+interface loopback827
+  vrf member trmvrf-3027
+  ip address 103.1.27.4/32
+  ip pim sparse-mode
+
+interface loopback828
+  vrf member trmvrf-3028
+  ip address 103.1.28.4/32
+  ip pim sparse-mode
+
+interface loopback829
+  vrf member trmvrf-3029
+  ip address 103.1.29.4/32
+  ip pim sparse-mode
+
+interface loopback830
+  vrf member trmvrf-3030
+  ip address 103.1.30.4/32
+  ip pim sparse-mode
+
+interface loopback831
+  vrf member trmvrf-3031
+  ip address 103.1.31.4/32
+  ip pim sparse-mode
+
+interface loopback832
+  vrf member trmvrf-3032
+  ip address 103.1.32.4/32
+  ip pim sparse-mode
+
+interface loopback833
+  vrf member trmvrf-3033
+  ip address 103.1.33.4/32
+  ip pim sparse-mode
+
+interface loopback834
+  vrf member trmvrf-3034
+  ip address 103.1.34.4/32
+  ip pim sparse-mode
+
+interface loopback835
+  vrf member trmvrf-3035
+  ip address 103.1.35.4/32
+  ip pim sparse-mode
+
+interface loopback836
+  vrf member trmvrf-3036
+  ip address 103.1.36.4/32
+  ip pim sparse-mode
+
+interface loopback837
+  vrf member trmvrf-3037
+  ip address 103.1.37.4/32
+  ip pim sparse-mode
+
+interface loopback838
+  vrf member trmvrf-3038
+  ip address 103.1.38.4/32
+  ip pim sparse-mode
+
+interface loopback839
+  vrf member trmvrf-3039
+  ip address 103.1.39.4/32
+  ip pim sparse-mode
+
+interface loopback840
+  vrf member trmvrf-3040
+  ip address 103.1.40.4/32
+  ip pim sparse-mode
+
+interface loopback841
+  vrf member trmvrf-3041
+  ip address 103.1.41.4/32
+  ip pim sparse-mode
+
+interface loopback842
+  vrf member trmvrf-3042
+  ip address 103.1.42.4/32
+  ip pim sparse-mode
+
+interface loopback843
+  vrf member trmvrf-3043
+  ip address 103.1.43.4/32
+  ip pim sparse-mode
+
+interface loopback844
+  vrf member trmvrf-3044
+  ip address 103.1.44.4/32
+  ip pim sparse-mode
+
+interface loopback845
+  vrf member trmvrf-3045
+  ip address 103.1.45.4/32
+  ip pim sparse-mode
+
+interface loopback846
+  vrf member trmvrf-3046
+  ip address 103.1.46.4/32
+  ip pim sparse-mode
+
+interface loopback847
+  vrf member trmvrf-3047
+  ip address 103.1.47.4/32
+  ip pim sparse-mode
+
+interface loopback848
+  vrf member trmvrf-3048
+  ip address 103.1.48.4/32
+  ip pim sparse-mode
+
+interface loopback849
+  vrf member trmvrf-3049
+  ip address 103.1.49.4/32
+  ip pim sparse-mode
+
+interface loopback850
+  vrf member trmvrf-3050
+  ip address 103.1.50.4/32
+  ip pim sparse-mode
+
+interface loopback851
+  vrf member trmvrf-3051
+  ip address 103.1.51.4/32
+  ip pim sparse-mode
+
+interface loopback852
+  vrf member trmvrf-3052
+  ip address 103.1.52.4/32
+  ip pim sparse-mode
+
+interface loopback853
+  vrf member trmvrf-3053
+  ip address 103.1.53.4/32
+  ip pim sparse-mode
+
+interface loopback854
+  vrf member trmvrf-3054
+  ip address 103.1.54.4/32
+  ip pim sparse-mode
+
+interface loopback855
+  vrf member trmvrf-3055
+  ip address 103.1.55.4/32
+  ip pim sparse-mode
+
+interface loopback856
+  vrf member trmvrf-3056
+  ip address 103.1.56.4/32
+  ip pim sparse-mode
+
+interface loopback857
+  vrf member trmvrf-3057
+  ip address 103.1.57.4/32
+  ip pim sparse-mode
+
+interface loopback858
+  vrf member trmvrf-3058
+  ip address 103.1.58.4/32
+  ip pim sparse-mode
+
+interface loopback859
+  vrf member trmvrf-3059
+  ip address 103.1.59.4/32
+  ip pim sparse-mode
+
+interface loopback860
+  vrf member trmvrf-3060
+  ip address 103.1.60.4/32
+  ip pim sparse-mode
+
+interface loopback861
+  vrf member trmvrf-3061
+  ip address 103.1.61.4/32
+  ip pim sparse-mode
+
+interface loopback862
+  vrf member trmvrf-3062
+  ip address 103.1.62.4/32
+  ip pim sparse-mode
+
+interface loopback863
+  vrf member trmvrf-3063
+  ip address 103.1.63.4/32
+  ip pim sparse-mode
+
+interface loopback864
+  vrf member trmvrf-3064
+  ip address 103.1.64.4/32
+  ip pim sparse-mode
+
+interface loopback865
+  vrf member trmvrf-3065
+  ip address 103.1.65.4/32
+  ip pim sparse-mode
+
+interface loopback866
+  vrf member trmvrf-3066
+  ip address 103.1.66.4/32
+  ip pim sparse-mode
+
+interface loopback867
+  vrf member trmvrf-3067
+  ip address 103.1.67.4/32
+  ip pim sparse-mode
+
+interface loopback868
+  vrf member trmvrf-3068
+  ip address 103.1.68.4/32
+  ip pim sparse-mode
+
+interface loopback869
+  vrf member trmvrf-3069
+  ip address 103.1.69.4/32
+  ip pim sparse-mode
+
+interface loopback870
+  vrf member trmvrf-3070
+  ip address 103.1.70.4/32
+  ip pim sparse-mode
+
+interface loopback871
+  vrf member trmvrf-3071
+  ip address 103.1.71.4/32
+  ip pim sparse-mode
+
+interface loopback872
+  vrf member trmvrf-3072
+  ip address 103.1.72.4/32
+  ip pim sparse-mode
+
+interface loopback873
+  vrf member trmvrf-3073
+  ip address 103.1.73.4/32
+  ip pim sparse-mode
+
+interface loopback874
+  vrf member trmvrf-3074
+  ip address 103.1.74.4/32
+  ip pim sparse-mode
+
+interface loopback875
+  vrf member trmvrf-3075
+  ip address 103.1.75.4/32
+  ip pim sparse-mode
+
+interface loopback876
+  vrf member trmvrf-3076
+  ip address 103.1.76.4/32
+  ip pim sparse-mode
+
+interface loopback877
+  vrf member trmvrf-3077
+  ip address 103.1.77.4/32
+  ip pim sparse-mode
+
+interface loopback878
+  vrf member trmvrf-3078
+  ip address 103.1.78.4/32
+  ip pim sparse-mode
+
+interface loopback879
+  vrf member trmvrf-3079
+  ip address 103.1.79.4/32
+  ip pim sparse-mode
+
+interface loopback880
+  vrf member trmvrf-3080
+  ip address 103.1.80.4/32
+  ip pim sparse-mode
+
+interface loopback881
+  vrf member trmvrf-3081
+  ip address 103.1.81.4/32
+  ip pim sparse-mode
+
+interface loopback882
+  vrf member trmvrf-3082
+  ip address 103.1.82.4/32
+  ip pim sparse-mode
+
+interface loopback883
+  vrf member trmvrf-3083
+  ip address 103.1.83.4/32
+  ip pim sparse-mode
+
+interface loopback884
+  vrf member trmvrf-3084
+  ip address 103.1.84.4/32
+  ip pim sparse-mode
+
+interface loopback885
+  vrf member trmvrf-3085
+  ip address 103.1.85.4/32
+  ip pim sparse-mode
+
+interface loopback886
+  vrf member trmvrf-3086
+  ip address 103.1.86.4/32
+  ip pim sparse-mode
+
+interface loopback887
+  vrf member trmvrf-3087
+  ip address 103.1.87.4/32
+  ip pim sparse-mode
+
+interface loopback888
+  vrf member trmvrf-3088
+  ip address 103.1.88.4/32
+  ip pim sparse-mode
+
+interface loopback889
+  vrf member trmvrf-3089
+  ip address 103.1.89.4/32
+  ip pim sparse-mode
+
+interface loopback890
+  vrf member trmvrf-3090
+  ip address 103.1.90.4/32
+  ip pim sparse-mode
+
+interface loopback891
+  vrf member trmvrf-3091
+  ip address 103.1.91.4/32
+  ip pim sparse-mode
+
+interface loopback892
+  vrf member trmvrf-3092
+  ip address 103.1.92.4/32
+  ip pim sparse-mode
+
+interface loopback893
+  vrf member trmvrf-3093
+  ip address 103.1.93.4/32
+  ip pim sparse-mode
+
+interface loopback894
+  vrf member trmvrf-3094
+  ip address 103.1.94.4/32
+  ip pim sparse-mode
+
+interface loopback895
+  vrf member trmvrf-3095
+  ip address 103.1.95.4/32
+  ip pim sparse-mode
+
+interface loopback896
+  vrf member trmvrf-3096
+  ip address 103.1.96.4/32
+  ip pim sparse-mode
+
+interface loopback897
+  vrf member trmvrf-3097
+  ip address 103.1.97.4/32
+  ip pim sparse-mode
+
+interface loopback898
+  vrf member trmvrf-3098
+  ip address 103.1.98.4/32
+  ip pim sparse-mode
+
+interface loopback899
+  vrf member trmvrf-3099
+  ip address 103.1.99.4/32
+  ip pim sparse-mode
+
+interface loopback900
+  vrf member trmvrf-3100
+  ip address 103.1.100.4/32
+  ip pim sparse-mode
+line console
+  exec-timeout 0
+  speed 115200
+line vty
+  exec-timeout 0
+router isis isis_ext
+  address-family ipv4 unicast
+  vrf trmvrf-3001
+    net 49.0002.0002.0001.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3002
+    net 49.0002.0002.0002.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3003
+    net 49.0002.0002.0003.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3004
+    net 49.0002.0002.0004.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3005
+    net 49.0002.0002.0005.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3006
+    net 49.0002.0002.0006.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3007
+    net 49.0002.0002.0007.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3008
+    net 49.0002.0002.0008.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3009
+    net 49.0002.0002.0009.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3010
+    net 49.0002.0002.0010.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3011
+    net 49.0002.0002.0011.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3012
+    net 49.0002.0002.0012.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3013
+    net 49.0002.0002.0013.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+      redistribute bgp 65003 route-map allowall
+  vrf trmvrf-3014
+    net 49.0002.0002.0014.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3015
+    net 49.0002.0002.0015.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3016
+    net 49.0002.0002.0016.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3017
+    net 49.0002.0002.0017.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3018
+    net 49.0002.0002.0018.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3019
+    net 49.0002.0002.0019.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3020
+    net 49.0002.0002.0020.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3021
+    net 49.0002.0002.0021.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3022
+    net 49.0002.0002.0022.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3023
+    net 49.0002.0002.0023.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3024
+    net 49.0002.0002.0024.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3025
+    net 49.0002.0002.0025.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3026
+    net 49.0002.0002.0026.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3027
+    net 49.0002.0002.0027.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3028
+    net 49.0002.0002.0028.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3029
+    net 49.0002.0002.0029.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3030
+    net 49.0002.0002.0030.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3031
+    net 49.0002.0002.0031.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3032
+    net 49.0002.0002.0032.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3033
+    net 49.0002.0002.0033.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3034
+    net 49.0002.0002.0034.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3035
+    net 49.0002.0002.0035.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3036
+    net 49.0002.0002.0036.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3037
+    net 49.0002.0002.0037.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3038
+    net 49.0002.0002.0038.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3039
+    net 49.0002.0002.0039.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3040
+    net 49.0002.0002.0040.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3041
+    net 49.0002.0002.0041.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3042
+    net 49.0002.0002.0042.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3043
+    net 49.0002.0002.0043.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3044
+    net 49.0002.0002.0044.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3045
+    net 49.0002.0002.0045.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3046
+    net 49.0002.0002.0046.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3047
+    net 49.0002.0002.0047.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3048
+    net 49.0002.0002.0048.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3049
+    net 49.0002.0002.0049.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3050
+    net 49.0002.0002.0050.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3051
+    net 49.0002.0002.0051.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3052
+    net 49.0002.0002.0052.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3053
+    net 49.0002.0002.0053.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3054
+    net 49.0002.0002.0054.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3055
+    net 49.0002.0002.0055.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3056
+    net 49.0002.0002.0056.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3057
+    net 49.0002.0002.0057.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3058
+    net 49.0002.0002.0058.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3059
+    net 49.0002.0002.0059.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3060
+    net 49.0002.0002.0060.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3061
+    net 49.0002.0002.0061.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3062
+    net 49.0002.0002.0062.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3063
+    net 49.0002.0002.0063.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3064
+    net 49.0002.0002.0064.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3065
+    net 49.0002.0002.0065.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3066
+    net 49.0002.0002.0066.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3067
+    net 49.0002.0002.0067.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3068
+    net 49.0002.0002.0068.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3069
+    net 49.0002.0002.0069.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3070
+    net 49.0002.0002.0070.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3071
+    net 49.0002.0002.0071.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3072
+    net 49.0002.0002.0072.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3073
+    net 49.0002.0002.0073.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3074
+    net 49.0002.0002.0074.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3075
+    net 49.0002.0002.0075.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3076
+    net 49.0002.0002.0076.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3077
+    net 49.0002.0002.0077.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3078
+    net 49.0002.0002.0078.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3079
+    net 49.0002.0002.0079.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3080
+    net 49.0002.0002.0080.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3081
+    net 49.0002.0002.0081.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3082
+    net 49.0002.0002.0082.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3083
+    net 49.0002.0002.0083.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3084
+    net 49.0002.0002.0084.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3085
+    net 49.0002.0002.0085.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3086
+    net 49.0002.0002.0086.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3087
+    net 49.0002.0002.0087.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3088
+    net 49.0002.0002.0088.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3089
+    net 49.0002.0002.0089.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3090
+    net 49.0002.0002.0090.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3091
+    net 49.0002.0002.0091.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3092
+    net 49.0002.0002.0092.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3093
+    net 49.0002.0002.0093.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3094
+    net 49.0002.0002.0094.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3095
+    net 49.0002.0002.0095.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3096
+    net 49.0002.0002.0096.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3097
+    net 49.0002.0002.0097.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3098
+    net 49.0002.0002.0098.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3099
+    net 49.0002.0002.0099.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+  vrf trmvrf-3100
+    net 49.0002.0002.0100.00
+    is-type level-2
+    log-adjacency-changes
+    address-family ipv4 unicast
+      redistribute bgp 301 route-map allowall
+router bgp 301
+  timers bestpath-limit 600
+  graceful-restart restart-time 300
+  graceful-restart stalepath-time 600
+  vrf trmvrf-3001
+    router-id 103.1.1.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.1.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3002
+    router-id 103.1.2.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.2.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3003
+    router-id 103.1.3.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.3.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3004
+    router-id 103.1.4.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.4.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3005
+    router-id 103.1.5.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.5.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3006
+    router-id 103.1.6.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.6.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3007
+    router-id 103.1.7.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.7.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3008
+    router-id 103.1.8.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.8.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3009
+    router-id 103.1.9.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.9.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3010
+    router-id 103.1.10.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.10.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3011
+    router-id 103.1.11.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.11.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3012
+    router-id 103.1.12.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.12.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3013
+    router-id 103.1.13.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.13.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3014
+    router-id 103.1.14.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.14.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3015
+    router-id 103.1.15.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.15.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3016
+    router-id 103.1.16.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.16.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3017
+    router-id 103.1.17.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.17.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3018
+    router-id 103.1.18.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.18.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3019
+    router-id 103.1.19.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.19.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3020
+    router-id 103.1.20.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.20.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3021
+    router-id 103.1.21.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.21.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3022
+    router-id 103.1.22.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.22.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3023
+    router-id 103.1.23.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.23.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3024
+    router-id 103.1.24.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.24.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3025
+    router-id 103.1.25.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.25.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3026
+    router-id 103.1.26.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.26.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3027
+    router-id 103.1.27.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.27.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3028
+    router-id 103.1.28.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.28.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3029
+    router-id 103.1.29.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.29.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3030
+    router-id 103.1.30.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.30.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3031
+    router-id 103.1.31.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.31.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3032
+    router-id 103.1.32.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.32.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3033
+    router-id 103.1.33.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.33.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3034
+    router-id 103.1.34.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.34.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3035
+    router-id 103.1.35.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.35.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3036
+    router-id 103.1.36.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.36.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3037
+    router-id 103.1.37.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.37.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3038
+    router-id 103.1.38.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.38.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3039
+    router-id 103.1.39.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.39.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3040
+    router-id 103.1.40.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.40.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3041
+    router-id 103.1.41.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.41.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3042
+    router-id 103.1.42.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.42.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3043
+    router-id 103.1.43.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.43.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3044
+    router-id 103.1.44.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.44.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3045
+    router-id 103.1.45.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.45.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3046
+    router-id 103.1.46.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.46.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3047
+    router-id 103.1.47.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.47.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3048
+    router-id 103.1.48.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.48.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3049
+    router-id 103.1.49.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.49.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3050
+    router-id 103.1.50.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.50.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3051
+    router-id 103.1.51.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.51.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3052
+    router-id 103.1.52.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.52.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3053
+    router-id 103.1.53.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.53.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3054
+    router-id 103.1.54.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.54.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3055
+    router-id 103.1.55.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.55.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3056
+    router-id 103.1.56.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.56.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3057
+    router-id 103.1.57.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.57.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3058
+    router-id 103.1.58.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.58.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3059
+    router-id 103.1.59.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.59.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3060
+    router-id 103.1.60.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.60.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3061
+    router-id 103.1.61.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.61.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3062
+    router-id 103.1.62.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.62.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3063
+    router-id 103.1.63.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.63.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3064
+    router-id 103.1.64.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.64.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3065
+    router-id 103.1.65.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.65.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3066
+    router-id 103.1.66.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.66.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3067
+    router-id 103.1.67.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.67.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3068
+    router-id 103.1.68.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.68.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3069
+    router-id 103.1.69.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.69.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3070
+    router-id 103.1.70.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.70.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3071
+    router-id 103.1.71.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.71.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3072
+    router-id 103.1.72.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.72.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3073
+    router-id 103.1.73.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.73.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3074
+    router-id 103.1.74.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.74.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3075
+    router-id 103.1.75.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.75.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3076
+    router-id 103.1.76.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.76.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3077
+    router-id 103.1.77.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.77.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3078
+    router-id 103.1.78.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.78.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3079
+    router-id 103.1.79.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.79.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3080
+    router-id 103.1.80.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.80.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3081
+    router-id 103.1.81.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.81.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3082
+    router-id 103.1.82.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.82.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3083
+    router-id 103.1.83.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.83.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3084
+    router-id 103.1.84.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.84.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3085
+    router-id 103.1.85.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.85.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3086
+    router-id 103.1.86.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.86.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3087
+    router-id 103.1.87.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.87.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3088
+    router-id 103.1.88.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.88.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3089
+    router-id 103.1.89.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.89.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3090
+    router-id 103.1.90.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.90.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3091
+    router-id 103.1.91.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.91.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3092
+    router-id 103.1.92.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.92.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3093
+    router-id 103.1.93.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.93.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3094
+    router-id 103.1.94.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.94.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3095
+    router-id 103.1.95.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.95.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3096
+    router-id 103.1.96.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.96.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3097
+    router-id 103.1.97.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.97.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3098
+    router-id 103.1.98.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.98.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3099
+    router-id 103.1.99.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.99.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3100
+    router-id 103.1.100.4
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+    address-family ipv4 unicast
+      redistribute direct route-map allowall
+      redistribute isis isis_ext route-map allowall
+    neighbor 192.104.100.1
+      remote-as 65002
+      address-family ipv4 unicast
+  vrf trmvrf-3101
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+  vrf trmvrf-3102
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+  vrf trmvrf-3103
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+  vrf trmvrf-3104
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+  vrf trmvrf-3105
+    graceful-restart restart-time 300
+    graceful-restart stalepath-time 600
+
+l2rib dup-host-mac-detection 100 180
+logging console 5
+
+

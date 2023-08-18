@@ -1,0 +1,2894 @@
+# ------------------------------------------------------
+#        Node List:
+#            node1_s1_spine  : S1-FX3-SPINE
+#            node2_s1_vpc_1  : S1-FX3-LEAF-1
+#            node3_s1_vpc_2  : S1-FX3-LEAF-2
+#            node4_s1_leaf_1 : S1-FX3-BGW-3
+#            node5_s1_access : PVNF-PGW
+# ------------------------------------------------------
+parameters:
+    context: cli
+    # ------------------------------------------------------
+    # Features to be enabled
+    # ------------------------------------------------------
+    enable_features:
+        node1_s1_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+            - ngmvpn
+        node2_s1_vpc_1: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - pim6
+            - bgp
+            - vxlan
+            - ngmvpn
+        node3_s1_vpc_2: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - pim6
+            - bgp
+            - vxlan
+            - ngmvpn
+        node4_s1_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - pim6
+            - bgp
+            - vxlan
+            - ngmvpn
+        node5_s1_access: 
+            - lldp
+            - lacp
+    
+    # ------------------------------------------------------
+    # TCAM Carving configs
+    # ------------------------------------------------------
+    tcam_carving_config:
+        node1_s1_spine: |
+            hardware access-list tcam region ing-racl 256
+            hardware access-list tcam region ing-l3-vlan-qos 256
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region ing-nbm 1536        
+        node2_s1_vpc_1: |
+            multicast flow-path export
+            hardware profile multicast flex-stats-enable
+            hardware access-list tcam region ing-racl 256
+            hardware access-list tcam region ing-l3-vlan-qos 256
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region ing-nbm 1536
+        node3_s1_vpc_2: |
+            multicast flow-path export
+            hardware profile multicast flex-stats-enable
+            hardware access-list tcam region ing-racl 256
+            hardware access-list tcam region ing-l3-vlan-qos 256
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region ing-nbm 1536
+        node4_s1_leaf_1: |
+            multicast flow-path export
+            hardware profile multicast flex-stats-enable
+            hardware access-list tcam region ing-racl 256
+            hardware access-list tcam region ing-l3-vlan-qos 256
+            hardware access-list tcam region ing-sup 768
+            hardware access-list tcam region ing-nbm 1536
+    
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config:
+
+        # Site-1 SPINE --------------------------
+        node1_s1_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 11.11.11.11
+                    prefix_length: 255.255.255.255
+            loopback11:
+                description: "### NBM loopback interface ###"
+                enabled: True
+                vrf: "NBM-1"
+                ipv4:
+                    ip: 11.101.101.101
+                    prefix_length: 255.255.255.255
+
+            #-----------------------------------------------#
+            # Setting up PO interfaces with MTU
+            nd01_nd02_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            nd01_nd03_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd03_1_2:
+                mtu: 9216
+                enabled: True
+            nd01_nd04_1_1:
+                mtu: 9216
+                enabled: True
+            nd01_nd04_1_2:
+                mtu: 9216
+                enabled: True
+            
+            #-----------------------------------------------#
+            # SPINE to VPC-1 Uplink number 1 - PO
+            Port-channel111:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S1-VPC-1 ###"
+                mtu: 9216
+                add_members: nd01_nd02_1_1, nd01_nd02_1_2
+                ipv4:
+                    ip: 1.11.1.2
+                    prefix_length: 255.255.255.254
+            # SPINE to VPC-1 Uplink number 2 - L3 int
+            nd01_nd02_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-VPC-1 ###"
+                ipv4:
+                    ip: 1.11.2.2
+                    prefix_length: 255.255.255.254
+            # SPINE to VPC-1 Uplink number 3 - L3 int
+            nd01_nd02_1_4:
+                enabled: True
+                vrf: "NBM-1"
+                mtu: 9216
+                description: "### To S2-VPC-1 ###"
+                ipv4:
+                    ip: 1.11.3.2
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # SPINE to VPC-2 Uplink number 1 - PO
+            Port-channel112:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S1-VPC-2 ###"
+                mtu: 9216
+                add_members: nd01_nd03_1_1, nd01_nd03_1_2
+                ipv4:
+                    ip: 1.12.1.2
+                    prefix_length: 255.255.255.254
+            # SPINE to VPC-2 Uplink number 2 - L3 int
+            nd01_nd03_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-VPC-2 ###"
+                ipv4:
+                    ip: 1.12.2.2
+                    prefix_length: 255.255.255.254
+            # SPINE to VPC-2 Uplink number 3 - L3 int
+            nd01_nd03_1_4:
+                enabled: True
+                vrf: "NBM-1"
+                mtu: 9216
+                description: "### To S2-VPC-1 ###"
+                ipv4:
+                    ip: 1.12.3.2
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # SPINE to STD Uplink number 1 - PO
+            Port-channel113:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S1-STD-1 ###"
+                mtu: 9216
+                add_members: nd01_nd04_1_1, nd01_nd04_1_2
+                ipv4:
+                    ip: 1.13.1.2
+                    prefix_length: 255.255.255.254
+            # SPINE to STD Uplink number 2 - L3 int
+            nd01_nd04_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-VPC-2 ###"
+                ipv4:
+                    ip: 1.13.2.2
+                    prefix_length: 255.255.255.254
+            # SPINE to STD Uplink number 3 - L3 int
+            nd01_nd04_1_4:
+                enabled: True
+                vrf: "NBM-1"
+                mtu: 9216
+                description: "### To S2-VPC-1 ###"
+                ipv4:
+                    ip: 1.13.3.2
+                    prefix_length: 255.255.255.254
+
+        # Site-1 VPC-1 --------------------------
+        node2_s1_vpc_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.11.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.11.11.11
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 1.10.10.10
+                    prefix_length: 255.255.255.255
+            loopback11-20:
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 101.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.255
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                ipv6:
+                    start_ipv6_addr: 2001:101:1:1::1
+                    start_ipv6_prefix_len: 128
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+            loopback100:
+                description: "### NBM loopback interface ###"
+                enabled: True
+                vrf: "NBM-1"
+                ipv4:
+                    ip: 101.1.11.1
+                    prefix_length: 255.255.255.255
+            
+            #-----------------------------------------------#
+            # Setting up PO interfaces with MTU
+            nd02_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd02_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            nd02_nd05_1_1:
+                mtu: 9216
+                enabled: True
+            nd02_nd05_1_2:
+                mtu: 9216
+                enabled: True
+            nd02_nd03_1_2:
+                mtu: 9216
+                enabled: True
+            nd02_nd03_1_3:
+                mtu: 9216
+                enabled: True
+            
+            #-----------------------------------------------#
+            # VPC-1 to SPINE
+            Port-channel111:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd02_nd01_1_1, nd02_nd01_1_2
+                ipv4:
+                    ip: 1.11.1.3
+                    prefix_length: 255.255.255.254
+            nd02_nd01_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                ipv4:
+                    ip: 1.11.2.3
+                    prefix_length: 255.255.255.254
+            
+            #-----------------------------------------------#
+            # VPC-1 to SPINE for NBM VRF
+            nd02_nd01_1_4:
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                description: "### To SPINE for NBM ###"
+                ipv4:
+                    ip: 1.11.3.3
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # VPC Peer-keep-alive
+            nd02_nd03_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                mtu: 9216
+                description: "### Peer-keep-alive ###"
+                ipv4:
+                    ip: 1.1.1.2
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # VPC Peer-Link
+            Port-channel10:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2,101,1001-1020"
+                add_members: nd02_nd03_1_2, nd02_nd03_1_3
+
+            #-----------------------------------------------#
+            # VPC PO link to ACCESS
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "101,1001-1020"
+                add_members: nd02_nd05_1_1,nd02_nd05_1_2
+
+            #-----------------------------------------------#
+            # VPC routing link to peer
+            nd02_nd03_1_4:
+                description: "Peer gateway vpc peer-link"
+                enabled: True
+                mtu: 9216
+                ipv4:
+                    redirect: False
+                    ip: 2.2.2.2
+                    prefix_length: 255.255.255.254
+                ipv6:
+                    redirect: False
+            
+            #-----------------------------------------------#
+            # SVI Configs
+            Vlan1001-1010:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.1.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:1:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan1011-1020:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.11.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:11:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan3001-3010:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            
+            #-----------------------------------------------#
+            # NBM SVI
+            vlan101:
+                description: "NBM SVI"
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                ipv4:
+                    redirect: False
+                    ip: 30.1.11.111
+                    prefix_length: 255.255.255.0
+                ipv6:
+                    redirect: False
+
+            #-----------------------------------------------#
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    2001001-2001005:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001006-2001010:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    2001011-2001015:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001016-2001020:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    3003001-3003010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                        nve_vni_mcast_group: 226.0.0.1
+        
+        # Site-1 VPC-2 --------------------------
+        node3_s1_vpc_2:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.12.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.12.12.12
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 1.10.10.10
+                    prefix_length: 255.255.255.255
+            loopback11-20:
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 101.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.255
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                ipv6:
+                    start_ipv6_addr: 2001:101:1:1::1
+                    start_ipv6_prefix_len: 128
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+            loopback100:
+                description: "### NBM loopback interface ###"
+                enabled: True
+                vrf: "NBM-1"
+                ipv4:
+                    ip: 101.1.12.1
+                    prefix_length: 255.255.255.255
+            
+            #-----------------------------------------------#
+            # Setting up PO interfaces with MTU
+            nd03_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd03_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            nd03_nd05_1_1:
+                mtu: 9216
+                enabled: True
+            nd03_nd05_1_2:
+                mtu: 9216
+                enabled: True
+            nd03_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            nd03_nd02_1_3:
+                mtu: 9216
+                enabled: True
+            
+            #-----------------------------------------------#
+            # VPC-2 to SPINE
+            Port-channel112:
+                channel_group_mode: active
+                enabled: True
+                description: "### To SPINE ###"
+                mtu: 9216
+                add_members: nd03_nd01_1_1, nd03_nd01_1_2
+                ipv4:
+                    ip: 1.12.1.3
+                    prefix_length: 255.255.255.254
+            nd03_nd01_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To SPINE ###"
+                ipv4:
+                    ip: 1.12.2.3
+                    prefix_length: 255.255.255.254
+            
+            #-----------------------------------------------#
+            # VPC-1 to SPINE for NBM VRF
+            nd03_nd01_1_4:
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                description: "### To SPINE ###"
+                ipv4:
+                    ip: 1.12.3.3
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # VPC Peer-keep-alive
+            nd03_nd02_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                mtu: 9216
+                description: "### Peer-keep-alive ###"
+                ipv4:
+                    ip: 1.1.1.3
+                    prefix_length: 255.255.255.254
+
+            #-----------------------------------------------#
+            # VPC Peer-Link
+            Port-channel10:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2,101,1001-1020"
+                add_members: nd03_nd02_1_2, nd03_nd02_1_3
+
+            #-----------------------------------------------#
+            # VPC PO link to ACCESS
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "101,1001-1020"
+                add_members: nd03_nd05_1_1,nd03_nd05_1_2
+
+            #-----------------------------------------------#
+            # VPC routing link to peer
+            nd03_nd02_1_4:
+                description: "Peer gateway vpc peer-link"
+                enabled: True
+                mtu: 9216
+                ipv4:
+                    redirect: False
+                    ip: 2.2.2.3
+                    prefix_length: 255.255.255.254
+                ipv6:
+                    redirect: False
+
+            #-----------------------------------------------#
+            # SVI Configs
+            Vlan1001-1010:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.1.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:1:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan1011-1020:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.11.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:11:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan3001-3010:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+            
+            #-----------------------------------------------#
+            # NBM SVI
+            vlan101:
+                description: "NBM SVI"
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                ipv4:
+                    redirect: False
+                    ip: 30.1.11.112
+                    prefix_length: 255.255.255.0
+                ipv6:
+                    redirect: False
+
+            #-----------------------------------------------#
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    2001001-2001005:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001006-2001010:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    2001011-2001015:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001016-2001020:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    3003001-3003010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                        nve_vni_mcast_group: 226.0.0.1
+        
+        # Site-1 STD-LEAF --------------------------
+        node4_s1_leaf_1:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.13.1.1
+                    prefix_length: 255.255.255.255
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 1.13.13.13
+                    prefix_length: 255.255.255.255
+            loopback11-20:
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 101.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.255
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                ipv6:
+                    start_ipv6_addr: 2001:101:1:1::1
+                    start_ipv6_prefix_len: 128
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+            loopback100:
+                description: "### NBM loopback interface ###"
+                enabled: True
+                vrf: "NBM-1"
+                ipv4:
+                    ip: 101.1.13.1
+                    prefix_length: 255.255.255.255
+            
+            #-----------------------------------------------#
+            # Setting up PO interfaces with MTU
+            nd04_nd01_1_1:
+                mtu: 9216
+                enabled: True
+            nd04_nd01_1_2:
+                mtu: 9216
+                enabled: True
+            
+            #-----------------------------------------------#
+            # LEAF to SPINE
+            Port-channel113:
+                channel_group_mode: active
+                enabled: True
+                description: "### To S1-SPINE ###"
+                mtu: 9216
+                add_members: nd04_nd01_1_1, nd04_nd01_1_2
+                ipv4:
+                    ip: 1.13.1.3
+                    prefix_length: 255.255.255.254
+            nd04_nd01_1_3:
+                enabled: True
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 1.13.2.3
+                    prefix_length: 255.255.255.254
+            
+            #-----------------------------------------------#
+            # STD to SPINE for NBM VRF
+            nd04_nd01_1_4:
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                description: "### To S2-BGW-1 ###"
+                ipv4:
+                    ip: 1.13.3.3
+                    prefix_length: 255.255.255.254
+            
+            #-----------------------------------------------#
+            # STD to IXIA
+            nd04_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "101,1001-1020"
+
+            #-----------------------------------------------#
+            # SVI Configs
+            Vlan1001-1010:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.1.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:1:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan1011-1020:
+                description: "L2VNI"
+                mtu: 9216
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 10.11.0.1
+                    start_ipv4_prefix_len: 255.255.0.0
+                    step_ipv4_addr: 0.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:10:11:0::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:1:0::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+            Vlan3001-3010:
+                description: "L3VNI"
+                mtu: 9216
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            #-----------------------------------------------#
+            # NBM SVI
+            vlan101:
+                description: "NBM SVI"
+                enabled: True
+                vrf : "NBM-1"
+                mtu: 9216
+                ipv4:
+                    redirect: False
+                    ip: 30.1.13.101
+                    prefix_length: 255.255.255.0
+                ipv6:
+                    redirect: False
+
+            #-----------------------------------------------#
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                enabled: True
+                nve_vni_dict:
+                    2001001-2001005:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001006-2001010:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    2001011-2001015:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.1.1
+                        nve_vni_suppress_arp: True
+                    2001016-2001020:
+                        nve_vni_type: 'L2'
+                        nve_vni_mcast_group: 225.10.2.1
+                        nve_vni_suppress_arp: True
+                    3003001-3003010:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                        nve_vni_mcast_group: 226.0.0.1
+    
+        # Site-1 ACCESS --------------------------
+        node5_s1_access:
+
+            #-----------------------------------------------#
+            # Setting up PO interfaces with MTU
+            nd05_nd02_1_1:
+                mtu: 9216
+                enabled: True
+            nd05_nd02_1_2:
+                mtu: 9216
+                enabled: True
+            nd05_nd03_1_1:
+                mtu: 9216
+                enabled: True
+            nd05_nd03_1_2:
+                mtu: 9216
+                enabled: True
+            
+            #-----------------------------------------------#
+            # VPC PO link to VPC Peers
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "101,1001-1020"
+                add_members: nd05_nd02_1_1,nd05_nd02_1_2,nd05_nd03_1_1,nd05_nd03_1_2 
+
+            #-----------------------------------------------#
+            # SPINE to TGEN for Site internal emulation
+            nd05_tgen_1_1:
+                enabled: True
+                description: edge
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "101,1001-1020"
+    
+    # ------------------------------------------------------
+    # OSPF COnfigs
+    # ------------------------------------------------------
+    ospf_config:
+        
+        # S1-SPINE
+        node1_s1_spine:
+            default:
+                instance: p1
+                router_id: 11.11.11.11
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po111:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd02_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po112:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd03_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    po113:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd04_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+            NBM-1:
+                instance: NBM-1
+                router_id: 11.11.11.11
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    nd01_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd03_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd04_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo11:
+                        if_admin_control: True
+                        area: 0.0.0.0
+        
+        # S1-VPC-1
+        node2_s1_vpc_1:
+            default:
+                instance: p1
+                router_id: 1.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po111:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    nd02_nd03_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+            NBM-1:
+                instance: NBM-1
+                router_id: 1.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    nd02_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    vlan101:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S1-VPC-2
+        node3_s1_vpc_2:
+            default:
+                instance: p1
+                router_id: 1.12.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po112:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    nd03_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+            NBM-1:
+                instance: NBM-1
+                router_id: 1.12.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    nd03_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    vlan101:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+        # S1-STD-LEAF
+        node4_s1_leaf_1:
+            default:
+                instance: p1
+                router_id: 1.13.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    po113:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+            NBM-1:
+                instance: NBM-1
+                router_id: 1.13.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    nd04_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    lo100:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    vlan101:
+                        if_admin_control: True
+                        area: 0.0.0.0
+        
+    # ------------------------------------------------------
+    # VLAN Configs
+    # ------------------------------------------------------
+    vlan_config: 
+        node2_s1_vpc_1:
+            -   vlan: "1001-1020"
+                vn_segment_id: "2001001-2001020"
+            -   vlan: "3001-3010"
+                vn_segment_id: "3003001-3003010"
+            -   vlan: "101"
+        node3_s1_vpc_2:
+            -   vlan: "1001-1020"
+                vn_segment_id: "2001001-2001020"
+            -   vlan: "3001-3010"
+                vn_segment_id: "3003001-3003010"
+            -   vlan: "101"
+        node4_s1_leaf_1:
+            -   vlan: "1001-1020"
+                vn_segment_id: "2001001-2001020"
+            -   vlan: "3001-3010"
+                vn_segment_id: "3003001-3003010"
+            -   vlan: "101"
+        node5_s1_access:
+            -   vlan: "101,1001-1020"
+
+    # ------------------------------------------------------
+    # route-map Configs
+    # ------------------------------------------------------
+    route_policy_config:
+        node1_s1_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+        node2_s1_vpc_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node3_s1_vpc_2:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+        node4_s1_leaf_1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+    
+    # ------------------------------------------------------
+    # VxLAN Configs
+    # ------------------------------------------------------
+    vxlan_config:
+        node2_s1_vpc_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            enabled_ngmvpn: True
+        node3_s1_vpc_2:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            enabled_ngmvpn: True
+        node4_s1_leaf_1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+            enabled_ngmvpn: True
+    
+    # ------------------------------------------------------
+    # VxLAN EVPN Configs
+    # ------------------------------------------------------
+    evpn_config:
+        node2_s1_vpc_1:
+            vni_list:
+                -   vni_id: 2001001-2001020
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        
+        node3_s1_vpc_2:
+            vni_list:
+                -   vni_id: 2001001-2001020
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        
+        node4_s1_leaf_1:
+            vni_list:
+                -   vni_id: 2001001-2001020
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+    # ------------------------------------------------------
+    # VRF Configs
+    # ------------------------------------------------------
+    vrf_config:
+        node1_s1_spine:
+            vrf_list:
+                -   vrf_name: "NBM-1"
+                    vrf_name_flag : True
+        
+        node2_s1_vpc_1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                -   vrf_name: "NBM-1"
+                    vrf_name_flag : True
+                -   prefix: "peer"
+                    vrf_name: "keep-alive"
+        
+        node3_s1_vpc_2:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                -   vrf_name: "NBM-1"
+                    vrf_name_flag : True
+                -   prefix: "peer"
+                    vrf_name: "keep-alive"
+        
+        node4_s1_leaf_1: 
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                         - protocol: 'mvpn' 
+                           rt_mvpn: True
+                -   vrf_name: "NBM-1"
+                    vrf_name_flag : True
+
+    # ------------------------------------------------------
+    # PIM Configs
+    # ------------------------------------------------------
+    pim_config:
+        # S1-SPINE
+        node1_s1_spine:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po111:
+                        mode: sparse-mode
+                    nd01_nd02_1_3:
+                        mode: sparse-mode
+                    po112:
+                        mode: sparse-mode
+                    nd01_nd03_1_3:
+                        mode: sparse-mode
+                    po113:
+                        mode: sparse-mode
+                    nd01_nd04_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+            NBM-1:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.101.101.101
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    nd01_nd02_1_4:
+                        mode: sparse-mode
+                    nd01_nd03_1_4:
+                        mode: sparse-mode
+                    nd01_nd04_1_4:
+                        mode: sparse-mode
+                    lo11:
+                        mode: sparse-mode
+        
+        # S1-VPC-1
+        node2_s1_vpc_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po111:
+                        mode: sparse-mode
+                    nd02_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    nd02_nd03_1_4:
+                        mode: sparse-mode
+            NBM-1:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.101.101.101
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    nd02_nd01_1_4:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+                    vlan101:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 101.1.1.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 101.1.2.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 101.1.3.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 101.1.4.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 101.1.5.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 101.1.6.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 101.1.7.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 101.1.8.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 101.1.9.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 101.1.10.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+        
+        # S1-VPC-2
+        node3_s1_vpc_2:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po112:
+                        mode: sparse-mode
+                    nd03_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    nd03_nd02_1_4:
+                        mode: sparse-mode
+            NBM-1:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.101.101.101
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    nd03_nd01_1_4:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+                    vlan101:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 101.1.1.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 101.1.2.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 101.1.3.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 101.1.4.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 101.1.5.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 101.1.6.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 101.1.7.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 101.1.8.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 101.1.9.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 101.1.10.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+
+        # S1-STD-LEAF
+        node4_s1_leaf_1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    po113:
+                        mode: sparse-mode
+                    nd04_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+            NBM-1:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.101.101.101
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    nd04_nd01_1_4:
+                        mode: sparse-mode
+                    lo100:
+                        mode: sparse-mode
+                    vlan101:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 101.1.1.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 101.1.2.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 101.1.3.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 101.1.4.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 101.1.5.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 101.1.6.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 101.1.7.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 101.1.8.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 101.1.9.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 101.1.10.1
+                        static_rp_group_list: 224.0.0.0/4
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+
+    # ------------------------------------------------------
+    # PIM6 Configs
+    # ------------------------------------------------------
+    pim6_config:
+        
+        # S1-VPC-1
+        node2_s1_vpc_1:
+            default:
+                interface_config:
+                    po111:
+                        mode: sparse-mode
+                    nd02_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    nd02_nd03_1_4:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:1::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:2::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:3::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:4::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:5::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:6::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:7::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:8::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:9::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:10::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+
+        # S1-VPC-2
+        node3_s1_vpc_2:
+            default:
+                interface_config:
+                    po112:
+                        mode: sparse-mode
+                    nd03_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+                    nd03_nd02_1_4:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:1::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:2::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:3::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:4::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:5::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:6::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:7::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:8::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:9::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:10::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+
+        # S1-STD-LEAF
+        node4_s1_leaf_1:
+            default:
+                interface_config:
+                    po113:
+                        mode: sparse-mode
+                    nd04_nd01_1_3:
+                        mode: sparse-mode
+                    lo0:
+                        mode: sparse-mode
+                    lo1:
+                        mode: sparse-mode
+            VRF-1:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:1::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo11:
+                        mode: sparse-mode
+                    Vlan1001:
+                        mode: sparse-mode
+                    Vlan1011:
+                        mode: sparse-mode
+                    Vlan3001:
+                        mode: sparse-mode
+            VRF-2:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:2::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo12:
+                        mode: sparse-mode
+                    Vlan1002:
+                        mode: sparse-mode
+                    Vlan1012:
+                        mode: sparse-mode
+                    Vlan3002:
+                        mode: sparse-mode
+            VRF-3:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:3::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo13:
+                        mode: sparse-mode
+                    Vlan1003:
+                        mode: sparse-mode
+                    Vlan1013:
+                        mode: sparse-mode
+                    Vlan3003:
+                        mode: sparse-mode
+            VRF-4:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:4::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo14:
+                        mode: sparse-mode
+                    Vlan1004:
+                        mode: sparse-mode
+                    Vlan1014:
+                        mode: sparse-mode
+                    Vlan3004:
+                        mode: sparse-mode
+            VRF-5:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:5::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo15:
+                        mode: sparse-mode
+                    Vlan1005:
+                        mode: sparse-mode
+                    Vlan1015:
+                        mode: sparse-mode
+                    Vlan3005:
+                        mode: sparse-mode
+            VRF-6:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:6::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo16:
+                        mode: sparse-mode
+                    Vlan1006:
+                        mode: sparse-mode
+                    Vlan1016:
+                        mode: sparse-mode
+                    Vlan3006:
+                        mode: sparse-mode
+            VRF-7:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:7::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo17:
+                        mode: sparse-mode
+                    Vlan1007:
+                        mode: sparse-mode
+                    Vlan1017:
+                        mode: sparse-mode
+                    Vlan3007:
+                        mode: sparse-mode
+            VRF-8:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:8::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo18:
+                        mode: sparse-mode
+                    Vlan1008:
+                        mode: sparse-mode
+                    Vlan1018:
+                        mode: sparse-mode
+                    Vlan3008:
+                        mode: sparse-mode
+            VRF-9:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:9::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo19:
+                        mode: sparse-mode
+                    Vlan1009:
+                        mode: sparse-mode
+                    Vlan1019:
+                        mode: sparse-mode
+                    Vlan3009:
+                        mode: sparse-mode
+            VRF-10:
+                rp_address:
+                    -   static_rp_address: 2001:101:1:10::1
+                        static_rp_group_list: ff00::/8
+                interface_config:
+                    lo20:
+                        mode: sparse-mode
+                    Vlan1010:
+                        mode: sparse-mode
+                    Vlan1020:
+                        mode: sparse-mode
+                    Vlan3010:
+                        mode: sparse-mode
+
+    # ------------------------------------------------------
+    # IGMP COnfigs
+    # ------------------------------------------------------
+    igmp_config:
+        node2_s1_vpc_1:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 3
+        node3_s1_vpc_2:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 3
+        node4_s1_leaf_1:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 3
+    
+    # ------------------------------------------------------
+    # MLD COnfigs
+    # ------------------------------------------------------
+    mld_config:
+        node2_s1_vpc_1:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 1
+        node3_s1_vpc_2:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 1
+        node4_s1_leaf_1:
+            default:
+                interface_config:
+                    Vlan1001-1020:
+                        enable: True
+                        version: 1
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config:
+        
+        # S1-SPINE
+        node1_s1_spine:
+            default:
+                bgp_id: 100
+                router_id: 11.11.11.11
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv4 mvpn'
+                    -   af_name: 'ipv6 mvpn'
+                neighbor_attr:
+                    -   neighbor_id: 1.11.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'VPC-1 Connectivity to 1.11.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 1.12.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'VPC-2 Connectivity to 1.12.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 1.13.1.1
+                        nbr_remote_as: 100
+                        nbr_description: 'STD-LEAF Connectivity to 1.13.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+        
+        # S2-BGW-1
+        node2_s1_vpc_1:
+            default:
+                bgp_id: 100
+                router_id: 1.11.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_advertise_pip: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv4 mvpn'
+                    -   af_name: 'ipv6 mvpn'
+                neighbor_attr:
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'Spine Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+            "1-10":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+        
+        # S2-BGW-2
+        node3_s1_vpc_2:
+            default:
+                bgp_id: 100
+                router_id: 1.12.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_advertise_pip: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv4 mvpn'
+                    -   af_name: 'ipv6 mvpn'
+                neighbor_attr:
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'Spine Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+            "1-10":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # S2-LEAF-1
+        node4_s1_leaf_1:
+            default:
+                bgp_id: 100
+                router_id: 1.13.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv4 mvpn'
+                    -   af_name: 'ipv6 mvpn'
+                neighbor_attr:
+                    -   neighbor_id: 11.11.11.11
+                        nbr_remote_as: 100
+                        nbr_description: 'Spine Connectivity to 11.11.11.11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv4 mvpn'
+                                nbr_af_send_community: 'both'
+                            -   nbr_af_name: 'ipv6 mvpn'
+                                nbr_af_send_community: 'both'
+            "1-10":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+    
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    missing_config: 
+
+        node1_s1_spine: |
+            feature nbm
+            vrf context NBM-1
+              ip pim prune-on-expiry
+              ip pim spt-threshold infinity group-list spt
+              ip multicast multipath nbm
+            nbm vrf NBM-1
+              nbm mode pim-active
+              nbm host-policy
+                sender
+                  default permit
+                receiver
+                  default permit
+                pim
+                  default permit
+            nbm flow-policy
+              policy NBM
+                bandwidth 100000 kbps
+                dscp 18
+                ip group-range 228.0.0.1 to 228.0.0.255
+
+        node2_s1_vpc_1: |
+            feature hsrp
+            feature nbm
+            ip igmp snooping vxlan
+            ipv6 mld snooping
+            ipv6 mld snooping vxlan
+            system mld snooping
+            interface loopback1
+              ip address 1.10.10.10/32 secondary
+            vpc domain 100
+              peer-switch
+              role priority 3000
+              system-priority 3000
+              system-mac 00:01:55:55:55:55
+              peer-keepalive destination 1.1.1.3 source 1.1.1.2 vrf peer-keep-alive
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface Port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface Port-channel100
+              vpc 100
+            vrf context NBM-1
+              ip pim prune-on-expiry
+              ip pim spt-threshold infinity group-list spt
+              ip multicast multipath nbm
+            nbm vrf NBM-1
+              nbm mode pim-active
+              nbm host-policy
+                sender
+                  default permit
+                receiver
+                  default permit
+                pim
+                  default permit
+            nbm flow-policy
+              policy NBM
+                bandwidth 100000 kbps
+                dscp 18
+                ip group-range 228.0.0.1 to 228.0.0.255
+            interface Vlan101
+              ip ospf passive-interface
+                hsrp version 2
+                hsrp 101 
+                  priority 255
+                  ip 30.1.11.101
+            vrf context VRF-1
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-2
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-3
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-4
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-5
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-6
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-7
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-8
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-9
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-10
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+        
+        node3_s1_vpc_2: |
+            feature hsrp
+            feature nbm
+            ip igmp snooping vxlan
+            ipv6 mld snooping
+            ipv6 mld snooping vxlan
+            system mld snooping
+            interface loopback1
+              ip address 1.10.10.10/32 secondary
+            vpc domain 100
+              peer-switch
+              role priority 3001
+              system-priority 3000
+              system-mac 00:01:55:55:55:55
+              peer-keepalive destination 1.1.1.2 source 1.1.1.3 vrf peer-keep-alive
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface Port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface Port-channel100
+              vpc 100
+            vrf context NBM-1
+              ip pim prune-on-expiry
+              ip pim spt-threshold infinity group-list spt
+              ip multicast multipath nbm
+            nbm vrf NBM-1
+              nbm mode pim-active
+              nbm host-policy
+                sender
+                  default permit
+                receiver
+                  default permit
+                pim
+                  default permit
+            nbm flow-policy
+              policy NBM
+                bandwidth 100000 kbps
+                dscp 18
+                ip group-range 228.0.0.1 to 228.0.0.255
+            interface Vlan101
+              ip ospf passive-interface
+                hsrp version 2
+                hsrp 101 
+                  priority 255
+                  ip 30.1.11.101
+            vrf context VRF-1
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-2
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-3
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-4
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-5
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-6
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-7
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-8
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-9
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-10
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+        
+        node4_s1_leaf_1: |
+            feature nbm
+            ip igmp snooping vxlan
+            ipv6 mld snooping
+            ipv6 mld snooping vxlan
+            system mld snooping
+            interface {{nd04_tgen_1_1}}
+                spanning-tree port type edge trunk
+                spanning-tree bpdufilter enable
+            vrf context NBM-1
+              ip pim prune-on-expiry
+              ip pim spt-threshold infinity group-list spt
+              ip multicast multipath nbm
+            nbm vrf NBM-1
+              nbm mode pim-active
+              nbm host-policy
+                sender
+                  default permit
+                receiver
+                  default permit
+                pim
+                  default permit
+            nbm flow-policy
+              policy NBM
+                bandwidth 100000 kbps
+                dscp 18
+                ip group-range 228.0.0.1 to 228.0.0.255
+            interface Vlan101
+              ip ospf passive-interface
+            vrf context VRF-1
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-2
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-3
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-4
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-5
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-6
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-7
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-8
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-9
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+            vrf context VRF-10
+                ip multicast multipath s-g-hash next-hop-based
+                ipv6 multicast multipath sg-nexthop-hash
+
+    # ------------------------------------------------------
+    # Features to be disabled as part of cleanup
+    # ------------------------------------------------------
+    disable_features:
+        node1_s1_spine: 
+            - lldp
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node2_s1_vpc_1: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node3_s1_vpc_2: 
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node4_s1_leaf_1: 
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - pim4
+            - bgp
+            - vxlan
+        node5_s1_access: 
+            - lldp
+            - lacp
+    
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    disable_missing_config:
+        node1_s1_spine: |
+            no feature nbm
+            no ip igmp snooping vxlan
+            no ipv6 mld snooping
+            no ipv6 mld snooping vxlan
+            no system mld snooping
+        node2_s1_vpc_1: |
+            no feature hsrp
+            no feature nbm
+            no ip igmp snooping vxlan
+            no ipv6 mld snooping
+            no ipv6 mld snooping vxlan
+            no system mld snooping
+        node3_s1_vpc_2: |
+            no feature hsrp
+            no feature nbm
+            no ip igmp snooping vxlan
+            no ipv6 mld snooping
+            no ipv6 mld snooping vxlan
+            no system mld snooping
+        node4_s1_leaf_1: |
+            no feature hsrp
+            no feature nbm
+            no ip igmp snooping vxlan
+            no ipv6 mld snooping
+            no ipv6 mld snooping vxlan
+            no system mld snooping
+  
+
+    

@@ -1,0 +1,446 @@
+testbed:
+    name: VxLAN_JWALA_POD_2_PVNF
+    credentials:
+        default:
+            username: admin
+            password: nbv_12345
+        enable:
+            password: nbv_12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 192.168.0.100
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123!
+        ntp:
+            server: 1.2.3.4
+devices:
+    S1-SPINE-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 192.168.0.26
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.26
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S2-SPINE-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 192.168.0.29
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.29
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S1-LEAF-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2016
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.72
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S1-LEAF-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2017
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.73
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S1-BGW:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2018
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.74
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S2-BGW:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2051
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.79
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S2-LEAF-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2052
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.76
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    S2-LEAF-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2053
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.71
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    SUPER-ACCESS:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv_12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.104.102.13
+            port: 2064
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 192.168.0.110
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.104.102.208"
+          alt:
+            ip: "10.104.104.248"
+            port: 8009
+            protocol: telnet
+topology:
+    S1-SPINE-1:
+        interfaces:
+            SPINE_to_LEAF-1:
+                intf: Ethernet2/4/1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-2:
+                intf: Ethernet2/4/3
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            SPINE_to_BGW:
+                intf: Ethernet2/5/1
+                link: SPINE_to_BGW
+                type: ethernet
+                module_type: m3
+    S2-SPINE-1:
+        interfaces:
+            SPINE_to_LEAF-1:
+                intf: Ethernet2/10/1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-2:
+                intf: Ethernet2/10/3
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            SPINE_to_BGW:
+                intf: Ethernet1/7/1
+                link: SPINE_to_BGW
+                type: ethernet
+                module_type: m3
+    S1-LEAF-1:
+        interfaces:
+            LEAF-1_to_SPINE:
+                intf: Ethernet1/1
+                link: LEAF-1_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_PGW_1:
+                intf: Ethernet1/15
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_PGW_2:
+                intf: Ethernet1/16
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_IXIA:
+                intf: Ethernet1/48
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    S1-LEAF-2:
+        interfaces:
+            LEAF-2_to_SPINE:
+                intf: Ethernet1/1
+                link: LEAF-2_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_PGW_1:
+                intf: Ethernet1/15
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_PGW_2:
+                intf: Ethernet1/16
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+                module_type: m3
+    S2-LEAF-1:
+        interfaces:
+            LEAF-1_to_SPINE:
+                intf: Ethernet1/1
+                link: LEAF-1_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_PGW_1:
+                intf: Ethernet1/15
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_PGW_2:
+                intf: Ethernet1/16
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+                module_type: m3
+    S2-LEAF-2:
+        interfaces:
+            LEAF-2_to_SPINE:
+                intf: Ethernet1/7
+                link: LEAF-2_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_PGW_1:
+                intf: Ethernet1/15
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_PGW_2:
+                intf: Ethernet1/16
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/48
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+    S1-BGW:
+        interfaces:
+            BGW_to_SPINE:
+                intf: Ethernet1/1
+                link: BGW_to_SPINE
+                type: ethernet
+                module_type: m3
+            BGW_1_to_BGW_2:
+                intf: Ethernet1/39
+                link: BGW_to_CORE
+                type: ethernet
+                module_type: m3
+    S2-BGW:
+        interfaces:
+            BGW_to_SPINE:
+                intf: Ethernet1/1
+                link: BGW_to_SPINE
+                type: ethernet
+                module_type: m3
+            BGW_2_to_BGW_1:
+                intf: Ethernet1/39
+                link: BGW_to_CORE
+                type: ethernet
+                module_type: m3
+    SUPER-ACCESS:
+        interfaces:
+            PGW_to_DC_1_LEAF-1_1:
+                intf: Ethernet1/1/1
+                link: PGW_to_DC_1_LEAF-1_1
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_1_LEAF-1_2:
+                intf: Ethernet1/1/2
+                link: PGW_to_DC_1_LEAF-1_2
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_1_LEAF-2_1:
+                intf: Ethernet1/1/3
+                link: PGW_to_DC_1_LEAF-2_1
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_1_LEAF-2_2:
+                intf: Ethernet1/1/4
+                link: PGW_to_DC_1_LEAF-2_2
+                type: ethernet
+                module_type: m3
+
+            PGW_to_DC_2_LEAF-1_1:
+                intf: Ethernet1/2/1
+                link: PGW_to_DC_2_LEAF-1_1
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_2_LEAF-1_2:
+                intf: Ethernet1/2/2
+                link: PGW_to_DC_2_LEAF-1_2
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_2_LEAF-2_1:
+                intf: Ethernet1/2/3
+                link: PGW_to_DC_2_LEAF-2_1
+                type: ethernet
+                module_type: m3
+            PGW_to_DC_2_LEAF-2_2:
+                intf: Ethernet1/2/4
+                link: PGW_to_DC_2_LEAF-2_2
+                type: ethernet
+                module_type: m3
+            PGW_to_IXIA:
+                intf: Ethernet1/32
+                link: PGW_to_IXIA
+                type: ethernet
+                module_type: m3
+    IXIA:
+        interfaces:
+            IXIA_to_DC_1_LEAF-1:
+                intf: 1/8
+                link: IXIA_to_DC_1_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_DC_2_LEAF-2:
+                intf: 1/13
+                link: IXIA_to_DC_2_LEAF-2
+                type: ethernet
+                module_type: m3
+            IXIA_to_PGW:
+                intf: 2/4
+                link: IXIA_to_PGW
+                type: ethernet
+                module_type: m3

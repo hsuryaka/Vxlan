@@ -1,0 +1,634 @@
+testbed:
+    name: VxLAN_Featurette
+    credentials:
+        default:
+            username: admin
+            password: nbv_12345
+        enable:
+            password: nbv_12345
+    servers:
+        tftp:
+            server: prithvi
+            address: 10.106.168.251
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123
+        ntp:
+            server: 1.2.3.4
+devices:
+    WFR_SPINE:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            port: 2003
+            ip: "10.197.127.14"
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.70
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9508_1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2008
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2009
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.71
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9508_2:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2005
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2007
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.72
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    N9504_1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2019
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          b:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2020
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.73
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    FAN-1:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2023
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.76
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    FAN-2:
+        type: 'router'
+        os: 'nxos'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: "10.197.127.14"
+            port: 2024
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.77
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.16"
+          alt:
+            ip: "10.197.127.122"
+            port: 8009
+            protocol: telnet
+topology:
+    WFR_SPINE:
+        interfaces:
+            #----- SPINE to LEAF-1
+            # = GX Link
+            SPINE_to_LEAF-1_1:
+                intf: Ethernet1/1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 215
+            # = JPlus Legacy LC
+            SPINE_to_LEAF-1_2:
+                intf: Ethernet1/5
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 215
+            # = Kerry Legacy LC
+            SPINE_to_LEAF-1_3:
+                intf: Ethernet1/4
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 215
+            SPINE_to_LEAF-1_4:
+                intf: Ethernet1/6
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                PO : 215
+
+            #----- SPINE to LEAF-2
+            # = GX Link
+            SPINE_to_LEAF-2_1:
+                intf: Ethernet1/7
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 216
+            # = JPlus Legacy LC
+            SPINE_to_LEAF-2_2:
+                intf: Ethernet1/11
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 216
+            # = Kerry Legacy LC
+            SPINE_to_LEAF-2_3:
+                intf: Ethernet1/10
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 216
+            SPINE_to_LEAF-2_4:
+                intf: Ethernet1/12
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                PO : 216
+
+            #----- SPINE to LEAF-3
+            # = GX Link
+            SPINE_to_LEAF-3_1:
+                intf: Ethernet1/13
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 217
+            # = JPlus Legacy LC
+            SPINE_to_LEAF-3_2:
+                intf: Ethernet1/17
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 217
+            # = Kerry Legacy LC
+            SPINE_to_LEAF-3_3:
+                intf: Ethernet1/16
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                PO : 217
+    N9508_1:
+        interfaces:
+            #----- VPC Links
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet3/2
+                link: LEAF-1_to_LEAF-2_PKA_1
+                type: ethernet
+            LEAF_to_MCT_1:
+                intf: Ethernet4/1/1
+                link: LEAF-1_to_LEAF-2_MCT_1
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_2:
+                intf: Ethernet4/1/2
+                link: LEAF-1_to_LEAF-2_MCT_2
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_3:
+                intf: Ethernet4/1/3
+                link: LEAF-1_to_LEAF-2_MCT_3
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_4:
+                intf: Ethernet4/1/4
+                link: LEAF-1_to_LEAF-2_MCT_4
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_5:
+                intf: Ethernet3/1
+                link: LEAF-1_to_LEAF-2_MCT_5
+                type: ethernet
+                PO : 4096
+            #----- SPINE to LEAF-1
+            # = GX Link
+            LEAF_to_SPINE_1:
+                intf: Ethernet4/3
+                link: LEAF-1_to_SPINE_1
+                type: ethernet
+                PO : 215
+            # = JPlus Legacy LC
+            LEAF_to_SPINE_2:
+                intf: Ethernet3/5
+                link: LEAF-1_to_SPINE_2
+                type: ethernet
+                PO : 215
+            # = Kerry Legacy LC
+            LEAF_to_SPINE_3:
+                intf: Ethernet2/19
+                link: LEAF-1_to_SPINE_3
+                type: ethernet
+                PO : 215
+            LEAF_to_SPINE_4:
+                intf: Ethernet1/5
+                link: LEAF-1_to_SPINE_4
+                type: ethernet
+                PO : 215
+            #----- LEAF-1 to FAN-1
+            # = GX Link
+            LEAF_to_FAN_1_1:
+                intf: Ethernet4/10
+                link: LEAF-1_to_FAN_1_1
+                type: ethernet
+                PO : 1
+            # = JPlus Legacy LC
+            LEAF_to_FAN_1_2:
+                intf: Ethernet3/20
+                link: LEAF-1_to_FAN_1_2
+                type: ethernet
+                PO : 1
+            # = Kerry Legacy LC
+            LEAF_to_FAN_1_3:
+                intf: Ethernet2/9
+                link: LEAF-1_to_FAN_1_3
+                type: ethernet
+                PO : 1
+            #----- LEAF-1 to FAN-2
+            LEAF_to_FAN_2_1:
+                intf: Ethernet1/24/1
+                link: LEAF-1_to_FAN_2_1
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_2:
+                intf: Ethernet1/24/2
+                link: LEAF-1_to_FAN_2_2
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_3:
+                intf: Ethernet1/24/3
+                link: LEAF-1_to_FAN_2_3
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_4:
+                intf: Ethernet1/24/4
+                link: LEAF-1_to_FAN_2_4
+                type: ethernet
+                PO : 2
+            #----- LEAF-1 to LEAF-3
+            # = GX Link
+            LEAF_1_to_LEAF_3_1:
+                intf: Ethernet1/25
+                link: LEAF_1_to_LEAF_3_1
+                type: ethernet
+            
+    N9508_2:
+        interfaces:
+            #----- VPC Links
+            LEAF_to_PEER_KEEP_ALIVE:
+                intf: Ethernet3/2
+                link: LEAF-2_to_LEAF-1_PKA_1
+                type: ethernet
+            LEAF_to_MCT_1:
+                intf: Ethernet4/1/1
+                link: LEAF-2_to_LEAF-1_MCT_1
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_2:
+                intf: Ethernet4/1/2
+                link: LEAF-2_to_LEAF-1_MCT_2
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_3:
+                intf: Ethernet4/1/3
+                link: LEAF-2_to_LEAF-1_MCT_3
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_4:
+                intf: Ethernet4/1/4
+                link: LEAF-2_to_LEAF-1_MCT_4
+                type: ethernet
+                PO : 4096
+            LEAF_to_MCT_5:
+                intf: Ethernet3/1
+                link: LEAF-2_to_LEAF-1_MCT_5
+                type: ethernet
+                PO : 4096
+            #----- SPINE to LEAF-2
+            # = GX Link
+            LEAF_to_SPINE_1:
+                intf: Ethernet4/3
+                link: LEAF-2_to_SPINE_1
+                type: ethernet
+                PO : 216
+            # = JPlus Legacy LC
+            LEAF_to_SPINE_2:
+                intf: Ethernet3/5
+                link: LEAF-2_to_SPINE_2
+                type: ethernet
+                PO : 216
+            # = Kerry Legacy LC
+            LEAF_to_SPINE_3:
+                intf: Ethernet2/23
+                link: LEAF-2_to_SPINE_3
+                type: ethernet
+                PO : 216
+            LEAF_to_SPINE_4:
+                intf: Ethernet1/5
+                link: LEAF-2_to_SPINE_4
+                type: ethernet
+                PO : 216
+            #----- LEAF-2 to FAN-1
+            # = GX Link
+            LEAF_to_FAN_1_1:
+                intf: Ethernet4/11
+                link: LEAF-2_to_FAN_1_1
+                type: ethernet
+                PO : 1
+            # = JPlus Legacy LC
+            LEAF_to_FAN_1_2:
+                intf: Ethernet3/20
+                link: LEAF-2_to_FAN_1_2
+                type: ethernet
+                PO : 1
+            # = Kerry Legacy LC
+            LEAF_to_FAN_1_3:
+                intf: Ethernet2/9
+                link: LEAF-2_to_FAN_1_3
+                type: ethernet
+                PO : 1
+            #----- LEAF-2 to FAN-2
+            LEAF_to_FAN_2_1:
+                intf: Ethernet1/24/1
+                link: LEAF-2_to_FAN_2_1
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_2:
+                intf: Ethernet1/24/2
+                link: LEAF-2_to_FAN_2_2
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_3:
+                intf: Ethernet1/24/3
+                link: LEAF-2_to_FAN_2_3
+                type: ethernet
+                PO : 2
+            LEAF_to_FAN_2_4:
+                intf: Ethernet1/24/4
+                link: LEAF-2_to_FAN_2_4
+                type: ethernet
+                PO : 2
+    N9504_1:
+        interfaces:
+            #----- SPINE to LEAF-3
+            # = GX Link
+            LEAF_to_SPINE_1:
+                intf: Ethernet2/2
+                link: LEAF-3_to_SPINE_1
+                type: ethernet
+                PO : 217
+            # = JPlus Legacy LC
+            LEAF_to_SPINE_2:
+                intf: Ethernet4/49
+                link: LEAF-3_to_SPINE_2
+                type: ethernet
+                PO : 217
+            # = Kerry Legacy LC
+            LEAF_to_SPINE_3:
+                intf: Ethernet1/13
+                link: LEAF-3_to_SPINE_3
+                type: ethernet
+                PO : 217
+            #----- LEAF-3 to LEAF-1
+            LEAF_3_to_LEAF_1_1:
+                intf: Ethernet1/25
+                link: LEAF_3_to_LEAF_1_1
+                type: ethernet
+            #----- LEAF-3 to FAN-2
+            LEAF_to_FAN_2_1:
+                intf: Ethernet2/11
+                link: LEAF-2_to_FAN_2_1
+                type: ethernet
+            LEAF_to_FAN_2_2:
+                intf: Ethernet3/11
+                link: LEAF-2_to_FAN_2_2
+                type: ethernet
+            #----- LEAF-3 loopback
+            LEAF-3_to_LEAF-3_1:
+                intf: Ethernet2/12
+                link: LEAF-3_to_LEAF-3_1
+                type: ethernet
+            LEAF-3_to_LEAF-3_2:
+                intf: Ethernet2/13
+                link: LEAF-3_to_LEAF-3_2
+                type: ethernet
+            #----- LEAF-3 to IXIA
+            LEAF_to_IXIA:
+                intf: Ethernet2/16
+                link: LEAF-3_to_IXIA
+                type: ethernet
+    FAN-1:
+        interfaces:
+            #----- FAN to LEAF-1
+            # = GX Link
+            FAN_to_LEAF-1_1:
+                intf: Ethernet1/9
+                link: FAN_to_LEAF-1_1
+                type: ethernet
+                PO : 1
+            # = JPlus Legacy LC
+            FAN_to_LEAF-1_2:
+                intf: Ethernet1/21
+                link: FAN_to_LEAF-1_2
+                type: ethernet
+                PO : 1
+            # = Kerry Legacy LC
+            FAN_to_LEAF-1_3:
+                intf: Ethernet1/6
+                link: FAN_to_LEAF-1_3
+                type: ethernet
+                PO : 1
+            #----- FAN to LEAF-2
+            # = GX Link
+            FAN_to_LEAF-2_1:
+                intf: Ethernet1/7
+                link: FAN_to_LEAF-2_1
+                type: ethernet
+                PO : 1
+            # = JPlus Legacy LC
+            FAN_to_LEAF-2_2:
+                intf: Ethernet1/22
+                link: FAN_to_LEAF-2_2
+                type: ethernet
+                PO : 1
+            # = Kerry Legacy LC
+            FAN_to_LEAF-2_3:
+                intf: Ethernet1/10
+                link: FAN_to_LEAF-2_3
+                type: ethernet
+                PO : 1
+            FAN_to_IXIA:
+                intf: Ethernet1/32
+                link: FAN_to_IXIA
+                type: ethernet
+            #----- FAN-1 to FAN-2
+            FAN-1_to_FAN-2_1:
+                intf: Ethernet1/1/3
+                link: FAN-1_to_FAN-2_1
+                type: ethernet
+            FAN-1_to_FAN-2_2:
+                intf: Ethernet1/1/4
+                link: FAN-1_to_FAN-2_2
+                type: ethernet
+    FAN-2:
+        interfaces:
+            #----- FAN to LEAF-1
+            FAN_to_LEAF-1_1:
+                intf: Ethernet1/15
+                link: FAN_to_LEAF-1_1
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-1_2:
+                intf: Ethernet1/16
+                link: FAN_to_LEAF-1_2
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-1_3:
+                intf: Ethernet1/17
+                link: FAN_to_LEAF-1_3
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-1_4:
+                intf: Ethernet1/18
+                link: FAN_to_LEAF-1_4
+                type: ethernet
+                PO : 2
+            #----- FAN to LEAF-2
+            FAN_to_LEAF-2_1:
+                intf: Ethernet1/19
+                link: FAN_to_LEAF-2_1
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-2_2:
+                intf: Ethernet1/20
+                link: FAN_to_LEAF-2_2
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-2_3:
+                intf: Ethernet1/21
+                link: FAN_to_LEAF-2_3
+                type: ethernet
+                PO : 2
+            FAN_to_LEAF-2_4:
+                intf: Ethernet1/22
+                link: FAN_to_LEAF-1_4
+                type: ethernet
+                PO : 2
+            #----- FAN-2 to LEAF-3
+            FAN-2_to_LEAF-3_1:
+                intf: Ethernet1/49
+                link: FAN-2_to_LEAF-3_1
+                type: ethernet
+            FAN-2_to_LEAF-3_2:
+                intf: Ethernet1/50
+                link: FAN-2_to_LEAF-3_2
+                type: ethernet
+            #----- FAN-2 to FAN-1
+            FAN-2_to_FAN-1_1:
+                intf: Ethernet1/11
+                link: FAN-2_to_FAN-1_1
+                type: ethernet
+            FAN-2_to_FAN-1_2:
+                intf: Ethernet1/12
+                link: FAN-2_to_FAN-1_2
+                type: ethernet
+    IXIA:
+        interfaces:
+            IXIA_to_FAN-1:
+                intf: 7/6
+                link: IXIA_to_FAN-1
+                type: ethernet
+            IXIA_to_LEAF-3:
+                intf: 7/4
+                link: IXIA_to_LEAF-3
+                type: ethernet

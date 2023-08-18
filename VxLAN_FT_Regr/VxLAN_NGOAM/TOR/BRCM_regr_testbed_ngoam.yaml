@@ -1,0 +1,261 @@
+
+testbed:
+    name: VxLAN-BRCM
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+
+devices:
+    Calgary-1:
+        os: nxos
+        type: N9K
+        alias: uut1
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2005
+            vty:
+                protocol: telnet
+                ip: 10.127.63.97
+    Calgary-2:
+        os: nxos
+        type: N9K
+        alias: uut2
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2037
+            vty:
+                protocol: telnet
+                ip: 10.127.63.98
+
+    Calgary-3:
+        os: nxos
+        type: N9K
+        alias: uut3
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2039
+            vty:
+                protocol: telnet
+                ip: 10.127.63.83
+
+    SPINE:
+        os: nxos
+        type: N3K
+        alias: uut4
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2002
+            vty:
+                protocol: telnet
+                ip: 10.127.63.82
+
+    FAN-1:
+        os: nxos
+        type: N3K
+        alias: uut5
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2007
+            vty:
+                protocol: telnet
+                ip: 10.127.63.94
+
+    FAN-2:
+        os: nxos
+        type: N3K
+        alias: uut6
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            console:
+                protocol: telnet
+                ip: 10.127.63.200
+                port: 2008
+            vty:
+                protocol: telnet
+                ip: 10.127.63.85
+
+    TG1:
+        type: ixia
+        alias: tgen
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.127.63.100
+                tcl_server: 10.104.104.243
+                ixnetwork_tcl_server: 10.104.104.243
+                username: Administrator
+                reset: 1
+topology:
+    Calgary-1:
+        interfaces:
+            Eth1/1:
+                link: uut1_uut4_1
+                alias: uut1_uut4_1
+                type: ethernet
+            Eth1/2:
+                link: uut1_uut4_2
+                alias: uut1_uut4_2
+                type: ethernet
+            Eth1/14:
+                link: uut1_uut2_1
+                alias: uut1_uut2_1
+                type: ethernet
+            Eth1/8:
+                link: uut1_uut2_2
+                alias: uut1_uut2_2
+                type: ethernet
+            Eth1/10/1:
+                link: uut1_uut5_1
+                alias: uut1_uut5_1
+                type: ethernet
+            Eth1/10/2:
+                link: uut1_uut5_2
+                alias: uut1_uut5_2
+                type: ethernet
+            Eth1/10/3:
+                link: uut1_uut5_3
+                alias: uut1_uut5_3
+                type: ethernet
+
+    Calgary-2:
+        interfaces:
+            Eth1/5:
+                link: uut2_uut4_1
+                alias: uut2_uut4_1
+                type: ethernet
+            Eth1/6:
+                link: uut2_uut4_2
+                alias: uut2_uut4_2
+                type: ethernet
+            Eth1/14:
+                link: uut1_uut2_1
+                alias: uut2_uut1_1
+                type: ethernet
+            Eth1/9:
+                link: uut1_uut2_2
+                alias: uut2_uut1_2
+                type: ethernet
+            Eth1/10/1:
+                link: uut2_uut5_1
+                alias: uut2_uut5_1
+                type: ethernet
+            Eth1/10/2:
+                link: uut2_uut5_2
+                alias: uut2_uut5_2
+                type: ethernet
+
+    Calgary-3:
+        interfaces:
+            Eth2/5:
+                link: uut3_uut4_1
+                alias: uut3_uut4_1
+                type: ethernet
+            Eth1/21:
+                link: uut3_uut6_1
+                alias: uut3_uut6_1
+                type: ethernet
+            Eth1/22:
+                link: uut3_uut6_2
+                alias: uut3_uut6_2
+                type: ethernet
+    SPINE:
+        interfaces:
+            Eth1/5:
+                link: uut1_uut4_1
+                alias: uut4_uut1_1
+                type: ethernet
+            Eth1/6:
+                link: uut1_uut4_2
+                alias: uut4_uut1_2
+                type: ethernet
+            Eth1/11:
+                link: uut2_uut4_1
+                alias: uut4_uut2_1
+                type: ethernet
+            Eth1/14:
+                link: uut2_uut4_2
+                alias: uut4_uut2_2
+                type: ethernet
+            Eth1/12:
+                link: uut3_uut4_1
+                alias: uut4_uut3_1
+                type: ethernet
+             
+    FAN-1:
+        interfaces:
+            Eth1/17:
+                link: uut1_uut5_1
+                alias: uut5_uut1_1
+                type: ethernet
+            Eth1/18:
+                link: uut1_uut5_2
+                alias: uut5_uut1_2
+                type: ethernet
+            Eth1/19:
+                link: uut1_uut5_3
+                alias: uut5_uut1_3
+                type: ethernet
+            Eth1/21:
+                link: uut2_uut5_1
+                alias: uut5_uut2_1
+                type: ethernet
+            Eth1/22:
+                link: uut2_uut5_2
+                alias: uut5_uut2_2
+                type: ethernet
+            Eth1/1:
+                link: uut5_TG1_1
+                alias: uut5_TG1_1
+                type: ethernet
+
+    FAN-2:
+        interfaces:
+            Eth1/21:
+                link: uut3_uut6_1
+                alias: uut6_uut3_1
+                type: ethernet
+            Eth1/22:
+                link: uut3_uut6_2
+                alias: uut6_uut3_2
+                type: ethernet
+            Eth1/1:
+                link: uut6_TG1_1
+                alias: uut6_TG1_1
+                type: ethernet
+
+    TG1:
+       interfaces:
+            1/1:
+               type: ethernet
+               alias: TG1_uut5_1
+               link: uut5_TG1_1
+            1/2:
+               type: ethernet
+               alias: TG1_uut6_1
+               link: uut6_TG1_1
+

@@ -1,0 +1,202 @@
+testbed:
+    name: VxLAN_RFC_5549
+    servers:
+        scp:
+            server: n3k-qa-image
+            address: 10.127.63.241
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+
+devices:
+    Spine-01:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2025
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.225.127.108
+    Sundown-01:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2012
+          alt:
+            protocol: telnet
+            ip: 10.225.127.28
+    Sundown-02:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2015
+          alt:
+            protocol: telnet
+            ip: 10.225.127.31
+    Sumpin-01:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2018
+          alt:
+            protocol: telnet
+            ip: 10.225.127.34
+    NepCR-01:
+        type: 'router'
+        os: 'nxos'
+        series: 'n7k'
+        credentials:
+            default:
+                username: admin
+                password: nbv12345
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.17
+            port: 2016
+          alt:
+            protocol: telnet
+            ip: 10.225.127.32
+    IXIA:
+        type: Ixia
+        os: ios
+        platform: n9k
+        connections:
+          a:
+            protocol: telnet
+            ip: 10.197.127.16
+          alt:
+            ip: 10.225.127.16
+            port: 8009
+            protocol: telnet
+topology:
+    Spine-01:
+        interfaces:
+            Ethernet1/53/1:
+                alias: SPINE_to_LEAF-1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/51/3:
+                alias: SPINE_to_LEAF-2
+                link: SPINE_to_LEAF-2
+                type: ethernet
+            Ethernet1/53/3:
+                alias: SPINE_to_LEAF-3
+                link: SPINE_to_LEAF-3
+                type: ethernet
+    Sundown-01:
+        interfaces:
+            Ethernet1/15:
+                alias: LEAF-1_to_LEAF-2_1
+                link: LEAF-1_to_LEAF-2_1
+                type: ethernet
+            Ethernet1/16:
+                alias: LEAF-1_to_LEAF-2_2
+                link: LEAF-1_to_LEAF-2_2
+                type: ethernet
+            Ethernet1/35:
+                alias: LEAF-1_to_SPINE
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/23:
+                alias: LEAF-1_to_FAN
+                link: LEAF-1_to_FAN
+                type: ethernet
+    Sundown-02:
+        interfaces:
+            Ethernet1/15:
+                alias: LEAF-2_to_LEAF-1_1
+                link: LEAF-1_to_LEAF-2_1
+                type: ethernet
+            Ethernet1/16:
+                alias: LEAF-2_to_LEAF-1_2
+                link: LEAF-1_to_LEAF-2_2
+                type: ethernet
+            Ethernet1/33:
+                alias: LEAF-2_to_SPINE
+                link: SPINE_to_LEAF-2
+                type: ethernet
+            Ethernet1/27:
+                alias: LEAF-2_to_FAN
+                link: LEAF-2_to_FAN
+                type: ethernet
+    Sumpin-01:
+        interfaces:
+            Ethernet1/35:
+                alias: LEAF-3_to_SPINE
+                link: SPINE_to_LEAF-3
+                type: ethernet
+            Ethernet1/48:
+                alias: LEAF-3_to_IXIA
+                link: LEAF-3_to_IXIA
+                type: ethernet
+    NepCR-01:
+        interfaces:
+            Ethernet1/2/1:
+                alias: FAN_to_LEAF-1
+                link: LEAF-1_to_FAN
+                type: ethernet
+            Ethernet1/3/1:
+                alias: FAN_to_LEAF-2
+                link: LEAF-2_to_FAN
+                type: ethernet
+            Ethernet1/1/1:
+                alias: FAN_to_IXIA
+                link: FAN_to_IXIA
+                type: ethernet
+    IXIA:
+        interfaces:
+            2/12:
+                alias: IXIA_to_FAN
+                link: FAN_to_IXIA
+                type: ethernet
+            2/13:
+                alias: IXIA_to_LEAF-3
+                link: LEAF-3_to_IXIA
+                type: ethernet

@@ -1,0 +1,3123 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+InitializeTestbed:
+  source:
+    #pkg: src.forwarding.vxlan.vxlan_config
+    pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+    class: InitializeTestbed
+  datafile_path: "esi_mh_config.yml"
+  verify_file_path: "esi_rx_mh_verify.yml"
+InitializeTraffic:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "regr_VxLAN_ESI_MH_Rx_FX3s1vpc_FXs2std_absr_A-S_absr_local_double_esi.ixncfg"
+    processors:
+        post:
+            verify_ixia_static_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+
+ConfigureWithTemplate:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: ConfigureWithTemplate
+        
+TriggerReloadAscii:
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      order: [ 'verify_traffic', 'verify_l2rib' ]
+  source:
+    pkg: lib.triggers.reload
+    class: reload.ReloadAscii
+  device_dut:
+    - node02
+  traffic_convergence_time: 300
+  trigger_wait_time: '500'
+  ixia_static: True
+  loss_tolerance: 0.01
+  check_iteration: 2
+  device_dut:
+    - node01
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+
+TriggerReloadTor:
+    devices:
+        -  'node02'
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+    source:
+        pkg: lib.triggers.reload
+        class: reload.Reload
+    traffic_convergence_time: 300
+    trigger_wait_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node04
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerVpcReloadPri:
+    devices:
+        -  'node01'
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerVpcReloadSec:
+    devices:
+        -  'node04'
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    timeout:
+        max_time: 900
+        interval: 60
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerIssuNative:
+    devices:
+        -  'node01'
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.issu.issu.TriggerIssuNative
+    processors:
+        pre:
+            send_continuous_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_traffic
+        post:
+            verify_traffic:
+              pkg: src.forwarding.vxlan.traffic
+              method: verify_trafficss
+            verify_l2rib:
+              pkg: VxLAN_ESI_MH
+              method: verifyl2routetype
+            order: [ 'verify_traffic', 'verify_l2rib' ]
+    timeout:
+        max_time: 3600
+        interval: 60
+    traffic_convergence_time: 120
+    mode: 'native'
+    ctrlplane_downtime: 121
+    update_pts_features: ['platform']
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+
+# SwitchReloadLxc:
+#     device_dut:
+#       - 'node02'
+#     processors:
+#       pre:
+#         send_continuous_traffic:
+#           pkg: src.forwarding.vxlan.traffic
+#           method: verify_traffic
+#       post:
+#         verify_traffic:
+#           pkg: src.forwarding.vxlan.traffic
+#           method: verify_traffic
+#     source:
+#       pkg: src.system.system_config
+#       class: ConfigureLXCMode
+#     timeout:
+#       max_time: 1500
+#       interval: 60
+#     traffic_convergence_time: 600
+#     loss_tolerance: 0.01
+#     check_iteration: 2
+#     ixia_static: True
+
+TriggerIssuLxc:
+    devices:
+        -  'node01'
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.issu.issu.TriggerIssuLxc
+    processors:
+      pre:
+        send_continuous_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    timeout:
+        max_time: 3600
+        interval: 60
+    issu_timeout: 1800
+    traffic_convergence_time: 100
+    mode: 'lxc'
+    update_pts_features: ['platform']
+    loss_tolerance: 0.01
+    check_iteration: 2
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+TriggerIssuLxcStandalone:
+    devices:
+        -  'node01'
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.issu.issu.TriggerIssuLxc
+    processors:
+      pre:
+        send_continuous_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    timeout:
+        max_time: 3600
+        interval: 60
+    issu_timeout: 1800
+    traffic_convergence_time: 100
+    mode: 'lxc'
+    update_pts_features: ['platform']
+    loss_tolerance: 0.01
+    check_iteration: 2
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TC-Config_Replace:
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+    source:
+      pkg: VxLAN_ESI_MH
+      class: Config_Replace
+    devices: ['node01']
+    trigger_wait_time: 180
+    cmd: "
+        interface nve 1\n
+          shut\n
+        int loopback1\n
+          no ip address\n
+         "
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    loss_tolerance: 0.01
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+TC_Change_L2VNI_BGW:
+    source:
+      pkg: VxLAN_ESI_MH
+      class: Config_New_L2VNI
+    device_dut:
+        - node01
+        - node04
+        - node02
+    #devices: ['node01']
+    trigger_wait_time: 60
+    cmd: "
+        vlan 11\n
+          no vn-segment 10011\n
+          vn-segment 10311\n
+        vlan 12\n
+          no vn-segment 10012\n
+          vn-segment 10312\n
+        vlan 13\n
+          no vn-segment 10013\n
+          vn-segment 10313\n
+        vlan 14\n
+          no vn-segment 10014\n
+          vn-segment 10314\n
+        vlan 15\n
+          no vn-segment 10015\n
+          vn-segment 10315\n
+        interface nve 1\n
+          no member vni 10011-10015\n
+          member vni 10311-10315\n
+            suppress-arp\n
+            multisite ingress-replication\n
+            ingress-replication protocol bgp\n
+         "
+    # device_dut:
+    #   - node01
+    ixia_static: True
+
+
+TC_Change_L2VNI_Leaf:
+    source:
+      pkg: VxLAN_ESI_MH
+      class: Config_New_L2VNI
+    device_dut:
+        - node06
+        - node05
+    #devices: ['node01']
+    trigger_wait_time: 60
+    cmd: "
+        vlan 11\n
+          no vn-segment 10011\n
+          vn-segment 10311\n
+        vlan 12\n
+          no vn-segment 10012\n
+          vn-segment 10312\n
+        vlan 13\n
+          no vn-segment 10013\n
+          vn-segment 10313\n
+        vlan 14\n
+          no vn-segment 10014\n
+          vn-segment 10314\n
+        vlan 15\n
+          no vn-segment 10015\n
+          vn-segment 10315\n
+        interface nve 1\n
+          no member vni 10011-10015\n
+          member vni 10311-10315\n
+            suppress-arp\n
+            ingress-replication protocol bgp\n"  
+
+Initialize_New_Ixia_Traffic:
+    source:
+        pkg: src.forwarding.vxlan.traffic
+        class: InitializeTraffic
+    tgen_path: "regr_VxLAN_ESI_MH_Rx_FX3s1vpc_FXs2std_absr_A-S_absr_local_double_esi_L2vni&ESI_chg.ixncfg"
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    device_dut:
+      - node01
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.4457'
+
+Host_move_1:
+    source:
+      pkg: VxLAN_ESI_MH
+      class: verify_mac_address
+    device_dut:
+    - node06
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+    mac: '0011.0100.0011'
+    vlan: 11
+
+Host_move_2:
+    source:
+      pkg: src.forwarding.vxlan.traffic
+      class: InitializeTraffic
+    tgen_path: "regr_VxLAN_ESI_MH_Rx_FX3s1vpc_FXs2std_absr_A-S_absr_local_host_move.ixncfg"
+    processors:
+      # pre:
+      #   verify_mac_address:
+      #     pkg: VxLAN_ESI_MH
+      #     method: verify_mac_address
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+
+Host_move_3:
+    source:
+      pkg: VxLAN_ESI_MH
+      class: StopAndStartTopology
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+        order: ['verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    device_dut:
+      - node06
+    loss_tolerance: 0.01
+    check_iteration: 1
+    ixia_static: True
+    mac: '0011.0100.0011'
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 1
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.4457'
+    topology_name: 'node07_tgn01'
+    device_group_name: 'nd07'
+    wait_time: 30
+    send_device_count: 1
+    apiServerIp: 10.78.61.123
+    ixChassisIpList:
+    - 10.225.127.36
+
+
+# VPC Primary GIR Default profile enter
+TriggerGIRAddVPCPrimary:
+    convergence_time: 1200
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerMaintenanceMode
+    #processors:
+        # pre:
+        #     start_ixia_static_traffic:
+        #         pkg: src.forwarding.vxlan.traffic
+        #         method: start_ixia_static_traffic
+        #     verify_ixia_static_traffic:
+        #         pkg: src.forwarding.vxlan.traffic
+        #         method: verify_ixia_static_traffic
+        #     order: [ 'start_ixia_static_traffic', 'verify_ixia_static_traffic' ]
+        #post:
+            # verify_ixia_static_traffic_convergence:
+            #     pkg: src.forwarding.vxlan.traffic
+            #     method: verify_ixia_static_traffic_convergence
+          # verify_traffic:
+          #   pkg: src.forwarding.vxlan.traffic
+          #   method: verify_traffic
+    trigger_wait_time: 30
+    device_dut:
+      - node01
+    traffic_streams: ['all']
+    testcase_convergence_param: 'TriggerGIRAddConvergenceVPCPrimary'
+    traffic_convergence_time: 100
+    loss_tolerance: 20
+    check_iteration: 1
+    max_outage: 30
+
+# VPC Primary GIR Default profile exit
+TriggerGIRRemoveVPCPrimary:
+    convergence_time: 1200
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.TriggerNormalMode
+    processors:
+        # pre:
+        #     start_ixia_static_traffic:
+        #         pkg: src.forwarding.vxlan.traffic
+        #         method: start_ixia_static_traffic
+        #     verify_ixia_static_traffic:
+        #         pkg: src.forwarding.vxlan.traffic
+        #         method: verify_ixia_static_traffic
+        #     order: [ 'start_ixia_static_traffic', 'verify_ixia_static_traffic' ]
+        post:
+            # verify_ixia_static_traffic_convergence:
+            #     pkg: src.forwarding.vxlan.traffic
+            #     method: verify_ixia_static_traffic_convergence
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    traffic_convergence_time: 100
+    trigger_wait_time: 30
+    traffic_streams: ['all']
+    loss_tolerance: 20
+    check_iteration: 1
+    max_outage: 30
+    testcase_convergence_param: 'TriggerGIRRemoveConvergenceVPCPrimary'
+    device_dut:
+      - node01
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerFabricLinkFlap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node01
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: 'esi'
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 300
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerDCILinkFlap:
+
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node01
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 300
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+VpcAccessFlapPri:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node01
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerAddRemoveBgpNeighborBfd:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    # source:
+    #     pkg: genie.libs.sdk.triggers.addremove.bgp.nxos.addremove
+    #     class: TriggerAddRemoveBgpNeighborBfd
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.addremove.bgp.addremove.TriggerAddRemoveBgpNeighborBfd
+    device_dut:
+        - node01
+        - node04
+    devices:
+        - node01
+        - node04
+    max_time: 180
+    interval: 15
+    method: 'checkpoint'
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+    max_time : 180
+    interval: 15
+    timeout_recovery:
+        max_time : 180
+        interval: 15
+
+TC_XML_Validation:
+  source:
+    pkg: VxLAN_ESI_MH
+    class: xml_validation
+  device_dut:
+    - node01
+    - node04
+  mac: 0012.0111.0001
+  vlan: 11
+  ESI: '0300.0000.0001.0000.0457'
+  xml_build: 10.4.1
+  intf: nve1
+
+Toggle_BGP_EVPN_AF_MaximumPath:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    timeout: 
+        max_time: 180
+        interval: 15
+    method: 'checkpoint'
+    tgn_timeout: 60
+    tgn_delay: 10
+    timeout_recovery:
+        max_time: 180
+        interval: 15
+    source:
+      pkg: VxLAN_ESI_MH
+      class: Removeadd_Bgp_MAX_Paths
+    device_dut: ['node01']
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    bgp_AS: '1000'
+    traffic_convergence_time: 120
+    loss_tolerance: 0.01
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+Trigger_ftr_NveOverlay:
+    source:
+      pkg: lib.triggers.remove_add
+      class: remove_add.UnConfigConfigFeature
+    processors:
+      pre:
+        perform_copy_r_s:
+          pkg: VxLAN_ESI_MH
+          method: perform_copy_r_s
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - feature nv overlay
+    trigger_wait_time: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'feature nv overlay'
+    copy_r_s: True
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+RemoveAddL3VniUnderNve:
+    processors:
+      pre:
+        perform_copy_r_s:
+          pkg: VxLAN_ESI_MH
+          method: perform_copy_r_s
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddL3VniUnderNve
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - feature nv overlay
+    copy_r_s: True
+    trigger_wait_time: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'feature nv overlay'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    l3_vni: '201001-201020'
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+DeleteRecreateVlan:
+    processors:
+        pre:
+          perform_copy_r_s:
+            pkg: VxLAN_ESI_MH
+            method: perform_copy_r_s
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.UnconfigConfigVlan
+    device_dut:
+        - node01
+    copy_r_s: True
+    trigger_wait_time: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'feature nv overlay'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: '11,12,13,14,15'
+    ixia_static: True
+    traffic_convergence_time: 120
+    l3vni: '201001-201020'
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+# TRIGGER: VPC failover - Primary to Secondary role change
+TRIGGER_vpc_role_change_A:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node01
+    vpc_role_priority: 201
+    trigger_wait_time: 30
+    vpc_dut: 'primary'
+    loss: 5.0
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    l3vni: '201001-201020'
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+# TRIGGER: VPC failover - Secondary to primary role change
+TRIGGER_vpc_role_change_B:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node01
+    vpc_role_priority: 100
+    vpc_dut: 'secondary'
+    trigger_wait_time: 30
+    loss: 5.0
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    l3vni: '201001-201020'
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+removeadd_NveOverlay:
+    processors:
+        pre:
+          perform_copy_r_s:
+            pkg: VxLAN_ESI_MH
+            method: perform_copy_r_s
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - nv overlay evpn
+    copy_r_s: True
+    trigger_wait_time: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'nv overlay evpn'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerNveSrcLoopbackFlap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    loopback_range:
+        "1"
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    clear_cmd_lst:
+        - nv overlay evpn
+    converge_sec: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'nv overlay evpn'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerNve_MS_SrcLoopbackFlap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    loopback_range:
+        "200"
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    converge_sec: '300'
+    convergence_wait_time: '60'
+    feature_to_remove: 'nv overlay evpn'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+ModifyNveSrcLoopbackIP:
+    processors:
+        pre:
+          perform_copy_r_s:
+            pkg: VxLAN_ESI_MH
+            method: perform_copy_r_s
+        # post:
+        #   verify_traffic:
+        #     pkg: src.forwarding.vxlan.traffic
+        #     method: verify_traffic
+        #   verify_l2rib:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verifyl2routetype
+        #   verifyl2fm_mac:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verifyl2fm_mac
+        #   verify_nve_res_path:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verify_nve_res_path
+        #   verify_fwd_es_path:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verify_fwd_es_path
+        #   verify_evpn_ead:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verify_evpn_ead
+        #   verify_l2rib_pathlist:
+        #     pkg: VxLAN_ESI_MH
+        #     method: verify_l2rib_pathlist
+        #   order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ModifyNveSrcLoopbackIP
+    nve_loopback: 'loopback1'
+    trigger_nve_peers: ''
+    #     node01: {'node01': '100.100.100.2'}
+        # node01:
+        #     nve1:
+        #         nve_name: nve1
+        #         peer_ip:
+        #             '100.100.100.2':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.4':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.6':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    cli_to_parse: ''
+    nve_new_loopback_ip_dict: {'node01':'100.100.100.25'}
+    ip_mask: '32'
+    wait_time: '180'
+    convergence_wait_time: '60'
+    feature_to_remove: 'nv overlay evpn'
+    copy_r_s: True
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+RevertNveSrcLoopbackIP:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.RevertNveSrcLoopbackIP
+    nve_loopback: 'loopback1'
+    #trigger_nve_peers: ''
+    #     node01: {'node01': '100.100.100.2'}
+        # node01: 
+        #     nve1:
+        #         nve_name: nve1
+        #         peer_ip:
+        #             '100.100.100.2':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.4':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.6':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    cli_to_parse: ''
+    #nve_new_loopback_ip_dict: {'node01':'100.100.100.1'}
+    ip_mask: '32'
+    cli_to_parse1: 'show running-config nv overlay'
+    cli_to_parse2: 'show startup-config interface {nve_loopback}'
+    wait_time: '30'
+    convergence_wait_time: '60'
+    feature_to_remove: 'nv overlay evpn'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+Delete_Add_NveSrcLoopbackIP:
+    processors:
+        pre:
+          perform_copy_r_s:
+            pkg: VxLAN_ESI_MH
+            method: perform_copy_r_s
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: VxLAN_ESI_MH
+        class: Delete_NVE_Loopback_ip
+    nve_loopback: 'loopback1'
+    loopback: '1'
+    copy_r_s: True
+    trigger_nve_peers: ''
+    #     node01: {'node01': '100.100.100.2'}
+        # node01:
+        #     nve1:
+        #         nve_name: nve1
+        #         peer_ip:
+        #             '100.100.100.2':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.4':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+        #             '100.100.100.6':
+        #                 learn_type: 'CP'
+        #                 peer_state: 'up'
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    cli_to_parse: ''
+    #nve_new_loopback_ip_dict: {'node01':'100.100.100.1'}
+    ip_mask: '32'
+    cli_to_parse1: 'show running-config nv overlay'
+    cli_to_parse2: 'show startup-config interface {nve_loopback}'
+    #nve_new_loopback_ip_dict: {'node01':'100.100.100.25'}
+    ip_mask: '32'
+    wait_time: '180'
+    convergence_wait_time: '60'
+    #interface_logical_map: self.parameters.get('interface_logical_map')
+    feature_to_remove: 'nv overlay evpn'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+
+
+TriggerRemAddVRF:
+  processors:
+    pre:
+          perform_copy_r_s:
+            pkg: VxLAN_ESI_MH
+            method: perform_copy_r_s
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      verifyl2fm_mac:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2fm_mac
+      verify_nve_res_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_nve_res_path
+      verify_fwd_es_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_fwd_es_path
+      verify_evpn_ead:
+        pkg: VxLAN_ESI_MH
+        method: verify_evpn_ead
+      verify_l2rib_pathlist:
+        pkg: VxLAN_ESI_MH
+        method: verify_l2rib_pathlist
+      verify_bgp_route_type1:
+        pkg: VxLAN_ESI_MH
+        method: verify_bgp_route_type1
+      order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+      #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  source:
+    pkg: lib.triggers.remove_add
+    class: remove_add.UnConfigConfigFeature
+  device_dut:
+    - node01
+    - node04
+  copy_r_s: True
+  traffic_convergence_time: 120
+  feature_to_remove: 'vrf context vxlan-1001'
+  trigger_wait_time: '120'
+  convergence_wait_time: '180'
+  loss_tolerance: 0.01
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+  #igmp_intf: ['tgn01_nd01_1_2','tgn01_nd02_1_2','tgn01_nd03_1_1','tgn01_nd03_1_2','tgn01_nd04_1_1','tgn01_nd05_1_1','tgn01_nd06_1_1']
+
+
+VpcDomainShut:
+    # processors:
+    #     post:
+    #       verify_traffic:
+    #         pkg: src.forwarding.vxlan.traffic
+    #         method: verify_traffic
+    #       verify_l2rib:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verifyl2routetype
+    #       verifyl2fm_mac:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verifyl2fm_mac
+    #       verify_nve_res_path:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verify_nve_res_path
+    #       verify_fwd_es_path:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verify_fwd_es_path
+    #       verify_evpn_ead:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verify_evpn_ead
+    #       verify_l2rib_pathlist:
+    #         pkg: VxLAN_ESI_MH
+    #         method: verify_l2rib_pathlist
+    #       order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: vpc_flap.VpcDomainShut
+    device_dut:
+        - node01
+    trigger_wait_time: '180'
+    converge_time: '180'
+    convergence_wait_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+VpcDomainNoShut:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: vpc_flap.VpcDomainNoShut
+    device_dut:
+        - node01
+    trigger_wait_time: '180'
+    converge_time: '180'
+    convergence_wait_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+
+TriggerClearIpRouteVrfAll:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear ip route vrf all *
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerClearIpv6RouteVrfAll:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear ipv6 route vrf all *
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerClearBgpAll:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear ip bgp vrf all *
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+clear_mac_address:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear mac address-table dynamic
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+Trigger_Vrf_Flap:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node01
+    clear_cmd_lst:
+        - clear mac address-table dynamic
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+    vrfs: ['vxlan-1001','vxlan-1002','vxlan-1003','vxlan-1004','vxlan-1005']
+
+VpcAccessFlapSec:
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcAccessFlap
+    device_dut:
+        - node04
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartBgpProcess:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node01
+  process_list:
+    - bgp
+  processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: 'esi'
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartNve:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node01
+  process_list:
+    - nve
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      verifyl2fm_mac:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2fm_mac
+      verify_nve_res_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_nve_res_path
+      verify_fwd_es_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_fwd_es_path
+      verify_evpn_ead:
+        pkg: VxLAN_ESI_MH
+        method: verify_evpn_ead
+      verify_l2rib_pathlist:
+        pkg: VxLAN_ESI_MH
+        method: verify_l2rib_pathlist
+      verify_bgp_route_type1:
+        pkg: VxLAN_ESI_MH
+        method: verify_bgp_route_type1
+      order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+      #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: 'esi'
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+
+
+TriggerRestartL2rib:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node01
+  process_list:
+    - l2rib
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      verifyl2fm_mac:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2fm_mac
+      verify_nve_res_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_nve_res_path
+      verify_fwd_es_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_fwd_es_path
+      verify_evpn_ead:
+        pkg: VxLAN_ESI_MH
+        method: verify_evpn_ead
+      verify_l2rib_pathlist:
+        pkg: VxLAN_ESI_MH
+        method: verify_l2rib_pathlist
+      verify_bgp_route_type1:
+        pkg: VxLAN_ESI_MH
+        method: verify_bgp_route_type1
+      order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+      #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartUrib:
+  source:
+    pkg: lib.triggers.flap
+    class: restart_process.RestartProcess
+  device_dut:
+    - node01
+  process_list:
+    - urib
+  processors:
+    post:
+      verify_traffic:
+        pkg: src.forwarding.vxlan.traffic
+        method: verify_traffic
+      verify_l2rib:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2routetype
+      verifyl2fm_mac:
+        pkg: VxLAN_ESI_MH
+        method: verifyl2fm_mac
+      verify_nve_res_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_nve_res_path
+      verify_fwd_es_path:
+        pkg: VxLAN_ESI_MH
+        method: verify_fwd_es_path
+      verify_evpn_ead:
+        pkg: VxLAN_ESI_MH
+        method: verify_evpn_ead
+      verify_l2rib_pathlist:
+        pkg: VxLAN_ESI_MH
+        method: verify_l2rib_pathlist
+      verify_bgp_route_type1:
+        pkg: VxLAN_ESI_MH
+        method: verify_bgp_route_type1
+      order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+      #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartProcessL2fm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04
+    process_list:
+        - l2fm
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartProcessUfdm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node01
+    process_list:
+        - ufdm
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: 'esi'
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+TriggerRestartProcessEltm:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04
+    process_list:
+        - Eltm
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: 'esi'
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+VpcPeerLinkFlapNveFlap:
+    processors:
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+        verify_l2rib:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2routetype
+        verifyl2fm_mac:
+          pkg: VxLAN_ESI_MH
+          method: verifyl2fm_mac
+        verify_nve_res_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_nve_res_path
+        verify_fwd_es_path:
+          pkg: VxLAN_ESI_MH
+          method: verify_fwd_es_path
+        verify_evpn_ead:
+          pkg: VxLAN_ESI_MH
+          method: verify_evpn_ead
+        verify_l2rib_pathlist:
+          pkg: VxLAN_ESI_MH
+          method: verify_l2rib_pathlist
+        verify_bgp_route_type1:
+          pkg: VxLAN_ESI_MH
+          method: verify_bgp_route_type1
+        order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+        #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.VpcPeerLinkFlapNveFlap
+    device_dut:
+        - node04
+    wait_time: '100'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+
+# TriggerAddCloudsecConfig:
+#   processors:
+#     post:
+#       verify_traffic:
+#         pkg: src.forwarding.vxlan.traffic
+#         method: verify_traffic
+#       verify_l2rib:
+#         pkg: VxLAN_ESI_MH
+#         method: verifyl2routetype
+#       order: [ 'verify_traffic', 'verify_l2rib' ]
+#   traffic_convergence_time: 1000
+#   source:
+#     pkg: lib.triggers.change_config.apply_new_config
+#     class: ApplyNewConfig
+#   build_config_params:
+#     - config_builder: BuildMissingConfig
+#       config_params: add_cloudsec_config
+#   wait_time: '100'
+#   device_dut:
+#     - node02
+#   loss_tolerance: 0.01
+#   check_iteration: 2
+#   mac: 0012.0111.0001
+#   macincr: 1
+#   type: esi
+#   vlan: 11
+#   vlan_range: 5
+#   ixia_static: True
+#   traffic_convergence_time: 120
+#   Next_Hops: ['201.1.1.1', '201.1.1.2']
+#   NH_1: '201.1.1.1'
+#   NH_2: '201.1.1.2'
+#   ESI: '0300.0000.0001.0000.0457'
+
+# TriggerRemoveCloudsecConfig:
+#   processors:
+#     post:
+#       verify_traffic:
+#         pkg: src.forwarding.vxlan.traffic
+#         method: verify_traffic
+#       verify_l2rib:
+#         pkg: VxLAN_ESI_MH
+#         method: verifyl2routetype
+#       order: [ 'verify_traffic', 'verify_l2rib' ]
+#   traffic_convergence_time: 600
+#   source:
+#     pkg: lib.triggers.change_config.apply_new_config
+#     class: ApplyNewConfig
+#   build_config_params:
+#     - config_builder: BuildMissingConfig
+#       config_params: remove_cloudsec_config
+#   copy_rs_flag: False
+#   device_dut:
+#     - node02
+#   wait_time: '100'
+#   loss_tolerance: 0.01
+#   check_iteration: 2
+#   mac: 0012.0111.0001
+#   macincr: 1
+#   type: 'esi'
+#   vlan: 11
+#   vlan_range: 5
+#   ixia_static: True
+#   traffic_convergence_time: 120
+
+TriggerEsiNodeDown:
+  # processors:
+  #   post:
+  #     verify_traffic:
+  #       pkg: src.forwarding.vxlan.traffic
+  #       method: verify_traffic
+  #     verify_l2rib:
+  #       pkg: VxLAN_ESI_MH
+  #       method: verifyl2routetype
+  #     verifyl2fm_mac:
+  #       pkg: VxLAN_ESI_MH
+  #       method: verifyl2fm_mac
+  #     verify_nve_res_path:
+  #       pkg: VxLAN_ESI_MH
+  #       method: verify_nve_res_path
+  #     verify_fwd_es_path:
+  #       pkg: VxLAN_ESI_MH
+  #       method: verify_fwd_es_path
+  #     order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', verify_fwd_es_path]
+  traffic_convergence_time: 600
+  source:
+    pkg: lib.triggers.flap.esi_ixia_flap
+    class: EsiTriggerFlap
+  copy_rs_flag: False
+  device_dut:
+    - node01
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0000.1111.0108
+  macincr: 100
+  type: 'esi'
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  ixia_params:
+      topology: node07_tgn01
+      outer_device_group: nd07
+      outer_network: nd07_network
+      loopback: nd07_loopback_1
+      inner_device_group: nd07_vtep_1
+      esi_index: 1
+      esi_count: 100
+      Active: False
+
+TriggerEsiNodeUp:
+  processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          verify_bgp_route_type1:
+            pkg: VxLAN_ESI_MH
+            method: verify_bgp_route_type1
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist','verify_bgp_route_type1']
+          #order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+  traffic_convergence_time: 600
+  source:
+    pkg: lib.triggers.flap.esi_ixia_flap
+    class: EsiTriggerFlap
+  copy_rs_flag: False
+  device_dut:
+    - node01
+  wait_time: '100'
+  loss_tolerance: 0.01
+  check_iteration: 2
+  mac: 0000.1111.0108
+  macincr: 100
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  mac: 0012.0111.0001
+  macincr: 1
+  type: esi
+  vlan: 11
+  vlan_range: 5
+  ixia_static: True
+  traffic_convergence_time: 120
+  Next_Hops: ['201.1.1.1', '201.1.1.2']
+  NH_1: '201.1.1.1'
+  NH_2: '201.1.1.2'
+  ESI: '0300.0000.0001.0000.0457'
+  ixia_static: True
+  ixia_params:
+      topology: node07_tgn01
+      outer_device_group: nd07
+      outer_network: nd07_network
+      loopback: nd07_loopback_1
+      inner_device_group: nd07_vtep_1
+      esi_index: 1
+      esi_count: 100
+      Active: True
+
+      
+SwitchReloadLxc:
+    device_dut:
+      - 'node02'
+    processors:
+      pre:
+        send_continuous_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+      post:
+        verify_traffic:
+          pkg: src.forwarding.vxlan.traffic
+          method: verify_traffic
+    source:
+      pkg: src.system.system_config
+      class: ConfigureLXCMode
+    timeout:
+      max_time: 1500
+      interval: 60
+    traffic_convergence_time: 600
+    loss_tolerance: 0.01
+    check_iteration: 2
+    ixia_static: True
+
+
+    #--------------------------------#
+    ######## WF-EOR TRIGGERS #########
+    #---------------------------------#
+
+TriggerSSO_S1_BGW_1:
+    source:
+        pkg: auto.dc3-india.hsuryaka.pyATS.projects.EVPN_BH.EVPN_BH_script
+        class: TriggerSSO
+    device:
+        - node01
+    device_dut:
+        - node01
+    cc_dut_list: ['node01']
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+    
+
+TriggerReloadLC_S1_BGW_1:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    source:
+        pkg: auto.dc3-india.hsuryaka.pyATS.projects.EVPN_BH.EVPN_BH_script
+        class: TriggerLCReload
+    device_dut:
+        - node01
+    # intf_list:
+    #     - node4_s1_bgw_2
+    cc_dut_list: ['node01']
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+            
+
+TriggerReloadFabricModules_S1_BGW_1:
+    source:
+        pkg: auto.dc3-india.hsuryaka.pyATS.projects.EVPN_BH.EVPN_BH_script
+        class: TriggerFMReload
+    device_dut:
+        - node01
+    # intf_list:
+    #     - node3_s1_bgw_1
+    cc_dut_list: ['node011']
+    timeout:
+        max_time: 500
+        interval: 20
+    num_values:
+        oc: '1'
+    traffic_convergence_time: 300
+    cc_dut_list: ['node01']
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          check_cores:
+            pkg: lib.verify.verify_core
+            method: call_verify_cores
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'
+            
+
+TC_00028_TriggerReloadSC_S1_BGW_1:
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    source:
+        pkg: auto.dc3-india.hsuryaka.pyATS.projects.EVPN_BH.EVPN_BH_script
+        class: TriggerSCReload
+    device_dut:
+        - node01
+    intf_list:
+        - node01
+    cc_dut_list: ['node01']
+    processors:
+        post:
+          verify_traffic:
+            pkg: src.forwarding.vxlan.traffic
+            method: verify_traffic
+          verify_l2rib:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2routetype
+          verifyl2fm_mac:
+            pkg: VxLAN_ESI_MH
+            method: verifyl2fm_mac
+          verify_nve_res_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_nve_res_path
+          verify_fwd_es_path:
+            pkg: VxLAN_ESI_MH
+            method: verify_fwd_es_path
+          verify_evpn_ead:
+            pkg: VxLAN_ESI_MH
+            method: verify_evpn_ead
+          verify_l2rib_pathlist:
+            pkg: VxLAN_ESI_MH
+            method: verify_l2rib_pathlist
+          check_cores:
+            pkg: lib.verify.verify_core
+            method: call_verify_cores
+          order: [ 'verify_traffic', 'verify_l2rib', 'verifyl2fm_mac', 'verify_nve_res_path', 'verify_fwd_es_path', 'verify_evpn_ead','verify_l2rib_pathlist']
+    trigger_wait_time: '180'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '60'
+    loss_tolerance: 0.01
+    check_iteration: 2
+    mac: 0012.0111.0001
+    macincr: 1
+    type: esi
+    vlan: 11
+    vlan_range: 5
+    ixia_static: True
+    traffic_convergence_time: 120
+    Next_Hops: ['201.1.1.1', '201.1.1.2']
+    NH_1: '201.1.1.1'
+    NH_2: '201.1.1.2'
+    ESI: '0300.0000.0001.0000.0457'

@@ -1,0 +1,18 @@
+[2020-02-05 12:10:06]: Started process.  Command line: 
+[2020-02-05 12:10:06]:      port number: 47661
+[2020-02-05 12:10:06]:    timeout value: 120
+[2020-02-05 12:10:06]:       log option: log
+[2020-02-05 12:10:06]: results dir path: /ws/danthoma-bgl/pyats19/multisite
+[2020-02-05 12:10:06]:    log file name: hlpyapi.hltlog
+[2020-02-05 12:10:06]: Working directory is now: /ws/danthoma-bgl/pyats19/multisite
+[2020-02-05 12:10:06]: Sourcing initialization file "stcinit.srv".
+[2020-02-05 12:10:06]: Connecting to port 47661 on 127.0.0.1.
+[2020-02-05 12:10:06]: Creating server socket.
+[2020-02-05 12:10:06]: Generated port number: 33106
+[2020-02-05 12:10:06]: Setting up timeout check.
+[2020-02-05 12:10:06]: Waiting for client connection.
+[2020-02-05 12:10:06]: Client connection from 127.0.0.1 port 35152.
+[2020-02-05 12:10:06]: Executing: <package require SpirentHltApi>
+[2020-02-05 12:10:19]: Return value: <4.72>
+[2020-02-05 12:10:19]: custom_path--/ws/danthoma-bgl/pyats19/multisite
+[2020-02-05 12:23:24]: Client connection has been broken.  Exiting.

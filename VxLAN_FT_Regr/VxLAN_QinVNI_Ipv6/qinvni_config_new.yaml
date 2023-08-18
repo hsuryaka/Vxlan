@@ -1,0 +1,1777 @@
+# ------------------------------------------------------
+#        Node List:
+#
+#            node01_spine        : S1-FX3-SPINE
+#            node02_vpcVtep1     : S1-FX3-BGW-1
+#            node03_vpcVtep2     : S1-FX3-BGW-2
+#            node04_stdVtep3      : S1-FX3-LEAF
+#            node05_vpcFANOUT    : S1-BG-VPC_ACCESS
+#
+# ------------------------------------------------------
+parameters:
+    context: cli
+    # ------------------------------------------------------
+    # Features to be enabled
+    # ------------------------------------------------------
+    enable_features:
+        # SIPNE
+        node01_spine:
+            - lldp
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-1
+        node02_vpcVtep1:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-2
+        node03_vpcVtep2:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # STD VTEP-3
+        node04_stdVtep3:
+            - lldp
+            - vlan
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC ACCESS
+        node05_vpcFANOUT:
+            - lldp
+            - vlan
+            - lacp
+    
+    # ------------------------------------------------------
+    # TCAM Carving configs
+    # ------------------------------------------------------
+    tcam_carving_config:
+        # node01_spine: |
+        #     ipv6 mld snooping
+        #     system mld snooping
+        node02_vpcVtep1: |
+            system nve infra-vlans 5 force
+        node03_vpcVtep2: |
+            system nve infra-vlans 5 force
+        # node04_stdVtep3: |
+        #     ipv6 mld snooping
+        #     system mld snooping
+        # node05_vpcFANOUT: |
+        #     ipv6 mld snooping
+        #     system mld snooping
+
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config: 
+
+        # SPINE --------------------------
+        node01_spine:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 11.11.11.11
+                    prefix_length: 255.255.255.255
+                ipv6:
+                    ip: 2001:11:11:11::11
+                    prefix_length: 128
+
+            # SPINE to VTEP-1
+            nd01_nd02_1_1:
+                enabled: True
+                description: "### To VTEP-1 INT-1 ###"
+                ipv6:
+                    ip: 2001:1:11:1::3
+                    prefix_length: 64
+            nd01_nd02_1_2:
+                enabled: True
+                description: "### To VTEP-1 INT-2 ###"
+                ipv6:
+                    ip: 2001:1:11:2::3
+                    prefix_length: 64
+            nd01_nd02_1_3:
+                enabled: True
+                description: "### To VTEP-1 INT-3 ###"
+                ipv6:
+                    ip: 2001:1:11:3::3
+                    prefix_length: 64
+            nd01_nd02_1_4:
+                enabled: True
+                description: "### To VTEP-1 INT-4 ###"
+                ipv6:
+                    ip: 2001:1:11:4::3
+                    prefix_length: 64
+            
+            # SPINE to VTEP-2
+            nd01_nd03_1_1:
+                enabled: True
+                description: "### To VTEP-2 INT-1 ###"
+                ipv6:
+                    ip: 2001:1:12:1::3
+                    prefix_length: 64
+            nd01_nd03_1_2:
+                enabled: True
+                description: "### To VTEP-2 INT-2 ###"
+                ipv6:
+                    ip: 2001:1:12:2::3
+                    prefix_length: 64
+            nd01_nd03_1_3:
+                enabled: True
+                description: "### To VTEP-2 INT-3 ###"
+                ipv6:
+                    ip: 2001:1:12:3::3
+                    prefix_length: 64
+            nd01_nd03_1_4:
+                enabled: True
+                description: "### To VTEP-2 INT-4 ###"
+                ipv6:
+                    ip: 2001:1:12:4::3
+                    prefix_length: 64
+            
+            # SPINE to VTEP-3
+            nd01_nd04_1_1:
+                enabled: True
+                description: "### To VTEP-3 INT-1 ###"
+                ipv6:
+                    ip: 2001:1:13:1::3
+                    prefix_length: 64
+            nd01_nd04_1_2:
+                enabled: True
+                description: "### To VTEP-3 INT-2 ###"
+                ipv6:
+                    ip: 2001:1:13:2::3
+                    prefix_length: 64
+            nd01_nd04_1_3:
+                enabled: True
+                description: "### To VTEP-3 INT-3 ###"
+                ipv6:
+                    ip: 2001:1:13:3::3
+                    prefix_length: 64
+            nd01_nd04_1_4:
+                enabled: True
+                description: "### To VTEP-3 INT-4 ###"
+                ipv6:
+                    ip: 2001:1:13:4::3
+                    prefix_length: 64
+
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.11.1.1
+                    prefix_length: 255.255.255.255
+                ipv6:
+                    ip: 2001:1:11:1::1
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: 2001:1:11:11::11
+                    prefix_length: 128
+            loopback2:
+                description: "### VTEP Secondary loopback ###"
+                enabled: True
+                ipv6:
+                    ip: 2001:1:10:10::10
+                    prefix_length: 128
+
+            # VTEP-1 to SPINE
+            nd02_nd01_1_1:
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 2001:1:11:1::2
+                    prefix_length: 64
+            nd02_nd01_1_2:
+                enabled: True
+                description: "### To SPNE INT-2 ###"
+                ipv6:
+                    ip: 2001:1:11:2::2
+                    prefix_length: 64
+            nd02_nd01_1_3:
+                enabled: True
+                description: "### To SPNE INT-3 ###"
+                ipv6:
+                    ip: 2001:1:11:3::2
+                    prefix_length: 64
+            nd02_nd01_1_4:
+                enabled: True
+                description: "### To SPNE INT-4 ###"
+                ipv6:
+                    ip: 2001:1:11:4::2
+                    prefix_length: 64
+
+            # VPC Peer-keep-alive
+            nd02_nd03_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                description: "### Peer-keep-alive ###"
+                ipv4:
+                    ip: 1.1.1.2
+                    prefix_length: 255.255.255.254
+
+            # VPC Peer-Link
+            nd02_nd03_1_2:
+                enabled: True
+            nd02_nd03_1_3:
+                enabled: True
+            nd02_nd03_1_4:
+                enabled: True
+            Port-channel10:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2,3001-3004,1001-1008"
+                add_members: nd02_nd03_1_2, nd02_nd03_1_3, nd02_nd03_1_4
+
+            # VPC LEG-1
+            nd02_nd05_1_1:
+                enabled: True
+            nd02_nd05_1_2:
+                enabled: True
+            nd02_nd05_1_3:
+                enabled: True
+            nd02_nd05_1_4:
+                enabled: True
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                # switchport_mode: trunk
+                # trunk_vlans: "1001-1008"
+                add_members: nd02_nd05_1_1, nd02_nd05_1_2, nd02_nd05_1_3, nd02_nd05_1_4
+
+            # IXIA TGEN
+            nd02_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                # switchport_mode: trunk
+                # trunk_vlans: "1001-1008"
+
+            # Backup SVI for VPC
+            Vlan2:
+                enabled: True
+                description: "### Backup SVI ###"
+                ipv6:
+                    ip: 2001:1:2:1::2
+                    prefix_length: 64
+
+            # L2VNI SVI Configs - Set-1
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:1::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-2
+            Vlan1003-1004:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 2
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.3.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:3::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-3
+            Vlan1005-1006:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 3
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.5.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:5::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-4
+            Vlan1007-1008:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 4
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.7.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:7::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan3001-3004:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI
+                    2001001-2001008:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003003:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003004:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.12.1.1
+                    prefix_length: 255.255.255.255
+                ipv6:
+                    ip: 2001:1:12:1::1
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: 2001:1:12:12::12
+                    prefix_length: 128
+            loopback2:
+                description: "### VTEP Secondary loopback ###"
+                enabled: True
+                ipv6:
+                    ip: 2001:1:10:10::10
+                    prefix_length: 128
+
+            # VTEP-2 to SPINE
+            nd03_nd01_1_1:
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 2001:1:12:1::2
+                    prefix_length: 64
+            nd03_nd01_1_2:
+                enabled: True
+                description: "### To SPNE INT-2 ###"
+                ipv6:
+                    ip: 2001:1:12:2::2
+                    prefix_length: 64
+            nd03_nd01_1_3:
+                enabled: True
+                description: "### To SPNE INT-3 ###"
+                ipv6:
+                    ip: 2001:1:12:3::2
+                    prefix_length: 64
+            nd03_nd01_1_4:
+                enabled: True
+                description: "### To SPNE INT-4 ###"
+                ipv6:
+                    ip: 2001:1:12:4::2
+                    prefix_length: 64
+
+            # VPC Peer-keep-alive
+            nd03_nd02_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                description: "### Peer-keep-alive ###"
+                ipv4:
+                    ip: 1.1.1.3
+                    prefix_length: 255.255.255.254
+
+            # VPC Peer-Link
+            nd03_nd02_1_2:
+                enabled: True
+            nd03_nd02_1_3:
+                enabled: True
+            nd03_nd02_1_4:
+                enabled: True
+            Port-channel10:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "2,3001-3004,1001-1008"
+                add_members: nd03_nd02_1_2, nd03_nd02_1_3, nd03_nd02_1_4
+
+            # VPC LEG-2
+            nd03_nd05_1_1:
+                enabled: True
+            nd03_nd05_1_2:
+                enabled: True
+            nd03_nd05_1_3:
+                enabled: True
+            nd03_nd05_1_4:
+                enabled: True
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                # switchport_mode: trunk
+                # trunk_vlans: "1001-1008"
+                add_members: nd03_nd05_1_1, nd03_nd05_1_2, nd03_nd05_1_3, nd03_nd05_1_4
+
+            # IXIA TGEN
+            nd03_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                # switchport_mode: trunk
+                # trunk_vlans: "1001-1008"
+
+            # Backup SVI for VPC
+            Vlan2:
+                enabled: True
+                description: "### Backup SVI ###"
+                ipv6:
+                    ip: 2001:1:2:1::3
+                    prefix_length: 64
+            
+            # L2VNI SVI Configs - Set-1
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:1::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-2
+            Vlan1003-1004:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 2
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.3.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:3::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-3
+            Vlan1005-1006:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 3
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.5.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:5::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-4
+            Vlan1007-1008:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 4
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.7.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:7::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan3001-3004:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI
+                    2001001-2001008:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003003:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003004:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 1.13.1.1
+                    prefix_length: 255.255.255.255
+                ipv6:
+                    ip: 2001:1:13:1::1
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: 2001:1:13:13::13
+                    prefix_length: 128
+
+            # VTEP-3 to SPINE
+            nd04_nd01_1_1:
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 2001:1:13:1::2
+                    prefix_length: 64
+            nd04_nd01_1_2:
+                enabled: True
+                description: "### To SPNE INT-2 ###"
+                ipv6:
+                    ip: 2001:1:13:2::2
+                    prefix_length: 64
+            nd04_nd01_1_3:
+                enabled: True
+                description: "### To SPNE INT-3 ###"
+                ipv6:
+                    ip: 2001:1:13:3::2
+                    prefix_length: 64
+            nd04_nd01_1_4:
+                enabled: True
+                description: "### To SPNE INT-4 ###"
+                ipv6:
+                    ip: 2001:1:13:4::2
+                    prefix_length: 64
+
+            # IXIA TGEN
+            nd04_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                # switchport_mode: trunk
+                # trunk_vlans: "1001-1008"
+
+            # L2VNI SVI Configs - Set-1
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 1
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:1::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-2
+            Vlan1003-1004:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 2
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.3.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:3::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-3
+            Vlan1005-1006:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 3
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.5.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:5::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L2VNI SVI Configs - Set-4
+            Vlan1007-1008:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 4
+                    step: 0
+                    prefix: 'VRF'
+                ipv4:
+                    start_ipv4_addr: 100.1.7.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+                ipv6:
+                    start_ipv6_addr: 2001:100:1:7::1
+                    start_ipv6_prefix_len: 64
+                    step_ipv6_addr: 0:0:0:1::0
+                    step_ipv6_prefix_len: 0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan3001-3004:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 1
+                    step: 1
+                    prefix: 'VRF'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                enabled: True
+                nve_vni_dict:
+                    # L2VNI
+                    2001001-2001008:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L3VNI
+                    3003001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003003:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    3003004:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # ACCESS --------------------------
+        node05_vpcFANOUT:
+            
+            # VPC PO
+            nd05_nd02_1_1:
+                enabled: True
+            nd05_nd02_1_2:
+                enabled: True
+            nd05_nd02_1_3:
+                enabled: True
+            nd05_nd02_1_4:
+                enabled: True
+            nd05_nd03_1_1:
+                enabled: True
+            nd05_nd03_1_2:
+                enabled: True
+            nd05_nd03_1_3:
+                enabled: True
+            nd05_nd03_1_4:
+                enabled: True
+            Port-channel100:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "1001-1008"
+                add_members: nd05_nd02_1_1, nd05_nd02_1_2, nd05_nd02_1_3, nd05_nd02_1_4, nd05_nd03_1_1, nd05_nd03_1_2, nd05_nd03_1_3, nd05_nd03_1_4
+
+            # IXIA TGEN
+            nd05_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "1001-1008"
+
+    # ------------------------------------------------------
+    # OSPFv3 COnfigs
+    # ------------------------------------------------------
+    ospfv3_config:
+        
+        # SPINE --------------------------
+        node01_spine:
+            default:
+                instance: p1
+                router_id: 11.11.11.11
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # To VTEP-1
+                    nd01_nd02_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd02_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd02_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd02_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    # To VTEP-2
+                    nd01_nd03_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd03_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd03_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd03_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+                    # To VTEP-3
+                    nd01_nd04_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd04_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd04_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd01_nd04_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            default:
+                instance: p1
+                router_id: 1.11.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd02_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd02_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # Back up Link
+                    vlan2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            default:
+                instance: p1
+                router_id: 1.12.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd03_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+        # STD LEAF --------------------------
+        node04_stdVtep3:
+            default:
+                instance: p1
+                router_id: 1.13.1.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd04_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd01_1_3:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd04_nd01_1_4:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+    # ------------------------------------------------------
+    # VLAN Configs 
+    # ------------------------------------------------------
+    vlan_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            -   vlan: "1001-1008"
+                vn_segment_id: "2001001-2001008"
+            -   vlan: "3001-3004"
+                vn_segment_id: "3003001-3003004"
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            -   vlan: "1001-1008"
+                vn_segment_id: "2001001-2001008"
+            -   vlan: "3001-3004"
+                vn_segment_id: "3003001-3003004"
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            -   vlan: "1001-1008"
+                vn_segment_id: "2001001-2001008"
+            -   vlan: "3001-3004"
+                vn_segment_id: "3003001-3003004"
+
+    # ------------------------------------------------------
+    # route-map Configs
+    # ------------------------------------------------------
+    route_policy_config:
+
+        # SPINE --------------------------
+        node01_spine:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+            -   route_policy: "RMAP_NH_UNCHANGED"
+                route_disposition: "permit"
+                statement_name: 10
+                set_next_hop: 'unchanged'
+        
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            -   route_policy: "RMAP_PERMIT_ALL"
+                route_disposition: "permit"
+                statement_name: 10
+
+    # ------------------------------------------------------
+    # VxLAN Configs
+    # ------------------------------------------------------
+    vxlan_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+    # ------------------------------------------------------
+    # VxLAN EVPN Configs
+    # ------------------------------------------------------
+    evpn_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            vni_list:
+                -   vni_id: 2001001-2001008
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            vni_list:
+                -   vni_id: 2001001-2001008
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            vni_list:
+                -   vni_id: 2001001-2001008
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+    # ------------------------------------------------------
+    # VRF Configs
+    # ------------------------------------------------------
+    vrf_config: 
+
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "1-10"
+                    vni: "3003001-3003010"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+    # ------------------------------------------------------
+    # IGMP COnfigs
+    # ------------------------------------------------------
+    igmp_config: {}
+
+        # # SAMPLE --------------------------
+        # node14_s3_leaf:
+        #     default:
+        #         interface_config:
+        #             vlan1001-1072:
+        #                 enable: True
+        #                 version: 3
+        #             vlan1501-1572:
+        #                 enable: True
+        #                 version: 3
+
+    # ------------------------------------------------------
+    # MLD COnfigs
+    # ------------------------------------------------------
+    mld_config: {}
+        
+        # # Site-1 BGW-1 --------------------------
+        # node04_s1_bgw1:
+        #     default:
+        #         interface_config:
+        #             vlan1001-1072:
+        #                 enable: True
+        #                 version: 1
+        #             vlan1501-1572:
+        #                 enable: True
+        #                 version: 1
+
+    # ------------------------------------------------------
+    # PIM Configs
+    # ------------------------------------------------------
+    pim_config: 
+
+        # SPINE --------------------------
+        node01_spine:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0:
+                        mode: sparse-mode
+                    # To VTEP-1
+                    nd01_nd02_1_1:
+                        mode: sparse-mode
+                    nd01_nd02_1_2:
+                        mode: sparse-mode
+                    nd01_nd02_1_3:
+                        mode: sparse-mode
+                    nd01_nd02_1_4:
+                        mode: sparse-mode
+                    # To VTEP-2
+                    nd01_nd03_1_1:
+                        mode: sparse-mode
+                    nd01_nd03_1_2:
+                        mode: sparse-mode
+                    nd01_nd03_1_3:
+                        mode: sparse-mode
+                    nd01_nd03_1_4:
+                        mode: sparse-mode
+                    # To VTEP-3
+                    nd01_nd04_1_1:
+                        mode: sparse-mode
+                    nd01_nd04_1_2:
+                        mode: sparse-mode
+                    nd01_nd04_1_3:
+                        mode: sparse-mode
+                    nd01_nd04_1_4:
+                        mode: sparse-mode
+
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0-2:
+                        mode: sparse-mode
+                    ### Underlay Interfaces
+                    # To SPINE
+                    nd02_nd01_1_1:
+                        mode: sparse-mode
+                    nd02_nd01_1_2:
+                        mode: sparse-mode
+                    nd02_nd01_1_3:
+                        mode: sparse-mode
+                    nd02_nd01_1_4:
+                        mode: sparse-mode
+                    ### L2VNI SVI's
+                    vlan1001-1005:
+                        mode: sparse-mode
+                    vlan1101-1105:
+                        mode: sparse-mode
+                    vlan1501-1505:
+                        mode: sparse-mode
+                    vlan1601-1605:
+                        mode: sparse-mode
+                    ### L3VNI SVI's
+                    vlan3001-3005:
+                        mode: sparse-mode
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0-2:
+                        mode: sparse-mode
+                    ### Underlay Interfaces
+                    # To SPINE
+                    nd03_nd01_1_1:
+                        mode: sparse-mode
+                    nd03_nd01_1_2:
+                        mode: sparse-mode
+                    nd03_nd01_1_3:
+                        mode: sparse-mode
+                    nd03_nd01_1_4:
+                        mode: sparse-mode
+                    ### L2VNI SVI's
+                    vlan1001-1005:
+                        mode: sparse-mode
+                    vlan1101-1105:
+                        mode: sparse-mode
+                    vlan1501-1505:
+                        mode: sparse-mode
+                    vlan1601-1605:
+                        mode: sparse-mode
+                    ### L3VNI SVI's
+                    vlan3001-3005:
+                        mode: sparse-mode
+
+        # STD VTEP-2 --------------------------
+        node04_stdVtep3:
+            default:
+                sg_expiry_timer: 1000
+                rp_address:
+                    -   static_rp_address: 11.11.11.11
+                        static_rp_group_list: 225.0.0.0/4
+                interface_config:
+                    # Underlay Loopbacks
+                    lo0-1:
+                        mode: sparse-mode
+                    ### Underlay Interfaces
+                    # To SPINE
+                    nd04_nd01_1_1:
+                        mode: sparse-mode
+                    nd04_nd01_1_2:
+                        mode: sparse-mode
+                    nd04_nd01_1_3:
+                        mode: sparse-mode
+                    nd04_nd01_1_4:
+                        mode: sparse-mode
+                    ### L2VNI SVI's
+                    vlan1001-1005:
+                        mode: sparse-mode
+                    vlan1101-1105:
+                        mode: sparse-mode
+                    vlan1501-1505:
+                        mode: sparse-mode
+                    vlan1601-1605:
+                        mode: sparse-mode
+                    ### L3VNI SVI's
+                    vlan3001-3005:
+                        mode: sparse-mode
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config: 
+
+        # SPINE --------------------------
+        node01_spine:
+            default:
+                bgp_id: 100
+                router_id: 11.11.11.11
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards VTEPS
+                    # Underlay BGP Session
+                    -   neighbor_id: 2001:1:11:1::1
+                        nbr_remote_as: 100
+                        nbr_description: 'VTEP-1 Connectivity to 2001:1:11:1::1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 2001:1:12:1::1
+                        nbr_remote_as: 100
+                        nbr_description: 'VTEP-2 Connectivity to 2001:1:11:1::1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: 2001:1:13:1::1
+                        nbr_remote_as: 100
+                        nbr_description: 'VTEP-3 Connectivity to 2001:1:11:1::1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+
+        # VPC VTEP-1 --------------------------
+        node02_vpcVtep1:
+            default:
+                bgp_id: 100
+                router_id: 1.11.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_REDIST_TAG_54321'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 2001:11:11:11::11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 2001:11:11:11::11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "1-4":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # VPC VTEP-2 --------------------------
+        node03_vpcVtep2:
+            default:
+                bgp_id: 100
+                router_id: 1.12.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_REDIST_TAG_54321'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 2001:11:11:11::11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 2001:11:11:11::11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "1-4":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+        # STD VTEP-3 --------------------------
+        node04_stdVtep3:
+            default:
+                bgp_id: 100
+                router_id: 1.13.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_REDIST_TAG_54321'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: 2001:11:11:11::11
+                        nbr_remote_as: 100
+                        nbr_description: 'SPINE Connectivity to 2001:11:11:11::11'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "1-4":
+                bgp_id: 100
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'RMAP_PERMIT_ALL'
+
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    missing_config: 
+
+        node02_vpcVtep1: |
+            ip igmp snooping vxlan
+            vlan 2
+
+            vrf context peer-keep-alive
+            vpc domain 100
+              peer-switch
+              role priority 3000
+              system-priority 3000
+              peer-keepalive destination 1.1.1.3 source 1.1.1.2 vrf peer-keep-alive
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface Port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface Port-channel100
+              vpc 100
+            
+            interface nve 1
+              source-interface loopback1 anycast loopback2
+
+        node03_vpcVtep2: |
+            ip igmp snooping vxlan
+            vlan 2
+
+            vrf context peer-keep-alive
+            vpc domain 100
+              peer-switch
+              role priority 3000
+              system-priority 3000
+              peer-keepalive destination 1.1.1.2 source 1.1.1.3 vrf peer-keep-alive
+              peer-gateway
+              ipv6 nd synchronize
+              ip arp synchronize
+            interface Port-channel10
+              spanning-tree port type network
+              vpc peer-link
+            interface Port-channel100
+              vpc 100
+
+            interface nve 1
+              source-interface loopback1 anycast loopback2
+
+        node04_stdVtep3: |
+            ip igmp snooping vxlan
+
+    # ------------------------------------------------------
+    # Features to be disabled as part of cleanup
+    # ------------------------------------------------------
+    disable_features:
+        # SIPNE
+        node01_spine:
+            - lldp
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-1
+        node02_vpcVtep1:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-2
+        node03_vpcVtep2:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # STD VTEP-3
+        node04_stdVtep3:
+            - lldp
+            - vlan
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC ACCESS
+        node05_vpcFANOUT:
+            - lldp
+            - vlan
+            - lacp
+    
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    disable_missing_config:
+        
+        node02_vpcVtep1: |
+            no ip igmp snooping vxlan
+            no vrf context peer-keep-alive
+            no vlan 2
+
+        node03_vpcVtep2: |
+            no ip igmp snooping vxlan
+            no vrf context peer-keep-alive
+            no vlan 2
+
+        node04_stdVtep3: |
+            no ip igmp snooping vxlan

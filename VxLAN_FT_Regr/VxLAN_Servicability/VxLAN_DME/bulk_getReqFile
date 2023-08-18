@@ -1,0 +1,13 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+  <get-config>
+    <source>
+      <running/>
+    </source>
+    <filter>
+      <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
+        <mac-items/>
+      </System>
+    </filter>
+  </get-config>
+</rpc>
+

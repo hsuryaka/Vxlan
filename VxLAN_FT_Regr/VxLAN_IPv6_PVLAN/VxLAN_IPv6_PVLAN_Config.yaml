@@ -1,0 +1,2224 @@
+# ------------------------------------------------------
+#        Node List:
+#
+#            node01        : SPINE
+#            node02     : TECATE-1
+#            node03     : SUMPIN
+#            node04         : Fan2
+# ------------------------------------------------------
+parameters:
+    context: cli
+    # ------------------------------------------------------
+    # Features to be enabled
+    # ------------------------------------------------------
+    enable_features:
+        # SIPNE
+        node01:
+            - lldp
+            - vlan
+            #- vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-1
+        node02:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+            
+        # VPC VTEP-2
+        node03:
+            - lldp
+            - vlan
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+           
+        # fan
+        node04:
+            - bgp
+            - vxlan
+        
+        node05:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+            
+        
+    # ------------------------------------------------------
+    # TCAM Carving configs
+    # ------------------------------------------------------
+    # tcam_carving_config:
+    #     node01: |
+    #         ipv6 mld snooping
+    #         system mld snooping
+    #     node02: |
+    #         system nve infra-vlans 2 force
+    #     node03: |
+    #         system nve infra-vlans 2 force
+    #     node04: |
+    #     #     ipv6 mld snooping
+    #     #     system mld snooping
+    #     # node05_vpcAccess: |
+    #     #     ipv6 mld snooping
+    #     #     system mld snooping
+
+    # ------------------------------------------------------
+    # Interface Level configs
+    # ------------------------------------------------------
+    interface_config: 
+
+        # SPINE --------------------------
+        node01:
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                # ipv4:
+                #     ip: 11.11.11.11
+                #     prefix_length: 255.255.255.255
+                ipv6:
+                    ip: fd00::a02:1
+                    prefix_length: 128
+            
+            #SPINE to VTEP-1
+            nd01_nd02_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To VTEP-1 ###"
+                ipv6:
+                    ip: 1001:1::10
+                    prefix_length: 64
+            
+            
+            #SPINE to VTEP-2
+            nd01_nd03_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To VTEP-2 ###"
+                ipv6:
+                    ip: 1001:2::10
+                    prefix_length: 64
+
+            nd01_nd05_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To VTEP-3 ###"
+                ipv6:
+                    ip: 1001:3::10
+                    prefix_length: 64       
+            
+        # VPC VTEP-1 --------------------------
+        node02:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                # ipv4:
+                #     ip: 1.11.1.1
+                #     prefix_length: 255.255.255.255
+                ipv6:
+                    ip: fd00::a02:0
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: fd00::a03:0
+                    prefix_length: 128
+            loopback2:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: fd00::a03:4
+                    prefix_length: 128
+
+            nd02_nd01_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 1001:1::20
+                    prefix_length: 64
+            # VPC Peer-keep-alive
+            # nd02_nd05_1_1:
+            #     enabled: True
+            #     vrf : "peer-keep-alive"
+            #     description: "### Peer-keep-alive ###"
+            #     switchport_enable: False
+            #     ipv4:
+            #         ip: 10.2.2.1
+            #         prefix_length: 255.255.255.254
+            #     ipv6:
+            #         ip: 3001:1::1
+            #         prefix_length: 128
+            # nd02_nd05_1_2:
+            #     enabled: True
+            #     vrf : "peer-keep-alive"
+            #     description: "### Peer-keep-alive ###"
+            #     switchport_enable: False
+            #     ipv4:
+            #         ip: 10.2.2.1
+            #         prefix_length: 255.255.255.254
+            #     ipv6:
+            #         ip: 3001:1::1
+            #         prefix_length: 128
+            # # VPC Peer-Link
+            # nd02_nd05_1_1:
+            #     enabled: True
+            # nd02_nd05_1_2:
+            #     enabled: True
+            # Port-channel15:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd02_nd05_1_1, nd02_nd05_1_2
+
+            # # # # VPC LEG-1
+            # nd02_nd04_1_1:
+            #     enabled: True
+            # Port-channel1:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd02_nd04_1_1
+
+            # IXIA TGEN
+            nd02_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "1,10-12,100-102,2000"
+
+            # Backup SVI for VPC
+            # Vlan2:
+            #     enabled: True
+            #     description: "### Backup SVI ###"
+            #     ipv6:
+            #         ip: 2001:1:2:1::2
+            #         prefix_length: 64
+
+            # L2VNI SVI Configs - Set-1
+
+            # Vlan10:
+            #     description: "L2VNI"
+            #     fabric_forwarding_mode: anycast-gateway
+            #     enabled: True
+            #     vrf:
+            #         start: 1
+            #         step: 1
+            #         prefix: 'VRF'
+            #     ipv4:
+            #         start_ipv4_addr: 196.10.100.102
+            #         start_ipv4_prefix_len: 255.255.0.0
+            #         step_ipv4_addr: 0.0.0.0
+            #         step_ipv4_len: 0.0.0.0
+            #         redirect: False
+            #     ipv6:
+            #         start_ipv6_addr: 196:10:100:102::254
+            #         start_ipv6_prefix_len: 64
+            #         step_ipv6_addr: 0:0:0:0::0
+            #         step_ipv6_prefix_len: 0
+            #         redirect: False
+
+            # Vlan11:
+            #     description: "L2VNI"
+            #     fabric_forwarding_mode: anycast-gateway
+            #     enabled: True
+            #     vrf:
+            #         start: 1
+            #         step: 1
+            #         prefix: 'VRF'
+            #     ipv4:
+            #         start_ipv4_addr: 196.176.10.10
+            #         start_ipv4_prefix_len: 255.255.0.0
+            #         step_ipv4_addr: 0.0.0.0
+            #         step_ipv4_len: 0.0.0.0
+            #         redirect: False
+            #     #ipv6:
+            #     #     start_ipv6_addr: 2001:100:1:1::1
+            #     #     start_ipv6_prefix_len: 64
+            #     #     step_ipv6_addr: 0:0:0:1::0
+            #     #     step_ipv6_prefix_len: 0
+            #     #     redirect: False
+
+            # # L2VNI SVI Configs - Set-2
+            # Vlan12:
+            #     description: "L2VNI"
+            #     fabric_forwarding_mode: anycast-gateway
+            #     enabled: True
+            #     vrf:
+            #         start: 1
+            #         step: 1
+            #         prefix: 'VRF'
+            #     ipv4:
+            #         start_ipv4_addr: 197.176.10.10
+            #         start_ipv4_prefix_len: 255.255.0.0
+            #         step_ipv4_addr: 0.0.0.0
+            #         step_ipv4_len: 0.0.0.0
+            #         redirect: False
+                # ipv6:
+                #     start_ipv6_addr: 2001:100:2:1::1
+                #     start_ipv6_prefix_len: 64
+                #     step_ipv6_addr: 0:0:0:1::0
+                #     step_ipv6_prefix_len: 0
+                #     redirect: False
+            # Vlan100-102:
+            #     description: "L2VNI"
+            #     fabric_forwarding_mode: anycast-gateway
+            #     enabled: True
+            #     vrf:
+            #         start: 1
+            #         step: 1
+            #         prefix: 'VRF'
+
+
+
+            # L3VNI Set-1
+                # vlan2000:
+                #     description: "L3VNI"
+                #     enabled: True
+                #     ip_forward: True
+                #     ipv6_forward: True
+                #     vrf:
+                #         start: 1
+                #         step: 1
+                #         prefix: 'VRF'
+                #     ipv4:
+                #         redirect: False
+                #     ipv6:
+                #         redirect: False
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: False
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    
+                    # L2VNI Set-1
+                    30010:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30100:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30101:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30102:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L2VNI Set-2
+                    30002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # # L2VNI Set-3
+                    # 30000:
+                    #     nve_vni_type: 'L2'
+                    #     nve_vni_suppress_arp: False
+                    #     nve_vni_ir: true
+                    #     nve_vni_ir_proto: bgp
+                    # L3VNI
+                    50000:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                # ipv4:
+                #     ip: 1.12.1.1
+                #     prefix_length: 255.255.255.255
+                ipv6:
+                    ip: fd00::a02:2
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: fd00::a03:1
+                    prefix_length: 128
+            # loopback2:
+            #     description: "### VTEP loopback interface ###"
+            #     enabled: True
+            #     ipv6:
+            #         ip: fd00::a03:4
+            #         prefix_length: 128
+            # VTEP-2 to SPINE
+            nd03_nd01_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 1001:3::20
+                    prefix_length: 64
+            
+
+            # # VPC Peer-keep-alive
+            # node03_node02_1_1:
+            #     enabled: True
+            #     vrf : "peer-keep-alive"
+            #     description: "### Peer-keep-alive ###"
+            #     ipv4:
+            #         ip: 1.1.1.3
+            #         prefix_length: 255.255.255.254
+
+            # # VPC Peer-Link
+            # node03_node02_1_2:
+            #     enabled: True
+            # node03_node02_1_3:
+            #     enabled: True
+            # node03_node02_1_4:
+            #     enabled: True
+            # Port-channel10:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "2,3001-3005,1001-1005,1101-1105,1501-1505,1601-1605"
+            #     add_members: node03_node02_1_2, node03_node02_1_3, node03_node02_1_4
+
+            # # VPC LEG-2
+            # node03_nd05_1_1:
+            #     enabled: True
+            # node03_nd05_1_2:
+            #     enabled: True
+            # node03_nd05_1_3:
+            #     enabled: True
+            # node03_nd05_1_4:
+            #     enabled: True
+            # Port-channel100:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1001-1005,1101-1105,1501-1505,1601-1605"
+            #     add_members: node03_nd05_1_1, node03_nd05_1_2, node03_nd05_1_3, node03_nd05_1_4
+
+            # IXIA TGEN
+            nd03_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "1,10-12,100-102,2000"
+
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: False
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    
+                    # L2VNI Set-1
+                    30010:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30100:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30101:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30102:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L2VNI Set-2
+                    30002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L2VNI Set-3
+                    # 30000:
+                    #     nve_vni_type: 'L2'
+                    #     nve_vni_suppress_arp: False
+                    #     nve_vni_ir: true
+                    #     nve_vni_ir_proto: bgp
+                    # L3VNI
+                    50000:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+        
+        
+        # ACCESS --------------------------
+        # node05_vpcAccess:
+            
+        #     # VPC PO
+        #     nd05_node02_1_1:
+        #         enabled: True
+        #     nd05_node02_1_2:
+        #         enabled: True
+        #     nd05_node02_1_3:
+        #         enabled: True
+        #     nd05_node02_1_4:
+        #         enabled: True
+        #     nd05_node03_1_1:
+        #         enabled: True
+        #     nd05_node03_1_2:
+        #         enabled: True
+        #     nd05_node03_1_3:
+        #         enabled: True
+        #     nd05_node03_1_4:
+        #         enabled: True
+        #     Port-channel100:
+        #         channel_group_mode: active
+        #         enabled: True
+        #         switchport_enable: True
+        #         switchport_mode: trunk
+        #         trunk_vlans: "1001-1005,1101-1105,1501-1505,1601-1605"
+        #         add_members: nd05_node02_1_1, nd05_node02_1_2, nd05_node02_1_3, nd05_node02_1_4, nd05_node03_1_1, nd05_node03_1_2, nd05_node03_1_3, nd05_node03_1_4
+
+            # IXIA TGEN
+        # leaf--
+        node04:
+            nd04_tgen_1_1:
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "1,10-12,100-102,2000"
+
+            # Backup SVI for VPC
+            # Vlan2:
+            #     enabled: True
+            #     description: "### Backup SVI ###"
+            #     ipv6:
+            #         ip: 2001:1:2:1::3
+            #         prefix_length: 64
+            
+            # L2VNI SVI Configs - Set-1
+            # Vlan100:
+            #     description: "L2VNI"
+            #     fabric_forwarding_mode: anycast-gateway
+            #     enabled: True
+            #     vrf:
+            #         start: 1
+            #         step: 1
+            #         prefix: 'VRF'
+        node05:
+            ### Loopback Interfaces
+            loopback0:
+                description: "### Router ID Loopback ###"
+                enabled: True
+                # ipv4:
+                #     ip: 1.11.1.1
+                #     prefix_length: 255.255.255.255
+                ipv6:
+                    ip: fd00::a02:3
+                    prefix_length: 128
+            loopback1:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: fd00::a03:3
+                    prefix_length: 128
+            loopback2:
+                description: "### VTEP loopback interface ###"
+                enabled: True
+                ipv6:
+                    ip: fd00::a03:4
+                    prefix_length: 128
+           
+            nd05_nd01_1_1:
+                mtu: 9216
+                enabled: True
+                description: "### To SPNE INT-1 ###"
+                ipv6:
+                    ip: 1001:4::20
+                    prefix_length: 64
+            
+            # nd04_nd05_1_1:
+            #     enabled: True
+            # Port-channel1:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd04_nd05_1_1
+
+            # nd04_nd02_1_1:
+            #     enabled: True
+            # Port-channel1:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd04_nd02_1_1
+            # VPC Peer-keep-alive
+            # nd05_nd02_1_1:
+            #     enabled: True
+            #     vrf : "peer-keep-alive"
+            #     description: "### Peer-keep-alive ###"
+            #     switchport_enable: False
+            #     ipv4:
+            #         ip: 10.2.2.2
+            #         prefix_length: 255.255.255.254
+            #     ipv6:
+            #         ip: 3001:1::2
+            #         prefix_length: 128
+
+            # # VPC Peer-Link
+            # Port-channel15:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd05_nd02_1_1, nd05_nd02_1_2
+
+            # # # # VPC LEG-1
+            # nd05_nd04_1_1:
+            #     enabled: True
+            # Port-channel1:
+            #     channel_group_mode: active
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            #     add_members: nd05_nd04_1_1
+            # IXIA TGEN
+            # nd05_tgen_1_1:
+            #     enabled: True
+            #     switchport_enable: True
+            #     switchport_mode: trunk
+            #     trunk_vlans: "1,10-12,100-102,2000"
+            # NVE Configs
+            nve1:
+                description: 'NVE Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: False
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    
+                    # L2VNI Set-1
+                    30010:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30100:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30101:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30102:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    30001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L2VNI Set-2
+                    30002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: False
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    # L2VNI Set-3
+                    # 30000:
+                    #     nve_vni_type: 'L2'
+                    #     nve_vni_suppress_arp: False
+                    #     nve_vni_ir: true
+                    #     nve_vni_ir_proto: bgp
+                    #L3VNI
+                    50000:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    
+    # ------------------------------------------------------
+    # OSPFv3 COnfigs
+    # ------------------------------------------------------
+    ospfv3_config:
+        
+        # SPINE --------------------------
+        node01:
+            default:
+                instance: p1
+                router_id: 10.2.0.2
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # To VTEP-1
+                    nd01_nd02_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    # To VTEP-2
+                    nd01_nd03_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    nd01_nd05_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+        # VPC VTEP-1 --------------------------
+        node02:
+            default:
+                instance: p1
+                router_id: 10.2.0.1
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd02_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    # # Back up Link
+                    # vlan2:
+                    #     if_admin_control: True
+                    #     area: 0.0.0.0
+                    #     if_cost: 1
+                    #     if_type: 'point-to-point'
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            default:
+                instance: p1
+                router_id: 10.2.0.3
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd03_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+        
+        node05:
+            default:
+                instance: p1
+                router_id: 10.2.0.4
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    lo0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    lo2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    # TO SPINE
+                    nd05_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+    # ------------------------------------------------------
+    # VLAN Configs 
+    # ------------------------------------------------------
+    vlan_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02:
+            -   vlan: "10"
+                vn_segment_id: "30010"
+            -   vlan: "11"
+                vn_segment_id: "30001"
+            -   vlan: "12"
+                vn_segment_id: "30002"
+            -   vlan: "100"
+                vn_segment_id: "30100"
+            -   vlan: "101"
+                vn_segment_id: "30101"
+            -   vlan: "102"
+                vn_segment_id: "30102"
+            # -   vlan: "2300"
+            #     vn_segment_id: "30000"
+            -   vlan: "2000"
+                vn_segment_id: "50000"
+            
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            -   vlan: "10"
+                vn_segment_id: "30010"
+            -   vlan: "11"
+                vn_segment_id: "30001"
+            -   vlan: "12"
+                vn_segment_id: "30002"
+            -   vlan: "100"
+                vn_segment_id: "30100"
+            -   vlan: "101"
+                vn_segment_id: "30101"
+            -   vlan: "102"
+                vn_segment_id: "30102"
+            # -   vlan: "2300"
+            #     vn_segment_id: "30000"
+            -   vlan: "2000"
+                vn_segment_id: "50000"
+
+        node05:
+            -   vlan: "10"
+                vn_segment_id: "30010"
+            -   vlan: "11"
+                vn_segment_id: "30001"
+            -   vlan: "12"
+                vn_segment_id: "30002"
+            -   vlan: "100"
+                vn_segment_id: "30100"
+            -   vlan: "101"
+                vn_segment_id: "30101"
+            -   vlan: "102"
+                vn_segment_id: "30102"
+            # -   vlan: "2300"
+            #     vn_segment_id: "30000"
+            -   vlan: "2000"
+                vn_segment_id: "50000"
+
+    # ------------------------------------------------------
+    # route-map Configs
+    # ------------------------------------------------------
+    route_policy_config:
+
+        # SPINE --------------------------
+        node01:
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+            # -   route_policy: "RMAP_NH_UNCHANGED"
+            #     route_disposition: "permit"
+            #     statement_name: 10
+            #     set_next_hop: 'unchanged'
+        
+        # VPC VTEP-1 --------------------------
+        node02:
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+        node05:
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+    # ------------------------------------------------------
+    # VxLAN Configs
+    # ------------------------------------------------------
+    vxlan_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        node05:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+    # ------------------------------------------------------
+    # VxLAN EVPN Configs
+    # ------------------------------------------------------
+    evpn_config:
+        
+        # VPC VTEP-1 --------------------------
+        node02:
+            vni_list:
+                -   vni_id: 30010
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30100
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30101
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30102
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30001
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30000
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 50000
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            vni_list:
+                -   vni_id: 30010
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30100
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30101
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30102
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30001
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30000
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 50000
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        node05:
+            vni_list:
+                -   vni_id: 30010
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30100
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30101
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30102
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30001
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 30002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 50000
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+        
+    # ------------------------------------------------------
+    # VRF Configs
+    # ------------------------------------------------------
+    vrf_config: 
+
+        # VPC VTEP-1 --------------------------
+        node02:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "myvrf_50000"
+                    #vni: "30000-30002,30010,30100-30102,50000"
+                    vni: '50000'
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "myvrf_50000"
+                    #vni: "30000-30002,30010,30100-30102,50000"
+                    vni: '50000'
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+        node05:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "myvrf_50000"
+                    #vni: "30000-30002,30010,30100-30102,50000"
+                    vni: '50000'
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+                      - af_name: 'ipv6 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True        
+    # ------------------------------------------------------
+    # IGMP COnfigs
+    # ------------------------------------------------------
+    igmp_config: {}
+
+        # # SAMPLE --------------------------
+        # node14_s3_leaf:
+        #     default:
+        #         interface_config:
+        #             vlan1001-1072:
+        #                 enable: True
+        #                 version: 3
+        #             vlan1501-1572:
+        #                 enable: True
+        #                 version: 3
+
+    # ------------------------------------------------------
+    # MLD COnfigs
+    # ------------------------------------------------------
+    mld_config: {}
+        
+        # # Site-1 BGW-1 --------------------------
+        # node04_s1_bgw1:
+        #     default:
+        #         interface_config:
+        #             vlan1001-1072:
+        #                 enable: True
+        #                 version: 1
+        #             vlan1501-1572:
+        #                 enable: True
+        #                 version: 1
+
+    # ------------------------------------------------------
+    # PIM Configs
+    # ------------------------------------------------------
+    # pim_config: 
+
+    #     # SPINE --------------------------
+    #     node01:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 225.0.0.0/4
+    #             interface_config:
+    #                 # Underlay Loopbacks
+    #                 lo0:
+    #                     mode: sparse-mode
+    #                 # To VTEP-1
+    #                 nd01_nd02_1_1_1:
+    #                     mode: sparse-mode
+                    
+    #                 # To VTEP-2
+    #                 nd01_nd03_1_1:
+    #                     mode: sparse-mode
+                    
+
+    #     # VPC VTEP-1 --------------------------
+    #     node02:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 225.0.0.0/4
+    #             interface_config:
+    #                 # Underlay Loopbacks
+    #                 lo0-2:
+    #                     mode: sparse-mode
+    #                 ### Underlay Interfaces
+    #                 # To SPINE
+    #                 nd02_nd01_1_1:
+    #                     mode: sparse-mode
+                    
+    #                 ### L2VNI SVI's
+    #                 vlan11,12:
+    #                     mode: sparse-mode
+    #                 vlan2300:
+    #                     mode: sparse-mode
+    #                 ### L3VNI SVI's
+    #                 vlan2000:
+    #                     mode: sparse-mode
+
+    #     # VPC VTEP-2 --------------------------
+    #     node03:
+    #         default:
+    #             sg_expiry_timer: 1000
+    #             rp_address:
+    #                 -   static_rp_address: 11.11.11.11
+    #                     static_rp_group_list: 225.0.0.0/4
+    #             interface_config:
+    #                 # Underlay Loopbacks
+    #                 lo0-2:
+    #                     mode: sparse-mode
+    #                 ### Underlay Interfaces
+    #                 # To SPINE
+    #                 nd03_nd01_1_1:
+    #                     mode: sparse-mode
+    #                 ### L2VNI SVI's
+    #                 vlan11,12:
+    #                     mode: sparse-mode
+    #                 vlan2300:
+    #                     mode: sparse-mode
+    #                 ### L3VNI SVI's
+    #                 vlan2000:
+    #                     mode: sparse-mode
+
+    # ------------------------------------------------------
+    # BGP configuration
+    # ------------------------------------------------------
+    bgp_config: 
+
+        # SPINE --------------------------
+        node01:
+            default:
+                bgp_id: 4000
+                router_id: 10.2.0.2
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                maxas_limit: 10
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                # BGP Neighbors towards VTEPS
+                    # Underlay BGP Session
+                    -   neighbor_id: fd00::a02:0
+                        nbr_remote_as: 4000
+                        nbr_description: 'VTEP-1 Connectivity to fd00::a02:0'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: fd00::a02:2
+                        nbr_remote_as: 4000
+                        nbr_description: 'VTEP-2 Connectivity to fd00::a02:2'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                    -   neighbor_id: fd00::a02:3
+                        nbr_remote_as: 4000
+                        nbr_description: 'VTEP-2 Connectivity to fd00::a02:2'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+        # VPC VTEP-1 --------------------------
+        node02:
+            default:
+                bgp_id: 4000
+                router_id: 10.2.0.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: fd00::a02:1
+                        nbr_remote_as: 4000
+                        nbr_description: 'SPINE Connectivity to fd00::a02:1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                
+            # BGP VRF Configs
+            "myvrf_50000":
+                bgp_id: 4000
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+        # VPC VTEP-2 --------------------------
+        node03:
+            default:
+                bgp_id: 4000
+                router_id: 10.2.0.3
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                    # BGP Neighbors towards SPINE
+                    -   neighbor_id: fd00::a02:1
+                        nbr_remote_as: 4000
+                        nbr_description: 'SPINE Connectivity to fd00::a02:1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "myvrf_50000":
+                bgp_id: 4000
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+        node05:
+            default:
+                bgp_id: 4000
+                router_id: 10.2.0.4
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                    -   af_name: 'ipv6 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                # BGP Neighbors towards DCI
+                #     BGP Neighbors towards SPINE
+                    -   neighbor_id: fd00::a02:1
+                        nbr_remote_as: 4000
+                        nbr_description: 'SPINE Connectivity to fd00::a02:1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "myvrf_50000":
+                bgp_id: 4000
+                prefix: 'VRF'
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+                  - af_name: 'ipv6 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+    # ------------------------------------------------------
+    # Add missing (user defined) configs
+    # ------------------------------------------------------
+    missing_config: 
+
+        node01: |
+          interface {{nd01_nd02_1_1}}
+            description ### To VTEP-1 ###
+            mtu 9216
+            ipv6 address 1001:1::10/64
+            ipv6 link-local use-bia
+            ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            no shutdown
+
+          interface {{nd01_nd05_1_1}}
+            description ### To VTEP-2 ###
+            mtu 9216
+            ipv6 address 1001:3::10/64
+            ipv6 link-local use-bia
+            ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            no shutdown
+
+          interface {{nd01_nd03_1_1}}
+            description ### To VTEP-2 ###
+            mtu 9216
+            ipv6 address 1001:2::10/64
+            ipv6 link-local use-bia
+            ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            no shutdown
+            router ospfv3 UNDERLAY
+              router-id 10.2.0.2
+            router bgp 4000
+              router-id 10.2.0.2
+              timers bgp 90 270
+              timers prefix-peer-timeout 270
+              graceful-restart-helper
+              maxas-limit 10
+              log-neighbor-changes
+              address-family ipv4 unicast
+                redistribute direct route-map ANY
+                maximum-paths 64
+                maximum-paths ibgp 64
+              address-family ipv6 unicast
+                redistribute direct route-map ANY
+                maximum-paths 64
+                maximum-paths ibgp 64
+              address-family l2vpn evpn
+                maximum-paths 64
+                retain route-target all
+            neighbor fd00::a02:0
+              remote-as 4000
+              description VTEP-1 Connectivity to fd00::a02:0
+              update-source loopback0
+              timers 90 270
+              address-family l2vpn evpn
+                send-community
+                send-community extended
+                route-reflector-client
+            neighbor fd00::a02:2
+              remote-as 4000
+              description VTEP-2 Connectivity to fd00::a02:2
+              update-source loopback0
+              timers 90 270
+              address-family l2vpn evpn
+                send-community
+                send-community extended
+                route-reflector-client
+              neighbor fd00::a02:3
+                remote-as 4000
+                description VTEP-2 Connectivity to fd00::a02:3
+                update-source loopback0
+                timers 90 270
+                address-family l2vpn evpn
+                send-community
+                send-community extended
+                route-reflector-client
+
+            no logging console
+
+            interface loopback0
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback1
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback2
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0  
+        node02: |
+            feature private-vlan
+            configure profile MyVRF_50000
+                vlan 2000
+                vrf context myvrf_50000
+                    vni 50000
+                address-family ipv4 unicast
+                address-family ipv6 unicast
+            configure terminal
+            configure profile MyNetwork_30000
+                vlan 1, 10-12, 100-102, 2000
+                vlan 10
+                vlan 11
+                vlan 12
+                vlan 100
+                vlan 101
+                vlan 102
+                vlan 2000
+            route-map ANY permit 10
+            vrf context management
+                ip route 0.0.0.0/0 10.104.102.1
+            vrf context myvrf_50000
+                vni 50000
+                address-family ipv4 unicast
+                address-family ipv6 unicast
+            vrf context peer-keep-alive
+            vlan 2300
+              vn-segment 30000
+            interface Vlan2300
+              vrf member myvrf_50000
+              no shutdown
+            interface Vlan11
+              vrf member myvrf_50000
+              ip address 196.176.10.10/16 tag 12345
+              no shutdown
+            interface Vlan12
+              vrf member myvrf_50000
+              ip address 197.176.10.10/16 tag 12345
+              no shutdown
+            configure terminal
+            vlan 10
+                private-vlan primary
+                private-vlan association 100-102
+                vn-segment 30010
+            vlan 11
+              vn-segment 30001
+            vlan 12
+              vn-segment 30002
+            vlan 100
+                private-vlan community
+                vn-segment 30100
+            vlan 101
+                private-vlan community
+                vn-segment 30101
+            vlan 102
+                private-vlan isolated
+                vn-segment 30102
+            vlan 2000
+              vn-segment 50000
+            vrf context myvrf_50000
+              vni 50000
+              rd auto
+              address-family ipv4 unicast
+                route-target both auto
+                route-target both auto evpn
+              address-family ipv6 unicast
+                route-target both auto
+                route-target both auto evpn
+            vrf context peer-keep-alive
+            vpc domain 10
+                peer-switch
+                role priority 10
+                peer-keepalive destination 10.2.2.2 source 10.2.2.1 vrf peer-keep-alive
+                peer-gateway
+                layer3 peer-router
+                ipv6 nd synchronize
+                ip arp synchronize
+            interface port-channel1
+                switchport
+                switchport mode private-vlan host
+                switchport private-vlan host-association 10 100
+                vpc 1
+
+            interface port-channel15
+                description **vpc Peer Link**
+                switchport
+                switchport mode trunk
+                switchport trunk allowed vlan 10-12,100-102
+                spanning-tree port type network
+                vpc peer-link
+            interface nve1
+                no shutdown
+                host-reachability protocol bgp
+                source-interface loopback1 anycast loopback2
+            member vni 30001
+                ingress-replication protocol bgp
+            member vni 30002
+                ingress-replication protocol bgp
+            member vni 30010
+                ingress-replication protocol bgp
+            member vni 30100
+                ingress-replication protocol bgp
+            member vni 30101
+                ingress-replication protocol bgp
+            member vni 30102
+                ingress-replication protocol bgp
+            member vni 50000 associate-vrf
+            interface {{nd02_nd04_1_1}}
+                channel-group 1 force mode active
+                no shutdown
+            interface {{nd02_nd05_1_1}}
+                vrf member peer-keep-alive
+                ip address 10.2.2.1/24
+                no shutdown
+
+            interface {{nd02_nd05_1_2}}
+                channel-group 15 force mode active
+                no shutdown
+            default interface {{nd02_tgen_1_1}}
+            interface {{nd02_tgen_1_1}}
+                switchport
+                switchport mode private-vlan host
+                switchport private-vlan host-association 10 100
+                spanning-tree port type edge
+            default interface {{nd02_nd01_1_1}}
+            interface {{nd02_nd01_1_1}}
+                mtu 9216
+                ipv6 link-local use-bia
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+                no shutdown
+            router ospfv3 UNDERLAY
+                router-id 10.2.0.1
+            router bgp 4000
+                router-id 10.2.0.1
+                neighbor fd00::a02:1
+                    remote-as 4000
+                    update-source loopback0
+                    address-family l2vpn evpn
+                        send-community
+                        send-community extended
+            vrf myvrf_50000
+                address-family ipv4 unicast
+                    advertise l2vpn evpn
+                    redistribute direct route-map fabric-rmap-redist-subnet
+                    maximum-paths ibgp 2
+                address-family ipv6 unicast
+                    advertise l2vpn evpn
+                    redistribute direct route-map fabric-rmap-redist-subnet
+                    maximum-paths ibgp 2
+            interface Vlan10
+                no shutdown
+                private-vlan mapping 100-102
+                vrf member myvrf_50000
+                ip address 196.10.100.102/16
+                ipv6 address 196:10:100:102::254/64
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan11
+                no shutdown
+                vrf member myvrf_50000
+                ip address 196.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan12
+                no shutdown
+                vrf member myvrf_50000
+                ip address 197.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan2000
+                no shutdown
+                mtu 9216
+                vrf member myvrf_50000
+                ip forward
+                ipv6 forward
+            interface loopback0
+                ipv6 address fd00::a02:0/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback1
+                ipv6 address fd00::a03:0/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback2
+                ipv6 address fd00::a03:4/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            vrf context peer-keep-alive
+            evpn
+                vni 30000 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30001 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30002 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30010 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30100 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30101 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30102 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                no logging console    
+      
+
+        node03: |
+            feature private-vlan
+            configure profile MyNetwork_30000
+                vlan 2300
+                    vn-segment 30000
+                interface Vlan2300
+                    vrf member myvrf_50000
+                    no shutdown
+                interface Vlan11
+                    vrf member myvrf_50000
+                    ip address 196.176.10.10/16 tag 12345
+                    no shutdown
+                interface Vlan12
+                    vrf member myvrf_50000
+                    ip address 197.176.10.10/16 tag 12345
+                    no shutdown
+                interface nve1
+                    member vni 30000
+                        ingress-replication protocol bgp
+                    member vni 30001
+                        ingress-replication protocol bgp
+                    member vni 30002
+                        ingress-replication protocol bgp
+            configure terminal 
+            configure profile MyVRF_50000
+                vlan 2000
+                    vn-segment 50000
+                vrf context myvrf_50000
+                    vni 50000
+                    rd auto
+                    address-family ipv4 unicast
+                        route-target both auto
+                        route-target both auto evpn
+                    address-family ipv6 unicast
+                        route-target both auto
+                        route-target both auto evpn
+                    interface Vlan2000
+                        vrf member myvrf_50000
+                        ip forward
+                        ipv6 address use-link-local-only
+                        no ip redirects
+                        no ipv6 redirects
+                        mtu 9216
+                        no shutdown
+                    router bgp 4000
+                        vrf myvrf_50000
+                            address-family ipv4 unicast
+                            advertise l2vpn evpn
+                            redistribute direct route-map fabric-rmap-redist-subnet
+                            maximum-paths ibgp 2
+                            address-family ipv6 unicast
+                            advertise l2vpn evpn
+                            redistribute direct route-map fabric-rmap-redist-subnet
+                            maximum-paths ibgp 2
+                    interface nve1
+                        member vni 50000 associate-vrf
+                    configure terminal
+          
+            vlan 10
+                private-vlan primary
+                private-vlan association 100-102
+                vn-segment 30010
+            vlan 100
+                private-vlan community
+                vn-segment 30100
+            vlan 101
+                private-vlan community
+                vn-segment 30101
+            vlan 102
+                private-vlan isolated
+                vn-segment 30102
+            vlan 2000
+                vn-segment 50000
+            vlan 2300
+                vn-segment 30000
+            interface nve1
+                no shutdown
+                host-reachability protocol bgp
+                source-interface loopback1
+            interface nve1
+                no shutdown
+                host-reachability protocol bgp
+                source-interface loopback1
+            member vni 30001
+                ingress-replication protocol bgp
+            member vni 30002
+                ingress-replication protocol bgp
+            member vni 30010
+                ingress-replication protocol bgp
+            member vni 30100
+                ingress-replication protocol bgp
+            member vni 30101
+                ingress-replication protocol bgp
+            member vni 30102
+                ingress-replication protocol bgp
+            member vni 50000 associate-vrf
+            con t
+            default interface {{nd03_tgen_1_1}}
+            interface {{nd03_tgen_1_1}}
+                switchport
+                switchport mode private-vlan host
+                switchport private-vlan host-association 10 100
+                no shutdown
+            interface {{nd03_nd01_1_1}}
+                mtu 9216
+                ipv6 link-local use-bia
+                ip address 10.104.102.187/24
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+                no shutdown
+            router ospfv3 UNDERLAY
+                router-id 10.2.0.3
+            router bgp 4000
+                router-id 10.2.0.3
+                graceful-restart-helper
+                neighbor fd00::a02:1
+                    remote-as 4000
+                    update-source loopback0
+                    address-family l2vpn evpn
+                        send-community
+                        send-community extended
+                vrf myvrf_50000
+                    address-family ipv4 unicast
+                        advertise l2vpn evpn
+                        redistribute direct route-map fabric-rmap-redist-subnet
+                        maximum-paths ibgp 2
+                    address-family ipv6 unicast
+                        advertise l2vpn evpn
+                        redistribute direct route-map fabric-rmap-redist-subnet
+                        maximum-paths ibgp 2
+            interface Vlan10
+                no shutdown
+                private-vlan mapping 100-102
+                vrf member myvrf_50000
+                ip address 196.10.100.102/16
+                ipv6 address 196:10:100:102::254/64
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan11
+                no shutdown
+                vrf member myvrf_50000
+                ip address 196.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan12
+                no shutdown
+                vrf member myvrf_50000
+                ip address 197.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan2000
+                no shutdown
+                mtu 9216
+                vrf member myvrf_50000
+                ip forward
+                ipv6 forward
+            interface loopback0
+                ipv6 address fd00::a02:2/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback1
+                ipv6 address fd00::a03:1/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback2
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0  
+            evpn
+                vni 30000 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30001 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30002 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                no logging console
+
+            apply profile MyNetwork_30000
+            apply profile MyVRF_50000          
+
+        node04: |
+            feature lacp
+            vlan 1,10-12,100-102,2000
+            interface port-channel1
+                switchport
+                switchport access vlan 100
+                no shut
+            default interface {{nd04_tgen_1_1}}
+            interface {{nd04_tgen_1_1}}
+                switchport access vlan 100
+                spanning-tree port type edge
+                no shut
+            interface {{nd04_nd02_1_1}}
+                channel-group 1 force mode active
+                no shut
+            interface {{nd04_nd05_1_1}}
+                channel-group 1 force mode active
+                no shut
+
+        node05: |
+            feature private-vlan
+            configure terminal
+            vlan 1, 10-12, 100-102, 2000
+                vlan 10
+                vlan 11
+                vlan 12
+                vlan 100
+                vlan 101
+                vlan 102
+                vlan 2000
+            route-map ANY permit 10
+            vrf context management
+                ip route 0.0.0.0/0 10.104.102.1
+            vrf context myvrf_50000
+                vni 50000
+                address-family ipv4 unicast
+                address-family ipv6 unicast
+            vrf context peer-keep-alive
+            vlan 2300
+              vn-segment 30000
+            interface Vlan2300
+              vrf member myvrf_50000
+              no shutdown
+            interface Vlan11
+              vrf member myvrf_50000
+              ip address 196.176.10.10/16 tag 12345
+              no shutdown
+            interface Vlan12
+              vrf member myvrf_50000
+              ip address 197.176.10.10/16 tag 12345
+              no shutdown
+            configure terminal
+            vlan 10
+                private-vlan primary
+                private-vlan association 100-102
+                vn-segment 30010
+            vlan 11
+              vn-segment 30001
+            vlan 12
+              vn-segment 30002
+            vlan 100
+                private-vlan community
+                vn-segment 30100
+            vlan 101
+                private-vlan community
+                vn-segment 30101
+            vlan 102
+                private-vlan isolated
+                vn-segment 30102
+            vlan 2000
+              vn-segment 50000
+            vrf context myvrf_50000
+              vni 50000
+              rd auto
+              address-family ipv4 unicast
+                route-target both auto
+                route-target both auto evpn
+              address-family ipv6 unicast
+                route-target both auto
+                route-target both auto evpn
+            vrf context peer-keep-alive
+            vpc domain 10
+                peer-switch
+                role priority 20
+                peer-keepalive destination 10.2.2.1 source 10.2.2.2 vrf peer-keep-alive
+                peer-gateway
+                layer3 peer-router
+                ipv6 nd synchronize
+                ip arp synchronize
+            interface port-channel1
+                switchport
+                switchport mode private-vlan host
+                switchport private-vlan host-association 10 100
+                vpc 1
+
+            interface port-channel15
+                description **vpc Peer Link**
+                switchport
+                switchport mode trunk
+                switchport trunk allowed vlan 10-12,100-102
+                spanning-tree port type network
+                vpc peer-link
+            interface nve1
+                no shutdown
+                host-reachability protocol bgp
+                source-interface loopback1 anycast loopback2
+            member vni 30001
+                ingress-replication protocol bgp
+            member vni 30002
+                ingress-replication protocol bgp
+            member vni 30010
+                ingress-replication protocol bgp
+            member vni 30100
+                ingress-replication protocol bgp
+            member vni 30101
+                ingress-replication protocol bgp
+            member vni 30102
+                ingress-replication protocol bgp
+            member vni 50000 associate-vrf
+            interface {{nd05_nd04_1_1}}
+                channel-group 1 force mode active
+                no shutdown
+            interface {{nd05_nd02_1_1}}
+                vrf member peer-keep-alive
+                ip address 10.2.2.2/24
+                no shutdown
+
+            interface {{nd05_nd02_1_2}}
+                channel-group 15 force mode active
+                no shutdown
+            default interface {{nd05_tgen_1_1}}
+            interface {{nd05_tgen_1_1}}
+                switchport
+                switchport mode private-vlan host
+                switchport private-vlan host-association 10 100
+                spanning-tree port type edge
+            interface {{nd05_nd01_1_1}}
+                mtu 9216
+                ipv6 link-local use-bia
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+                no shutdown
+            router ospfv3 UNDERLAY
+                router-id 10.2.0.4
+            router bgp 4000
+                router-id 10.2.0.1
+                neighbor fd00::a02:1
+                    remote-as 4000
+                    update-source loopback0
+                    address-family l2vpn evpn
+                        send-community
+                        send-community extended
+                vrf myvrf_50000
+                    address-family ipv4 unicast
+                        advertise l2vpn evpn
+                        redistribute direct route-map fabric-rmap-redist-subnet
+                        maximum-paths ibgp 2
+                    address-family ipv6 unicast
+                        advertise l2vpn evpn
+                        redistribute direct route-map fabric-rmap-redist-subnet
+                        maximum-paths ibgp 2
+            interface Vlan10
+                no shutdown
+                private-vlan mapping 100-102
+                vrf member myvrf_50000
+                ip address 196.10.100.102/16
+                ipv6 address 196:10:100:102::254/64
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan11
+                no shutdown
+                vrf member myvrf_50000
+                ip address 196.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan12
+                no shutdown
+                vrf member myvrf_50000
+                ip address 197.176.10.10/16 tag 12345
+                fabric forwarding mode anycast-gateway
+                no shut
+            interface Vlan2000
+                no shutdown
+                mtu 9216
+                vrf member myvrf_50000
+                ip forward
+                ipv6 forward
+            interface loopback0
+                ipv6 address fd00::a02:0/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback1
+                ipv6 address fd00::a03:3/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            interface loopback2
+                ipv6 address fd00::a03:4/128
+                ipv6 router ospfv3 UNDERLAY area 0.0.0.0
+            vrf context peer-keep-alive
+            evpn
+                vni 30000 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30001 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30002 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30010 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30100 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30101 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                vni 30102 l2
+                    rd auto
+                    route-target import auto
+                    route-target export auto
+                no logging console 
+
+  
+
+
+            
+               
+
+    # ------------------------------------------------------
+    # Features to be disabled as part of cleanup
+    # ------------------------------------------------------
+    disable_features:
+        # SIPNE
+        node01:
+            - lldp
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-1
+        node02:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+        # VPC VTEP-2
+        node03:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospfv3
+            - pim4
+            - bgp
+            - vxlan
+    
+    # ------------------------------------------------------
+    # Disabling the missing (user defined) configs
+    # ------------------------------------------------------
+    # disable_missing_config:
+        
+    #     node02: |
+    #         no ip igmp snooping vxlan
+    #         no vrf context peer-keep-alive
+    #         no vlan 2
+
+    #     node03: |
+    #         no ip igmp snooping vxlan
+    #         no vrf context peer-keep-alive
+    #         no vlan 2
+
+    #     node04_stdLeaf: |
+    #         no ip igmp snooping vxlan

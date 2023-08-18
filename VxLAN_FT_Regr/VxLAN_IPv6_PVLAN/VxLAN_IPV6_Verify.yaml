@@ -1,0 +1,349 @@
+# ------------------------------------------------------
+#        Node List:
+#
+#            node01        : SPINE
+#            node02    : TECATE-1
+#            node03     : SUMPIN
+#            node04          : Fan2
+#            node05      : TECATE-2
+# ------------------------------------------------------
+# ------------------------------------------------------
+# OSPF Neighbor Verification
+# ------------------------------------------------------
+# OSPFv3 Neigbor verification is not being carried by main libs
+# Hence keeping this as a place holder for when the code is fixed
+# ospfv3_neighbors: 
+#     node01:
+#         vrf:
+#             default:
+#                 address_family:
+#                     ipv4:
+#                         instance:
+#                             p1:
+#                                 areas:
+#                                     0.0.0.0:
+#                                         interfaces:
+#                                             # SPINE to VTEP-1
+#                                             '{{nd01_nd02_1_1}}':
+#                                                 neighbors:
+#                                                     fd00::a02:                           # <- Remote Neighbor Router ID
+#                                                         address: fd00::a02:0              # <- Remote Neighbor Address
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.1    # <- Remote Neighbor Router ID
+                                            
+#                                             # SPINE to VTEP-2
+#                                             '{{nd01_nd03_1_1}}':
+#                                                 neighbors:
+#                                                       fd00::a02:                         # <- Remote Neighbor Router ID
+#                                                         address: fd00::a02:3               # <- Remote Neighbor Address
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.4     # <- Remote Neighbor Router ID
+
+#                                             # SPINE to VTEP-3           
+#                                             '{{nd01_nd05_1_1}}':
+#                                                 neighbors:
+#                                                       fd00::a02:                         # <- Remote Neighbor Router ID
+#                                                         address: fd00::a02:2               # <- Remote Neighbor Address
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.3     # <- Remote Neighbor Router ID
+                                            
+                                           
+#     node02:
+#         vrf:
+#             default:
+#                 address_family:
+#                     ipv4:
+#                         instance:
+#                             p1:
+#                                 areas:
+#                                     0.0.0.0:
+#                                         interfaces:
+#                                             # VTE-1 to SPINE
+#                                             '{{nd02_nd01_1_1}}':
+#                                                 neighbors:
+#                                                     fd00::a02:
+#                                                         address: fd00::a02:1
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.2
+                                            
+#     node03:
+#         vrf:
+#             default:
+#                 address_family:
+#                     ipv4:
+#                         instance:
+#                             p1:
+#                                 areas:
+#                                     0.0.0.0:
+#                                         interfaces:
+#                                             # VTEP-2 to SPINE
+#                                             '{{nd03_nd01_1_1}}':
+#                                                 neighbors:
+#                                                     fd00::a02:
+#                                                         address: fd00::a02:1
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.2
+#     node05:
+#         vrf:
+#             default:
+#                 address_family:
+#                     ipv4:
+#                         instance:
+#                             p1:
+#                                 areas:
+#                                     0.0.0.0:
+#                                         interfaces:
+#                                             # VTE-1 to SPINE
+#                                             '{{nd05_nd01_1_1}}':
+#                                                 neighbors:
+#                                                     fd00::a02:
+#                                                         address: fd00::a02:1
+#                                                         state: full
+#                                                         neighbor_router_id: 10.2.0.2                                       
+
+# ------------------------------------------------------
+# PIM Neighbor Verification
+# ------------------------------------------------------
+pim_neighbors: {}
+
+# ------------------------------------------------------
+# BGP Neighbor Verification
+# ------------------------------------------------------
+# bgp_neighbors: 
+
+#     node01:
+#         total_peers: 3
+#         total_established_peers: 3
+#         vrf:
+#             default:
+#                 local_as: 4000
+#                 vrf_peers: 3
+#                 vrf_established_peers: 3
+#                 router_id: 10.2.0.2
+#                 neighbor:
+#                     fd00::a02:0:
+#                         state: established
+#                         remote_as: 4000
+#                     fd00::a02:2:
+#                         state: established
+#                         remote_as: 4000
+#                     fd00::a02:3:
+#                         state: established
+#                         remote_as: 4000
+                    
+
+#     node02:
+#         total_peers: 1
+#         total_established_peers: 1
+#         vrf:
+#             default:
+#                 local_as: 4000
+#                 vrf_peers: 1
+#                 vrf_established_peers: 1
+#                 router_id: 10.2.0.1
+#                 neighbor:
+#                     fd00::a02:1:
+#                         state: established
+#                         remote_as: 4000
+#                 # neighbor:
+#                 #     fd00::a02:3:
+#                 #         state: established
+#                 #         remote_as: 4000
+#     node03:
+#         total_peers: 1
+#         total_established_peers: 1
+#         vrf:
+#             default:
+#                 local_as: 4000
+#                 vrf_peers: 1
+#                 vrf_established_peers: 1
+#                 router_id: 10.2.0.3
+#                 neighbor:
+#                     fd00::a02:1:
+#                         state: established
+#                         remote_as: 4000
+
+    # node05:
+    #     total_peers: 1
+    #     total_established_peers: 1
+    #     vrf:
+    #         default:
+    #             local_as: 4000
+    #             vrf_peers: 1
+    #             vrf_established_peers: 1
+    #             router_id: 10.2.0.4
+    #             neighbor:
+    #                 fd00::a02:1:
+    #                     state: established
+    #                     remote_as: 4000
+
+# ------------------------------------------------------
+# BGP L2VPN EVPN Summary Verification
+# ------------------------------------------------------
+bgp_l2vpn_evpn_summary: {}
+
+# ------------------------------------------------------
+# NVE Interface Detail Verification
+# ------------------------------------------------------
+# nve_interface_detail: 
+#     node02:
+#         nve1:
+#             nve_name: nve1
+#             if_state: up
+#             encap_type: vxlan
+#             vpc_capability: 'vpc-vip-only [notified]'
+#             source_if: loopback1
+#             primary_ip: fd00::a03:0
+#             #secondary_ip: 2001:1:10:10::10
+#             src_if_state: up
+#             adv_vmac: True
+#             sm_state: nve-intf-add-complete
+#     node03:
+#         nve1:
+#             nve_name: nve1
+#             if_state: up
+#             encap_type: vxlan
+#             vpc_capability: 'vpc-vip-only [notified]'
+#             source_if: loopback1
+#             primary_ip: fd00::a03:1
+#             #secondary_ip: 2001:1:10:10::10
+#             src_if_state: up
+#             adv_vmac: True
+#             sm_state: nve-intf-add-complete
+   
+
+# ------------------------------------------------------
+# NVE Peers Verification
+# ------------------------------------------------------
+# nve_peers: 
+#     node02:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 fd00::a03:1:
+#                     learn_type: CP
+#                     peer_state: up
+#                 fd00::a03:3:
+#                     learn_type: CP
+#                     peer_state: up   
+#     node03:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 fd00::a03:0:
+#                     learn_type: CP
+#                     peer_state: up
+#                 fd00::a03:3:
+#                     learn_type: CP
+#                     peer_state: up
+    
+#     node03:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 fd00::a03:0:
+#                     learn_type: CP
+#                     peer_state: up
+#                 fd00::a03:1:
+#                     learn_type: CP
+#                     peer_state: up
+# ------------------------------------------------------
+# NVE Peers Verification Post Src Loopback IP Change
+# ------------------------------------------------------
+# nve_peers_after_nve_src_loopback_IP_change: 
+#     node02:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 # 1.12.12.12:
+#                 #     learn_type: CP
+#                 #     peer_state: up
+#                 2001:1:22:22::22:
+#                     learn_type: CP
+#                     peer_state: up
+#                 2001:1:13:13::13:
+#                     learn_type: CP
+#                     peer_state: up
+#     node03:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 # 1.11.11.11:
+#                 #     learn_type: CP
+#                 #     peer_state: up
+#                 2001:1:21:21::21:
+#                     learn_type: CP
+#                     peer_state: up
+#                 2001:1:13:13::13:
+#                     learn_type: CP
+#                     peer_state: up
+#     node04_stdLeaf:
+#         nve1:
+#             nve_name: nve1
+#             peer_ip:
+#                 2001:1:10:10::10:
+#                     learn_type: CP
+#                     peer_state: up
+#                 2001:1:21:21::21:
+#                     learn_type: CP
+#                     peer_state: up
+#                 2001:1:22:22::22:
+#                     learn_type: CP
+#                     peer_state: up
+
+# # ------------------------------------------------------
+# # NVE VNI Summary Verification
+# # ------------------------------------------------------
+# nve_vni_summary: 
+#     node02:
+#         vni:
+#             summary:
+#                 cp_vni_count: 50
+#                 cp_vni_up: 50
+#                 cp_vni_down: 0
+#                 dp_vni_count: 0
+#                 dp_vni_up: 0
+#                 dp_vni_down: 0
+#     node03:
+#         vni:
+#             summary:
+#                 cp_vni_count: 50
+#                 cp_vni_up: 50
+#                 cp_vni_down: 0
+#                 dp_vni_count: 0
+#                 dp_vni_up: 0
+#                 dp_vni_down: 0
+#     node04_stdLeaf:
+#         vni:
+#             summary:
+#                 cp_vni_count: 50
+#                 cp_vni_up: 50
+#                 cp_vni_down: 0
+#                 dp_vni_count: 0
+#                 dp_vni_up: 0
+#                 dp_vni_down: 0
+
+# ------------------------------------------------------
+# Collect Logs
+# ------------------------------------------------------
+# collect_log:
+#     node01:
+#         - show bgp sessions
+#         - show ip bgp summary
+#     node02:
+#         - show nve peers
+#         - show ospfv3 neighbors
+#         - show bgp sessions
+#         - show ip bgp summary
+        
+#     node03:
+#         - show nve peers
+#         - show ospfv3 neighbors
+#         - show bgp sessions
+#         - show ip bgp summary
+        
+    
+# ------------------------------------------------------
+# Error Logs Check - Exclude Patter
+# ------------------------------------------------------
+# err_log_check_exclude_pattern: ''

@@ -1,0 +1,413 @@
+
+testbed:
+    name: VxLAN-Sundown-VPC
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+
+devices:
+    GX-TOR1:
+        os: nxos
+        type: N9K
+        alias: uut1
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2006
+            vty:
+                protocol: telnet
+                ip: 10.225.127.128
+    GX-TOR2:
+        os: nxos
+        type: N9K
+        alias: uut2
+        connections:
+            defaults:
+               class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2042
+            vty:
+                protocol: telnet
+                ip: 10.225.127.103
+
+    Fex101:
+        os: nxos
+        type: Fex
+        alias: Fex101
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+    Fex102:
+        os: nxos
+        type: Fex
+        alias: Fex102
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+ 
+    Seoul-1:
+        os: nxos
+        type: N9K
+        alias: uut3
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2035
+            vty:
+                protocol: telnet
+                ip: 10.197.127.51
+
+    SPINE:
+        os: nxos
+        type: N3K
+        alias: uut4
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2041
+            vty:
+                protocol: telnet
+                ip: 10.197.127.57
+
+    FAN-2:
+        os: nxos
+        type: N3K
+        alias: uut5
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2038
+            vty:
+                protocol: telnet
+                ip: 10.197.127.56
+
+    FAN-1:
+        os: nxos
+        type: N3K
+        alias: uut6
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.14
+                port: 2037
+            vty:
+                protocol: telnet
+                ip: 10.197.127.55
+
+    TG1:
+        type: ixia
+        alias: tgen
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.197.127.16
+                tcl_server: 10.197.127.121
+                ixnetwork_tcl_server: 10.197.127.121
+                username: Administrator
+                reset: 1
+topology:
+    GX-TOR1:
+        interfaces:
+            Eth1/1:
+                link: uut1_uut4_1
+                alias: uut1_uut4_1
+                type: ethernet
+            Eth1/5:
+                link: uut1_uut4_2
+                alias: uut1_uut4_2
+                type: ethernet
+            Eth1/13:
+                link: uut1_uut4_3
+                alias: uut1_uut4_3
+                type: ethernet
+            Eth1/25:
+                link: uut1_uut4_4
+                alias: uut1_uut4_4
+                type: ethernet
+            Eth1/9:
+                link: uut1_uut2_1
+                alias: uut1_uut2_1
+                type: ethernet
+            Eth1/10:
+                link: uut1_uut2_2
+                alias: uut1_uut2_2
+                type: ethernet
+            Eth1/29/1:
+                link: uut1_uut5_1
+                alias: uut1_uut5_1
+                type: ethernet
+            Eth1/29/2:
+                link: uut1_uut5_2
+                alias: uut1_uut5_2
+                type: ethernet
+            Eth1/20:
+                link: uut1_TG1_1
+                alias: uut1_TG1_1
+                type: ethernet
+            Eth1/51/3:
+                link: uut1_Fex101_1
+                alias: uut1_Fex101_1
+                type: ethernet
+            Eth1/51/4:
+                link: uut1_Fex101_2
+                alias: uut1_Fex101_2
+                type: ethernet
+
+    Fex101:
+        interfaces:
+             Eth101/1/15:
+                link: Fex101_TG1_1
+                alias: Fex101_TG1_1
+                type: hif
+             Eth101/1/25:
+                link: Fex101_uut5_1
+                alias: Fex101_uut5_1
+                type: hif
+             Eth101/1/26:
+                link: Fex101_uut5_2
+                alias: Fex101_uut5_2
+                type: hif
+ 
+    GX-TOR2:
+        interfaces:
+            Eth1/1:
+                link: uut2_uut4_1
+                alias: uut2_uut4_1
+                type: ethernet
+            Eth1/5:
+                link: uut2_uut4_2
+                alias: uut2_uut4_2
+                type: ethernet
+            Eth1/13:
+                link: uut2_uut4_3
+                alias: uut2_uut4_3
+                type: ethernet
+            Eth1/21:
+                link: uut2_uut4_4
+                alias: uut2_uut4_4
+                type: ethernet
+            Eth1/9:
+                link: uut1_uut2_1
+                alias: uut2_uut1_1
+                type: ethernet
+            Eth1/10:
+                link: uut1_uut2_2
+                alias: uut2_uut1_2
+                type: ethernet
+            Eth1/29/1:
+                link: uut2_uut5_1
+                alias: uut2_uut5_1
+                type: ethernet
+            Eth1/29/2:
+                link: uut2_uut5_2
+                alias: uut2_uut5_2
+                type: ethernet
+            Eth1/20:
+                link: uut2_TG1_1
+                alias: uut2_TG1_1
+                type: ethernet
+            Eth1/51/3:
+                link: uut2_Fex101_1
+                alias: uut2_Fex101_1
+                type: ethernet
+            Eth1/51/4:
+                link: uut2_Fex101_2
+                alias: uut2_Fex101_2
+                type: ethernet
+            Eth1/51/1:
+                link: uut2_Fex102_1
+                alias: uut2_Fex102_1
+                type: ethernet
+            Eth1/51/2:
+                link: uut2_Fex102_2
+                alias: uut2_Fex102_2
+                type: ethernet
+    Fex102:
+         interfaces:
+             Eth102/1/15:
+                link: Fex102_TG1_1
+                alias: Fex102_TG1_1
+                type: hif
+             Eth102/1/25:
+                link: Fex102_uut5_1
+                alias: Fex102_uut5_1
+                type: hif
+             Eth102/1/26:
+                link: Fex102_uut5_2
+                alias: Fex102_uut5_2
+                type: hif
+ 
+    Seoul-1:
+        interfaces:
+            Eth1/1:
+                link: uut3_uut4_1
+                alias: uut3_uut4_1
+                type: ethernet
+            Eth1/2:
+                link: uut3_uut4_2
+                alias: uut3_uut4_2
+                type: ethernet
+            Eth1/3:
+                link: uut3_uut4_3
+                alias: uut3_uut4_3
+                type: ethernet
+            Eth1/4:
+                link: uut3_uut4_4
+                alias: uut3_uut4_4
+                type: ethernet
+            Eth1/39:
+                link: uut3_uut6_1
+                alias: uut3_uut6_1
+                type: ethernet
+            Eth1/40:
+                link: uut3_uut6_2
+                alias: uut3_uut6_2
+                type: ethernet
+    SPINE:
+        interfaces:
+            Eth1/49:
+                link: uut1_uut4_1
+                alias: uut4_uut1_1
+                type: ethernet
+            Eth1/50:
+                link: uut1_uut4_2
+                alias: uut4_uut1_2
+                type: ethernet
+            Eth1/51:
+                link: uut1_uut4_3
+                alias: uut4_uut1_3
+                type: ethernet
+            Eth1/57:
+                link: uut1_uut4_4
+                alias: uut4_uut1_4
+                type: ethernet
+            Eth1/53:
+                link: uut2_uut4_1
+                alias: uut4_uut2_1
+                type: ethernet
+            Eth1/54:
+                link: uut2_uut4_2
+                alias: uut4_uut2_2
+                type: ethernet
+            Eth1/55:
+                link: uut2_uut4_3
+                alias: uut4_uut2_3
+                type: ethernet
+            Eth1/56:
+                link: uut2_uut4_4
+                alias: uut4_uut2_4
+                type: ethernet
+            Eth1/1:
+                link: uut3_uut4_1
+                alias: uut4_uut3_1
+                type: ethernet
+            Eth1/2:
+                link: uut3_uut4_2
+                alias: uut4_uut3_2
+                type: ethernet
+            Eth1/3:
+                link: uut3_uut4_3
+                alias: uut4_uut3_3
+                type: ethernet
+            Eth1/4:
+                link: uut3_uut4_4
+                alias: uut4_uut3_4
+                type: ethernet
+             
+    FAN-2:
+        interfaces:
+            Eth1/50/1:
+                link: uut1_uut5_1
+                alias: uut5_uut1_1
+                type: ethernet
+            Eth1/50/2:
+                link: uut1_uut5_2
+                alias: uut5_uut1_2
+                type: ethernet
+            Eth1/52/1:
+                link: uut2_uut5_1
+                alias: uut5_uut2_1
+                type: ethernet
+            Eth1/52/2:
+                link: uut2_uut5_2
+                alias: uut5_uut2_2
+                type: ethernet
+            Eth1/1:
+                link: uut5_TG1_1
+                alias: uut5_TG1_1
+                type: ethernet
+            Eth1/49/1:
+                link: Fex102_uut5_1
+                alias: uut5_Fex102_1
+                type: hif
+            Eth1/49/2:
+                link: Fex102_uut5_2
+                alias: uut5_Fex102_2
+                type: hif
+            Eth1/49/3:
+                link: Fex101_uut5_1
+                alias: uut5_Fex101_1
+                type: hif
+            Eth1/49/4:
+                link: Fex101_uut5_2
+                alias: uut5_Fex101_2
+                type: hif
+ 
+    FAN-1:
+        interfaces:
+            Eth1/39:
+                link: uut3_uut6_1
+                alias: uut6_uut3_1
+                type: ethernet
+            Eth1/40:
+                link: uut3_uut6_2
+                alias: uut6_uut3_2
+                type: ethernet
+            Eth1/1:
+                link: uut6_TG1_1
+                alias: uut6_TG1_1
+                type: ethernet
+
+    TG1:
+       interfaces:
+            4/6:
+               type: ethernet
+               alias: TG1_uut5_1
+               link: uut5_TG1_1
+            4/5:
+               type: ethernet
+               alias: TG1_uut6_1
+               link: uut6_TG1_1
+            9/6:
+               type: ethernet
+               alias: TG1_uut1_1
+               link: uut1_TG1_1
+            9/5:
+               type: ethernet
+               alias: TG1_uut2_1
+               link: uut2_TG1_1
+            8/16:
+               link: Fex101_TG1_1
+               alias: TG1_Fex101_1
+               type: ethernet
+ 

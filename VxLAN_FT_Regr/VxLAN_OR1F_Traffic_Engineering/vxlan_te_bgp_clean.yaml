@@ -1,0 +1,126 @@
+# ------------------------------------------------------
+# Define Cleaner modules, device groups / devices
+# ------------------------------------------------------
+
+cleaners:
+    PyatsDeviceClean:
+        module: genie.libs.clean
+        devices: [node01, node02, node03, node04, node05, node06]
+
+# ---------------------------------------`---------------
+# Define clean part for devices
+# ------------------------------------------------------
+
+devices:
+
+    node01:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server host 10.197.151.181 traps version 2c public udp-port 2162
+
+                ! -- nxapi configs
+                nxapi http port 80
+                nxapi https port 443
+        order:
+            - connect
+            - apply_configuration
+
+    node02:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                feature bgp
+                fabric forwarding anycast-gateway-mac 2020.0000.00aa
+                
+                ! -- SNMP base configs
+                snmp-server host 10.197.151.181 traps version 2c public udp-port 2162
+
+                ! -- nxapi configs
+                nxapi http port 80
+                nxapi https port 443
+        order:
+            - connect
+            - apply_configuration
+
+    node03:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                feature bgp
+                fabric forwarding anycast-gateway-mac 2020.0000.00aa
+                
+                ! -- SNMP base configs
+                snmp-server host 10.197.151.181 traps version 2c public udp-port 2162
+
+                ! -- nxapi configs
+                nxapi http port 80
+                nxapi https port 443
+        order:
+            - connect
+            - apply_configuration
+
+    node04:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                feature bgp
+                fabric forwarding anycast-gateway-mac 2020.0000.00aa
+                
+        order:
+            - connect
+            - apply_configuration
+
+    node05:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server host 10.197.151.181 traps version 2c public udp-port 2162
+
+                ! -- nxapi configs
+                nxapi http port 80
+                nxapi https port 443
+        order:
+            - connect
+
+    node06:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server host 10.197.151.181 traps version 2c public udp-port 2162
+
+                ! -- nxapi configs
+                nxapi http port 80
+                nxapi https port 443
+        order:
+            - connect

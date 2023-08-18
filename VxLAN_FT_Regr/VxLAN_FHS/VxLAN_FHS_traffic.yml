@@ -1,0 +1,152 @@
+tgen_config:
+  node01:
+    tgn01_nd01_1_1:
+      device_group11:
+        ethernet:
+          start_mac_addr: 00:06:01:01:00:01
+          mac_addr_step: 1
+          start_vlan_id: 1001
+          vlan_id_step: 1
+          vlan_count: 1
+          hosts_per_vlan: 1
+          ipv4:
+            start_ipv4_addr: 100.1.1.10
+            start_ipv4_prefix_len: 24
+            start_ipv4_gw: 100.1.1.1
+            step_ipv4_addr_per_vlan: 0.0.1.0
+            step_ipv4_addr_host: 0.0.0.1
+            step_ipv4_gw: 0.0.0.0
+            next_layer: False
+    
+    # tgn01_nd01_1_2:
+    #   device_group12:
+    #     ethernet:
+    #       start_mac_addr: 00:06:02:01:00:01
+    #       mac_addr_step: 1
+    #       start_vlan_id: 1001
+    #       vlan_id_step: 1
+    #       vlan_count: 1
+    #       hosts_per_vlan: 1
+    #       ipv4:
+    #         start_ipv4_addr: 100.1.20.1
+    #         start_ipv4_prefix_len: 16
+    #         start_ipv4_gw: 100.1.1.1
+    #         step_ipv4_addr_per_vlan: 0.0.1.0
+    #         step_ipv4_addr_host: 0.0.0.1
+    #         step_ipv4_gw: 0.0.0.0
+    #         next_layer: False
+    
+  node03:
+    tgn01_nd03_1_1:
+      device_group21:
+        ethernet:
+          start_mac_addr: 00:07:01:01:00:01
+          mac_addr_step: 1
+          start_vlan_id: 1002
+          vlan_id_step: 1
+          vlan_count: 1
+          hosts_per_vlan: 1
+          ipv4:
+            start_ipv4_addr: 100.1.2.50
+            start_ipv4_prefix_len: 24
+            start_ipv4_gw: 100.1.2.1
+            step_ipv4_addr_per_vlan: 0.0.1.0
+            step_ipv4_addr_host: 0.0.0.1
+            step_ipv4_gw: 0.0.0.0
+            next_layer: False
+    
+    # tgn01_nd03_1_2:
+    #   device_group22:
+    #     ethernet:
+    #       start_mac_addr: 00:07:02:01:00:01
+    #       mac_addr_step: 1
+    #       start_vlan_id: 1002
+    #       vlan_id_step: 1
+    #       vlan_count: 1
+    #       hosts_per_vlan: 1
+    #       ipv4:
+    #         start_ipv4_addr: 100.2.60.1
+    #         start_ipv4_prefix_len: 16
+    #         start_ipv4_gw: 100.2.1.1
+    #         step_ipv4_addr_per_vlan: 0.0.1.0
+    #         step_ipv4_addr_host: 0.0.0.1
+    #         step_ipv4_gw: 0.0.0.0
+    #         next_layer: False
+  
+  # node02:
+  #   tgn01_nd02_1_1:
+  #     device_group31:
+  #       ethernet:
+  #         start_mac_addr: 00:08:01:01:00:01
+  #         mac_addr_step: 1
+  #         start_vlan_id: 1001
+  #         vlan_id_step: 1
+  #         vlan_count: 1
+  #         hosts_per_vlan: 1
+  #         ipv4:
+  #           start_ipv4_addr: 100.1.100.1
+  #           start_ipv4_prefix_len: 16
+  #           start_ipv4_gw: 100.1.1.1
+  #           step_ipv4_addr_per_vlan: 0.0.1.0
+  #           step_ipv4_addr_host: 0.0.0.1
+  #           step_ipv4_gw: 0.0.0.0
+  #           next_layer: False
+    
+  #   tgn01_nd02_1_2:
+  #     device_group32:
+  #       ethernet:
+  #         start_mac_addr: 00:08:02:01:00:01
+  #         mac_addr_step: 1
+  #         start_vlan_id: 1001
+  #         vlan_id_step: 1
+  #         vlan_count: 1
+  #         hosts_per_vlan: 1
+  #         ipv4:
+  #           start_ipv4_addr: 100.1.110.1
+  #           start_ipv4_prefix_len: 16
+  #           start_ipv4_gw: 100.1.1.1
+  #           step_ipv4_addr_per_vlan: 0.0.1.0
+  #           step_ipv4_addr_host: 0.0.0.1
+  #           step_ipv4_gw: 0.0.0.0
+  #           next_layer: False
+
+tgen_traffic_profile:
+  fabric_fwd_anycast_gw_mac: 00:00:de:ad:be:ef
+  node01:
+    ##Type5 traffic streams-V4
+    node01_node03:
+      flow: 'routed'
+      type: 'ipv4'
+      udp_src_port: 1121
+      udp_dst_port: 1122
+      frame_size: 128
+      traffic_rate: 10
+      tgen_src_port: tgn01_nd01_1_1
+      tgen_src_device_group: device_group11
+      tgen_dst_port:
+        tgn01_nd03_1_1:
+          tgen_dst_device_group: device_group21
+            # rx_traffic_expected: True
+        # tgn01_nd04_1_1:
+        #   tgen_dst_device_group: device_group06
+        #   rx_traffic_expected: True
+        # tgn01_nd05_1_2:
+        #   tgen_dst_device_group: device_group06
+        #   rx_traffic_expected: True
+        # tgn01_nd06_1_2:
+        #   tgen_dst_device_group: device_group06
+        #   rx_traffic_expected: True
+  node03:
+    node03_node01:
+      flow: 'routed'
+      type: 'ipv4'
+      udp_src_port: 1121
+      udp_dst_port: 1122
+      frame_size: 128
+      traffic_rate: 10
+      tgen_src_port: tgn01_nd03_1_1
+      tgen_src_device_group: device_group21
+      tgen_dst_port:
+        tgn01_nd01_1_1:
+          tgen_dst_device_group: device_group11
+            # rx_traffic_expected: True

@@ -1,0 +1,835 @@
+# extends: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_128_MSite_Scale/VxLAN_128_MSite_Scale_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_128_MSite_Scale/VxLAN_128_MSite_Scale_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+# TcamCarvingAndReload:
+#   source:
+#     pkg: lib.triggers.tcam_config.tcam_config
+#     class: TcamCarvingAndReload
+#   trigger_wait_time: '700'
+#   timeout: 700
+
+# Common Setup to configure the VxLAN
+TC_002_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+# # Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+TC_003_TriggerConvertL3VNIOld2New:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerConvertL3VNIOld2New
+    device_dut:
+        - node3_s1_bgw_1
+        - node4_s1_bgw_2
+        - node5_s1_leaf_1
+        - node7_s2_bgw_1
+        - node8_s2_bgw_2
+        - node9_s2_leaf_1
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+TC_004_ConfigureScaleMSiteVtepBgpSessionDCI:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: ConfigureScaleMSiteVtepBgpSessionDCI
+    device_dut:
+        - node1_cs_dci
+
+# # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+TC_005_ConfigureScaleInterSiteVtepBgpSessionS1Spine:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: ConfigureScaleInterSiteVtepBgpSessionS1Spine
+    device_dut:
+        - node2_s1_spine
+
+# # Configuration Adjustment, Add BGP Sessions for TGEN Emulation
+TC_006_ConfigureScaleInterSiteVtepBgpSessionS2Spine:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: ConfigureScaleInterSiteVtepBgpSessionS2Spine
+    device_dut:
+        - node6_s2_spine
+
+# Configure IXIA Before Converting and Before Scale
+TC_007_ConfigureIxia:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/auto/dc3-india/havadhut/automation/py_automation_develop/nexus-test-automation/eor/regression/nxos/test/N39kRegression/test/functional/Vxlan/VxLAN_FT_Regr/VxLAN_128_MSite_Scale/128_Sites_75_L3VNI_150_L2VNI_Fabric_VTEP.ixncfg"
+
+# Trigger Flap Fabric Link Before Converting and Before Scale
+TC_008_TriggerFabricLinkFlap_S1_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerFabricLinkFlap
+    device_dut:
+        - node3_s1_bgw_1
+    wait_time: '300'
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap DCI Link Before Converting and Before Scale
+TC_009_TriggerDCILinkFlap_S1_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node4_s1_bgw_2
+    wait_time: '300'
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap Fabric Link Before Converting and Before Scale
+TC_010_TriggerFabricLinkFlap_S2_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerFabricLinkFlap
+    device_dut:
+        - node7_s2_bgw_1
+    wait_time: '300'
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap DCI Link Before Converting and Before Scale
+TC_011_TriggerDCILinkFlap_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node8_s2_bgw_2
+    wait_time: '300'
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap NVE
+TC_012_TriggerFlapNve:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerFlapNve
+    device_dut:
+        - node3_s1_bgw_1
+        - node8_s2_bgw_2
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '300'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap NVE Source interface loopback
+TC_013_TriggerNveSrcLoopbackFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    loopback_range:
+        "1"
+    converge_sec: 240
+    # start_wait_time: 2
+    # stop_wait_time: 10
+    # verify_wait_time: 2
+    # traffic_convergence_time: 120
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Flap NVE Source interface loopback
+TC_014_TriggerMultisiteSrcLoopbackFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node3_s1_bgw_1
+        - node8_s2_bgw_2
+    loopback_range:
+        "100"
+    converge_sec: 240
+    # start_wait_time: 2
+    # stop_wait_time: 10
+    # verify_wait_time: 2
+    # traffic_convergence_time: 120
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Clear ARP and Mac address table
+TC_015_TriggerClearARPAndMAC:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    clear_cmd_lst:
+        - clear ip arp force-delete
+        - clear mac address-table dynamic
+    trigger_wait_time: '30'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Clear IPv4 Route for all VRF's Before Converting and Before Scale
+TC_016_TriggerClearIPv4RouteVrfAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node3_s1_bgw_1
+        - node8_s2_bgw_2
+    clear_cmd_lst:
+        - clear ip route vrf all *
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Clear IPv4 Route for all VRF's Before Converting and Before Scale
+TC_017_TriggerClearIPv6RouteVrfAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    clear_cmd_lst:
+        - clear ipv6 route vrf all *
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Clear IP BGP All Before Converting and Before Scale
+TC_018_TriggerClearBgpAll:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    device_dut:
+        - node3_s1_bgw_1
+        - node8_s2_bgw_2
+    clear_cmd_lst:
+        - clear ip bgp vrf all *
+    trigger_wait_time: '300'
+    convergence_time: '60'
+    traffic_convergence_time: 120
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Restart Process CLI BGP
+TC_019_TriggerRestartBgpCLI:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node3_s1_bgw_1
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+        - node8_s2_bgw_2
+    timeout:
+        max_time: 300
+        interval: 20
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Restart Process NVE
+TC_020_TriggerRestartProcessKillNVE:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+    source:
+        pkg: genie.libs.sdk.triggers.processrestart.nve.nxos.processrestart
+        class: TriggerProcessKillRestartNve
+    devices:
+        - node3_s1_bgw_1
+        - node8_s2_bgw_2
+    timeout:
+        max_time: 300
+        interval: 20
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Disable Enable feature nv overlay
+TC_021_TriggerDisableAndEnableNveOverlay_S1_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node3_s1_bgw_1
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '220'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Disable Enable feature nv overlay
+TC_022_TriggerDisableAndEnableNveOverlay_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node8_s2_bgw_2
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '220'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Remove/Add new L3VNI Under VRF After Converting and Before Scale
+TC_023_TriggerRemoveAddNewL3VNIUnderVRF:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerRemoveAddNewL3VNIUnderVRF
+    device_dut:
+        - node4_s1_bgw_2
+        - node7_s2_bgw_1
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Reload for Site-1 BGW-1
+TC_024_TriggerReloadBGW_S1_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    devices:
+        - node3_s1_bgw_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Trigger Reload for Site-2 BGW-2
+TC_025_TriggerReloadBGW_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    devices:
+        - node8_s2_bgw_2
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReload
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 2500
+        interval: 60
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+# Reload Fabric Modules
+TC_026_TriggerReloadFabricModules_S2_BGW_2:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: genie.libs.sdk.triggers.ha.reload.nxos.reload
+        class: TriggerReloadFabricModule
+    devices:
+        - node8_s2_bgw_2
+    timeout:
+        max_time: 500
+        interval: 20
+    num_values:
+        oc: '1'
+    traffic_convergence_time: 300
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+TC_027_TriggerReloadLC_S2_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    source:
+        pkg: lib.triggers.flap
+        class: eor_triggers.ReloadLC
+    device_dut:
+        - node7_s2_bgw_1
+    intf_list:
+        - nd07_nd01_1_1
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+TC_028_TriggerConfigRollBack_S2_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: 240
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node7_s2_bgw_1']
+            cmd: ['no interface nve 1']
+    cc_dut_list: ['node3_s1_bgw_1', 'node4_s1_bgw_2', 'node5_s1_leaf_1']
+
+TC_029_TriggerSSO_S2_BGW_1:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyTraffic
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: doCopyRunToStart
+            VerifyCC:
+                pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+                method: VerifyCC
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+        class: TriggerSSO
+    device_dut:
+        - node7_s2_bgw_1
+
+# # Trigger NVE delete and config rollback
+# TC_009_TriggerConfigureRollback_intNVE_S1_BGWs:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureRollback
+#     trigger_wait_time: 180
+#     traffic_convergence_time: 180
+#     verify_dict:
+#         node01:
+#             test_dut: ['node3_s2_bgw_1', 'node4_s2_bgw_2']
+#             cmd: ['no interface nve 1']
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Configure IXIA Before Converting and Before Scale
+# TC_002_ConfigureIxiaBeforeScale:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: ConfigureIxia
+#     datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_128_MSite_Scale/VxLAN_128_MSite_Scale_config.yaml)}"
+
+# # Trigger Remove/Add L3VNI Under VRF Before Converting and Before Scale
+# TC_007_TriggerRemoveAddL3VniUnderVrfBeforeScale_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.remove_add
+#         class: remove_add.RemoveAddL3VniUnderVrf
+#     device_dut:
+#         - node3_s2_bgw_1
+#         - node4_s2_bgw_2
+#     wait_time: '60'
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+
+# # Trigger Delete Recreate VLAN Before Converting and Before Scale
+# TC_008_TriggerDeleteRecreateVlan_S1_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node3_s2_bgw_1
+#         - node4_s2_bgw_2
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "101,103,3-4,7-8"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Trigger Delete Recreate VLAN After Converting and Before Scale
+# TC_017_TriggerDeleteRecreateVlan_S2_BGWs:
+#     source:
+#         pkg: lib.triggers.change_config
+#         class: change_config.UnconfigConfigVlan
+#     device_dut:
+#         - node7_s3_bgw_1
+#         - node8_s3_bgw_2
+#     traffic_convergence_time: 120
+#     convergence_wait_time: '180'
+#     wait_time: '60'
+#     vlan_range:
+#         "104,106,9-10,13-14"
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+
+# # Reload EOR LC
+# TriggerReloadLC:
+#     processors:
+#         post:
+#             VerifyTraffic:
+#                 pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#                 method: VerifyTraffic
+#     source:
+#         pkg: lib.triggers.flap
+#         class: eor_triggers.ReloadLC
+#     device_dut:
+#         - node7_s3_bgw_1
+#     intf_list:
+#         - nd07_nd01_1_1
+
+# # # Sample in script test
+# SampleTest:
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_128_MSite_Scale.VxLAN_128_MSite_Scale_script
+#         class: SampleTest

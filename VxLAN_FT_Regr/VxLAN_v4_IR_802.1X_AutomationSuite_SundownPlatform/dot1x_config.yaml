@@ -1,0 +1,1567 @@
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+# Author information:                                              #
+#        __author__ = 'Nexus India VxLAN DevTest Group'            #
+#        __copyright__ = 'Copyright (c) 2023, Cisco Systems Inc.'  #
+#        __contact__ = ['absr@cisco.com']                          #
+#        __credits__ = ['absr']                                    #
+#        __version__ = 2.0                                         #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+#    Node List:                                                    #
+#            node01_spine        : GX-SPINE                        #
+#            node02_vpcVtep1     : GX-EOR-1                        #
+#            node03_vpcVtep2     : GX-EOR-2                        #
+#            node04_stdVtep3     : GX-TOR-1                        #
+#            node05_vpcFANOUT    : GX-FAN-1                        #
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+parameters:
+    context: cli
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #   Features to be enabled on each device with specified by alias  #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    enable_features:
+        
+        # SIPNE-Device (GX-SPINE)
+        node01_spine:
+            - lldp
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+        
+        # VPC-VTEP-1 (GX-EOR-1)
+        node02_vpcVtep1:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+          
+        # VPC-VTEP-2 (GX-EOR-2)
+        node03_vpcVtep2:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - bgp
+            - vxlan            
+        
+        # STANDLONE-VTEP-3 (GX-TOR-1)
+        node04_stdVtep3:
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+            
+        # FANOUT-Device (GX-FAN-1)
+        node05_vpcFANOUT:
+            - lldp
+            - lacp
+    
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                 Interface Level Configuration                    #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    interface_config: 
+
+        # on GX-SPINE-Device
+        node01_spine:
+            # Loopback interfaces
+            loopback0:
+                description: "### RID | Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 10.1.1.1
+                    prefix_length: 255.255.255.255
+
+            # SPINE towards VTEP-1 as Link-1
+            nd01_nd02_1_1:
+                enabled: True
+                description: "### SPINE Towards VTEP-1 as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 12.12.12.1
+                    prefix_length: 255.255.255.0
+            # SPINE towards VTEP-1 as Link-2
+            nd01_nd02_1_2:
+                enabled: True
+                description: "### SPINE Towards VTEP-1 as Link-2 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 12.12.21.1
+                    prefix_length: 255.255.255.0
+            # SPINE towards VTEP-2 as Link-1
+            nd01_nd03_1_1:
+                enabled: True
+                description: "### SPINE Towards VTEP-2 as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 13.13.13.1
+                    prefix_length: 255.255.255.0
+            # SPINE towards VTEP-2 as Link-2
+            nd01_nd03_1_2:
+                enabled: True
+                description: "### SPINE Towards VTEP-2 as Link-2###"
+                switchport_enable: False
+                ipv4:
+                    ip: 13.13.31.1
+                    prefix_length: 255.255.255.0
+            # SPINE towards VTEP-3 as Link-1
+            nd01_nd04_1_1:
+                enabled: True
+                description: "### SPINE Towards VTEP-3 as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 14.14.14.1
+                    prefix_length: 255.255.255.0
+            # SPINE towards VTEP-3 as Link-2
+            nd01_nd04_1_2:
+                enabled: True
+                description: "### SPINE Towards VTEP-3 as link-2 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 14.14.41.1
+                    prefix_length: 255.255.255.0
+
+        # on GX-EOR-1 Device
+        node02_vpcVtep1:
+            # Loopback Interfaces
+            loopback0:
+                description: "### RID | Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 20.1.1.1
+                    prefix_length: 255.255.255.255
+
+            loopback1:
+                description: "### VTEP-1 | NVE loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 20.5.5.5
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 50.50.50.50
+                    prefix_length: 255.255.255.255
+
+            # VTEP-1 towards SPINE as Link-1
+            nd02_nd01_1_1:
+                enabled: True
+                description: "### VTEP-1 Towards SPINE as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 12.12.12.2
+                    prefix_length: 255.255.255.0
+            # VTEP-1 towards SPINE as Link-2
+            nd02_nd01_1_2:
+                enabled: True
+                description: "### Towards SPINE as Link-2 ###"
+                switchport_enable: False 
+                ipv4:
+                    ip: 12.12.21.2
+                    prefix_length: 255.255.255.0
+
+            # VPC Peer-keep-alive
+            nd02_nd03_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                description: "### VTEP-1 VPC Peer-keep-alive ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 10.2.2.1
+                    prefix_length: 255.255.255.0
+
+            # VPC Peer-Link
+            nd02_nd03_1_2:
+                enabled: True
+            nd02_nd03_1_3:
+                enabled: True
+            nd02_nd03_1_4:
+                enabled: True
+            Port-channel23:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                spanning-tree port type: network
+                switchport_mode: trunk
+                trunk_vlans: "201-202,1001-1002"
+                add_members: nd02_nd03_1_2, nd02_nd03_1_3, nd02_nd03_1_4
+
+            # VPC LEG
+            nd02_nd05_1_1:
+                enabled: True
+            nd02_nd05_1_2:
+                enabled: True                
+            Port-channel25:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "201-202,1001-1002"
+                add_members: nd02_nd05_1_1, nd02_nd05_1_2
+
+            # IXIA T.GEN as Link-1
+            nd02_tgen_1_1:
+                description: "### VTEP-1 Towards T.Gen as Link-1 ###"
+                enabled: True
+                switchport_enable: True
+
+            # IXIA T.GEN as Link-2
+            nd02_tgen_1_2:
+                description: "### VTEP-1 Towards T.Gen as Link-2 ###"
+                enabled: True
+                switchport_enable: True
+
+            # Backup SVI for VPC
+            Vlan2:
+                enabled: True
+                description: "### Backup SVI ###"
+                ipv4:
+                    ip: 2.2.2.1
+                    prefix_length: 255.255.255.0
+                    redirect: False
+
+            # L2VNI SVI Configs
+            Vlan1-1:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900000
+                    step: ''
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.2.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.1.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            Vlan201-202:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 201.201.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 1.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan101-102:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'VTEP-1 -- NVE-1 Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                nve_adv_virtual_rmac: True
+                enabled: True
+                nve_vni_dict:
+                    
+                    # L2VNI
+                    201201:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    202202:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001000:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    
+                    # L3VNI
+                    900001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    900002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # on GX-EOR-2
+        node03_vpcVtep2:
+            # Loopback Interfaces
+            loopback0:
+                description: "### RID | Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 30.1.1.1
+                    prefix_length: 255.255.255.255
+
+            loopback1:
+                description: "### VTEP-2 | NVE loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 30.5.5.5
+                    prefix_length: 255.255.255.255
+                ipv4_sec:
+                    ip: 50.50.50.50
+                    prefix_length: 255.255.255.255
+
+            # VTEP-2 towards SPINE as Link-1
+            nd03_nd01_1_1:
+                enabled: True
+                description: "### VTEP-2 Towards SPINE as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 13.13.13.2
+                    prefix_length: 255.255.255.0
+            # VTEP-2 towards SPINE as Link-2
+            nd03_nd01_1_2:
+                enabled: True
+                description: "### VTEP-2 Towards SPINE as Link-2 ###"
+                switchport_enable: False                    
+                ipv4:
+                    ip: 13.13.31.2
+                    prefix_length: 255.255.255.0
+            # VPC Peer-keep-alive
+            nd03_nd02_1_1:
+                enabled: True
+                vrf : "peer-keep-alive"
+                description: "### VPC Peer-keep-alive ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 10.2.2.2
+                    prefix_length: 255.255.255.0
+
+            # VPC Peer-Link
+            nd03_nd02_1_2:
+                enabled: True
+            nd03_nd02_1_3:
+                enabled: True
+            nd03_nd02_1_4:
+                enabled: True
+            Port-channel23:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "201-202,1001-1002"
+                add_members: nd03_nd02_1_2, nd03_nd02_1_3, nd03_nd02_1_4
+
+            # VPC LEG towards FANOUT
+            nd03_nd05_1_1:
+                enabled: True
+            nd03_nd05_1_2:
+                enabled: True                
+            Port-channel25:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "201-202,1001-1002"
+                add_members: nd03_nd05_1_1, nd03_nd05_1_2
+
+            # IXIA T.GEN as link-1
+            nd03_tgen_1_1:
+                description: "### VTEP-2 Towards T.Gen as Link-1 ###"
+                enabled: True
+                switchport_enable: True
+
+            # IXIA T.GEN as link-2
+            nd03_tgen_1_2:
+                description: "### VTEP-2 Towards T.Gen as Link-2 ###"
+                enabled: True
+                switchport_enable: True
+
+            # Backup SVI for VPC
+            Vlan2:
+                enabled: True
+                description: "### Backup SVI ###"
+                ipv4:
+                    ip: 2.2.2.2
+                    prefix_length: 255.255.255.0
+            
+            # L2VNI SVI Configs
+            Vlan1-1:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900000
+                    step: ''
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.2.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.1.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            Vlan201-202:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 201.201.2.2
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 1.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan101-102:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'VTEP-2 -- NVE-1 Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_global_ir_proto: bgp
+                nve_adv_virtual_rmac: True
+                nve_global_suppress_arp: True
+                enabled: True
+                nve_vni_dict:
+
+                    # L2VNI
+                    201201:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    202202:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001000:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    
+                    # L3VNI
+                    900001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    900002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # on GX-TOR-1
+        node04_stdVtep3:
+            # Loopback Interfaces
+            loopback0:
+                description: "### RID | Loopback ###"
+                enabled: True
+                ipv4:
+                    ip: 40.1.1.1
+                    prefix_length: 255.255.255.255
+
+            loopback1:
+                description: "### VTEP-3 | NVE loopback interface ###"
+                enabled: True
+                ipv4:
+                    ip: 40.5.5.5
+                    prefix_length: 255.255.255.255
+
+            # VTEP-3 towards SPINE as Link-1
+            nd04_nd01_1_1:
+                enabled: True
+                description: "### VTEP-3 Towards SPINE as Link-1 ###"
+                switchport_enable: False
+                ipv4:
+                    ip: 14.14.14.2
+                    prefix_length: 255.255.255.0
+            # VTEP-3 towards SPINE as Link-2
+            nd04_nd01_1_2:
+                enabled: True
+                description: "### VTEP-3 Towards SPINE as Link-2 ###"
+                switchport_enable: False      
+                ipv4:
+                    ip: 14.14.41.2
+                    prefix_length: 255.255.255.0
+
+            # IXIA T.GEN as Link-1
+            nd04_tgen_1_1:
+                description: "### VTEP-3 Towards T.Gen as Link-1 ###"
+                enabled: True
+                switchport_enable: True
+
+            # IXIA T.GEN as Link-2
+            nd04_tgen_1_2:
+                description: "### VTEP-3 Towards T.Gen as Link-2 ###"
+                enabled: True
+                switchport_enable: True
+
+            # L2VNI SVI Configs
+            Vlan1-1:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900000
+                    step: ''
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.1.1.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.0.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False            
+            Vlan1001-1002:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 4.2.2.1
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 0.1.1.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+            Vlan201-202:
+                description: "L2VNI"
+                fabric_forwarding_mode: anycast-gateway
+                enabled: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    start_ipv4_addr: 201.201.3.3
+                    start_ipv4_prefix_len: 255.255.255.0
+                    step_ipv4_addr: 1.1.0.0
+                    step_ipv4_len: 0.0.0.0
+                    redirect: False
+
+            # L3VNI SVI Configs
+            Vlan101-102:
+                description: "L3VNI"
+                enabled: True
+                ip_forward: True
+                ipv6_forward: True
+                vrf:
+                    start: 900001
+                    step: 000001
+                    prefix: 'VRF-vxlan'
+                ipv4:
+                    redirect: False
+                ipv6:
+                    redirect: False
+
+            # NVE Configs
+            nve1:
+                description: 'VTEP-3 -- NVE-1 Interface'
+                nve_host_reachability_protocol: bgp
+                nve_src_intf_loopback: loopback1
+                nve_src_intf_holddown: 240
+                nve_adv_virtual_rmac: True
+                nve_global_ir_proto: bgp
+                nve_global_suppress_arp: True
+                enabled: True
+                nve_vni_dict:
+                    
+                    # L2VNI
+                    201201:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    202202:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001000:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001001:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    2001002:
+                        nve_vni_type: 'L2'
+                        nve_vni_suppress_arp: True
+                        nve_vni_ir: true
+                        nve_vni_ir_proto: bgp
+                    
+                    # L3VNI
+                    900001:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+                    900002:
+                        nve_vni_type: 'L3'
+                        nve_vni_associate_vrf: True
+
+        # on GX-FAN-1
+        node05_vpcFANOUT:
+            
+            # VPC FANOUT towards VTEP-1 and VTEP-2
+            nd05_nd02_1_1:
+                enabled: True
+            nd05_nd02_1_2:
+                enabled: True                
+            nd05_nd03_1_1:
+                enabled: True
+            nd05_nd03_1_2:
+                enabled: True                
+            Port-channel25:
+                channel_group_mode: active
+                enabled: True
+                switchport_enable: True
+                switchport_mode: trunk
+                trunk_vlans: "201-202, 1001-1002"
+                add_members: nd05_nd02_1_1, nd05_nd02_1_2, nd05_nd03_1_1, nd05_nd03_1_2
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                       OSPF Configuration                         #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    ospf_config:
+        
+        # GX-SPINE DEVICE ------------------------
+        node01_spine:
+            default:
+                instance: p1
+                router_id: 10.10.10.10
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    loopback0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+
+                    # To VTEP-1 as Link-1
+                    nd01_nd02_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # To VTEP-1 as Link-2
+                    nd01_nd02_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+                    # To VTEP-2 as Link-1
+                    nd01_nd03_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # To VTEP-2 as Link-2
+                    nd01_nd03_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+                    # To VTEP-3 as Link-1
+                    nd01_nd04_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # To VTEP-3 as Link-2
+                    nd01_nd04_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'                        
+                    
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            default:
+                instance: p1
+                router_id: 20.20.20.20
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    loopback0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    loopback1:
+                        if_admin_control: True
+                        area: 0.0.0.0                     
+                    
+                    # TO SPINE as Link-1
+                    nd02_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # TO SPINE as Link-2
+                    nd02_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'                        
+                    
+                    # Back up Link
+                    vlan2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            default:
+                instance: p1
+                router_id: 30.30.30.30
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    
+                    # Loopbacks
+                    loopback0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    loopback1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    
+                    # TO SPINE
+                    nd03_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    nd03_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    
+                    # Back up Link
+                    vlan2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'                        
+
+        # STANDLONE VTEP (GX-TOR-1) ----------------------
+        node04_stdVtep3:
+            default:
+                instance: p1
+                router_id: 40.40.40.40
+                log_adjacency_changes: True
+                log_adjacency_changes_detail: True
+                interface_config:
+                    # Loopbacks
+                    loopback0:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    loopback1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                    
+                    # TO SPINE as Link-1
+                    nd04_nd01_1_1:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'
+                    # TO SPINE as Link-2
+                    nd04_nd01_1_2:
+                        if_admin_control: True
+                        area: 0.0.0.0
+                        if_cost: 1
+                        if_type: 'point-to-point'                        
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                        VLAN Configuration                        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    vlan_config:
+        
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            -   vlan: "1"
+                vn_segment_id: "2001000"
+            -   vlan: "201"
+                vn_segment_id: "201201"
+            -   vlan: "202"
+                vn_segment_id: "202202"
+            -   vlan: "1001-1002"
+                vn_segment_id: "2001001-2001002"
+            -   vlan: "101-102"
+                vn_segment_id: "900001-900002"
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            -   vlan: "1"
+                vn_segment_id: "2001000"
+            -   vlan: "201"
+                vn_segment_id: "201201"
+            -   vlan: "202"
+                vn_segment_id: "202202"
+            -   vlan: "1001-1002"
+                vn_segment_id: "2001001-2001002"
+            -   vlan: "101-102"
+                vn_segment_id: "900001-900002"
+
+        # STD VTEP-3 (GX-tOR-1) --------------------------
+        node04_stdVtep3:
+            -   vlan: "1"
+                vn_segment_id: "2001000"
+            -   vlan: "201"
+                vn_segment_id: "201201"
+            -   vlan: "202"
+                vn_segment_id: "202202"
+            -   vlan: "1001-1002"
+                vn_segment_id: "2001001-2001002"
+            -   vlan: "101-102"
+                vn_segment_id: "900001-900002"
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                   Route-Map Configuration                        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    route_policy_config:
+
+        # SPINE (GX-SPINE) --------------------------
+        node01_spine:       
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+        
+        # VPC VTEP-1 (GX-EOR-1) ---------------------
+        node02_vpcVtep1:        
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # VPC VTEP-2 (GX-EOR-2) ---------------------
+        node03_vpcVtep2:        
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+        # STD VTEP-3 (GX-TOR-1) ---------------------
+        node04_stdVtep3:        
+            -   route_policy: "ANY"
+                route_disposition: "permit"
+                statement_name: 10
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                       VxLAN Configuration                        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    vxlan_config:
+        
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+        # STD VTEP-3 (GX-TOR-1) --------------------------
+        node04_stdVtep3:
+            fabric_fwd_anycast_gw_mac: 0000.000a.aaaa
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                     VxLAN EVPN Configuration                     #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    evpn_config:
+        
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            vni_list:
+                -   vni_id: 2001001-2001002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 201201
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 202202
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            vni_list:
+                -   vni_id: 2001001-2001002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 201201
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 202202
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+        # STD VTEP-3 (GX-TOR-1) --------------------------
+        node04_stdVtep3:
+            vni_list:
+                -   vni_id: 2001001-2001002
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 201201
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+                -   vni_id: 202202
+                    rd: auto
+                    rt_list:
+                        -   rt: "auto"
+                            rt_type: both
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                           VRF Configuration                      #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    vrf_config: 
+
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900000"
+                    vni: "900000"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900001"
+                    vni: "900001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900002"
+                    vni: "900002"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900000"
+                    vni: "900000"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900001"
+                    vni: "900001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900002"
+                    vni: "900002"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+        # STD VTEP-3 (GX-TOR-1) --------------------------
+        node04_stdVtep3:
+            vrf_list:
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900000"
+                    vni: "900000"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900001"
+                    vni: "900001"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+                -   prefix: "VRF"
+                    vrf_name: "vxlan-900002"
+                    vni: "900002"
+                    rd: 'auto'
+                    address_family_attr:
+                      - af_name: 'ipv4 unicast'
+                        rt_attr: 'auto'
+                        rt_type: 'both'
+                        protocols:
+                         - protocol: 'evpn'
+                           rt_evpn: True
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                          PIM Configuration                       #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    pim_config: {}
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #                       BGP configuration                          #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    bgp_config: 
+
+        # SPINE (GX-SPINE) -------------------------------
+        node01_spine:
+            default:
+                bgp_id: 65535
+                router_id: 10.1.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                maxas_limit: 10
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                # Underlay BGP Session
+                # BGP Neighbors towards GX-EOR-1
+                    -   neighbor_id: 20.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'VTEP-1 Connectivity to 20.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                # BGP Neighbors towards GX-EOR-2
+                    -   neighbor_id: 30.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'VTEP-2 Connectivity to 30.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+                # BGP Neighbors towards GX-TOR-1
+                    -   neighbor_id: 40.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'VTEP-3 Connectivity to 40.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+                                nbr_af_route_reflector_client: True
+
+        # VPC VTEP-1 (GX-EOR-1) --------------------------
+        node02_vpcVtep1:
+            default:
+                bgp_id: 65535
+                router_id: 20.1.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                    # Underlay BGP Session
+                    # BGP Neighbors towards GX-SPINE
+                    -   neighbor_id: 10.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'Towards SPINE Connectivity to 10.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "VRF-vxlan-900000":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900001":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900002":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+        # VPC VTEP-2 (GX-EOR-2) --------------------------
+        node03_vpcVtep2:
+            default:
+                bgp_id: 65535
+                router_id: 30.1.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_advertise_pip: True
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                    # Underlay BGP Session
+                    # BGP Neighbors towards GX-SPINE
+                    -   neighbor_id: 10.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'Towards SPINE Connectivity to 10.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "VRF-vxlan-900000":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900001":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900002":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+        # STANDLONE VTEP (GX-TOR-1) ----------------------
+        node04_stdVtep3:
+            default:
+                bgp_id: 65535
+                router_id: 40.1.1.1
+                keepalive_interval: 90
+                prefix_peer_timeout: 270
+                holdtime: 270
+                graceful_restart_restart_time: 600
+                log_neighbor_changes: True
+                address_family_attr:
+                    -   af_name: 'l2vpn evpn'
+                        af_maximum_paths_ebgp: 64
+                        af_retain_rt_all: True
+                    -   af_name: 'ipv4 unicast'
+                        af_maximum_paths_ebgp: 64
+                        af_maximum_paths_ibgp: 64
+                        af_redist_connected: True
+                        af_redist_connected_route_policy: 'ANY'
+                neighbor_attr:
+                    # Underlay BGP Session
+                    # BGP Neighbors towards GX-SPINE
+                    -   neighbor_id: 10.1.1.1
+                        nbr_remote_as: 65535
+                        nbr_description: 'Towards SPINE Connectivity to 10.1.1.1'
+                        nbr_update_source: 'loopback0'
+                        nbr_keepalive_interval: 90
+                        nbr_holdtime: 270
+                        address_family_attr:
+                            -   nbr_af_name: 'l2vpn evpn'
+                                nbr_af_send_community: 'both'
+            # BGP VRF Configs
+            "VRF-vxlan-900000":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900001":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+            "VRF-vxlan-900002":
+                bgp_id: 65535
+                address_family_attr:
+                  - af_name: 'ipv4 unicast'
+                    af_advertise_l2_evpn: True
+                    af_maximum_paths_ebgp: 64
+                    af_maximum_paths_ibgp: 64
+                    af_redist_connected: True
+                    af_redist_connected_route_policy: 'ANY'
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #           Added Missing (user defined) Configuration             #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    missing_config: 
+
+        # SPINE-Device (GX-SPINE)
+        node01_spine: |
+            router bgp 65535
+                reconnect-interval 1
+
+        # VPC-VTEP-1 (GX-EOR-1)
+        node02_vpcVtep1: |
+            system nve infra-vlans 2
+            vlan 2
+            
+            router ospf p1
+              maximum-paths 64
+            
+            vrf context peer-keep-alive
+            
+            router bgp 65535
+                reconnect-interval 1            
+            
+            vpc domain 10
+                peer-switch
+                role priority 100
+                peer-keepalive destination 10.2.2.2 source 10.2.2.1 vrf peer-keep-alive
+                peer-gateway
+                layer3 peer-router
+                ipv6 nd synchronize
+                ip arp synchronize
+
+            interface port-channel23
+                vpc peer-link
+
+            interface port-channel25
+                vpc 25
+
+        # VPC-VTEP-2 (GX-EOR-2)
+        node03_vpcVtep2: |
+            system nve infra-vlans 2
+            vlan 2
+
+            router ospf p1
+              maximum-paths 64
+
+            vrf context peer-keep-alive
+
+            router bgp 65535
+                reconnect-interval 1
+
+            vpc domain 10
+                peer-switch
+                role priority 200
+                peer-keepalive destination 10.2.2.1 source 10.2.2.2 vrf peer-keep-alive
+                peer-gateway
+                layer3 peer-router
+                ipv6 nd synchronize
+                ip arp synchronize
+
+            interface port-channel23
+                vpc peer-link
+
+            interface port-channel25
+                vpc 25
+
+        # std-VTEP-3 (GX-TOR-1)
+        node04_stdVtep3: |
+            router bgp 65535
+                reconnect-interval 1                  
+
+            router ospf p1
+              maximum-paths 64
+
+
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #         Features to be disabled as part of Common cleanup        #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    disable_features:
+        
+        # SIPNE-Device (GX-SPINE)
+        node01_spine:
+            - lldp
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+
+        # VPC-VTEP-1 (GX-EOR-1)
+        node02_vpcVtep1:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+          
+        # VPC-VTEP-2 (GX-EOR-2)
+        node03_vpcVtep2:
+            - lldp
+            - vlan
+            - vpc
+            - lacp
+            - ospf
+            - bgp
+            - vxlan            
+        
+        # STANDLONE-VTEP-3 (GX-TOR-1)
+        node04_stdVtep3:
+            - lldp
+            - vlan
+            - lacp
+            - ospf
+            - bgp
+            - vxlan
+            
+        # FANOUT-Device (GX-FAN-1)
+        node05_vpcFANOUT:
+            - lldp
+            - lacp      
+    
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+    #     Disabling the Added Missing (user defined) Configuration     #
+    #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+    disable_missing_config:
+
+        # VPC-VTEP-1 (GX-EOR-1)
+        node02_vpcVtep1: |
+            no system nve infra-vlans 2
+            no vlan 2
+            no vrf context peer-keep-alive
+            no route-map ANY permit 10
+            no interface port-channel 23
+            no interface port-channel 25
+            no interface port-channel 101
+            no interface loopback3
+            no feature dot1x
+
+        # VPC-VTEP-2 (GX-EOR-2)
+        node03_vpcVtep2: |
+            no system nve infra-vlans 2
+            no vlan 2
+            no vlan 1001-1002
+            no vlan 101-102
+            no vrf context peer-keep-alive
+            no interface port-channel 23
+            no interface port-channel 25
+            no interface port-channel 101
+            no feature dot1x
+
+        # std-VTEP-3 (GX-TOR-1)
+        node04_stdVtep3: |
+            no system nve infra-vlans 2
+            no vlan 2
+            no vlan 1001-1002
+            no vlan 101-102
+            no vrf context peer-keep-alive
+            no feature-set fex
+            no install feature-set fex
+            no feature dot1x

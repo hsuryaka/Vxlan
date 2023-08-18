@@ -1,0 +1,1949 @@
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+###################################################################
+###                  Initial Configurations                     ###
+###################################################################
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(featureConfigs/NR2F_TRM_Data_MDTv4v6_configs.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(verifyFiles/NR2F_TRM_Data_MDTv4v6_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+TC_002_TcamCarvingAndReload:
+    source:
+        pkg: lib.triggers.tcam_config.tcam_config
+        class: TcamCarvingAndReload
+    trigger_wait_time: 300
+    timeout_config: 300
+
+# Common Setup to configure the VxLAN
+TC_003_CommonSetup:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyErrLogs
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonSetup
+
+# Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+TC_004_ConfigureConvertL3VNIOld2New:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyErrLogs
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: TriggerConvertL3VNIOld2New
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node06_s1_leaf
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+        - node11_s2_leaf
+        - node13_s3_bgw
+        - node14_s3_leaf
+
+# # Configure IXIA Before Converting and Before Scale
+TC_005_ConfigureIxia:
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: ConfigureIxia
+    tgen_cfg_file: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(ixiaConfigs/NR2F_TRMv4v6_DMDT.ixncfg)}"
+
+# Configure TRM Data MDT
+TC_006_ConfigureDataMdt:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: ConfigureDataMdt
+    build_config_params:
+        - config_builder: BuildMissingConfig
+    config_params: data_mdt_config
+    copy_rs_flag: False
+    data_mdt_config_wait_time: 5
+    trigger_wait_time: 5
+    convergence_time: 5
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node06_s1_leaf
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+        - node11_s2_leaf
+        - node13_s3_bgw
+        - node14_s3_leaf
+    cli_cmd_lst:
+        - delete bootflash:trigger_data_mdt_config no-prompt
+        - checkpoint file bootflash:trigger_data_mdt_config
+    processors:
+        post:
+            # trmv4_data_mdt_encap_verify:
+            #     pkg: lib.verify.verify_trm_data_mdt
+            #     method: trmv4_data_mdt_encap_verify
+            # trmv4_data_mdt_decap_verify:
+            #     pkg: lib.verify.verify_trm_data_mdt
+            #     method: trmv4_data_mdt_decap_verify
+            # create_checkpoint:
+            #     pkg: lib.triggers.config_trigger_lib
+            #     method: CliExecution.cli_execution
+            # trmv6_data_mdt_encap_verify:
+            #     pkg: lib.verify.verify_trm_data_mdt
+            #     method: trmv6_data_mdt_encap_verify
+            # trmv6_data_mdt_decap_verify:
+            #     pkg: lib.verify.verify_trm_data_mdt
+            #     method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    # verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    # verify_trmv4_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    # verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    # verify_trmv6_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+###################################################################
+###         Triggers - Site1 AC BGW - Site2 VPC BGW             ###
+###################################################################
+
+# ------------------------------------------------------
+# Site-1 AC BGW 
+# ------------------------------------------------------
+
+TriggerFlapNve_ACBGW1:
+    device_dut:
+        - node04_s1_bgw1
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '30'
+
+TriggerFlapVrf_AcBgw2:
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node05_s1_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    vrfs: [ 'VRF-1','VRF-2', 'VRF-7', 'VRF-13','VRF-14','VRF-19', 'VRF-25', 'VRF-26', 'VRF-31' ]
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+
+TriggerDeleteAddNveInterface_ACBGW1:
+    trigger_wait_time: '60'
+    convergence_wait_time: '120'
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node04_s1_bgw1
+    feature_to_remove: 'interface nve1'
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRemoveAddNveVniMsiteIngressReplicationOptimized_S1ACBGW1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddNveVniMultisiteIngressReplicationOptimized
+    device_dut:
+        - node04_s1_bgw1
+    vni_list: [3003001,3003002,3003003,3003004,3003005,3003006,3003007,3003008,3003009,3003010,3003011,3003012]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRemoveAddNveVniMsiteIngressReplication_S1ACBGW2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddNveVniMultisiteIngressReplication
+    device_dut:
+        - node05_s1_bgw2
+    vni_list: [2001001,2001002,2001003,2001004,2001005,2001006,2001007,2001008,2001009,2001010,2001011,2001012]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerDciIsolation_S1AcBgw1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DciIsolationVpc
+    device_dut:
+        - node04_s1_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerFabricIsolation_S1AcBgw2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    wait_time: '60'
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node05_s1_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRemoveAddEvpnMsiteDciTracking_S1AcBgw1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddEvpnMsiteDciTracking
+    device_dut:
+        - node04_s1_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRemoveAddEvpnMsiteFabricTracking_S1AcBgw2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddEvpnMsiteFabricTracking
+    device_dut:
+        - node05_s1_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+# ------------------------------------------------------
+# Site-2 VPC BGW 
+# ------------------------------------------------------
+
+TriggerFlapNve_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 2
+    wait_time: '30'
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapNve
+    device_dut:
+        - node09_s2_bgw1
+    cli_to_parse: 'show running-config nv overlay'
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerFlapVrf_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node09_s2_bgw1
+    vrfs: [ 'VRF-1','VRF-2', 'VRF-7', 'VRF-13','VRF-14','VRF-19', 'VRF-25', 'VRF-26', 'VRF-31' ]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerFlapVrf_S2VpcBgwSecondary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node10_s2_bgw2
+    vrfs: [ 'VRF-1','VRF-2', 'VRF-7', 'VRF-13','VRF-14','VRF-19', 'VRF-25', 'VRF-26', 'VRF-31' ]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerVpcPeerLinkFlap_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    device_dut:
+        - node09_s2_bgw1
+    source:
+        pkg: lib.triggers.flap.interface_flap
+        class: VpcPeerlinkFlap
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerDciIsolation_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    wait_time: '60'
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DciIsolationVpc
+    device_dut:
+        - node09_s2_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerFabricIsolation_S2VpcBgwSecondary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    wait_time: '60'
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node10_s2_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerDeleteAddNveInterface_S2VpcBgwSecondary:
+    trigger_wait_time: '60'
+    convergence_wait_time: '120'
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node10_s2_bgw2
+    feature_to_remove: 'interface nve1'
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRemoveAddNveL3VniMultisiteMcastGroup_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddNveVniMultisiteMulticastGroup
+    device_dut:
+        - node09_s2_bgw1
+    vni_list: [3003037,3003038,3003039,3003040,3003041,3003042,3003043,3003044,3003045,3003046,3003047,3003048]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRemoveAddNveL2VniMultisiteMcastGroup_S2VpcBgwSecondary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddNveVniMultisiteMulticastGroup
+    device_dut:
+        - node10_s2_bgw2
+    vni_list: [2001037,2001038,2001039,2001040,2001041,2001042,2001043,2001044,2001045,2001046,2001047,2001048]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerChangeVpcRolePriority_S2VpcBgw:
+    trigger_wait_time: 30
+    convergence_time: 30
+    start_wait_time: 4
+    stop_wait_time: 60
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+    cli_cmd_lst:
+        - delete bootflash:trigger_checkpoint_role_change no-prompt
+        - checkpoint file bootflash:trigger_checkpoint_role_change
+    vpc_role_priority: 1
+    vpc_dut: 'secondary'
+    processors:
+        pre:
+            create_checkpoint:
+                pkg: lib.triggers.config_trigger_lib
+                method: CliExecution.cli_execution
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRevertChangeVpcRolePriority_S2VpcBgw:
+    trigger_wait_time: 30
+    convergence_time: 30
+    start_wait_time: 4
+    stop_wait_time: 60
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeVPCRolePriority
+    device_dut:
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+    cli_cmd_lst:
+        - delete bootflash:trigger_checkpoint_role_change no-prompt
+        - checkpoint file bootflash:trigger_checkpoint_role_change
+    vpc_role_priority: 200
+    vpc_dut: 'primary'
+    processors:
+        pre:
+            create_checkpoint:
+                pkg: lib.triggers.config_trigger_lib
+                method: CliExecution.cli_execution
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRemoveAddEvpnMsiteDciTracking_S2VpcBgw2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddEvpnMsiteDciTracking
+    device_dut:
+        - node10_s2_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRemoveAddEvpnMsiteFabricTracking_S2VpcBgw1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddEvpnMsiteFabricTracking
+    device_dut:
+        - node05_s1_bgw2
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerModifyNveSrcLoopbackIP_S2VpcBgwPrimary:
+    trigger_wait_time: 30
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    convergence_wait_time: '120'
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ModifyNveSrcLoopbackIP
+    device_dut:
+        - node09_s2_bgw1
+    nve_new_loopback_ip_dict:
+        node09_s2_bgw1: 2.2.21.21
+    ip_mask: '32'
+    nve_loopback: 'loopback1'
+    cli_to_parse: 'show running-config nv overlay'
+    cli_cmd_lst:
+        - delete bootflash:trigger_checkpoint no-prompt
+        - checkpoint file bootflash:trigger_checkpoint
+    processors:
+        pre:
+            create_checkpoint:
+                pkg: lib.triggers.config_trigger_lib
+                method: CliExecution.cli_execution
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRollbackNveSrcLoopbackIP_S2VpcBgwPrimary:
+    trigger_wait_time: 100
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    device_dut:
+        - node09_s2_bgw1
+    ip_mask: '32'
+    nve_loopback: 'loopback1'
+    nve_new_loopback_ip_dict:
+        node09_s2_bgw1: 2.21.21.21
+    source:
+        pkg: lib.triggers.config_trigger_lib
+        class: RollbackCheckpoint
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+# ------------------------------------------------------
+# Common Triggers
+# ------------------------------------------------------
+
+TriggerFlapL2SviRange_S1S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+    svi_range:
+        "1001-1002,1013-1014,1025-1026,1037-1038,1049-1050,1061-1062,1501-1502,1513-1514,1525-1526,1537-1538,1549-1550,1561-1562"
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerFlapL3SviRange_S1S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapSviRange
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+    svi_range:
+        "3001,3013,3025,3037,3049,3061"
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRestartProcessNgmvpn_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04_s1_bgw1
+        - node10_s2_bgw2
+    process_list:
+        - ngmvpn
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRestartProcessBgp_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+    process_list:
+        - bgp
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRestartProcessL2Rib_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04_s1_bgw1
+        - node10_s2_bgw2
+    process_list:
+        - l2rib
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRestartProcessPim_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+    process_list:
+        - pim
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRestartProcessIgmp_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node04_s1_bgw1
+        - node10_s2_bgw2
+    process_list:
+        - igmp
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerRestartProcessNve_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+    process_list:
+        - nve
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerRestartProcessMld_S1_S2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node05_s1_bgw2
+        - node06_s1_leaf
+    process_list:
+        - mld
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerClearIpMrouteVrfAll_S1AcBgw1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    trigger_wait_time: 30
+    convergence_time: 30
+    device_dut:
+        - node04_s1_bgw1
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst: [ 'clear ip mroute * vrf all' ]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerClearIpMrouteVrfAll_S2VpcBgwSecondary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    trigger_wait_time: 30
+    convergence_time: 30
+    device_dut:
+        - node10_s2_bgw2
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst: [ 'clear ip mroute * vrf all' ]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerClearIpv6MrouteVrfAll_S1AcBgw2:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    trigger_wait_time: 30
+    convergence_time: 30
+    device_dut:
+        - node05_s1_bgw2
+    source:
+        pkg: lib.triggers.clear
+        class: clear.Clear
+    clear_cmd_lst: [ 'clear ipv6 mroute * vrf all' ]
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerChangeDciIrToMcastL2_S1S2:
+    vni_flag: 'l2'
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeDciIrToMcastL2
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+        - node13_s3_bgw
+    vni_list: [2001001,2001002,2001003,2001004,2001005,2001006,2001007,2001008,2001009,2001010,2001011,2001012]
+    group_list: ['225.102.0.21']
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerChangeDciMcastToIrL2_S1S2:
+    vni_flag: 'l2'
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.ChangeDciMcastToIrL2
+    device_dut:
+        - node04_s1_bgw1
+        - node05_s1_bgw2
+        - node09_s2_bgw1
+        - node10_s2_bgw2
+        - node13_s3_bgw
+    vni_list: [2001001,2001002,2001003,2001004,2001005,2001006,2001007,2001008,2001009,2001010,2001011,2001012]
+    group_list: ['225.102.0.21']
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+# ------------------------------------------------------
+# Servicability Triggers
+# ------------------------------------------------------
+
+TriggerConfigReplaceVrf_S2VpcBgwPrimary:
+    trigger_wait_time: 200
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    verify_dict:
+        node01:
+        test_dut: ['node09_s2_bgw1']
+        cmd: ['no vrf context VRF-1', 'no vrf context VRF-13', 'no vrf context VRF-25', 'no vrf context VRF-37', 'no vrf contextVRF-49', 'no vrf context VRF-61']
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.ConfigureReplace
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+TriggerConfigRollBack_int_nve_S2VpcBgwPrimary:
+    trigger_wait_time: 200
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node09_s2_bgw1']
+            cmd: ['no interface nve 1']
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+
+# ------------------------------------------------------
+# HA Triggers
+# ------------------------------------------------------
+
+TriggerReload_S2VpcBgwPrimary:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    devices:
+        - 'node09_s2_bgw1'
+    source:
+        class: triggers.ha.reload.reload.TriggerReload
+        pkg: genie.libs.sdk
+    timeout:
+        max_time: 2500
+        interval: 60
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerReload_S1AcBgw1:
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    devices:
+        - 'node04_s1_bgw1'
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    timeout:
+        max_time: 900
+        interval: 60
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerLCReload_S2VpcBgwPrimary:
+    trigger_wait_time: 240
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: TriggerLCReload
+    device_dut:
+        - node09_s2_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerSSO_S2VpcBgwPrimary:
+    trigger_wait_time: 240
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: TriggerSSO
+    device_dut:
+        - node09_s2_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerAllFMReload_S2VpcBgwPrimary:
+    trigger_wait_time: 240
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: TriggerAllFMReload
+    device_dut:
+        - node09_s2_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+TriggerAllSCReload_S2VpcBgwPrimary:
+    trigger_wait_time: 240
+    start_wait_time: 4
+    stop_wait_time: 10
+    verify_wait_time: 1
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: TriggerAllSCReload
+    device_dut:
+        - node09_s2_bgw1
+    processors:
+        post:
+            trmv4_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_encap_verify
+            trmv4_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv4_data_mdt_decap_verify
+            trmv6_data_mdt_encap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_encap_verify
+            trmv6_data_mdt_decap_verify:
+                pkg: lib.verify.verify_trm_data_mdt
+                method: trmv6_data_mdt_decap_verify
+            VerifyTraffic:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyTraffic
+    verify_trmv4_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_encap
+    verify_trmv4_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv4_data_mdt_decap
+    verify_trmv6_data_mdt_encap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_encap
+    verify_trmv6_data_mdt_decap_params: verify_spot_site1_acBgw_site2_vpcBgw_site3_bgwSpine_trmv6_data_mdt_decap
+
+SampleTest:
+    processors:
+        post:
+            VerifyEnhancedMcastCC:
+                pkg: scriptFiles.VxLAN_TRM_script
+                method: VerifyEnhancedMcastCC
+    source:
+        pkg: scriptFiles.VxLAN_TRM_script
+        class: SampleTest
+
+
+
+
+
+# Trigger Flap NVE
+TC_006_TriggerFlapNve_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: TriggerFlapNve
+    device_dut:
+        - node4_s1_leaf_1
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+# Trigger Flap NVE
+TC_007_TriggerFlapNve_VPC_Primary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: TriggerFlapNve
+    device_dut:
+        - node2_s1_vpc_1
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+    cli_to_parse: 'show running-config nv overlay'
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+# Trigger Flap NVE Source interface loopback
+TC_008_TriggerNveSrcLoopbackFlap_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node4_s1_leaf_1
+    loopback_range:
+        "1"
+    converge_sec: 240
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Trigger Flap NVE Source interface loopback
+TC_009_TriggerNveSrcLoopbackFlap_VPC_Secondary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapLoopbackRange
+    device_dut:
+        - node3_s1_vpc_2
+    loopback_range:
+        "1"
+    converge_sec: 240
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# FLAP TRM VRF
+TC_010_TriggerFlapVrf_TRM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node4_s1_leaf_1
+    vrfs: ['VRF-1','VRF-5']
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# FLAP NBM VRF
+TC_011_TriggerFlapVrf_NBM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: flap_vrf.TriggerFlapVrf
+    device_dut:
+        - node4_s1_leaf_1
+    vrfs: ['NBM-1']
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# FLAP NBM VRF
+TC_012_TRMUPLinkFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapInterfaceConvergence
+    device_dut:
+        - node4_s1_leaf_1
+    converge_time: 5
+    interface: nd04_nd01_1_3
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# FLAP NBM VRF
+TC_013_NBMUPLinkFlap:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FlapInterfaceConvergence
+    device_dut:
+        - node4_s1_leaf_1
+    converge_time: 5
+    interface: nd01_nd04_1_4
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Restart Process CLI BGP
+TC_014_TriggerRestartBgpCLI_STD_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 200
+        interval: 20
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Restart Process CLI BGP
+TC_015_TriggerRestartBgpCLI_VPC_Primary_VTEP:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: TriggerRestartBGPAS
+    device_dut:
+        - node2_s1_vpc_1
+    timeout:
+        max_time: 200
+        interval: 20
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Restart Process NVE
+TC_016_TriggerRestartProcessKillNVE:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: genie.libs.sdk.triggers.processrestart.nve.nxos.processrestart
+        class: TriggerProcessKillRestartNve
+    devices:
+        - node4_s1_leaf_1
+    timeout:
+        max_time: 200
+        interval: 20
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Restart Process NBM
+TC_017_TriggerRestartProcessKillNBM:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node4_s1_leaf_1
+    process_list:
+        - nbm
+    timeout:
+        max_time: 200
+        interval: 20
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Trigger Disable Enable feature nv overlay
+TC_018_TriggerDisableAndEnableNveOverlay:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.UnConfigConfigFeature
+    device_dut:
+        - node4_s1_leaf_1
+    traffic_convergence_time: 120
+    feature_to_remove: 'feature nv overlay'
+    trigger_wait_time: '600'
+    convergence_wait_time: '600'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Trigger Reload for Site-1 BGW-1
+TC_019_TriggerReloadBGW:
+    processors:
+        pre:
+            doCopyRunToStart:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: doCopyRunToStart
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    devices:
+        - node4_s1_leaf_1
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 400
+    timeout:
+        max_time: 2500
+        interval: 60
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Verify configure rollback for int nve 1
+TC_020_TriggerConfigRollBack_int_nve:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: 240
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node4_s1_leaf_1']
+            cmd: ['no interface nve 1']
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Verify configure rollback for feature nbm
+TC_021_TriggerConfigRollBack_feature_nbm:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyErrLogs
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyFlexStats:
+                pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+                method: VerifyFlexStats
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 60
+    trigger_wait_time: 240
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+        class: ConfigureRollback
+    verify_dict:
+        node01:
+            test_dut: ['node4_s1_leaf_1']
+            cmd: ['no feature nbm']
+    flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Sample in script test
+# SampleTest:
+#     processors:
+#         post:
+#             VerifyFlexStats:
+#                 pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+#                 method: VerifyFlexStats
+#     source:
+#         pkg: VxLAN_FT_Regr.VxLAN_TRM.VxLAN_TRM_NBM_FlexStats.TRMNBMFlexStats_CldScale.VxLAN_TRM_NBM_FlexStats_script
+#         class: SampleTest
+#     device_dut:
+#         - node2_s1_vpc_1
+#         - node3_s1_vpc_2
+#         - node4_s1_leaf_1
+#     flexStats_dut_list: ['node2_s1_vpc_1', 'node3_s1_vpc_2', 'node4_s1_leaf_1']
+
+# Common Cleanup
+CommonCleanup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup

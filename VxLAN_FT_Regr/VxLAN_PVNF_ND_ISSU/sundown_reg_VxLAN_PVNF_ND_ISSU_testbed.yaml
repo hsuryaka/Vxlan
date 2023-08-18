@@ -1,0 +1,358 @@
+testbed:
+    name: sundow-regression-testbed
+    alias: sundow-regression-testbed
+    custom:
+        session_name: 'pvnf'
+    tacacs:
+        login_prompt: 'Login:'
+        username: admin
+        password_prompt: "^.*Password:"
+    passwords:
+        tacacs: insieme
+        enable: lab
+        line: lab
+    servers:
+        tftp:
+            server: bgl-golden-tftp
+            address: 10.127.57.23
+            credentials:
+                default:
+                    username: sftpuser
+                    password: sftpuser123
+devices:
+    bgl-golden-tftp:
+        type: 'linux'
+        os: 'linux'
+        credentials:
+            default:
+                username: sftpuser
+                password: sftpuser123
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            linux:
+                protocol: ssh
+                ip: 10.127.57.23
+    FX3-REG-TB1-TOR3:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2036
+            alt:
+                protocol: telnet
+                ip: 10.197.127.205
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR2:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2035
+            alt:
+                protocol: telnet
+                ip: 10.197.127.204
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR1:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2026
+            alt:
+                protocol: telnet
+                ip: 10.197.127.217
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR3:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2028
+            alt:
+                protocol: telnet
+                ip: 10.197.127.219
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR3:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2036 
+            alt:
+                protocol: telnet
+                ip: 10.197.127.205
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-NODE7:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.142
+                port: 2010
+            alt:
+                protocol: telnet
+                ip: 10.78.63.26
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR2:
+        os: nxos
+        type: router
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2027
+            alt:
+                protocol: telnet
+                ip: 10.197.127.218
+        custom:
+          abstraction:
+            order: [os, platform]
+
+    IXIA:
+        type: 'Ixia'
+        platform: n9k
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.127.57.249
+                tcl_server: 10.78.63.102:8009
+                ixnetwork_tcl_server: 10.78.63.102:8009
+                username: ixia
+                reset: 1
+            a:
+                protocol: telnet
+                ip: "10.127.57.249"
+            alt:
+                ip: "10.78.63.102"
+                port: 8009
+                protocol: telnet
+
+topology:
+    FX3-REG-TB2-TOR3:
+        interfaces:
+            Ethernet1/25:
+                alias: SPINE_to_BL
+                link: SPINE_to_BL
+                type: ethernet
+            Ethernet1/11:
+                alias: SPINE_to_LEAF-1
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/1:
+                alias: SPINE_to_LEAF-2
+                link: SPINE_to_LEAF-2
+                type: ethernet
+            Ethernet1/15:
+                alias: SPINE_to_LEAF-3
+                link: SPINE_to_LEAF-3
+                type: ethernet
+    FX3-REG-TB2-TOR1:
+        interfaces:
+            Ethernet1/26:
+                alias: LEAF-1_to_SPINE
+                link: SPINE_to_LEAF-1
+                type: ethernet
+            Ethernet1/52:
+                alias: LEAF-1_to_PGW_1
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+            Ethernet1/53:
+                alias: LEAF-1_to_PGW_2
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+            Ethernet1/47:
+                alias: LEAF-1_to_IXIA
+                link: LEAF-1_to_IXIA
+                type: ethernet
+    FX3-REG-TB2-TOR2:
+        interfaces:
+            Ethernet1/1:
+                alias: LEAF-2_to_SPINE
+                link: SPINE_to_LEAF-2
+                type: ethernet
+            Ethernet1/52:
+                alias: LEAF-2_to_PGW_1
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+            Ethernet1/53:
+                alias: LEAF-2_to_PGW_2
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+    FX3-REG-TB1-TOR3:
+        interfaces:
+            Ethernet1/7:
+                alias: LEAF-3_to_SPINE
+                link: SPINE_to_LEAF-3
+                type: ethernet
+            Ethernet1/26:
+                alias: LEAF-3_to_PGW_1
+                link: LEAF-3_to_PGW_1
+                type: ethernet
+            Ethernet1/27:
+                alias: LEAF-3_to_PGW_2
+                link: LEAF-3_to_PGW_2
+                type: ethernet
+    FX3-REG-TB1-TOR2:
+        interfaces:
+            Ethernet1/15:
+                alias: BL_to_SPINE
+                link: SPINE_to_BL
+                type: ethernet
+            Ethernet1/25:
+                alias: BL_to_IXIA
+                link: BL_to_IXIA
+                type: ethernet
+    FX3-REG-TB1-NODE7:
+        interfaces:
+            Ethernet1/18:
+                alias: PGW_to_LEAF-1_1
+                link: LEAF-1_to_PGW_1
+                type: ethernet
+            Ethernet1/19:
+                alias: PGW_to_LEAF-1_2
+                link: LEAF-1_to_PGW_2
+                type: ethernet
+            Ethernet1/5:
+                alias: PGW_to_LEAF-2_1
+                link: LEAF-2_to_PGW_1
+                type: ethernet
+            Ethernet1/6:
+                alias: PGW_to_LEAF-2_2
+                link: LEAF-2_to_PGW_2
+                type: ethernet
+            Ethernet1/9:
+                alias: PGW_to_LEAF-3_1
+                link: LEAF-3_to_PGW_1
+                type: ethernet
+            Ethernet1/10:
+                alias: PGW_to_LEAF-3_2
+                link: LEAF-3_to_PGW_2
+                type: ethernet
+            Ethernet1/21:
+                alias: PGW_to_IXIA
+                link: PGW_to_IXIA
+                type: ethernet
+    IXIA:
+        interfaces:
+            11/9:
+                alias: IXIA_to_BL
+                link: BL_to_IXIA
+                type: ethernet
+            11/4:
+                alias: IXIA_to_LEAF-1
+                link: LEAF-1_to_IXIA
+                type: ethernet
+            9/9:
+                alias: IXIA_to_PGW
+                link: PGW_to_IXIA
+                type: ethernet

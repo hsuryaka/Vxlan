@@ -1,0 +1,309 @@
+# ------------------------------------------------------
+# Define Cleaner modules, device groups / devices
+# ------------------------------------------------------
+
+cleaners:
+    PyatsDeviceClean:
+        module: genie.libs.clean
+        devices: [node01_dci, node02_ext_rtr, \
+            node03_s1_spine, node04_s1_bgw1, node05_s1_bgw2, node06_s1_leaf,
+            node08_s2_spine, node09_s2_bgw1, node10_s2_bgw2, node11_s2_leaf,
+            node12_s3_bgvpc, node13_s3_bgw, node14_s3_leaf]
+
+# ---------------------------------------`---------------
+# Define clean part for devices
+# ------------------------------------------------------
+
+devices:
+
+    node01_dci:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 4 map 10g-4x
+                interface breakout module 1 port 6 map 10g-4x
+                interface breakout module 1 port 11 map 10g-4x
+                interface breakout module 2 port 1 map 10g-4x
+                interface breakout module 2 port 25 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node02_ext_rtr:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                feature lldp
+                feature lacp
+                feature pim
+                feature pim6
+                feature bgp
+
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+        order:
+            - connect
+            - apply_configuration
+
+    node03_s1_spine:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node04_s1_bgw1:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 49 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node05_s1_bgw2:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node06_s1_leaf:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node08_s2_spine:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 1 map 10g-4x
+                interface breakout module 1 port 45 map 10g-4x
+                interface breakout module 1 port 51 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node09_s2_bgw1:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 5 map 10g-4x
+                interface breakout module 1 port 9 map 100g-4x
+                interface breakout module 1 port 12 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node10_s2_bgw2:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 5 map 10g-4x
+                interface breakout module 1 port 9 map 100g-4x
+                interface breakout module 1 port 12 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node11_s2_leaf:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+        order:
+            - connect
+            - apply_configuration
+
+    node12_s3_bgvpc:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Device Specific Configs
+                hardware profile portmode 32x40g
+                hardware profile front portmode sfp-plus
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 1 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node13_s3_bgw:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 1 map 10g-4x
+                interface breakout module 1 port 21 map 10g-4x
+        order:
+            - connect
+            - apply_configuration
+
+    node14_s3_leaf:
+        connect:
+        apply_configuration:
+            configuration: |
+                ! -- Enable Logging
+                logg cons 5
+                term mon
+                
+                ! -- Default Features
+                feature telnet
+                feature bash
+                feature nxapi
+                
+                ! -- SNMP base configs
+                snmp-server community public rw
+
+                ! -- Breakout Configs
+                interface breakout module 1 port 49 map 10g-4x
+        order:
+            - connect
+            - apply_configuration

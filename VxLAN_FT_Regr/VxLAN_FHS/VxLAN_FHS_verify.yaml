@@ -1,0 +1,768 @@
+# ------------------------------------------------------
+#        Node List:
+#
+#            node05_spine           : SPINE-FX2
+#            node01                 : LEAF1-VPC-FX3
+#            node02                 : LEAF2-VPC-FX3
+#            node03                 : LEAF3-SA-FX2
+#            node04                 : LEAF4-SA-FX2
+#            node06_vpcAccess       : FANOUT-3172
+#
+# ------------------------------------------------------
+# ------------------------------------------------------
+# OSPF Neighbor Verification
+# ------------------------------------------------------
+ospf_neighbors:
+    node05_spine:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            # SPINE to VTEP-1
+                                            '{{nd05_nd01_1_1}}':
+                                                neighbors:
+                                                    1.11.1.1:                           # <- Remote Neighbor Router ID
+                                                        address: 1.11.1.2               # <- Remote Neighbor Address
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1    # <- Remote Neighbor Router ID
+                                            '{{nd05_nd01_1_2}}':
+                                                neighbors:
+                                                    1.11.1.1:
+                                                        address: 1.11.2.2
+                                                        state: full
+                                                        neighbor_router_id: 1.11.1.1
+                                            # SPINE to VTEP-2
+                                            '{{nd05_nd02_1_1}}':
+                                                neighbors:
+                                                    1.12.1.1:                           # <- Remote Neighbor Router ID
+                                                        address: 1.12.1.2               # <- Remote Neighbor Address
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1    # <- Remote Neighbor Router ID
+                                            '{{nd05_nd02_1_2}}':
+                                                neighbors:
+                                                    1.12.1.1:
+                                                        address: 1.12.2.2
+                                                        state: full
+                                                        neighbor_router_id: 1.12.1.1
+                                            # SPINE to STD VTEP-3
+                                            '{{nd05_nd03_1_1}}':
+                                                neighbors:
+                                                    1.13.1.1:
+                                                        address: 1.13.1.2
+                                                        state: full
+                                                        neighbor_router_id: 1.13.1.1
+                                            '{{nd05_nd03_1_2}}':
+                                                neighbors:
+                                                    1.13.1.1:
+                                                        address: 1.13.2.2
+                                                        state: full
+                                                        neighbor_router_id: 1.13.1.1
+                                            # SPINE to STD VTEP-4
+                                            '{{nd05_nd04_1_1}}':
+                                                neighbors:
+                                                    1.14.1.1:
+                                                        address: 1.14.1.2
+                                                        state: full
+                                                        neighbor_router_id: 1.14.1.1
+                                            '{{nd05_nd04_1_2}}':
+                                                neighbors:
+                                                    1.14.1.1:
+                                                        address: 1.14.2.2
+                                                        state: full
+                                                        neighbor_router_id: 1.14.1.1
+    node01:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            # VTEP-1 to SPINE
+                                            '{{nd01_nd05_1_1}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.11.1.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd01_nd05_1_2}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.11.2.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+    node02:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            # VTEP-2 to SPINE
+                                            '{{nd02_nd05_1_1}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.12.1.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd02_nd05_1_2}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.12.2.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+    node03:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            # Standlone VTEP-3 to SPINE
+                                            '{{nd03_nd05_1_1}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.13.1.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd03_nd05_1_2}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.13.2.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+    node04:
+        vrf:
+            default:
+                address_family:
+                    ipv4:
+                        instance:
+                            p1:
+                                areas:
+                                    0.0.0.0:
+                                        interfaces:
+                                            # Standlone VTEP-4 to SPINE
+                                            '{{nd04_nd05_1_1}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.14.1.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+                                            '{{nd04_nd05_1_2}}':
+                                                neighbors:
+                                                    11.11.11.11:
+                                                        address: 1.14.2.3
+                                                        state: full
+                                                        neighbor_router_id: 11.11.11.11
+
+# ------------------------------------------------------
+# PIM Neighbor Verification
+# ------------------------------------------------------
+pim_neighbors:
+    node05_spine:
+        vrf:
+            default:
+                interfaces:
+                    # SPINE to VTEP-2
+                    '{{nd05_nd01_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.1.2:
+                                          interface: '{{nd05_nd01_1_1}}'
+                    '{{nd05_nd01_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.2.2:
+                                          interface: '{{nd05_nd01_1_2}}'
+                    # SPINE to VTEP-2
+                    '{{nd05_nd02_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.1.2:
+                                          interface: '{{nd05_nd02_1_1}}'
+                    '{{nd05_nd02_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.2.2:
+                                          interface: '{{nd05_nd02_1_2}}'
+                    # SPINE to VTEP-3
+                    '{{nd05_nd03_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.1.2:
+                                          interface: '{{nd05_nd03_1_1}}'
+                    '{{nd05_nd03_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.2.2:
+                                          interface: '{{nd05_nd03_1_2}}'
+                    # SPINE to VTEP-4
+                    '{{nd05_nd04_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.14.1.2:
+                                          interface: '{{nd05_nd04_1_1}}'
+                    '{{nd05_nd04_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.14.2.2:
+                                          interface: '{{nd05_nd04_1_2}}'
+
+    node01:
+        vrf:
+            default:
+                interfaces:
+                    # to SPINE
+                    '{{nd01_nd05_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.1.3:
+                                          interface: '{{nd01_nd05_1_1}}'
+                    '{{nd01_nd05_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.11.2.3:
+                                          interface: '{{nd01_nd05_1_2}}'
+    node02:
+        vrf:
+            default:
+                interfaces:
+                    # to SPINE
+                    '{{nd02_nd05_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.1.3:
+                                          interface: '{{nd02_nd05_1_1}}'
+                    '{{nd02_nd05_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.12.2.3:
+                                          interface: '{{nd02_nd05_1_2}}'
+    node03:
+        vrf:
+            default:
+                interfaces:
+                    # to SPINE
+                    '{{nd03_nd05_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.1.3:
+                                          interface: '{{nd03_nd05_1_1}}'
+                    '{{nd03_nd05_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.13.2.3:
+                                          interface: '{{nd03_nd05_1_2}}'
+    node04:
+        vrf:
+            default:
+                interfaces:
+                    # to SPINE
+                    '{{nd04_nd05_1_1}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.14.1.3:
+                                          interface: '{{nd04_nd05_1_1}}'
+                    '{{nd04_nd05_1_2}}':
+                          address_family:
+                              ipv4:
+                                  neighbors:
+                                      1.14.2.3:
+                                          interface: '{{nd04_nd05_1_2}}'
+
+# ------------------------------------------------------
+# BGP Neighbor Verification
+# ------------------------------------------------------
+bgp_neighbors:
+
+    node05_spine:
+        total_peers: 4
+        total_established_peers: 4
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 4
+                vrf_established_peers: 4
+                router_id: 11.11.11.11
+                neighbor:
+                    1.11.1.1:
+                        state: established
+                        remote_as: 100
+                    1.12.1.1:
+                        state: established
+                        remote_as: 100
+                    1.13.1.1:
+                        state: established
+                        remote_as: 100
+                    1.14.1.1:
+                        state: established
+                        remote_as: 100
+    node01:
+        total_peers: 2
+        total_established_peers: 2
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 2
+                vrf_established_peers: 2
+                router_id: 1.11.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+                    24.24.24.2:
+                        state: established
+                        remote_as: 100
+
+    node02:
+        total_peers: 2
+        total_established_peers: 2
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 2
+                vrf_established_peers: 2
+                router_id: 1.12.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+                    24.24.24.1:
+                        state: established
+                        remote_as: 100
+
+    node03:
+        total_peers: 1
+        total_established_peers: 1
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 1
+                vrf_established_peers: 1
+                router_id: 1.13.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+
+    node04:
+        total_peers: 1
+        total_established_peers: 1
+        vrf:
+            default:
+                local_as: 100
+                vrf_peers: 1
+                vrf_established_peers: 1
+                router_id: 1.14.1.1
+                neighbor:
+                    11.11.11.11:
+                        state: established
+                        remote_as: 100
+
+# ------------------------------------------------------
+# BGP L2VPN EVPN Summary Verification
+# ------------------------------------------------------
+bgp_l2vpn_evpn_summary:
+
+    node05_spine:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 11.11.11.11
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 4
+                                capablepeers: 4
+                                neighbor:
+                                    1.11.1.1:
+                                        neighbor: 1.11.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    1.12.1.1:
+                                        neighbor: 1.12.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    1.13.1.1:
+                                        neighbor: 1.13.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    1.14.1.1:
+                                        neighbor: 1.14.1.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+    node01:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.11.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 2
+                                capablepeers: 2
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    24.24.24.2:
+                                        neighbor: 24.24.24.2
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+
+    node02:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.12.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 2
+                                capablepeers: 2
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+                                    24.24.24.1:
+                                        neighbor: 24.24.24.1
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+
+    node03:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.13.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+
+    node04:
+        instance:
+            default:
+                vrf:
+                    default:
+                        vrf_name_out: default
+                        vrf_router_id: 1.14.1.1
+                        vrf_local_as: 100
+                        address_family:
+                            l2vpn evpn:
+                                configuredpeers: 1
+                                capablepeers: 1
+                                neighbor:
+                                    11.11.11.11:
+                                        neighbor: 11.11.11.11
+                                        version: 4
+                                        remoteas: 100
+                                        state: established
+# ------------------------------------------------------
+# NVE Interface Detail Verification
+# ------------------------------------------------------
+nve_interface_detail:
+    node01:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '1.11.11.11'
+            secondary_ip: '1.10.10.10'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node02:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [notified]'
+            source_if: loopback1
+            primary_ip: '1.12.12.12'
+            secondary_ip: '1.10.10.10'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node03:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '1.13.13.13'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+    node04:
+        nve1:
+            nve_name: nve1
+            if_state: up
+            encap_type: vxlan
+            vpc_capability: 'vpc-vip-only [not-notified]'
+            source_if: loopback1
+            primary_ip: '1.14.14.14'
+            secondary_ip: '0.0.0.0'
+            src_if_state: up
+            adv_vmac: True
+            sm_state: nve-intf-add-complete
+
+# ------------------------------------------------------
+# NVE Peers Verification
+# ------------------------------------------------------
+nve_peers:
+    node01:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node02:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node03:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.10.10.10:
+                    learn_type: CP
+                    peer_state: up
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node04:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.10.10.10:
+                    learn_type: CP
+                    peer_state: up
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+
+# ------------------------------------------------------
+# NVE Peers Verification Post Src Loopback IP Change
+# ------------------------------------------------------
+nve_peers_after_nve_src_loopback_IP_change:
+    node01:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node02:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node03:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.10.10.10:
+                    learn_type: CP
+                    peer_state: up
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.14.14.14:
+                    learn_type: CP
+                    peer_state: up
+    node04:
+        nve1:
+            nve_name: nve1
+            peer_ip:
+                1.10.10.10:
+                    learn_type: CP
+                    peer_state: up
+                1.11.11.11:
+                    learn_type: CP
+                    peer_state: up
+                1.12.12.12:
+                    learn_type: CP
+                    peer_state: up
+                1.13.13.13:
+                    learn_type: CP
+                    peer_state: up
+
+# ------------------------------------------------------
+# NVE VNI Summary Verification
+# ------------------------------------------------------
+nve_vni_summary:
+    node01:
+        vni:
+            summary:
+                cp_vni_count: 3
+                cp_vni_up: 3
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node02:
+        vni:
+            summary:
+                cp_vni_count: 3
+                cp_vni_up: 3
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node03:
+        vni:
+            summary:
+                cp_vni_count: 3
+                cp_vni_up: 3
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+    node04:
+        vni:
+            summary:
+                cp_vni_count: 3
+                cp_vni_up: 3
+                cp_vni_down: 0
+                dp_vni_count: 0
+                dp_vni_up: 0
+                dp_vni_down: 0
+
+# ------------------------------------------------------
+# Collect Logs
+# ------------------------------------------------------
+collect_log:
+    node05_spine:
+        - show bgp sessions
+        - show ip bgp summary
+    node01:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node02:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node03:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+    node04:
+        - show nve peers
+        - show ip ospf neighbors
+        - show bgp sessions
+        - show ip bgp summary
+        - show ip igmp snooping groups
+
+# ------------------------------------------------------
+# Error Logs Check - Exclude Patter
+# ------------------------------------------------------
+err_log_check_exclude_pattern: ''

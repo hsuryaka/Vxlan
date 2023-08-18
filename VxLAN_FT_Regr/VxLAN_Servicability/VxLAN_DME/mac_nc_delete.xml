@@ -1,0 +1,22 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+  <edit-config>
+    <target>
+      <running/>
+    </target>
+    <config>
+      <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
+        <mac-items>
+          <static-items>
+            <vni-items>
+              <StaticEntryVni-list xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" nc:operation="delete">
+                <vni>11001</vni>
+                <staticMacAddress>00:11:00:22:00:33</staticMacAddress>
+                <peerIpv4>2.23.23.23</peerIpv4>
+              </StaticEntryVni-list>
+            </vni-items>
+          </static-items>
+        </mac-items>
+      </System>
+    </config>
+  </edit-config>
+</rpc>

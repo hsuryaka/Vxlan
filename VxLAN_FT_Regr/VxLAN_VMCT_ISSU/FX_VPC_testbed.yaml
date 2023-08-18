@@ -1,0 +1,354 @@
+
+testbed:
+    name: VxLAN-Sundown-vMCT
+    tacacs:
+        username: admin
+    passwords:
+        tacacs: nbv12345
+        enable: nbv12345
+    servers:
+        tftp:
+            server: n3k-qa-image
+            address: 10.127.63.241
+            path: ""
+            credentials:
+                default:
+                    username: swadmin
+                    password: password
+        ntp:
+            server: 1.2.3.4
+devices:
+    HW-1:
+        os: nxos
+        type: N9K
+        platform: n9k
+        model: n9300
+        alias: uut1
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2014
+            vty:
+                protocol: telnet
+                ip: 10.104.102.164
+        custom:
+            abstraction:
+                order: [os, platform, model] 
+    HW-2:
+        os: nxos
+        type: N9K
+        platform: n9k
+        model: n9300
+        alias: uut2
+        connections:
+            defaults:
+               class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2018
+            vty:
+                protocol: telnet
+                ip: 10.104.102.165
+        custom:
+            abstraction:
+                order: [os, platform, model] 
+    TC-3:
+        os: nxos
+        type: N9K
+        platform: n9k
+        model: n9300
+        alias: uut3
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2021
+            vty:
+                protocol: telnet
+                ip: 10.104.102.100
+
+    SPINE:
+        os: nxos
+        type: N3K
+        platform: n9k
+        model: n9300
+        alias: uut4
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2022
+            vty:
+                protocol: telnet
+                ip: 10.104.102.122
+
+    Oslo:
+        os: nxos
+        type: N3K
+        platform: n9k
+        model: n9300
+        alias: uut5
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2015
+            vty:
+                protocol: telnet
+                ip: 10.104.102.121
+
+    QZ:
+        os: nxos
+        type: N3K
+        platform: n9k
+        model: n9300
+        alias: uut6
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.104.102.18
+                port: 2025
+            vty:
+                protocol: telnet
+                ip: 10.104.102.52
+
+    TG1:
+        os: generic
+        type: ixia
+        alias: tgen
+        platform: ixia
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.104.102.68
+                tcl_server: 10.104.102.240
+                ixnetwork_tcl_server: 10.104.102.240
+                username: Administrator
+                reset: 1
+topology:
+    HW-1:
+        interfaces:
+            Eth1/49/1:
+                link: uut1_uut4_1
+                alias: uut1_uut4_1
+                type: ethernet
+            Eth1/49/2:
+                link: uut1_uut4_2
+                alias: uut1_uut4_2
+                type: ethernet
+            Eth1/49/3:
+                link: uut1_uut4_3
+                alias: uut1_uut4_3
+                type: ethernet
+            Eth1/49/4:
+                link: uut1_uut4_4
+                alias: uut1_uut4_4
+                type: ethernet
+            Eth1/17:
+                link: uut1_uut2_1
+                alias: uut1_uut2_1
+                type: ethernet
+            Eth1/18:
+                link: uut1_uut2_2
+                alias: uut1_uut2_2
+                type: ethernet
+            Eth1/25:
+                link: uut1_uut5_1
+                alias: uut1_uut5_1
+                type: ethernet
+            Eth1/26:
+                link: uut1_uut5_2
+                alias: uut1_uut5_2
+                type: ethernet
+            Eth1/7:
+                link: uut1_TG1_1
+                alias: uut1_TG1_1
+                type: ethernet
+ 
+    HW-2:
+        interfaces:
+            Eth1/49/1:
+                link: uut2_uut4_1
+                alias: uut2_uut4_1
+                type: ethernet
+            Eth1/49/2:
+                link: uut2_uut4_2
+                alias: uut2_uut4_2
+                type: ethernet
+            Eth1/49/3:
+                link: uut2_uut4_3
+                alias: uut2_uut4_3
+                type: ethernet
+            Eth1/49/4:
+                link: uut2_uut4_4
+                alias: uut2_uut4_4
+                type: ethernet
+            Eth1/17:
+                link: uut1_uut2_1
+                alias: uut2_uut1_1
+                type: ethernet
+            Eth1/18:
+                link: uut1_uut2_2
+                alias: uut2_uut1_2
+                type: ethernet
+            Eth1/23:
+                link: uut2_uut5_1
+                alias: uut2_uut5_1
+                type: ethernet
+            Eth1/24:
+                link: uut2_uut5_2
+                alias: uut2_uut5_2
+                type: ethernet
+            Eth1/7:
+                link: uut2_TG1_1
+                alias: uut2_TG1_1
+                type: ethernet
+ 
+    TC-3:
+        interfaces:
+            Eth1/52/1:
+                link: uut3_uut4_1
+                alias: uut3_uut4_1
+                type: ethernet
+            Eth1/52/2:
+                link: uut3_uut4_2
+                alias: uut3_uut4_2
+                type: ethernet
+            Eth1/52/3:
+                link: uut3_uut4_3
+                alias: uut3_uut4_3
+                type: ethernet
+            Eth1/52/4:
+                link: uut3_uut4_4
+                alias: uut3_uut4_4
+                type: ethernet
+            Eth1/9:
+                link: uut3_uut6_1
+                alias: uut3_uut6_1
+                type: ethernet
+            Eth1/10:
+                link: uut3_uut6_2
+                alias: uut3_uut6_2
+                type: ethernet
+    SPINE:
+        interfaces:
+            Eth1/9/1:
+                link: uut1_uut4_1
+                alias: uut4_uut1_1
+                type: ethernet
+            Eth1/9/2:
+                link: uut1_uut4_2
+                alias: uut4_uut1_2
+                type: ethernet
+            Eth1/9/3:
+                link: uut1_uut4_3
+                alias: uut4_uut1_3
+                type: ethernet
+            Eth1/9/4:
+                link: uut1_uut4_4
+                alias: uut4_uut1_4
+                type: ethernet
+            Eth1/10/1:
+                link: uut2_uut4_1
+                alias: uut4_uut2_1
+                type: ethernet
+            Eth1/10/2:
+                link: uut2_uut4_2
+                alias: uut4_uut2_2
+                type: ethernet
+            Eth1/10/3:
+                link: uut2_uut4_3
+                alias: uut4_uut2_3
+                type: ethernet
+            Eth1/10/4:
+                link: uut2_uut4_4
+                alias: uut4_uut2_4
+                type: ethernet
+            Eth1/6/1:
+                link: uut3_uut4_1
+                alias: uut4_uut3_1
+                type: ethernet
+            Eth1/6/2:
+                link: uut3_uut4_2
+                alias: uut4_uut3_2
+                type: ethernet
+            Eth1/6/3:
+                link: uut3_uut4_3
+                alias: uut4_uut3_3
+                type: ethernet
+            Eth1/6/4:
+                link: uut3_uut4_4
+                alias: uut4_uut3_4
+                type: ethernet
+             
+    Oslo:
+        interfaces:
+            Eth1/25:
+                link: uut1_uut5_1
+                alias: uut5_uut1_1
+                type: ethernet
+            Eth1/26:
+                link: uut1_uut5_2
+                alias: uut5_uut1_2
+                type: ethernet
+            Eth1/23:
+                link: uut2_uut5_1
+                alias: uut5_uut2_1
+                type: ethernet
+            Eth1/24:
+                link: uut2_uut5_2
+                alias: uut5_uut2_2
+                type: ethernet
+            Eth1/7:
+                link: uut5_TG1_1
+                alias: uut5_TG1_1
+                type: ethernet
+
+    QZ:
+        interfaces:
+            Eth1/9:
+                link: uut3_uut6_1
+                alias: uut6_uut3_1
+                type: ethernet
+            Eth1/10:
+                link: uut3_uut6_2
+                alias: uut6_uut3_2
+                type: ethernet
+            Eth1/7:
+                link: uut6_TG1_1
+                alias: uut6_TG1_1
+                type: ethernet
+
+    TG1:
+       interfaces:
+            1/6:
+               type: ethernet
+               alias: TG1_uut5_1
+               link: uut5_TG1_1
+            1/4:
+               type: ethernet
+               alias: TG1_uut6_1
+               link: uut6_TG1_1
+            1/7:
+               type: ethernet
+               alias: TG1_uut1_1
+               link: uut1_TG1_1
+            1/15:
+               type: ethernet
+               alias: TG1_uut2_1
+               link: uut2_TG1_1
+

@@ -1,0 +1,26 @@
+#*********************************************************************
+#
+# File:   vntag_mgr.yaml 
+# Author: 
+#
+# Description: comp specific yaml
+#
+#
+# Copyright (c) 2021-2022 by cisco Systems, Inc.
+# All rights reserved.
+#
+#
+# $Id: comp specific yaml $
+# $Source:  $
+# $Author:  $
+#
+#*********************************************************************
+version: 1
+components:
+    vntag_mgr:
+            default:
+                tech-sup: vntag
+                commands: show running ; show logging ; show accounting log
+            VNTAG_SEQ_TIMEOUT:
+                tech-sup: satmgr ; vntag
+                commands: show running ; show logging ; show accounting log

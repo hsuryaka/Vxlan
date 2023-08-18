@@ -1,0 +1,284 @@
+FWD_SYS_dict:
+    VRF_string                              : 'PVNF-'
+    VRF_id_start                            : 1
+    VRF_count                               : 3
+    VLAN_PER_VRF_count                      : 0
+    SPINE_COUNT                             : 1
+    BGP_AS_num                              : 200
+    OSPF_AS                                 : 100
+
+# BL data
+BL_dict:
+    loop0_ip                                : "2.11.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id                               : 111
+        spine_loop0_ip                      : "11.11.11.11"
+        common_rp                           : "100.1.1.1"
+        leaf_spine_po_v4                    : "2.111.1.3"
+        leaf_spine_mask_v4                  : "/31"
+        leaf_spine_po_v6                    : "2001:2:111:1::3"
+        leaf_spine_mask_v6                  : "/64"
+        spine_leaf_po_v4                    : "2.111.1.2"
+        spine_leaf_mask_v4                  : "/31"
+        spine_leaf_po_v6                    : "2001:2:111:1::2"
+        spine_leaf_mask_v6                  : "/64"
+    NVE_data:
+        src_loop                            : 'loopback1'
+        VTEP_IP                             : "2.11.11.11"
+        l3_mcast_grp_ip                     : '224.1.1.10'
+        l2_mcast_grp_ip                     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start                       : 10
+        l3_vni_start                        : 11001
+        l2_vlan_start                       : 301
+        l2_vni_start                        : 20001
+        l2_vlan_ipv4_start                  : '2.1.1.1'
+        l2_vlan_ipv4_mask                   : '/24'
+        l2_vlan_ipv6_start                  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask                   : '/64'
+
+# LEAF-1 data
+LEAF_1_dict:
+    loop0_ip                                : "2.211.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id                               : 211
+        spine_loop0_ip                      : "11.11.11.11"
+        common_rp                           : "100.1.1.1"
+        leaf_spine_po_v4                    : "2.211.1.3"
+        leaf_spine_mask_v4                  : "/31"
+        leaf_spine_po_v6                    : "2001:2:211:1::3"
+        leaf_spine_mask_v6                  : "/64"
+        spine_leaf_po_v4                    : "2.211.1.2"
+        spine_leaf_mask_v4                  : "/31"
+        spine_leaf_po_v6                    : "2001:2:211:1::2"
+        spine_leaf_mask_v6                  : "/64"
+    NVE_data:
+        src_loop                            : 'loopback1'
+        VTEP_IP                             : "2.21.21.21"
+        l3_mcast_grp_ip                     : '224.1.1.10'
+        l2_mcast_grp_ip                     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start                       : 10
+        l3_vni_start                        : 11001
+        l2_vlan_start                       : 301
+        l2_vni_start                        : 20001
+        l2_vlan_ipv4_start                  : '2.1.1.1'
+        l2_vlan_ipv4_mask                   : '/24'
+        l2_vlan_ipv6_start                  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask                   : '/64'
+    PVNF_data:
+        topo_1:
+            loop_num                        : 10
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "4.99.99.99"
+            pgw_comn_loop_v6                : "2001:4:99:99::99"
+            local_loop_v4                   : "4.21.21.21"
+            local_loop_v6                   : "2001:4:21:21::21"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 16
+            underlay_ipv4_start             : "4.21.1.2"                # Without mask, mask will be /31
+            underlay_ipv6_start             : "2001:4:21:1::2"          # Without mask, mask will be /127
+            svi_sub_int_vlan_start          : "2111"
+        topo_2:
+            loop_num                        : 20
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "5.21.21.2"
+            pgw_comn_loop_v6                : "2001:5:21:21::2"
+            local_loop_v4                   : "5.21.21.1"
+            local_loop_v6                   : "2001:5:21:21::1"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 16
+            underlay_ipv4_start             : "5.21.1.2"
+            underlay_ipv6_start             : "2001:5:21:1::2"
+            svi_sub_int_vlan_start          : "2131"
+        topo_3:
+            pgw_bgp_as                      : 50
+            pgw_to_leaf_underlay            : "sub-ints"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 16
+            underlay_ipv4_start             : "6.21.1.2"
+            underlay_ipv6_start             : "2001:6:21:1::2"
+            svi_sub_int_vlan_start          : "2151"
+
+# LEAF-2 data
+LEAF_2_dict:
+    loop0_ip                                : "2.212.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id                               : 212
+        spine_loop0_ip                      : "11.11.11.11"
+        common_rp                           : "100.1.1.1"
+        leaf_spine_po_v4                    : "2.212.1.3"
+        leaf_spine_mask_v4                  : "/31"
+        leaf_spine_po_v6                    : "2001:2:212:1::3"
+        leaf_spine_mask_v6                  : "/64"
+        spine_leaf_po_v4                    : "2.212.1.2"
+        spine_leaf_mask_v4                  : "/31"
+        spine_leaf_po_v6                    : "2001:2:212:1::2"
+        spine_leaf_mask_v6                  : "/64"
+    NVE_data:
+        src_loop                            : 'loopback1'
+        VTEP_IP                             : "2.22.22.22"
+        l3_mcast_grp_ip                     : '224.1.1.10'
+        l2_mcast_grp_ip                     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start                       : 10
+        l3_vni_start                        : 11001
+        l2_vlan_start                       : 301
+        l2_vni_start                        : 20001
+        l2_vlan_ipv4_start                  : '2.1.1.1'
+        l2_vlan_ipv4_mask                   : '/24'
+        l2_vlan_ipv6_start                  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask                   : '/64'
+    PVNF_data:
+        topo_1:
+            loop_num                        : 10
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "4.99.99.99"
+            pgw_comn_loop_v6                : "2001:4:99:99::99"
+            local_loop_v4                   : "4.22.22.22"
+            local_loop_v6                   : "2001:4:22:22::22"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 10
+            underlay_ipv4_start             : "4.22.1.2"                # Without mask, mask will be /31
+            underlay_ipv6_start             : "2001:4:22:1::2"          # Without mask, mask will be /127
+            svi_sub_int_vlan_start          : "2211"
+        topo_2:
+            loop_num                        : 20
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "5.22.22.2"
+            pgw_comn_loop_v6                : "2001:5:22:22::2"
+            local_loop_v4                   : "5.22.22.1"
+            local_loop_v6                   : "2001:5:22:22::1"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 10
+            underlay_ipv4_start             : "5.22.1.2"
+            underlay_ipv6_start             : "2001:5:22:1::2"
+            svi_sub_int_vlan_start          : "2231"
+        topo_3:
+            pgw_bgp_as                      : 50
+            pgw_to_leaf_underlay            : "sub-ints"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 10
+            underlay_ipv4_start             : "6.22.1.2"
+            underlay_ipv6_start             : "2001:6:22:1::2"
+            svi_sub_int_vlan_start          : "2251"
+
+# LEAF-3 data
+LEAF_3_dict:
+    loop0_ip                                : "2.213.1.1"
+    SPINE_1_UPLINK_PO:
+        po_id                               : 213
+        spine_loop0_ip                      : "11.11.11.11"
+        common_rp                           : "100.1.1.1"
+        leaf_spine_po_v4                    : "2.213.1.3"
+        leaf_spine_mask_v4                  : "/31"
+        leaf_spine_po_v6                    : "2001:2:213:1::3"
+        leaf_spine_mask_v6                  : "/64"
+        spine_leaf_po_v4                    : "2.213.1.2"
+        spine_leaf_mask_v4                  : "/31"
+        spine_leaf_po_v6                    : "2001:2:213:1::2"
+        spine_leaf_mask_v6                  : "/64"
+    NVE_data:
+        src_loop                            : 'loopback1'
+        VTEP_IP                             : "2.23.23.23"
+        l3_mcast_grp_ip                     : '224.1.1.10'
+        l2_mcast_grp_ip                     : '224.1.1.101'
+    VNI_data:
+        l3_vlan_start                       : 10
+        l3_vni_start                        : 11001
+        l2_vlan_start                       : 301
+        l2_vni_start                        : 20001
+        l2_vlan_ipv4_start                  : '2.1.1.1'
+        l2_vlan_ipv4_mask                   : '/24'
+        l2_vlan_ipv6_start                  : '2001:2:1:1::1'
+        l2_vlan_ipv6_mask                   : '/64'
+    PVNF_data:
+        topo_1:
+            loop_num                        : 10
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "4.99.99.99"
+            pgw_comn_loop_v6                : "2001:4:99:99::99"
+            local_loop_v4                   : "4.23.23.23"
+            local_loop_v6                   : "2001:4:23:23::23"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 6
+            underlay_ipv4_start             : "4.23.1.2"                # Without mask, mask will be /31
+            underlay_ipv6_start             : "2001:4:23:1::2"          # Without mask, mask will be /127
+            svi_sub_int_vlan_start          : "2311"
+        topo_2:
+            loop_num                        : 20
+            pgw_bgp_as                      : 50
+            pgw_comn_loop_v4                : "5.23.23.2"
+            pgw_comn_loop_v6                : "2001:5:23:23::2"
+            local_loop_v4                   : "5.23.23.1"
+            local_loop_v6                   : "2001:5:23:23::1"
+            pgw_to_leaf_underlay            : "vlan-svi"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 6
+            underlay_ipv4_start             : "5.23.1.2"
+            underlay_ipv6_start             : "2001:5:23:1::2"
+            svi_sub_int_vlan_start          : "2331"
+        topo_3:
+            pgw_bgp_as                      : 50
+            pgw_to_leaf_underlay            : "sub-ints"                # vlan-svi or sub-ints
+            leaf_to_pgw_link_count          : 6
+            underlay_ipv4_start             : "6.23.1.2"
+            underlay_ipv6_start             : "2001:6:23:1::2"
+            svi_sub_int_vlan_start          : "2351"
+
+# Traffic TGEN Data
+BL_TGEN_data:
+    'no_of_ints'                        : "3"
+    'phy_mode'                          : 'copper'
+    'mac'                               : '00:00:20:00:00:01'
+    'mac_step'                          : '00:00:00:00:00:01'
+    'protocol'                          : 'ipv46'
+    'v4_addr'                           : '101.1.1.50'
+    'v4_addr_step'                      : '1.0.0.0'
+    'v4_gateway'                        : '101.1.1.10'
+    'v4_gateway_step'                   : '1.0.0.0'
+    'v4_netmask'                        : '255.255.255.255'
+    'v6_addr'                           : '2001:101:1:1::50'
+    'v6_addr_step'                      : '0:1:0:0::0'
+    'v6_gateway'                        : '2001:101:1:1::10'
+    'v6_gateway_step'                   : '0:1:0:0::0'
+    'v6_netmask'                        : '128'
+    'vlan_id'                           : '1401'
+    'vlan_id_step'                      : '1'
+
+# Traffic TGEN Data
+PGW_TGEN_data:
+    'no_of_ints'                        : "3"
+    'phy_mode'                          : 'copper'
+    'mac'                               : '00:00:20:00:00:01'
+    'mac_step'                          : '00:00:00:00:00:01'
+    'protocol'                          : 'ipv46'
+    'v4_addr'                           : '201.1.1.50'
+    'v4_addr_step'                      : '1.0.0.0'
+    'v4_gateway'                        : '201.1.1.10'
+    'v4_gateway_step'                   : '1.0.0.0'
+    'v4_netmask'                        : '255.255.255.255'
+    'v6_addr'                           : '2001:201:1:1::50'
+    'v6_addr_step'                      : '0:1:0:0::0'
+    'v6_gateway'                        : '2001:201:1:1::10'
+    'v6_gateway_step'                   : '0:1:0:0::0'
+    'v6_netmask'                        : '128'
+    'vlan_id'                           : '1301'
+    'vlan_id_step'                      : '1'
+
+# Traffic TGEN Data
+LEAF_1_TGEN_data:
+    'no_of_ints'                        : "3"
+    'phy_mode'                          : 'copper'
+    'mac'                               : '00:00:21:00:00:01'
+    'mac_step'                          : '00:00:00:00:00:01'
+    'protocol'                          : 'ipv46'
+    'v4_addr'                           : '211.1.1.50'
+    'v4_addr_step'                      : '1.0.0.0'
+    'v4_gateway'                        : '211.1.1.10'
+    'v4_gateway_step'                   : '1.0.0.0'
+    'v4_netmask'                        : '255.255.255.255'
+    'v6_addr'                           : '2001:211:1:1::50'
+    'v6_addr_step'                      : '0:1:0:0::0'
+    'v6_gateway'                        : '2001:211:1:1::1'
+    'v6_gateway_step'                   : '0:1:0:0::0'
+    'v6_netmask'                        : '128'
+    'vlan_id'                           : '1201'
+    'vlan_id_step'                      : '1'

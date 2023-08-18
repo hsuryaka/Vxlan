@@ -1,0 +1,75 @@
+# ------------------------------------------------------
+# Define Cleaner modules, device groups / devices
+# ------------------------------------------------------
+
+cleaners:
+    PyatsDeviceClean:
+        module: genie.libs.clean
+        devices: [node1_s1_spine, node2_s1_vpc_1, node3_s1_vpc_2, node4_s1_leaf_1, node5_s1_access, node6_core1, node7_core2]
+
+# ------------------------------------------------------
+# Define clean part for devices
+# ------------------------------------------------------
+
+devices:
+    node1_s1_spine:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+
+    node2_s1_vpc_1:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+
+    node3_s1_vpc_2:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+
+    node4_s1_leaf_1:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+
+    node5_s1_access:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+
+    node6_core1:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration
+    node7_core2:
+        connect:
+        apply_configuration:
+            configuration: |
+                configure replace bootflash:base non-interactive verbose
+        order:
+            - connect
+            - apply_configuration

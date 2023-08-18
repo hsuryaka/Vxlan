@@ -1,0 +1,161 @@
+testbed:
+    name: VxLAN_Featurette
+    credentials:
+        default:
+            username: admin
+            password: nbv_12345
+        enable:
+            password: nbv_12345
+    servers:
+        tftp:
+            server: havadhut-blr
+            address: 192.168.0.100
+            path: ""
+            credentials:
+                default:
+                    username: snoopy
+                    password: nbv123!
+        ntp:
+            server: 1.2.3.4
+devices:
+    SPINE:
+        type: 'router'
+        os: 'nxos'
+        series: 'n3k'
+        credentials:
+            default:
+                username: admin
+                password: nbv123
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2041
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.57
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-1:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv123
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2039
+            setting:
+                ESCAPE_CHAR_CHATTY_TEAM_WAIT: 300
+                ESCAPE_CHAR_PROMPT_WAIT: 300
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.53
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+    Sundown-2:
+        type: 'router'
+        os: 'nxos'
+        series: 'n9k'
+        credentials:
+            default:
+                username: admin
+                password: nbv123
+        connections:
+          defaults:
+            class: 'unicon.Unicon'
+          a:
+            protocol: telnet
+            ip: 10.197.127.14
+            port: 2040
+            setting:
+                ESCAPE_CHAR_CHATTY_TEAM_WAIT: 300
+                ESCAPE_CHAR_PROMPT_WAIT: 300
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+          alt:
+            protocol: telnet
+            ip: 10.197.127.54
+            prompts:
+                login: r'login:'
+                password: r'Password:'
+
+    IXIA:
+        type: 'Ixia'
+        connections:
+          a:
+            protocol: telnet
+            ip: "10.197.127.16"
+          alt:
+            ip: "10.197.127.121"
+            port: 8009
+            protocol: telnet
+topology:
+    SPINE:
+        interfaces:
+            SPINE_to_LEAF-1:
+                intf: Ethernet1/16
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-2:
+                intf: Ethernet1/20
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            
+    Sundown-1:
+        interfaces:
+            LEAF-1_to_SPINE:
+                intf: Ethernet1/1
+                link: LEAF-1_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3
+                
+    Sundown-2:
+        interfaces:
+            LEAF-2_to_SPINE:
+                intf: Ethernet1/1
+                link: LEAF-2_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/20
+                link: LEAF-2_to_IXIA
+                type: ethernet
+                module_type: m3
+    
+    IXIA:
+        interfaces:
+            IXIA_to_LEAF-1:
+                intf: 4/3
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-2:
+                intf: 4/4
+                link: IXIA_to_LEAF-2
+                type: ethernet
+                module_type: m3

@@ -1,0 +1,1610 @@
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_python_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+extends: "/auto/dc3-india/hsuryaka/pyATS/automation/repo_develop/nexus-test-pyats/src/forwarding/vxlan/vxlan_trigger_datafile.yml"
+# extends: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(src/forwarding/vxlan/vxlan_trigger_datafile.yml)}"
+
+###################################################################
+###                  Initial Configurations                     ###
+###################################################################
+
+# Initialize TB to get ints and data files
+TC_001_InitializeTestbed:
+    source:
+        pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(PvLAN/pvlan_v6_config1.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(PvLAN/pvlan_v6_verify.yaml)}"
+
+# Carve out TCAM's and perform Reload
+# TC_002_TcamCarvingAndReload:
+#     source:
+#         pkg: lib.triggers.tcam_config.tcam_config
+#         class: TcamCarvingAndReload
+#     trigger_wait_time: 300
+#     timeout_config: 300
+
+# Common Setup to configure the VxLAN
+TC_003_CommonSetup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        #pkg: VxLAN_FT_Regr.vxlan_genie_sjc_config_copy.vxlan_config
+        class: CommonSetup
+#  TC_003_CommonSetup:
+#     source:
+#         pkg: src.forwarding.vxlan.vxlan_config
+#         class: CommonSetup
+
+TC_004_ConfigureIxia:
+    source:
+        pkg: pvlan_v6_script
+        class: ConfigureIxia
+    # tgen_cfg_file: "/ws/hsuryaka-bgl/Regression/PvLAN/NewConfig.PvLAN-TC1.ixncfg"
+    tgen_cfg_file: "/ws/hsuryaka-bgl/Regression/PvLAN/NewConfig.PvLAN-Trunk-TC.ixncfg"
+
+TC_005_rem_add_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: rem_add_vlan
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'
+    myvrf: 'myvrf_50000' 
+    ip_add: '196.10.100.102/16'
+    vn_segment: 30010
+    vn_segment1: 30100
+    ipv6_add: '196:10:100:102::254/64'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+
+# TC_006_rem_feature:
+#     source:
+#         pkg: pvlan_v6_script
+#         class: rem_feature
+#     device_dut:
+#         - node03
+#     vlan_num: 100
+#     vn_seg: 30100
+#     vn_seg1: 30200
+#     # processors:
+#     #     post:
+#     #         VerifyTraffic:
+#     #             pkg: pvlan_v6_script
+#     #             method: VerifyTrafficForLoss
+#     # wait_time: '30'
+#     # start_wait_time: 2
+#     # stop_wait_time: 10
+#     # verify_wait_time: 2
+#     # traffic_convergence_time: 120
+
+TC_007_change_community_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: change_community_vlan
+    device_dut:
+        - node02
+    pri_vlan: 10
+    sec_vlan: 100
+    sec_vlan1: 101
+    intf_ch: nd02_tgen_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_008_different_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: different_vlan
+    device_dut:
+        - node02
+    pri_vlan: 11
+    pri_vlan1: 10
+    intf_ch: nd02_tgen_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120   
+TC_009_flap_nve:
+    source:
+        pkg: pvlan_v6_script
+        class: flap_nve
+    device_dut:
+        - node02
+    nve: 1
+    vni1: 30001
+    vni2: 30002
+    vni3: 30010
+    vni4: 30100
+    vni5: 30101
+    vni6: 30102
+    vni7: 50000
+    lpbk: 1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_031_flap_bgp:
+    source:
+        pkg: pvlan_v6_script
+        class: flap_bgp
+    device_dut:
+        - node03
+    asn: 4000
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_010_flap_nve_loopback:
+    source:
+        pkg: pvlan_v6_script
+        class: flap_nve_loopback
+    device_dut:
+        - node02
+    nve: 1
+    lpbk: 1
+    vni: 30001
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_011_flap_port:
+    source:
+        pkg: pvlan_v6_script
+        class: flap_port
+    device_dut:
+        - node02
+    intf_ch: nd02_tgen_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_012_pvlan_to_normal_trunk:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_to_normal_trunk
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    pri_vlan: 10
+    sec_vlan: 100
+    vlans: '100-102'
+    processors:
+        post:
+
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_013_native_vlan_in_pvlantrunk:
+    source:
+        pkg: pvlan_v6_script
+        class: native_vlan_in_pvlantrunk
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    pri_vlan: 10
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_014_pvlan_counters:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_counters
+    device_dut:
+        - node02
+    sec_vlan: 100
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            # VerifyErrLogs:
+            #     pkg: pvlan_v6_script
+            #     method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_079_no_feature_private_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: no_feature_private_vlan
+    device_dut:
+        - node02
+    interface1: nd02_nd04_1_1
+    interface2: nd02_nd05_1_2
+    interface3: nd02_tgen_1_1
+    vlan: 10
+    vlan1: 100
+    vlan2: 101
+    vlan3: 102
+    vlan_st: '100-102'
+    vnseg1: 30100
+    vnseg2: 30101
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTrafficForLoss
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_016_pvlan_on_l3vni:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_on_l3vni
+    device_dut:
+        - node02
+    pri_vlan: 2000
+    sec_vlan: 200
+    vnseg: 50000
+    vnseg1: 30200
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_017_no_pvlan_mac_learnt:
+    source:
+        pkg: pvlan_v6_script
+        class: no_pvlan_mac_learnt
+    device_dut:
+        - node02
+    pri_vlan: 10
+    sec_vlan: '100-102'
+    vnseg: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_018_vni_shut_mac_learnt:
+    source:
+        pkg: pvlan_v6_script
+        class: vni_shut_mac_learnt
+    device_dut:
+        - node02
+    pri_vlan: 10
+    sec_vlan: '100-102'
+    vnseg: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_019_clear_learnt_mac:
+    source:
+        pkg: pvlan_v6_script
+        class: clear_learnt_mac
+    device_dut:
+        - node02
+        - node03
+    pri_vlan: 10
+    vnseg: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_020_pvlan_to_portchannel:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_to_portchannel
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    pri_vlan: 10
+    port_ch: 15
+    vlan: 100
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120 
+
+TC_021_L3_uplink_flap:
+    source:
+        pkg: pvlan_v6_script
+        class: L3_uplink_flap
+    device_dut:
+        - node02
+    nve: 1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'
+    myvrf: 'myvrf_50000' 
+    ip_add: '196.10.100.102/16'
+    loopback: 1
+    vn_segment: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '50'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_022_pvlan_to_normal_vlan_mac_learn:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_to_normal_vlan_mac_learn
+    device_dut:
+        - node03
+    nve: 1
+    vlan_num: 10
+    vlan_string: '100-102'
+    loopback: 1
+    vni: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '50'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_023_normal_vlan_to_pvlan_mac_learn:
+    source:
+        pkg: pvlan_v6_script
+        class: normal_vlan_to_pvlan_mac_learn
+    device_dut:
+        - node03  
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vni: 30010
+    nve: 1
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_024_isolated_community_vica_versa:
+    source:
+        pkg: pvlan_v6_script
+        class: isolated_community_vica_versa
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_num2: 102
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_025_isolated_community_isolated:
+    source:
+        pkg: pvlan_v6_script
+        class: isolated_community_isolated
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_num2: 102
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_026_static_mac:
+    source:
+        pkg: pvlan_v6_script
+        class: static_mac
+    device_dut:
+        - node02
+        - node03
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_027_process_restart:
+    source:
+        pkg: pvlan_v6_script
+        class: process_restart
+    device_dut:
+        - node03
+    bgp_asn: 4000
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_028_community_to_promiscous:
+    source:
+        pkg: pvlan_v6_script
+        class: community_to_promiscous
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'       
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_029_isolated_to_promiscous:
+    source:
+        pkg: pvlan_v6_script
+        class: isolated_to_promiscous
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 102
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_030_mac_move_in_same_pvlan:
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_in_same_pvlan
+    device_dut:
+        - node02
+        - node03
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_033_native_vlan_on_peomiscuous:
+    source:
+        pkg: pvlan_v6_script
+        class: native_vlan_on_peomiscuous
+    device_dut:
+        - node02
+    intf_ch: nd02_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 102
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_034_clear_trigger:
+    source:
+        pkg: pvlan_v6_script
+        class: clear_trigger
+    device_dut:
+        - node03
+    processors:
+        post:    
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_036_snmp_stats:
+    source:
+        pkg: pvlan_v6_script
+        class: snmp_stats
+    device_dut1:
+        - node05
+    device_dut2:
+        - node02
+    intf_ch: nd05_nd02_1_3
+    ip_addr: '10.13.13.2/24'
+    ip_addr1: '10.13.13.1'
+    ip_addr2: '10.13.13.1/24'
+    ip_addr3: '10.13.13.2'
+TC_037_reload_verify_community_port_to_trunk_promiscuous_port:
+    device_dut:
+        - node02
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 60
+    traffic_convergence_time: 120
+    timeout: 
+        max_time: 900
+        interval: 60
+TC_038_mac_move_promiscous_vlan:  
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_promiscous_vlan
+    device_dut:
+        - node02
+    intf_ch: nd02_tgen_1_1
+    intf_ch1: nd02_nd04_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'
+    port_ch: 1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+# TC_039_mac_move_promiscous_trunk:
+#     source:
+#         pkg: pvlan_v6_script
+#         class: mac_move_promiscous_trunk
+#     device_dut:
+#         - node02
+#     intf_ch: e1/48
+#     intf_ch1: 1
+#     vlan_num: 10
+#     vlan_num1: 100
+#     vlan_string: '100-102'
+#     port_ch: 1
+#     processors:
+#         post:
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#             VerifyTraffic:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyTraffic
+#             VerifyErrLogs:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyErrLogs
+#     wait_time: '30'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+# TC_040_mac_move_isolated_trunk:
+#     source:
+#         pkg: pvlan_v6_script
+#         class: mac_move_isolated_trunk
+#     device_dut:
+#         - node02
+#     intf_ch: e1/48
+#     intf_ch1: e1/1
+#     vlan_num: 10
+#     vlan_num1: 102
+#     vlan_string: '100-102'
+#     port_ch: 1
+#     processors:
+#         post:
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#             VerifyTraffic:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyTraffic
+#             VerifyErrLogs:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyErrLogs
+#     wait_time: '30'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+
+# TC_042_pvlan_with_member_port_not_allowed:
+#     source:
+#         pkg: pvlan_v6_script
+#         class: pvlan_with_member_port_not_allowed
+#     device_dut:
+#         - node02
+#     processors:
+#         post:
+#             check_cores:
+#                 pkg: lib.verify.verify_core
+#                 method: call_verify_cores
+#             VerifyTraffic:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyTraffic
+#             VerifyErrLogs:
+#                 pkg: pvlan_v6_script
+#                 method: VerifyErrLogs
+#     wait_time: '30'
+#     start_wait_time: 2
+#     stop_wait_time: 10
+#     verify_wait_time: 2
+#     traffic_convergence_time: 120
+TC_043_multiple_primary_secondary_ports1:
+    source:
+        pkg: pvlan_v6_script
+        class: multiple_primary_secondary_ports1
+    device_dut:
+        - node02
+    intf_ch: nd02_tgen_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_044_pvlan_in_peerlink_not_allowed:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_in_peerlink_not_allowed
+    device_dut:
+        - node05
+    port_ch: 15
+    vlan: 1
+    vlan1: 10
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_045_pvlan_adding_and_removing_members_from_portchannel:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_adding_and_removing_members_from_portchannel
+    device_dut:
+        - node05
+    vlan_num: 10
+    vlan_num1: 100
+    port_ch: 1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    
+TC_046_reload_verify_secondary_and_pvlan_traffic:
+    device_dut:
+        - node05
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    timeout: 
+        max_time: 900
+        interval: 60
+
+TC_047_nve_flap_on_primary:
+    source:
+        pkg: pvlan_v6_script
+        class: nve_flap_on_primary
+    device_dut:
+        - node02
+    vlan_pri: 10
+    vn_seg: 30010
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_048_nve_loopback_flap_on_primary:
+    source:
+        pkg: pvlan_v6_script
+        class: nve_loopback_flap_on_primary
+    device_dut:
+        - node02
+    nve: 1
+    loopbk_1: 1
+    loopbk_2: 2
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_049_svi_flap:
+    source:
+        pkg: pvlan_v6_script
+        class: svi_flap
+    device_dut:
+        - node02
+        - node05
+    pri_vlan: 10
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_039_mac_move_vpc_community_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_vpc_community_vlan
+    device_dut:
+        - node02
+    intf_ch: nd02_nd04_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_040_mac_move_vpc_isolated_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_vpc_isolated_vlan
+    device_dut:
+        - node02
+        - node05
+    pri_vlan: 10
+    sec_vlan: 100
+    sec_vlan1: 102
+    port_ch: 1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_052_multiple_primary_secondary_ports:
+    source:
+        pkg: pvlan_v6_script
+        class: multiple_primary_secondary_ports
+    device_dut:
+        - node02
+    intf: nd05_nd02_1_3
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_053_multiple_primary_secondary_ports_isolated:
+    source:
+        pkg: pvlan_v6_script
+        class: multiple_primary_secondary_ports_isolated
+    device_dut:
+        - node02
+    intf: nd05_nd02_1_3
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_054_pvlan_with_system_dot1q_transit:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_with_system_dot1q_transit
+    device_dut:
+        - node02
+        - node05
+    vlan_l3: 2000
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_055_vmct_configs:
+    source:
+        pkg: pvlan_v6_script
+        class: vmct_configs
+    device_dut1:
+        - node01
+    device_dut2:
+        - node02
+    device_dut3:
+        - node05
+    intf_ch: nd01_nd02_1_1
+    intf_ch1: nd01_nd05_1_1   
+    loopbk: '3'
+    ip_add1: 'fd00::a04:1/128'
+    underlay: 'UNDERLAY'
+    intf_ch4: nd02_nd05_1_2
+    ch_grp: '15'
+    vpc: '10'
+    dest_ip1: 'fd00::a04:2'
+    src_ip1: 'fd00::a04:1'
+    intf_ch3: nd02_nd01_1_1
+    ip_add2: 'fd00::a04:2/128'
+    dest_ip2: 'fd00::a04:1'
+    src_ip2: 'fd00::a04:2'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+TC_056_vmct_configs_reload:
+    device_dut:
+        - node01
+        - node02
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+    timeout: 
+        max_time: 900
+        interval: 60
+
+TC_060_isolated_community_promiscuous:
+    source:
+        pkg: pvlan_v6_script
+        class: isolated_community_promiscuous
+    device_dut:
+        - node03
+    po_ch: 1
+    pri_vlan: 10
+    sec_vlan: 102
+    vlan_st: '100-102'
+    sec_vlan1: 100
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_061_native_vlan_vmct:
+    source:
+        pkg: pvlan_v6_script
+        class: native_vlan_vmct
+    device_dut:
+        - node03
+    po_ch: 1
+    pri_vlan: 10    
+    processors:
+        post:    
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_062_trunk_community_promiscuous:
+    source:
+        pkg: pvlan_v6_script
+        class: trunk_community_promiscuous
+    device_dut:
+        - node03
+    po_ch: 1
+    pri_vlan: 10
+    sec_vlan: 100
+    vlan_st: '100-102'
+    intf_ch: nd03_tgen_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_063_Reload_vtep_vmct:
+    device_dut:
+        - node02
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 200
+    timeout: 
+        max_time: 900
+        interval: 60
+TC_064_mac_move_vmct_community_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_vmct_community_vlan
+    device_dut:
+        - node02
+    intf_ch: nd02_nd04_1_1
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_065_mac_move_vmct_isolated_vlan:
+    source:
+        pkg: pvlan_v6_script
+        class: mac_move_vmct_isolated_vlan
+    device_dut:
+        - node02
+    po_ch: 1
+    pri_vlan: 10
+    sec_vlan: 100
+    sec_vlan1: 102
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120    
+TC_066_NDIssu_StandAloneBGW:
+    source:
+        pkg: pvlan_v6_script
+        class: NDIssu_StandAloneBGW
+    device_dut:
+        - node05
+    target_image: nxos64-cs.10.3.2.IMG9.0.140.F.bin 
+    # processors:
+    #     post:
+    #         VerifyTraffic:
+    #             pkg: pvlan_v6_script
+    #             method: VerifyTraffic
+    # wait_time: '30'
+    # start_wait_time: 2
+    # stop_wait_time: 10
+    # verify_wait_time: 2
+    # traffic_convergence_time: 120
+TC_067_copy_replace:
+    source:
+        pkg: pvlan_v6_script
+        class: copy_replace
+    device_dut:
+        - node02
+        - node05
+    po_ch: 1
+    pri_vlan: 10
+    sec_vlan: 102
+    vpc: 1  
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_050_TriggerReloadAscii:
+    processors:
+        post:
+            VerifyErrLogs:
+                pkg: pvlan_v6_script
+                method: VerifyErrLogs
+    VerifyTraffic:
+        pkg: pvlan_v6_script
+        method: VerifyTraffic
+    check_cores:
+        pkg: lib.verify.verify_core
+        method: call_verify_cores
+    source:
+        pkg: lib.triggers.reload
+        class: reload.ReloadAscii
+    device_dut:
+        - node03
+    traffic_convergence_time: 300
+    trigger_wait_time: '500'
+    ixia_static: True
+    loss_tolerance: 0.01
+    check_iteration: 2
+TC_069_igmp_snooping_disabled:
+    source:
+        pkg: pvlan_v6_script
+        class: igmp_snooping_disabled
+    device_dut:
+        - node05
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_078_dhcp_snooping_enabled:
+    source:
+        pkg: pvlan_v6_script
+        class: dhcp_snooping_enabled
+    device_dut:
+        - node05
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '60'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_071_pvlan_to_trunkport:
+    source:
+        pkg: pvlan_v6_script
+        class: pvlan_to_trunkport
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_073_trunk_and_pvlan_traffic:
+    source:
+        pkg: pvlan_v6_script
+        class: ConfigureIxia
+    tgen_cfg_file: "/ws/hsuryaka-bgl/Regression/PvLAN/NewConfig.PvLAN-Trunk-TC.ixncfg"
+    source:
+        pkg: pvlan_v6_script
+        class: trunk_and_pvlan_traffic
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+
+TC_074_community_port_to_trunk_promiscuous_port:
+    source:
+        pkg: pvlan_v6_script
+        class: community_port_to_trunk_promiscuous_port
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_num1: 100
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_075_promiscuous_to_promiscous_trunk:
+    source:
+        pkg: pvlan_v6_script
+        class: promiscuous_to_promiscous_trunk
+    device_dut:
+        - node03
+    intf_ch: nd03_tgen_1_1
+    vlan_num: 10
+    vlan_string: '100-102'
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_039_reload_verify_trunk:
+    device_dut:
+        - node02
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    wait_time: '200'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 60
+    traffic_convergence_time: 120
+    timeout: 
+        max_time: 900
+        interval: 60
+TC_006_consistency_parameters:
+    source:
+        pkg: pvlan_v6_script
+        class: consistency_parameters
+    device_dut:
+        - node03
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+TC_076_downgrade_image:
+    source:
+        pkg: pvlan_v6_script
+        class: downgrade_image
+    device_dut:
+        - node05
+    target_image:
+        - nxos64-cs.10.3.2.F.bin
+    processors:
+        post:
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+            VerifyTraffic:
+                pkg: pvlan_v6_script
+                method: VerifyTraffic
+            # VerifyErrLogs:
+            #     pkg: pvlan_v6_script
+            #     method: VerifyErrLogs
+    wait_time: '30'
+    start_wait_time: 2
+    stop_wait_time: 10
+    verify_wait_time: 2
+    traffic_convergence_time: 120
+# Common Cleanup
+CommonCleanup:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: CommonCleanup

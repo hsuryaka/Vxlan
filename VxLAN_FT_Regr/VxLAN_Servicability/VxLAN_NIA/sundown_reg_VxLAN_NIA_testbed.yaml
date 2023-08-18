@@ -1,0 +1,363 @@
+testbed:
+    name: sundow-regression-testbed
+    alias: sundow-regression-testbed
+    custom:
+        session_name: 'l3_nia_fsv'
+    tacacs:
+        login_prompt: 'Login:'
+        username: admin
+        password_prompt: "^.*Password:"
+    passwords:
+        tacacs: insieme
+        enable: lab
+        line: lab
+    servers:
+        tftp:
+            server: bgl-golden-tftp
+            address: 10.127.57.23
+            #path: "/auto/bgl-golden/tftpboot/scheduler/"
+            credentials:
+                default:
+                    username: sftpuser
+                    password: sftpuser123
+        
+devices:
+    FX3-REG-TB1-TOR1:
+        os: nxos
+        type: VPC_VTEP
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2034
+            alt:
+                protocol: telnet
+                ip: 10.197.127.203
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-TOR2:
+        os: nxos
+        type: VPC_VTEP
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2035
+            alt:
+                protocol: telnet
+                ip: 10.197.127.204
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-NODE4:
+        os: nxos
+        type: L2_SWITCH
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2044
+            alt:
+                protocol: telnet
+                ip: 10.197.127.243
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR1:
+        os: nxos
+        type: STANDALONE_VTEP
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2026
+            alt:
+                protocol: telnet
+                ip: 10.197.127.217
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB2-TOR3:
+        os: nxos
+        type: SPINE
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.141
+                port: 2028
+            alt:
+                protocol: telnet
+                ip: 10.197.127.219
+        custom:
+          abstraction:
+            order: [os, platform]
+    FX3-REG-TB1-NODE7:
+        os: nxos
+        type: L2_SWITCH
+        platform: n9k
+        credentials:
+            default:
+                username: admin
+                password: insieme
+            enable:
+                password: insieme
+            ts:
+                username: lab
+                passwd: lab
+        connections:
+            defaults:
+                class: 'unicon.Unicon'
+            a:
+                protocol: telnet
+                ip: 10.197.127.142
+                port: 2010
+            alt:
+                protocol: telnet
+                ip: 10.78.63.26
+        custom:
+          abstraction:
+            order: [os, platform]
+    IXIA:
+        type: Ixia
+        os: ixianative
+        platform: n9k 
+        connections:
+            defaults:
+                class: hltapi.IxiaHltApiConnection
+            hltapi:
+                protocol: hltapi
+                ip: 10.127.57.249
+                tcl_server: 10.78.63.102:8009
+                ixnetwork_tcl_server: 10.78.63.102:8009
+                username: ixia
+                reset: 1
+            a:
+                protocol: telnet
+                ip: "10.127.57.249"
+            alt:
+                ip: "10.78.63.102"
+                port: 8009
+                protocol: telnet
+
+topology:
+    FX3-REG-TB1-TOR1:
+        interfaces:
+            LEAF-1_to_LEAF-2_1:
+                intf: Ethernet1/1
+                link: LEAF-1_to_LEAF-2_1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_LEAF-2_2:
+                intf: Ethernet1/2
+                link: LEAF-1_to_LEAF-2_2
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_SPINE:
+                intf: Ethernet1/8
+                link: LEAF-1_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_FAN-1:
+                intf: Ethernet1/9
+                link: LEAF-1_to_FAN-1
+                type: ethernet
+                module_type: m3
+            LEAF-1_to_IXIA:
+                intf: Ethernet1/25
+                link: LEAF-1_to_IXIA
+                type: ethernet
+                module_type: m3    
+    FX3-REG-TB1-TOR2:
+        interfaces:
+            LEAF-2_to_LEAF-1_1:
+                intf: Ethernet1/1
+                link: LEAF-2_to_LEAF-1_1
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_LEAF-1_2:
+                intf: Ethernet1/2
+                link: LEAF-2_to_LEAF-1_2
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_SPINE:
+                intf: Ethernet1/15
+                link: LEAF-2_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_FAN-1:
+                intf: Ethernet1/10
+                link: LEAF-2_to_FAN-1
+                type: ethernet
+                module_type: m3
+            LEAF-2_to_IXIA:
+                intf: Ethernet1/25
+                link: LEAF-2_to_IXIA
+                type: ethernet
+                module_type: m3    
+    FX3-REG-TB1-NODE4:
+        interfaces:
+            FAN-1_to_LEAF-1:
+                intf: Ethernet1/13
+                link: FAN-1_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            FAN-1_to_LEAF-2:
+                intf: Ethernet1/3
+                link: FAN-1_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            FAN-1_to_IXIA:
+                intf: Ethernet1/32
+                link: FAN-1_to_IXIA
+                type: ethernet
+                module_type: m3    
+    FX3-REG-TB2-TOR1:
+        interfaces:
+            LEAF-3_to_SPINE:
+                intf: Ethernet1/26
+                link: LEAF-3_to_SPINE
+                type: ethernet
+                module_type: m3
+            LEAF-3_to_FAN-2:
+                intf: Ethernet1/52
+                link: LEAF-3_to_FAN-2_1
+                type: ethernet
+                module_type: m3
+            LEAF-3_to_FAN-2_2:
+                intf: Ethernet1/53
+                link: LEAF-3_to_FAN-2_2
+                type: ethernet
+                module_type: m3
+            LEAF-3_to_IXIA:
+                intf: Ethernet1/47
+                link: LEAF-3_to_IXIA
+                type: ethernet
+                module_type: m3    
+    FX3-REG-TB2-TOR3:
+        interfaces:
+            SPINE_to_LEAF-1:
+                intf: Ethernet1/21
+                link: SPINE_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-2:
+                intf: Ethernet1/25
+                link: SPINE_to_LEAF-2
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-3:
+                intf: Ethernet1/11
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            SPINE_to_LEAF-3:
+                intf: Ethernet1/11
+                link: SPINE_to_LEAF-3
+                type: ethernet
+                module_type: m3
+    FX3-REG-TB1-NODE7:
+        interfaces:
+            FAN-2_to_LEAF-3:
+                intf: Ethernet1/18
+                link: FAN-2_to_LEAF-3_1
+                type: ethernet
+                module_type: m3
+            FAN-2_to_LEAF-3_2:
+                intf: Ethernet1/19
+                link: FAN-2_to_LEAF-3_2
+                type: ethernet
+                module_type: m3
+            FAN-2_to_IXIA:
+                intf: Ethernet1/21
+                link: FAN-2_to_IXIA
+                type: ethernet
+                module_type: m3
+
+    IXIA:
+        interfaces:
+            IXIA_to_LEAF-3:
+                intf: 11/4
+                link: IXIA_to_LEAF-3
+                type: ethernet
+                module_type: m3
+            IXIA_to_FAN-1:
+                intf: 6/10
+                link: IXIA_to_FAN-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_FAN-2:
+                intf: 9/9
+                link: IXIA_to_FAN-2
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-1:
+                intf: 6/5
+                link: IXIA_to_LEAF-1
+                type: ethernet
+                module_type: m3
+            IXIA_to_LEAF-2:
+                intf: 11/9
+                link: IXIA_to_LEAF-2
+                type: ethernet
+                module_type: m3

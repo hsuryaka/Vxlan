@@ -1,0 +1,213 @@
+system_setup:
+    cfg_persistence: True
+    system_cfg:
+        1:
+            device_name: 'device-1'
+            file_path: '/auto/dc3/absr/pyats/users/absr/otm_infra/inputs/cfg_files/common_pre_test_input.cfg'
+test_attributes:
+    on_failure:
+        core_location: '/ws/pkanduri-bgl/cores/'
+
+testcase:
+
+    1:
+        id: "mac_add_static_nve_peer_ip_nc_create"
+        description: "validate cli via netconf create for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_create_1"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+                #defop: "merge"
+                trigger: "process_restart(nve), process_restart(policyelem)"
+                datastore: "running"
+                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+                   depth:  8
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+    
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+
+    2:
+        id: "mac_add_static_nve_peer_ip_nc_create"
+        description: "validate cli via netconf create for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_create_2"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+                #defop: "merge"
+                trigger: "interface_shut(nve1), interface_noshut(nve1)"
+                datastore: "running"
+                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+                   depth:  8
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+    
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+
+#    3:
+#        id: "mac_add_static_nve_peer_ip_nc_create"
+#        description: "validate cli via netconf create for mac address static on nve interface"
+#        feature:
+#            1:
+#                id: "mac_add_static_nve_peer_ip_nc_create_3"
+#                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+#                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+#                #defop: "merge"
+#                #trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+#                datastore: "running"
+#                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+#                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+#                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+#                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+#                local_persistence: False
+#                expected: 'ok'
+#                oper:
+#                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+#                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+#                   depth:  8
+#                   match: {'peerIpv4': '62.1.1.1'}
+#                   match_expected: True
+#                dme_consistency_checker: True
+#                show_verification:
+#                     1:
+#                          command: "sh run | i 'static 0011.0022.0033'"
+#                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+#
+#        mode: "netconf"
+#        yang: "device"
+#        device_name: "device-1"
+
+
+    3:
+        id: "mac_add_static_nve_peer_ip_nc_create"
+        description: "validate cli via netconf create for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_create_4"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+                #defop: "merge"
+                trigger: "reload_ascii"
+                datastore: "running"
+                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+                   depth:  8
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+
+
+    4:
+        id: "mac_add_static_nve_peer_ip_nc_create"
+        description: "validate cli via netconf create for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_nc_create_5"
+                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+                #defop: "merge"
+                trigger: "reload"
+                datastore: "running"
+                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+                local_persistence: False
+                expected: 'ok'
+                oper:
+                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+                   depth:  8
+                   match: {'peerIpv4': '2.23.23.23'}
+                   match_expected: True
+                dme_consistency_checker: True
+                show_verification:
+                     1:
+                          command: "sh run | i 'static 0011.0022.0033'"
+                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+
+        mode: "netconf"
+        yang: "device"
+        device_name: "device-1"
+#
+#    6:
+#        id: "mac_add_static_nve_peer_ip_nc_create"
+#        description: "validate cli via netconf create for mac address static on nve interface"
+#        feature:
+#            1:
+#                id: "mac_add_static_nve_peer_ip_nc_create_3"
+#                dn: "sys/mac/static/vni-11001-mac-00:11:00:22:00:33"
+#                #command: "feature lldp ; int device3_int1 ; lldp dcbx version auto"
+#                #defop: "merge"
+#                trigger: "issu(bootflash://nxos.9.3.5.63.bin.upg)"
+#                datastore: "running"
+#                feature_cfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge.txt"
+#                feature_uncfg_file_path: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_merge_uncfg.txt"
+#                skip_phase: ['start_traffic','stop_and_analyze_traffic']
+#                custom_payload: ['/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_create.xml']
+#                local_persistence: False
+#                expected: 'ok'
+#                oper:
+#                   getReqFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getreq.xml"
+#                   getRespFile: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac_nc_getresp.xml"
+#                   depth:  8
+#                   match: {'peerIpv4': '62.1.1.1'}
+#                   match_expected: True
+#                dme_consistency_checker: True
+#                show_verification:
+#                     1:
+#                          command: "sh run | i 'static 0011.0022.0033'"
+#                          expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/put-mac-static.txt"
+#
+#        mode: "netconf"
+#        yang: "device"
+#        device_name: "device-1"

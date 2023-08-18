@@ -1,0 +1,158 @@
+system_setup:
+    cfg_persistence: True
+    system_cfg:
+        1:
+            device_name: 'device-1'
+            file_path: '/auto/dc3/absr/pyats/users/absr/otm_infra/inputs/cfg_files/common_pre_test_input.cfg'
+test_attributes:
+    on_failure:
+        core_location: '/ws/pkanduri-bgl/cores/'
+
+    
+testcase:
+    1:
+        id: "mac_add_static_nve_peer_ip_rest_post"
+        description: "validate cli and rest post for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_post_1"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem), interface_shut(nve1), interface_noshut(nve1), issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem)"
+                trigger: "issu(bootflash://nxos64.10.2.0.125.bin.upg)"
+                local_persistence: True 
+                expected: 200
+                dme_consistency_checker: True
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                   depth:  5  
+                   match: {'staticMacAddress': '00:01:00:02:00:03'}
+                show_verification:
+                    1:
+                     command: "show run | grep mac"
+                     #api: "show_run_intf"
+                     expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac-static-nve.txt"
+    
+        mode: "rest"
+        yang: "device"
+        device_name: "device-1"
+        #post_trigger: "switchover"
+        
+    
+    2:
+        id: "mac_add_static_nve_peer_ip_rest_post"
+        description: "validate cli and rest post for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_post_2"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "process_restart(nve), process_restart(policyelem)"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem)"
+                #trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+                local_persistence: True 
+                expected: 200
+                dme_consistency_checker: True
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                   depth:  5  
+                   match: {'staticMacAddress': '00:01:00:02:00:03'}
+                show_verification:
+                    1:
+                     command: "show run | grep mac"
+                     #api: "show_run_intf"
+                     expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac-static-nve.txt"
+    
+        mode: "rest"
+        yang: "device"
+        device_name: "device-1"
+        #post_trigger: "switchover"
+        
+    3:
+        id: "mac_add_static_nve_peer_ip_rest_post"
+        description: "validate cli and rest post for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_post_3"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "interface_shut(nve1), interface_noshut(nve1)"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem)"
+                #trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+                local_persistence: True 
+                expected: 200
+                dme_consistency_checker: True
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                   depth:  5  
+                   match: {'staticMacAddress': '00:01:00:02:00:03'}
+                show_verification:
+                    1:
+                     command: "show run | grep mac"
+                     #api: "show_run_intf"
+                     expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac-static-nve.txt"
+    
+        mode: "rest"
+        yang: "device"
+        device_name: "device-1"
+        #post_trigger: "switchover"
+
+
+    4:
+        id: "mac_add_static_nve_peer_ip_rest_post"
+        description: "validate cli and rest post for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_post_4"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "reload"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem)"
+                #trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+                local_persistence: True 
+                expected: 200
+                dme_consistency_checker: True
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                   depth:  5  
+                   match: {'staticMacAddress': '00:01:00:02:00:03'}
+                show_verification:
+                    1:
+                     command: "show run | grep mac"
+                     #api: "show_run_intf"
+                     expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac-static-nve.txt"
+    
+        mode: "rest"
+        yang: "device"
+        device_name: "device-1"
+        #post_trigger: "switchover"
+
+    5:
+        id: "mac_add_static_nve_peer_ip_rest_post"
+        description: "validate cli and rest post for mac address static on nve interface"
+        feature:
+            1:
+                id: "mac_add_static_nve_peer_ip_rest_post_5"
+                dn: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                command: "mac address-table static 0001.0002.0003 vni 11001 interface nve 1 peer-ip 2.23.23.23"
+                trigger: "reload_ascii"
+                #trigger: "process_restart(nve), process_restart(policyelem), process_restart(confelem)"
+                #trigger: "issu(bootflash://nxos.9.3.4.IIL9.0.444.bin.upg)"
+                local_persistence: True 
+                expected: 200
+                dme_consistency_checker: True
+                oper:
+                   object_uri: "/api/mo/sys/mac/static/vni-11001-mac-00:01:00:02:00:03"
+                   depth:  5  
+                   match: {'staticMacAddress': '00:01:00:02:00:03'}
+                show_verification:
+                    1:
+                     command: "show run | grep mac"
+                     #api: "show_run_intf"
+                     expectedOutput: "/ws/pkanduri-bgl/N9K_Scripts_Porting/DME/mac-static-nve.txt"
+    
+        mode: "rest"
+        yang: "device"
+        device_name: "device-1"
+        #post_trigger: "switchover"

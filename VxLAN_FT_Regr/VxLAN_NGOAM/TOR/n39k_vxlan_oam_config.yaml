@@ -1,0 +1,657 @@
+skip_configSetup_dict: tcam_config
+ 
+dut:
+    uut1:
+        feature: telnet,interface-vlan,ssh,lldp,bgp,lacp,bash-shell,vpc,ospf,pim,ospfv3,nv_overlay_evpn,nve,vnseg_vlan
+    uut2:
+        feature: telnet,interface-vlan,ssh,lldp,bgp,lacp,bash-shell,vpc,ospf,pim,ospfv3,nv_overlay_evpn,nve,vnseg_vlan
+    uut3:
+        feature: telnet,interface-vlan,ssh,lldp,bgp,lacp,bash-shell,ospf,pim,ospfv3,nv_overlay_evpn,nve,vnseg_vlan
+    uut4:
+        feature: telnet,interface-vlan,ssh,lldp,bgp,lacp,bash-shell, ospf,pim,ospfv3,nv_overlay_evpn
+    uut5:
+        feature: telnet,ssh,lldp,lacp
+    uut6:
+        feature: telnet,ssh,lldp,lacp
+
+
+tcam_config_dict:
+    uut1:
+         arp-ether: -size 256 -double_wide True
+    uut2:
+         arp-ether: -size 256 -double_wide True
+    uut3:
+         arp-ether: -size 256 -double_wide True
+
+
+
+interface_config_dict:
+   portchannel:
+        uut1:
+               port-channel1:  -memberList "uut1_uut2_1 uut1_uut2_2" -mode switchport -switchportmode trunk
+               port-channel3:  -memberList "uut1_uut5_2 uut1_uut5_3" -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+               port-channel10: -memberList "uut1_uut4_2 uut1_uut4_3" -mode no switchport -ipv4_addr 1.2.1.1 -ipv4_prf_len 24
+
+        uut2:
+               port-channel1:  -memberList "uut2_uut1_1 uut2_uut1_2" -mode switchport -switchportmode trunk
+               port-channel3:  -memberList "uut2_uut5_1 uut2_uut5_2" -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+               port-channel20: -memberList "uut2_uut4_2 uut2_uut4_3" -mode no switchport -ipv4_addr 2.2.1.1 -ipv4_prf_len 24
+        uut3:
+               port-channel30: -memberList "uut3_uut4_2"  -mode no switchport -ipv4_addr 3.3.1.1 -ipv4_prf_len 24
+
+        uut4: 
+               port-channel10: -memberList "uut4_uut1_2 uut4_uut1_3" -mode no switchport -ipv4_addr 1.2.1.2 -ipv4_prf_len 24
+               port-channel20: -memberList "uut4_uut2_2 uut4_uut2_3" -mode no switchport -ipv4_addr 2.2.1.2 -ipv4_prf_len 24
+               port-channel30: -memberList "uut4_uut3_2" -mode no switchport -ipv4_addr 3.3.1.2 -ipv4_prf_len 24 -no_negotiate_auto True -speed 40000
+ 
+        uut5:
+               port-channel3:  -memberList "uut5_uut1_2 uut5_uut1_3 uut5_uut2_1 uut5_uut2_2" -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+                
+   ethernet:
+       uut1:
+            uut1_uut4_1: -mode no switchport -admin_state up -ipv4_addr 1.1.1.1 -ipv4_prf_len 24
+            uut1_uut2_4: -mode no switchport -admin_state up -ipv4_addr 100.1.1.1 -ipv4_prf_len 24
+            uut1_uut2_1: -channelGroup 1 -channelGroupMode active -switchMode switchport -switchportmode trunk
+            uut1_uut2_2: -channelGroup 1 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list
+            uut1_uut4_2: -channelGroup 10 -channelGroupMode active -switchMode no switchport 
+            uut1_uut4_3: -channelGroup 10 -channelGroupMode active -switchMode no switchport
+            uut1_uut4_4: -mode switchport -admin_state up -switchportmode access -access_vlan 1000
+            uut1_uut5_2: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+            uut1_uut5_3: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+            uut1_uut2_3: -mode no switchport -admin_state up -ipv4_addr 10.1.1.1 -ipv4_prf_len 24 -mtu 9100 -vrf vpc_keepalive
+            uut1_TG1_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+       uut2:
+            uut2_uut1_1: -channelGroup 1 -channelGroupMode active -switchMode switchport -switchportmode trunk 
+            uut2_uut1_2: -channelGroup 1 -channelGroupMode active -switchMode switchport -switchportmode trunk
+            uut2_uut5_1: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+            uut2_uut5_2: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+            uut2_uut4_2: -channelGroup 20 -channelGroupMode active -switchMode no switchport 
+            uut2_uut4_3: -channelGroup 20 -channelGroupMode active -switchMode no switchport
+            uut2_uut4_1: -mode no switchport -admin_state up -ipv4_addr 2.1.1.1 -ipv4_prf_len 24
+            uut2_uut1_4: -mode no switchport -admin_state up -ipv4_addr 100.1.1.2 -ipv4_prf_len 24
+            uut2_uut4_4: -mode switchport -admin_state up -switchportmode access -access_vlan 1001
+            uut2_uut1_3: -mode no switchport -admin_state up -ipv4_addr 10.1.1.2 -ipv4_prf_len 24 -mtu 9100 -vrf vpc_keepalive
+            uut2_TG1_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+       uut3:
+            uut3_uut4_2: -channelGroup 30 -channelGroupMode active -switchMode no switchport
+            uut3_uut4_1: -mode no switchport -admin_state up -ipv4_addr 3.1.1.1 -ipv4_prf_len 24
+            uut3_uut6_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+ 
+       uut4:
+            uut4_uut1_1: -mode no switchport -admin_state up -ipv4_addr 1.1.1.2 -ipv4_prf_len 24
+            uut4_uut1_2: -channelGroup 10 -channelGroupMode active -switchMode no switchport
+            uut4_uut1_3: -channelGroup 10 -channelGroupMode active -switchMode no switchport
+            uut4_uut1_4: -mode switchport -admin_state up -switchportmode access -access_vlan 1000
+            uut4_uut2_1: -mode no switchport -admin_state up -ipv4_addr 2.1.1.2 -ipv4_prf_len 24
+            uut4_uut2_2: -channelGroup 20 -channelGroupMode active -switchMode no switchport
+            uut4_uut2_3: -channelGroup 20 -channelGroupMode active -switchMode no switchport
+            uut4_uut2_4: -mode switchport -admin_state up -switchportmode access -access_vlan 1001
+            uut4_uut3_2: -channelGroup 30 -channelGroupMode active -switchMode no switchport
+            uut4_uut3_1: -mode no switchport -admin_state up -ipv4_addr 3.1.1.2 -ipv4_prf_len 24
+ 
+       uut5:
+           uut5_uut1_2: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+           uut5_uut1_3: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401 
+           uut5_uut2_1: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+           uut5_uut2_2: -channelGroup 3 -channelGroupMode active -switchMode switchport -switchportmode trunk -allowed_vlan_list 2-401
+           uut5_TG1_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+
+       uut6:
+           uut6_uut3_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+           uut6_TG1_1: -mode switchport -switchportmode trunk -allowed_vlan_list 2-401
+
+   loopback:
+        uut1:
+               loopback0: -ipv4_addr 10.10.10.10 -ipv4_prf_len 32 -secondary_ipv4_addr 20.20.20.20 
+               loopback1: -ipv4_addr 11.11.11.11 -ipv4_prf_len 32
+               loopback100: -ipv4_addr 99.99.99.99 -ipv4_prf_len 32 -vrf evpn_tenant_1000600
+               loopback99: -ipv4_addr 30.30.30.30 -ipv4_prf_len 32 -secondary_ipv4_addr 31.31.31.31
+ 
+        uut2:
+               loopback0: -ipv4_addr 10.10.10.11 -ipv4_prf_len 32 -secondary_ipv4_addr 20.20.20.20 
+               loopback1: -ipv4_addr 12.12.12.12 -ipv4_prf_len 32
+               loopback100: -ipv4_addr 97.97.97.97 -ipv4_prf_len 32 -vrf evpn_tenant_1000600
+               loopback99: -ipv4_addr 30.30.30.31 -ipv4_prf_len 32 -secondary_ipv4_addr 31.31.31.31
+ 
+        uut3:
+               loopback0: -ipv4_addr 20.20.20.21 -ipv4_prf_len 32 
+               loopback1: -ipv4_addr 13.13.13.13 -ipv4_prf_len 32
+               loopback100: -ipv4_addr 55.55.55.55 -ipv4_prf_len 32 -vrf evpn_tenant_1000600
+               loopback99: -ipv4_addr 40.40.40.40 -ipv4_prf_len 32
+ 
+        uut4:
+               loopback0: -ipv4_addr 102.102.102.102 -ipv4_prf_len 32 
+               loopback1: -ipv4_addr 17.17.17.17 -ipv4_prf_len 32
+ 
+   vlan:
+       uut1: 2-401,600,601,1000
+       uut2: 2-401,600,601,1001
+       uut3: 2-401,600,601
+       uut4: 1000-1001
+       uut5: 2-401
+       uut6: 2-401
+
+   svi:
+       uut1: 
+           1000: -ipv4_addr 1.3.1.1 -ipv4_prf_len 24
+       uut2: 
+           1001: -ipv4_addr 2.3.1.1 -ipv4_prf_len 24
+       uut4: 
+           1000: -ipv4_addr 1.3.1.2 -ipv4_prf_len 24
+           1001: -ipv4_addr 2.3.1.2 -ipv4_prf_len 24
+   vrf:
+       uut1: vpc_keepalive
+       uut2: vpc_keepalive 
+ 
+bgp_config_dict:
+   uut1:
+      100:
+        default:
+         router_configs:
+               -graceful_restart True -keep_alive_time 30 -hold_time 90
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64
+             l2vpn:
+                 -maximum_paths 64 -advertise_pip True
+         templates:
+             EVPN:
+               config:
+                 -remote_as 200 -update_source loopback1 -ebgp_multihop 3 -keep_alive_time 30 -hold_time 90
+               address_family:
+                            l2vpn: 
+                                     -soft_reconfiguration True -send_community True -send_community_extended True -disable_peer_as_check True -allow_as_in 3
+         neighbors:
+           ipv4:
+             17.17.17.17:
+                template_params: 
+                                 -inherit_peer EVPN
+        evpn_tenant_1000600:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn -network_list 99.99.99.99/32
+        evpn_tenant_1000601:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn
+   uut2:
+      100:
+        default:
+         router_configs:
+             -graceful_restart True -keep_alive_time 30 -hold_time 90
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64
+             l2vpn:
+                 -maximum_paths 64 -advertise_pip True
+         templates:
+             EVPN:
+               config:
+                 -remote_as 200 -update_source loopback1 -ebgp_multihop 3 -keep_alive_time 30 -hold_time 90
+               address_family:
+                            l2vpn: 
+                                     -soft_reconfiguration True -send_community True -disable_peer_as_check True -send_community_extended True -allow_as_in 3 
+         neighbors:
+           ipv4:
+             17.17.17.17:
+                template_params: 
+                                 -inherit_peer EVPN
+        evpn_tenant_1000600:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn -network_list 97.97.97.97/32
+        evpn_tenant_1000601:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn
+ 
+   uut3:
+      100:
+        default:
+         router_configs:
+             -log_neighbor_changes True -graceful_restart True -keep_alive_time 30 -hold_time 90
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64
+             l2vpn:
+                 -maximum_paths 64
+         templates:
+             EVPN:
+               config:
+                 -remote_as 200 -update_source loopback1 -ebgp_multihop 3 -keep_alive_time 30 -hold_time 90
+               address_family:
+                            l2vpn: 
+                                     -soft_reconfiguration True -send_community True -disable_peer_as_check True -send_community_extended True -allow_as_in 3
+         neighbors:
+           ipv4:
+             17.17.17.17:
+                template_params: 
+                                 -inherit_peer EVPN
+        evpn_tenant_1000600:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn -network_list 55.55.55.55/32
+        evpn_tenant_1000601:
+           address_family:
+             ipv4_unicast:
+                   -advertise_l2vpn l2vpn -advertise_l2vpn_type evpn
+ 
+ 
+   uut4:
+      200:
+        default:
+         router_configs:
+             -log_neighbor_changes True -graceful_restart True -keep_alive_time 30 -hold_time 90
+         address_family:
+             ipv4_unicast:
+                 -maximum_paths 64
+             l2vpn:
+                 -maximum_paths 64 -retain_route_target True 
+         templates:
+             EVPN:
+               config:
+                 -remote_as 100 -update_source loopback1 -ebgp_multihop 3 -keep_alive_time 30 -hold_time 90
+               address_family:
+                            l2vpn: 
+                                     -soft_reconfiguration True -send_community True -disable_peer_as_check True -route_map NH_UNCHANGED -route_map_direction out -send_community_extended True
+
+         neighbors:
+           ipv4:
+             11.11.11.11:
+                template_params: 
+                                 -inherit_peer EVPN
+             12.12.12.12:
+                template_params: 
+                                 -inherit_peer EVPN
+             13.13.13.13:
+                template_params: 
+                                 -inherit_peer EVPN
+
+route_map_config_dict:
+       uut4:
+          direct:
+               route-map NH_UNCHANGED permit 10 \
+               set ip next-hop unchanged
+
+pim_config_dict:
+    uut1:
+        rp_config:
+            static:
+                102.102.102.102: -group_list 224.0.0.0/4 -route_map None  -bidir_flag NO -override_flag NO
+        intf_config:
+             uut1_uut4_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             uut1_uut2_4: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po10: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             vlan1000: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             loopback0: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback99: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+ 
+
+
+    uut2:
+        rp_config:
+            static:
+                102.102.102.102: -group_list 224.0.0.0/4 -route_map None  -bidir_flag NO -override_flag NO
+        intf_config:
+             uut2_uut4_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             uut2_uut1_4: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po20: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             vlan1001: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             loopback0: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback99: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+ 
+
+    uut3:
+        rp_config:
+            static:
+                102.102.102.102: -group_list 224.0.0.0/4 -route_map None  -bidir_flag NO -override_flag NO
+        intf_config:
+             uut3_uut4_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po30: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             loopback0: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback99: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             loopback1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+ 
+
+    uut4:
+        rp_config:
+            static:
+                102.102.102.102: -group_list 224.0.0.0/4 -route_map None  -bidir_flag NO -override_flag NO
+        intf_config:
+             uut4_uut3_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po30: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             loopback0: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+             uut4_uut2_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po20: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             vlan1001: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             uut4_uut1_1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             po10: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             vlan1000: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface NO
+             loopback1: -hello_interval None -dr_priority None -border_flag NO -dr_delay None -peer_device none -peer_interface none -loopback_interface YES
+ 
+
+ospfv2_config_dict:
+        uut1:
+            100:
+                router_configs:
+                    default: -router_id 1.1.1.1
+                interface_configs:
+                     uut1_uut4_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut1_uut2_4:
+                        -area_id 0.0.0.0 -cost 10 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po10:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     vlan1000:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback99:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback1:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                   
+        uut2:
+            100:
+                router_configs:
+                    default: -router_id 2.1.1.1
+                interface_configs:
+                     uut2_uut4_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut2_uut1_4:
+                        -area_id 0.0.0.0 -cost 10 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po20:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     vlan1001:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback99:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback1:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+ 
+        uut3:
+            100:
+                router_configs:
+                    default: -router_id 3.1.1.1
+                interface_configs:
+                     uut3_uut4_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po30:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     vlan1006:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback1:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+ 
+        uut4:
+            100:
+                router_configs:
+                    default: -router_id 3.1.1.2
+                interface_configs:
+                     uut4_uut3_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po30:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback0:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut4_uut2_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po20:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     vlan1001:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     uut4_uut1_1:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     po10:
+                        -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     vlan1000:
+                         -area_id 0.0.0.0 -cost 2 -hello_interval 1 -dead_interval 4 -area_id 0
+                     loopback1:
+                         -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+ 
+vpc_config_dict:
+    uut1:
+        vpc_domain: -domain_id 1 -system_priority 32667 -role_priority 100 -peer_keepalive_src_ipv4_addr 10.1.1.1 -peer_keepalive_dst_ipv4_addr 10.1.1.2 -peer_keepalive_vrf vpc_keepalive -peer_switch True -peer_gateway True -arp_synchronize True
+        vpc_peer_link: -pc_no 1
+        vpc_port_channels:
+            port-channel3: -members uut1_uut5_2,uut1_uut5_3 -pc_no 3 -vpc_id 2 -port_mode trunk
+        vlans: -vlan_id 2-401
+    uut2:
+        vpc_domain: -domain_id 1 -system_priority 32667 -role_priority 200 -peer_keepalive_src_ipv4_addr 10.1.1.2 -peer_keepalive_dst_ipv4_addr 10.1.1.1 -peer_switch True -peer_gateway True -arp_synchronize -peer_keepalive_vrf vpc_keepalive
+        vpc_peer_link: -pc_no 1
+        vpc_port_channels:
+            port-channel3: -members uut2_uut5_1,uut2_uut5_2 -pc_no 3 -vpc_id 2 -port_mode trunk
+        vlans: -vlan_id 2-401
+
+
+#########
+# SCALE
+#########
+
+vxlan_dict:
+ 
+   uut1:
+      evpn:
+         l2_vlan_vni_mapping: -start_vlan_id 2 -start_vni_id 10002 -incr_step 1 -count 400
+
+         l3_vlan_vni_mapping: -start_vlan_id 600 -start_vni_id 1000600 -incr_step 1 -count 2
+
+         global: -anycast_mac 0000.7777.7777
+
+         evpn_config: -start_vni 10002 -incr_step 1 -count 400 -rd auto -rt auto
+ 
+         vrf:
+              evpn_tenant_1000600: 
+                            vni: 1000600
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+              evpn_tenant_1000601:
+                            vni: 1000601
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+         l2_vni_svi:
+                 evpn_tenant_1000600: -l2vni_start 2 -count 200 -ipv4_start 192.1.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+                 evpn_tenant_1000601: -l2vni_start 202 -count 200 -ipv4_start 192.2.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+         l3_vni_svi:
+                 evpn_tenant_1000600: -l3vni_start 600 -count 1
+                 evpn_tenant_1000601: -l3vni_start 601 -count 1
+      nve1:
+             global: -source_int loopback0 -host_reachablity bgp -adv_vmac True -evpn_ir True
+             l2_vni:
+                vni_group1: -l2vni_start 10002 -count 200
+                vni_group2: -l2vni_start 10202 -count 200 -mcast_group 231.1.1.1
+             l3_vni: -l3vni_start 1000600 -count 2
+
+   uut2:
+      evpn:
+         l2_vlan_vni_mapping: -start_vlan_id 2 -start_vni_id 10002 -incr_step 1 -count 400
+
+         l3_vlan_vni_mapping: -start_vlan_id 600 -start_vni_id 1000600 -incr_step 1 -count 2
+
+         global: -anycast_mac 0000.7777.7777
+
+         evpn_config: -start_vni 10002 -incr_step 1 -count 400 -rd auto -rt auto
+ 
+         vrf:
+              evpn_tenant_1000600: 
+                            vni: 1000600
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+              evpn_tenant_1000601:
+                            vni: 1000601
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+         l2_vni_svi:
+                 evpn_tenant_1000600: -l2vni_start 2 -count 200 -ipv4_start 192.1.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+                 evpn_tenant_1000601: -l2vni_start 202 -count 200 -ipv4_start 192.2.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+         l3_vni_svi:
+                 evpn_tenant_1000600: -l3vni_start 600 -count 1
+                 evpn_tenant_1000601: -l3vni_start 601 -count 1
+      nve1:
+             global: -source_int loopback0 -host_reachablity bgp -adv_vmac True -evpn_ir True
+             l2_vni:
+                vni_group1: -l2vni_start 10002 -count 200
+                vni_group2: -l2vni_start 10202 -count 200 -mcast_group 231.1.1.1
+             l3_vni: -l3vni_start 1000600 -count 2
+
+   uut3:
+      evpn:
+         l2_vlan_vni_mapping: -start_vlan_id 2 -start_vni_id 10002 -incr_step 1 -count 400
+
+         l3_vlan_vni_mapping: -start_vlan_id 600 -start_vni_id 1000600 -incr_step 1 -count 2
+
+         global: -anycast_mac 0000.7777.7777
+
+         evpn_config: -start_vni 10002 -incr_step 1 -count 400 -rd auto -rt auto
+ 
+         vrf:
+              evpn_tenant_1000600: 
+                            vni: 1000600
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+              evpn_tenant_1000601:
+                            vni: 1000601
+                            rd: auto
+                            address_family:
+                                   ipv4: -rt auto
+         l2_vni_svi:
+                 evpn_tenant_1000600: -l2vni_start 2 -count 200 -ipv4_start 192.1.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+                 evpn_tenant_1000601: -l2vni_start 202 -count 200 -ipv4_start 192.2.1.1 -ip_step 0.0.1.0 -ipv4_prf_len 24
+         l3_vni_svi:
+                 evpn_tenant_1000600: -l3vni_start 600 -count 1
+                 evpn_tenant_1000601: -l3vni_start 601 -count 1
+      nve1:
+             global: -source_int loopback0 -host_reachablity bgp -evpn_ir True
+             l2_vni:
+                vni_group1: -l2vni_start 10002 -count 200
+                vni_group2: -l2vni_start 10202 -count 200 -mcast_group 231.1.1.1
+             l3_vni: -l3vni_start 1000600 -count 2
+
+
+trigger_dict:
+          uplink:
+            uut1:
+               po: Po10
+               eth: uut1_uut4_1
+            uut2:
+               po: Po20
+               eth: uut2_uut4_1               
+            uut3:
+               po: Po30
+               eth: uut3_uut4_1 
+          Access:
+            uut1: 
+               po: Po3
+            uut2:
+               po: Po3
+            uut3:
+               Eth: uut3_uut6_1
+          VpcPOAccess:
+            uut1:
+               Po3:
+                  memberList: "uut1_uut5_2 uut1_uut5_3"
+            uut2:
+               Po3:
+                  memberList: "uut2_uut5_1 uut2_uut5_2"
+          Vpc_MCT: Po1
+          nve_int:
+                 uut1:
+                     int_conf:
+                             loopback0: -ipv4_addr 10.10.10.10 -ipv4_prf_len 32 -secondary_ipv4_addr 20.20.20.20
+                     ospfv2_conf:
+                                100:
+                                   loopback0: -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     pim_conf:
+                                loopback0: -mode sparse
+                 uut2:
+                     int_conf:
+                              loopback0: -ipv4_addr 10.10.10.11 -ipv4_prf_len 32 -secondary_ipv4_addr 20.20.20.20
+                     ospfv2_conf:
+                                100:
+                                   loopback0: -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     pim_conf:
+                                loopback0: -mode sparse
+ 
+                 uut3:
+                     int_conf:
+                             loopback0: -ipv4_addr 20.20.20.21 -ipv4_prf_len 32
+                     ospfv2_conf:
+                                100:
+                                   loopback0: -area_id 0.0.0.0 -hello_interval 1 -dead_interval 4 -area_id 0
+                     pim_conf:
+                                loopback0: -mode sparse
+ 
+
+oam_config_dict:
+       uut1:
+           profile:
+                  1:
+                   global:
+                         -description oam -payload 0x2 -sport 12345 -hop 1
+                   flow:
+                        -dot1q 500 -ip_src 22.33.44.55 -ip_dst 55.44.33.22 -ipv6_src 3333::1 -ipv6_dst 4444::1 -mac_src 11:11:11:11:11:11 -mac_dst 22:22:22:22:22:22 -src_port 11 -dst_port 12 -protocol 35 
+           profile1:
+                   2:
+                    global:
+                         -interface uut1_uut4_1
+           profile2:
+                   3:
+                    global:
+                         -oamchannel 2
+               
+       uut2:
+           profile:
+                  1:
+                   global:
+                         -description oam -payload 0x2 -sport 12345 -hop 1
+                   flow:
+                        -dot1q 500 -ip_src 22.33.44.55 -ip_dst 55.44.33.22 -ipv6_src 3333::1 -ipv6_dst 4444::1 -mac_src 11:11:11:11:11:11 -mac_dst 22:22:22:22:22:22 -src_port 11 -dst_port 12 -protocol 35   
+
+       uut3:
+           profile:
+                  1:
+                   global:
+                         -description oam -payload 0x2 -sport 12345 -hop 1
+                   flow:
+                        -dot1q 500 -ip_src 22.33.44.55 -ip_dst 55.44.33.22 -ipv6_src 3333::1 -ipv6_dst 4444::1 -mac_src 11:11:11:11:11:11 -mac_dst 22:22:22:22:22:22 -src_port 11 -dst_port 12 -protocol 35   
+           profile1:
+                   2:
+                    global:
+                         -interface port-channel30
+           profile2:
+                   3:
+                    global:
+                         -oamchannel 2
+                  
+vxlan_uplink_dict:
+          uut1:
+              eth: uut1_uut4_1
+              PO: port-channel10
+          uut3:
+              eth: uut3_uut4_1
+              PO: port-channel30
+                      
+
+traffic_config_dict:
+             host_config:
+                  profile1:
+                      TG1_uut5_1: 
+                             -mode create -enable_ping_response 1 -ipv4Mask 32 -vlan_id_start 2 -vlan_count 10 -ipv4_start 192.1.1.2 -ipv4Gw 192.1.1.1 -ipv4_start_step 0.0.1.0 -ipv4Gw_step 0.0.1.0 -device_count 10 -deviceip_step 0.0.0.1 -macaddr_start 22:22:22:01:01:01 -macaddr_start_step 00:01:00:00:00:00 -devicemac_step 00:00:00:00:00:01
+                      TG1_uut6_1:
+                             -mode create -enable_ping_response 1 -ipv4Mask 32 -vlan_id_start 52 -vlan_count 10 -ipv4_start 192.1.51.2 -ipv4Gw 192.1.51.1 -ipv4_start_step 0.0.1.0 -ipv4Gw_step 0.0.1.0 -device_count 10 -deviceip_step 0.0.0.1 -macaddr_start 00:10:94:11:01:01 -macaddr_start_step 00:01:00:00:00:00 -devicemac_step 00:00:00:00:00:01
+
+             traffic_config:
+                 host_bound:
+                    VPCToStandalone: -srcPort TG1_uut5_1 -dstPort TG1_uut6_1 -mode create -host_profile profile1 -rate_pps 10000 -frame_size 1280 -transmit_mode continuous -name VPCToStandalone -mac_gw 192.1.1.1
+                    StandaloneToVpc: -srcPort TG1_uut6_1 -dstPort TG1_uut5_1 -mode create -host_profile profile1 -rate_pps 10000 -frame_size 1280 -transmit_mode continuous -name StandaloneToVpc -mac_gw 192.1.51.1

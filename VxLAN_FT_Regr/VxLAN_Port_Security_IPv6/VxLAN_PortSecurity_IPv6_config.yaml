@@ -1,0 +1,259 @@
+FWD_SYS_dict:
+    VRF_string              : 'VRF-'
+    VRF_id_start            : 1
+    VRF_count               : 1
+    VLAN_PER_VRF_count      : 1
+    SPINE_COUNT             : 1
+    BGP_AS_num              : 100
+    OSPF_AS                 : 'vxlan_v6'
+
+# LEAF-1 data
+LEAF_1_dict:
+    loop10_ipv6             : "10:1:1:1::2"
+    loop0_ip                : "10.11.1.2"
+    SPINE_1_UPLINK_PO:
+        po_id               : 11
+        spine_loop0_ip      : "10.11.1.1"
+        leaf_spine_po_v4    : "1.11.1.2"
+        leaf_spine_mask_v4  : "/31"
+        spine_leaf_po_v4    : "1.11.1.3"
+        spine_leaf_mask_v4  : "/31"
+        spine_loop10_ipv6   :  '10:1:1:1::1'
+        spine_leaf_po_v6    : "2001:db8:35:1::2"
+        spine_leaf_mask_v6  : "/64"
+        leaf_spine_po_v6    : "2001:db8:35:1::3"
+        leaf_spine_mask_v6  : "/64"
+    VPC_data:
+        domain_id           : 100
+        peer_link_po        : 10
+        VPC_ACC_po          : 11
+        kp_al_vrf           : "peer-keep-alive"
+        kp_al_ip            : "10.197.127.116"
+        backup_svi          : "2000"
+        backup_svi_ip       : "1.1.1.2/31"
+    NVE_data:
+        src_loop            : 'loopback11'
+        anycast_loop        : 'loopback12'
+        VTEP_IPV6           : "11:1:1:1::2"
+        VPC_VTEP_IPV6       : "12:1:1:1::2"
+    STATIC_IR_VNI_data:
+        VRF_string          : 'VRF-'
+        VRF_id_start        : 1
+        VRF_count           : 1
+        VLAN_PER_VRF_count  : 2
+        l3_vlan_start       : 3001
+        l3_vni_start        : 3003001
+        l2_vlan_start       : 1001
+        l2_vni_start        : 4201001
+        l2_vlan_ipv4_start  : '100.10.1.1'
+        l2_vlan_ipv4_mask   : '/16'
+        l2_vlan_ipv6_start  : '2001:100:1:10::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# LEAF-2 data
+LEAF_2_dict:
+    loop10_ipv6              : "10:1:1:1::3"
+    loop0_ip                 : "11.11.1.2"
+    SPINE_1_UPLINK_PO:
+        po_id               : 11
+        spine_loop0_ip      : "10.11.1.1"
+        spine_loop10_ipv6   : '10:1:1:1::1'
+        leaf_spine_po_v4    : "1.12.1.2"
+        leaf_spine_mask_v4  : "/31"
+        spine_leaf_po_v4    : "1.12.1.3"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:db8:36:1::2"
+        spine_leaf_mask_v6  : "/64"
+        leaf_spine_po_v6    : "2001:db8:36:1::3"
+        leaf_spine_mask_v6  : "/64"
+    VPC_data:
+        domain_id           : 100
+        peer_link_po        : 10
+        VPC_ACC_po          : 11
+        kp_al_vrf           : "peer-keep-alive"
+        kp_al_ip            : "10.197.127.117"
+        backup_svi          : "2000"
+        backup_svi_ip       : "1.1.1.3/31"
+    NVE_data:
+        src_loop            : 'loopback11'
+        anycast_loop        : 'loopback12'
+        VTEP_IPV6           : "11:1:1:1::3"
+        VPC_VTEP_IPV6       : "12:1:1:1::2"
+    STATIC_IR_VNI_data:
+        VRF_string          : 'VRF-'
+        VRF_id_start        : 1
+        VRF_count           : 1
+        VLAN_PER_VRF_count  : 2
+        l3_vlan_start       : 3001
+        l3_vni_start        : 3003001
+        l2_vlan_start       : 1001
+        l2_vni_start        : 4201001
+        l2_vlan_ipv4_start  : '100.10.1.1'
+        l2_vlan_ipv4_mask   : '/16'
+        l2_vlan_ipv6_start  : '2001:100:1:10::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+# LEAF-3 data
+LEAF_3_dict:
+    loop10_ipv6             : "30:1:1::1"
+    loop0_ip                : "12.11.1.2"
+    SPINE_1_UPLINK_PO:
+        po_id               : 113
+        spine_loop0_ip      : "10.11.1.1"
+        spine_loop10_ipv6   : "10:1:1:1::1"
+        leaf_spine_po_v4    : "1.13.1.2"
+        leaf_spine_mask_v4  : "/31"
+        spine_leaf_po_v4    : "1.13.1.3"
+        spine_leaf_mask_v4  : "/31"
+        spine_leaf_po_v6    : "2001:db8:37:1::2"
+        spine_leaf_mask_v6  : "/64"
+        leaf_spine_po_v6    : "2001:db8:37:1::3"
+        leaf_spine_mask_v6  : "/64"
+    NVE_data:
+        src_loop            : 'loopback11'
+        VTEP_IPV6           : "11:1:1:2::2"
+
+    STATIC_IR_VNI_data:
+        VRF_string          : 'VRF-'
+        VRF_id_start        : 1
+        VRF_count           : 1
+        VLAN_PER_VRF_count  : 2
+        l3_vlan_start       : 3001
+        l3_vni_start        : 3003001
+        l2_vlan_start       : 1001
+        l2_vni_start        : 4201001
+        l2_vlan_ipv4_start  : '100.10.1.1'
+        l2_vlan_ipv4_mask   : '/16'
+        l2_vlan_ipv6_start  : '2001:100:1:10::1'
+        l2_vlan_ipv6_mask   : '/64'
+
+LEAF_1_Orphan1_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:16:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.10.1.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.10.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:10:10::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:10::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1001'
+    'vlan_id_step'          : '0'
+LEAF_1_Orphan2_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'fiber'
+    'mac'                   : '00:16:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.10.20.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.10.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:10:20::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:10::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1001'
+    'vlan_id_step'          : '0'
+
+LEAF_1_Fex_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'fiber'
+    'mac'                   : '00:14:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.10.30.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.10.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:10:30::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:10::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1001'
+    'vlan_id_step'          : '0'
+
+LEAF_3_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'fiber'
+    'mac'                   : '00:17:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.11.10.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.11.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:11:10::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:11::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1002'
+    'vlan_id_step'          : '0'
+
+LEAF_2_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'copper'
+    'mac'                   : '00:18:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.10.100.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.10.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:10:100::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:10::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1001'
+    'vlan_id_step'          : '0'
+FANOUT_TGEN_data:
+    'no_of_ints'            : "1025"
+    'phy_mode'              : 'fiber'
+    'mac'                   : '00:15:06:00:00:01'
+    'mac_step'              : '00:00:00:00:00:01'
+    'protocol'              : 'ipv6'
+    'v4_addr'               : '100.10.110.10'
+    'v4_addr_step'          : '0.0.0.1'
+    'v4_gateway'            : '100.10.1.1'
+    'v4_gateway_step'       : '0.0.0.0'
+    'v4_netmask'            : '255.255.0.0'
+    'v6_addr'               : '2001:100:1:10:40::2'
+    'v6_addr_step'          : '0:0:0:0::1'
+    'v6_gateway'            : '2001:100:1:10::1'
+    'v6_gateway_step'       : '0:0:0:0::'
+    'v6_netmask'            : '64'
+    'vlan_id'               : '1001'
+    'vlan_id_step'          : '0'
+
+PORTSEC_Dict:
+    'prim_orphan_mac'       : '0016.0600'
+    'prim_vpc_mac'          : '0015.0600'
+    'prim_fex_mac'          : '0014.0600'
+    'sa_mac'                : '0017.0600'
+    'prim_orphan2_mac'      : '0018.0600'
+    'orphan_static_mac'     : '0016.0600.0010'
+    'fex_static_mac'        : '0014.0600.0010'
+    'sa_static_mac'         : '0017.0600.0010'
+    'vpc_static_mac'        : '0015.0600.0010'
+    'vpc_static_mac1'       : '0015.0600.0011'
+    'fex_static_mac'        : '0014.0600.0010'
+    'Leaf1_Orphan_Topo'     : 0
+    'Leaf1_Fex_Topo'        : 4
+    'Leaf1_VPC_Topo'        : 3
+    'Leaf2_Topo'            : 1
+    'vpc_role_priority'     : 3005
+    'fex_po'                : 101

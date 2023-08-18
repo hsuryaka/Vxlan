@@ -1,0 +1,406 @@
+extends: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(../VxLAN_PYlib/VxLAN_Genie_Libs_Yamls/VxLAN_EVPN_master_trigger_file.yaml)}"
+
+# Initialize TB to get ints and data files
+InitializeTestbed:
+    source:
+        pkg: src.forwarding.vxlan.vxlan_config
+        class: InitializeTestbed
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_4K_L2VNI_2K_L3VNI/VxLAN_VNI_Scale_MSite_config.yaml)}"
+    verify_file_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_4K_L2VNI_2K_L3VNI/VxLAN_VNI_Scale_MSite_verify.yaml)}"
+
+# Configuration Adjustment, change IPV6 addresses for L2VNI's
+TC_001_ConfigureAdjustIPV6L2VNI:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: ConfigureAdjustIPV6L2VNI
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+        - node5_s2_leaf_1
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+        - node9_s3_leaf_1
+    wait_time: '60'
+    start_vlan: 3
+    start_ipv6: '2001:100:1:2::1'
+    ipv6_mask: '/64'
+    vlan_count: 20
+
+# Configure IXIA Before Converting and Before Scale
+TC_002_ConfigureIxiaBeforeScale:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: ConfigureIxia
+    datafile_path: "%CALLABLE{lib.utils.find_path.get_full_with_job_path(VxLAN_4K_L2VNI_2K_L3VNI/VxLAN_VNI_Scale_MSite_config.yaml)}"
+
+# Clear IPv4 Route for all VRF's Before Converting and Before Scale
+TC_003_TriggerClearIpRouteVrfAllBeforeScale_S1_BGWs:
+    source:
+        pkg: genie.libs.sdk.triggers.clear.routing.nxos.clear
+        class: TriggerClearIpRouteVrfAll
+    devices:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    timeout:
+        max_time: 300
+        interval: 20
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger restart Process vlan_mgr Before Converting and Before Scale
+TC_004_TriggerRestartVlanMgrBeforeScale:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node3_s2_bgw_1
+        - node8_s3_bgw_2
+    process_list:
+        - vlan_mgr
+    hap_reset : True
+    hap_reset_conv_time : 400
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Flap Fabric Link Before Converting and Before Scale
+TC_005_TriggerFabricLinkFlapBeforeScale_S1_BGWs:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    wait_time: '60'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Flap DCI Link Before Converting and Before Scale
+TC_006_TriggerDCILinkFlapBeforeScale_S1_BGWs:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    wait_time: '60'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Remove/Add L3VNI Under VRF Before Converting and Before Scale
+TC_007_TriggerRemoveAddL3VniUnderVrfBeforeScale_S1_BGWs:
+    source:
+        pkg: lib.triggers.remove_add
+        class: remove_add.RemoveAddL3VniUnderVrf
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    wait_time: '60'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger Delete Recreate VLAN Before Converting and Before Scale
+TC_008_TriggerDeleteRecreateVlan_S1_BGWs:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.UnconfigConfigVlan
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    traffic_convergence_time: 120
+    convergence_wait_time: '180'
+    wait_time: '60'
+    vlan_range:
+        "101,103,3-4,7-8"
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger NVE delete and config rollback
+TC_009_TriggerConfigureRollback_intNVE_S1_BGWs:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: ConfigureRollback
+    trigger_wait_time: 180
+    traffic_convergence_time: 180
+    verify_dict:
+        node01:
+            test_dut: ['node3_s2_bgw_1', 'node4_s2_bgw_2']
+            cmd: ['no interface nve 1']
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Configuration Adjustment, change OLD L3VNI's to New L3VNI's
+TC_010_TriggerConvertL3VNIOld2New:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: TriggerConvertL3VNIOld2New
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+        - node5_s2_leaf_1
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+        - node9_s3_leaf_1
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Clear IPv4 Route for all VRF's After Converting and Before Scale
+TC_011_TriggerClearIpRouteVrfAllAfterConverting_S1_BGWs:
+    source:
+        pkg: genie.libs.sdk.triggers.clear.routing.nxos.clear
+        class: TriggerClearIpRouteVrfAll
+    devices:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    timeout:
+        max_time: 300
+        interval: 20
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger restart Process vlan_mgr After Converting and Before Scale
+TC_012_TriggerRestartVlanMgrAfterConverting:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_process.RestartProcess
+    device_dut:
+        - node3_s2_bgw_1
+        - node8_s3_bgw_2
+    process_list:
+        - vlan_mgr
+    hap_reset : True
+    hap_reset_conv_time : 400
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Flap Fabric Link After Converting and Before Scale
+TC_013_TriggerFabricLinkFlapAfterConverting_S1_BGWs:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.FabricLinkFlap
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    wait_time: '60'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Flap DCI Link After Converting and Before Scale
+TC_014_TriggerDCILinkFlapAfterConverting_S1_BGWs:
+    source:
+        pkg: lib.triggers.flap
+        class: interface_flap.DCILinkFlap
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    wait_time: '60'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Remove/Add new L3VNI Under VRF After Converting and Before Scale
+TC_015_TriggerRemoveAddNewL3VNIUnderVRF:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: TriggerRemoveAddNewL3VNIUnderVRF
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Trigger NVE delete and config rollback
+TC_016_TriggerConfigureRollback_intNVE_S2_BGWs:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: ConfigureRollback
+    trigger_wait_time: 180
+    traffic_convergence_time: 180
+    verify_dict:
+        node01:
+            test_dut: ['node7_s3_bgw_1', 'node8_s3_bgw_2']
+            cmd: ['no interface nve 1']
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Trigger Delete Recreate VLAN After Converting and Before Scale
+TC_017_TriggerDeleteRecreateVlan_S2_BGWs:
+    source:
+        pkg: lib.triggers.change_config
+        class: change_config.UnconfigConfigVlan
+    device_dut:
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+    traffic_convergence_time: 120
+    convergence_wait_time: '180'
+    wait_time: '60'
+    vlan_range:
+        "104,106,9-10,13-14"
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Configuration Adjustment, Delete SVI's (feature interface-vlan) from all BGW's
+TC_018_TriggerDeleteSVINoFeatureInterfaceVlanfromBGW:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: TriggerDeleteSVINoFeatureInterfaceVlanfromBGW
+    device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+
+# Configuration Adjustment, Delete SVI's (feature interface-vlan) from all BGW's
+TC_019_ConfigureVNIScaleIncrease:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: ConfigureVNIScaleIncrease
+    bgw_device_dut:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+        - node7_s3_bgw_1
+        - node8_s3_bgw_2
+    leaf_device_dut:
+        - node5_s2_leaf_1
+        - node9_s3_leaf_1
+
+# Trigger Reload FM Module
+TriggerReloadFabricModule:
+    source:
+        pkg: genie.libs.sdk
+        class: triggers.ha.reload.reload.TriggerReloadFabricModule
+    devices:
+        - node7_s3_bgw_1
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+    timeout:
+        max_time: 500
+        interval: 20
+    num_values:
+        oc: '1'
+
+# Trigger Reload FM Module
+TriggerRestartNveIpfibReloadFM:
+    source:
+        pkg: lib.triggers.flap
+        class: restart_nve.RestartNveIpFibReloadLcReloadFM
+    device_dut:
+        - node8_s3_bgw_2
+    reload_params:
+        TriggerReloadFabricModule:
+            devices:
+                - node7_s3_bgw_1
+            timeout:
+                max_time: 500
+                interval: 20
+            num_values:
+                oc: '1'
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+            check_cores:
+                pkg: lib.verify.verify_core
+                method: call_verify_cores
+
+# Reload the TOR Device
+TriggerReloadTor_S1_BGWs:
+    devices:
+        - node3_s2_bgw_1
+        - node4_s2_bgw_2
+    processors:
+        post:
+            verify_traffic:
+                pkg: src.forwarding.vxlan.traffic
+                method: verify_traffic
+    source:
+        class: triggers.ha.reload.reload.TriggerReloadTor
+        pkg: genie.libs.sdk
+    traffic_convergence_time: 300
+    timeout:
+        max_time: 900
+        interval: 60
+
+# Reload EOR LC
+TriggerReloadLC:
+    processors:
+        post:
+            VerifyTraffic:
+                pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+                method: VerifyTraffic
+    source:
+        pkg: lib.triggers.flap
+        class: eor_triggers.ReloadLC
+    device_dut:
+        - node7_s3_bgw_1
+    intf_list:
+        - nd07_nd01_1_1
+
+# Sample in script test
+SampleTest:
+    source:
+        pkg: VxLAN_FT_Regr.VxLAN_4K_L2VNI_2K_L3VNI.VxLAN_VNI_Scale_MSite_script
+        class: SampleTest

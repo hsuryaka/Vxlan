@@ -1,0 +1,66 @@
+testbed:
+    name: Sundown-TB
+    alias: topologyvxlanTestbed
+    tacacs:
+        login_prompt: "login:"
+        password_prompt: "Password:"
+        username: admin
+    passwords:
+        tacacs: cisco
+        enable: cisco
+        line: cisco
+    servers:
+        tftp:
+            server:  10.127.57.23
+            address: 10.127.57.23 
+            path: ""
+            username: sftpuser123
+            password: sftpuser123 
+
+devices:
+    Sundown-1:
+        type: Nexus 9000
+        alias:  device-1
+        tacacs:
+            login_prompt: "login:"
+            password_prompt: "Password:"
+            username: admin
+        passwords:
+            tacacs: nbv12345
+            enable: nbv12345
+            line: lab
+        connections:
+            a:
+              protocol: telnet
+              ip: 10.197.127.14 
+              port: 2039
+            mgmt:
+                protocol: telnet
+                ip: "10.197.127.53"
+                mask: 255.255.255.0
+                gw: 10.127.63.1
+            alt:
+                protocol: ssh
+                ip: "10.197.127.53"
+            netconf:
+              class: yang.connector.Netconf
+              protocol: netconf
+              ip: "10.197.127.53"
+              port: 830
+              username: admin
+              password: nbv12345
+              hostkey_verify: False
+              look_for_keys: False
+    
+
+topology:
+     Sundown-1:
+        interfaces:
+            nve1:
+                alias: device1_int1
+                link: device1-device2-link1
+                type: ethernet
+                short_name: nve1
+    
+
+
